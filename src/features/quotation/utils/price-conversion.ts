@@ -1,0 +1,68 @@
+import type { QuotationExchangeRateFormState } from '../types/quotation-types';
+import type { KurDto } from '@/services/erp-types';
+
+function findDovizTipiFromCurrencyCode(currencyCode: string, erpRates: KurDto[]): number | null {
+  const erpRate = erpRates.find((er) => {
+    return er.dovizIsmi === currencyCode || er.dovizIsmi?.toUpperCase() === currencyCode.toUpperCase();
+  });
+  return erpRate?.dovizTipi ?? null;
+}
+
+function findExchangeRateByDovizTipi(
+  dovizTipi: number,
+  exchangeRates: QuotationExchangeRateFormState[],
+  erpRates?: KurDto[]
+): number | null {
+  const exchangeRate = exchangeRates.find((er) => er.dovizTipi === dovizTipi);
+  if (exchangeRate?.exchangeRate && exchangeRate.exchangeRate > 0) {
+    return exchangeRate.exchangeRate;
+  }
+
+  if (erpRates && erpRates.length > 0) {
+    const erpRate = erpRates.find((er) => er.dovizTipi === dovizTipi);
+    if (erpRate?.kurDegeri && erpRate.kurDegeri > 0) {
+      return erpRate.kurDegeri;
+    }
+  }
+
+  return null;
+}
+
+export function convertPriceToTargetCurrency(
+  price: number,
+  sourceCurrency: string,
+  targetCurrency: string,
+  exchangeRates: QuotationExchangeRateFormState[],
+  erpRates?: KurDto[]
+): number {
+  if (!erpRates || erpRates.length === 0) {
+    return price;
+  }
+
+  const sourceDovizTipi = findDovizTipiFromCurrencyCode(sourceCurrency, erpRates);
+  const targetDovizTipi = findDovizTipiFromCurrencyCode(targetCurrency, erpRates);
+
+  if (!sourceDovizTipi || !targetDovizTipi) {
+    return price;
+  }
+
+  if (sourceDovizTipi === targetDovizTipi) {
+    return price;
+  }
+
+  const sourceRate = findExchangeRateByDovizTipi(sourceDovizTipi, exchangeRates, erpRates);
+  const targetRate = findExchangeRateByDovizTipi(targetDovizTipi, exchangeRates, erpRates);
+
+  if (!sourceRate || sourceRate <= 0) {
+    return price;
+  }
+
+  if (!targetRate || targetRate <= 0) {
+    return price;
+  }
+
+  const priceInTL = price * sourceRate;
+  const finalPrice = priceInTL / targetRate;
+
+  return finalPrice;
+}

@@ -1,0 +1,72 @@
+{
+  "list": {
+    "title": "Lagerverwaltung",
+    "description": "Bestände anzeigen und verwalten",
+    "syncedFromErp": "Bestände werden automatisch aus dem ERP-System synchronisiert",
+    "search": "Nach Bestandsname oder ERP-Code suchen...",
+    "id": "ID",
+    "erpStockCode": "ERP-Bestandscode",
+    "stockName": "Bestandsname",
+    "unit": "Einheit",
+    "actions": "Aktionen",
+    "viewDetail": "Details",
+    "showing": "{{from}}-{{to}} / {{total}} angezeigt",
+    "page": "Seite {{current}} / {{total}}"
+  },
+  "detail": {
+    "title": "Bestandsdetails",
+    "basicInfo": "Grundinformationen",
+    "basicInfoReadonly": "Grundinformationen werden aus dem ERP-System synchronisiert und können nicht geändert werden",
+    "images": "Bilder",
+    "relations": "Verwandte Bestände",
+    "save": "Speichern",
+    "cancel": "Abbrechen",
+    "erpStockCode": "ERP-Bestandscode",
+    "stockName": "Bestandsname",
+    "unit": "Einheit",
+    "htmlDescription": "HTML-Beschreibung",
+    "htmlDescriptionPlaceholder": "HTML-Beschreibung eingeben",
+    "htmlDescription.required": "HTML-Beschreibung ist erforderlich",
+    "technicalSpecs": "Technische Spezifikationen (JSON)",
+    "technicalSpecsPlaceholder": "Technische Spezifikationen im JSON-Format (optional)"
+  },
+  "images": {
+    "upload": "Bilder hierher ziehen oder klicken",
+    "uploadHint": "Mehrfachauswahl wird unterstützt",
+    "uploadButton": "Bilder hochladen",
+    "selectedFiles": "Ausgewählte Dateien",
+    "altText": "Alt-Text (optional)",
+    "primary": "Primär",
+    "setPrimary": "Als primär festlegen",
+    "delete": "Löschen",
+    "noImages": "Noch keine Bilder hochgeladen",
+    "deleteConfirm": "Bild löschen",
+    "deleteConfirmMessage": "Sind Sie sicher, dass Sie dieses Bild löschen möchten?"
+  },
+  "relations": {
+    "add": "Verwandten Bestand hinzufügen",
+    "relatedStock": "Verwandter Bestand",
+    "relatedStock.required": "Auswahl eines verwandten Bestands ist erforderlich",
+    "quantity": "Menge",
+    "quantity.positive": "Menge muss eine positive Zahl sein",
+    "description": "Beschreibung",
+    "descriptionPlaceholder": "Beschreibung eingeben (optional)",
+    "isMandatory": "Pflicht",
+    "delete": "Löschen",
+    "actions": "Aktionen",
+    "noRelations": "Noch keine verwandten Bestände hinzugefügt",
+    "selectStock": "Bestand auswählen",
+    "search": "Suchen...",
+    "deleteConfirm": "Verwandten Bestand löschen",
+    "deleteConfirmMessage": "Sind Sie sicher, dass Sie den verwandten Bestand {{name}} löschen möchten?"
+  },
+  "messages": {
+    "detailCreateSuccess": "Bestandsdetails erfolgreich erstellt",
+    "detailUpdateSuccess": "Bestandsdetails erfolgreich aktualisiert",
+    "deleteSuccess": "Erfolgreich gelöscht",
+    "uploadSuccess": "Bilder erfolgreich hochgeladen",
+    "setPrimarySuccess": "Primärbild erfolgreich festgelegt",
+    "relationCreateSuccess": "Verwandter Bestand erfolgreich hinzugefügt",
+    "error": "Ein Fehler ist aufgetreten"
+  }
+}

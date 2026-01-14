@@ -1,0 +1,21 @@
+{
+  "menu": "ERP Müşteri",
+  "description": "ERP sisteminden gelen müşteri listesi",
+  "noData": "Müşteri bulunamadı",
+  "table": {
+    "branchCode": "Şube Kodu",
+    "businessUnitCode": "İş Birimi Kodu",
+    "customerCode": "Müşteri Kodu",
+    "customerName": "Müşteri Adı",
+    "phone": "Telefon",
+    "city": "Şehir",
+    "district": "İlçe",
+    "address": "Adres",
+    "countryCode": "Ülke Kodu",
+    "email": "E-posta",
+    "website": "Web Sitesi",
+    "taxNumber": "Vergi Numarası",
+    "taxOffice": "Vergi Dairesi",
+    "tcknNumber": "TCKN Numarası"
+  }
+}

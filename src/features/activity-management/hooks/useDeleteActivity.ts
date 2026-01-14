@@ -1,0 +1,26 @@
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner';
+import { activityApi } from '../api/activity-api';
+import { ACTIVITY_QUERY_KEYS } from '../utils/query-keys';
+
+export const useDeleteActivity = () => {
+  const { t } = useTranslation();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (id: number): Promise<void> => {
+      await activityApi.delete(id);
+    },
+    onSuccess: async () => {
+      await queryClient.refetchQueries({ 
+        queryKey: [ACTIVITY_QUERY_KEYS.LIST],
+        exact: false,
+      });
+      toast.success(t('activityManagement.deleteSuccess', 'Aktivite başarıyla silindi'));
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || t('activityManagement.deleteError', 'Aktivite silinirken bir hata oluştu'));
+    },
+  });
+};

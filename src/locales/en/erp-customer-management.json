@@ -1,0 +1,21 @@
+{
+  "menu": "ERP Customer",
+  "description": "Customer list from ERP system",
+  "noData": "No customers found",
+  "table": {
+    "branchCode": "Branch Code",
+    "businessUnitCode": "Business Unit Code",
+    "customerCode": "Customer Code",
+    "customerName": "Customer Name",
+    "phone": "Phone",
+    "city": "City",
+    "district": "District",
+    "address": "Address",
+    "countryCode": "Country Code",
+    "email": "Email",
+    "website": "Website",
+    "taxNumber": "Tax Number",
+    "taxOffice": "Tax Office",
+    "tcknNumber": "TCKN Number"
+  }
+}

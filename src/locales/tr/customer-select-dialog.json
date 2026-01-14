@@ -1,0 +1,23 @@
+{
+  "title": "Müşteri Seç",
+  "description": "Müşteri seçmek için bir tab seçin ve listeden müşteriyi seçin",
+  "erpCustomers": "ERP Müşterisi",
+  "crmCustomers": "CRM Müşterileri",
+  "allCustomers": "Tümü",
+  "erp": "ERP",
+  "crm": "CRM",
+  "noErpCustomers": "ERP müşterisi bulunamadı",
+  "noCrmCustomers": "CRM müşterisi bulunamadı",
+  "noCustomers": "Müşteri bulunamadı",
+  "noResults": "Arama sonucu bulunamadı",
+  "searchPlaceholder": "İsim veya kod ile ara...",
+  "voiceSearch": "Sesli arama",
+  "table": {
+    "type": "Tip",
+    "customerCode": "Müşteri Kodu",
+    "customerName": "Müşteri Adı",
+    "phone": "Telefon",
+    "city": "Şehir",
+    "email": "E-posta"
+  }
+}

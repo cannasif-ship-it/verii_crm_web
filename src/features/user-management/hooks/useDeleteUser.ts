@@ -1,0 +1,22 @@
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner';
+import { userApi } from '../api/user-api';
+import { queryKeys } from '../utils/query-keys';
+
+export const useDeleteUser = () => {
+  const { t } = useTranslation();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: number) => userApi.delete(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.list() });
+      queryClient.invalidateQueries({ queryKey: queryKeys.stats() });
+      toast.success(t('userManagement.messages.deleteSuccess', 'Kullanıcı başarıyla silindi'));
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || t('userManagement.messages.deleteError', 'Kullanıcı silinemedi'));
+    },
+  });
+};

@@ -1,0 +1,25 @@
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner';
+import { userApi } from '../api/user-api';
+import { queryKeys } from '../utils/query-keys';
+import type { UpdateUserDto, UserDto } from '../types/user-types';
+
+export const useUpdateUser = () => {
+  const { t } = useTranslation();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ id, data }: { id: number; data: UpdateUserDto }) =>
+      userApi.update(id, data),
+    onSuccess: (updatedUser: UserDto) => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.list() });
+      queryClient.invalidateQueries({ queryKey: queryKeys.detail(updatedUser.id) });
+      queryClient.invalidateQueries({ queryKey: queryKeys.stats() });
+      toast.success(t('userManagement.messages.updateSuccess', 'Kullanıcı başarıyla güncellendi'));
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || t('userManagement.messages.updateError', 'Kullanıcı güncellenemedi'));
+    },
+  });
+};
