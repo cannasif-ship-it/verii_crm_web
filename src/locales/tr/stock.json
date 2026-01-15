@@ -52,6 +52,8 @@
     "description": "Açıklama",
     "descriptionPlaceholder": "Açıklama giriniz (opsiyonel)",
     "isMandatory": "Zorunlu",
+    "mandatory": "Zorunlu",
+    "optional": "Opsiyonel",
     "delete": "Sil",
     "actions": "İşlemler",
     "noRelations": "Henüz bağlı stok eklenmemiş",

@@ -17,7 +17,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { Trash2 } from 'lucide-react';
+import { Trash2, CheckCircle2, XCircle } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 import { useStockRelations } from '../hooks/useStockRelations';
 import { useStockRelationDelete } from '../hooks/useStockRelationDelete';
 import type { StockRelationDto } from '../types';
@@ -80,6 +81,9 @@ export function StockRelationList({ stockId }: StockRelationListProps): ReactEle
               <TableHead>
                 {t('stock.relations.quantity', 'Miktar')}
               </TableHead>
+              <TableHead>
+                {t('stock.relations.isMandatory', 'Zorunlu')}
+              </TableHead>
               <TableHead className="text-right">
                 {t('stock.relations.actions', 'İşlemler')}
               </TableHead>
@@ -95,6 +99,19 @@ export function StockRelationList({ stockId }: StockRelationListProps): ReactEle
                   {relation.relatedStockName || '-'}
                 </TableCell>
                 <TableCell>{relation.quantity}</TableCell>
+                <TableCell>
+                  {relation.isMandatory ? (
+                    <Badge variant="default" className="gap-1">
+                      <CheckCircle2 className="h-3 w-3" />
+                      {t('stock.relations.mandatory', 'Zorunlu')}
+                    </Badge>
+                  ) : (
+                    <Badge variant="secondary" className="gap-1">
+                      <XCircle className="h-3 w-3" />
+                      {t('stock.relations.optional', 'Opsiyonel')}
+                    </Badge>
+                  )}
+                </TableCell>
                 <TableCell className="text-right">
                   <Button
                     variant="destructive"
