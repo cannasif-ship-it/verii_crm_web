@@ -28,7 +28,8 @@ import {
 } from '@/components/ui/dialog';
 import { CustomerSelectDialog } from '@/components/shared/CustomerSelectDialog';
 import { useShippingAddresses, useUsers, usePaymentTypes } from '../api/quotation-api';
-import { useCurrencyOptions } from '@/services/hooks/useCurrencyOptions';
+import { useExchangeRate } from '@/services/hooks/useExchangeRate';
+import type { KurDto } from '@/services/erp-types';
 import { ExchangeRateDialog } from './ExchangeRateDialog';
 import { DollarSign } from 'lucide-react';
 import { useAuthStore } from '@/stores/auth-store';
@@ -50,7 +51,7 @@ export function QuotationHeaderForm({
 }: QuotationHeaderFormProps = {}): ReactElement {
   const { t } = useTranslation();
   const form = useFormContext<CreateQuotationSchema>();
-  const { currencyOptions } = useCurrencyOptions();
+  const { data: erpRates = [] } = useExchangeRate();
   const user = useAuthStore((state) => state.user);
   const [customerSelectDialogOpen, setCustomerSelectDialogOpen] = useState(false);
   const [exchangeRateDialogOpen, setExchangeRateDialogOpen] = useState(false);
@@ -264,7 +265,7 @@ export function QuotationHeaderForm({
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  {currencyOptions.map((currency) => (
+                  {erpRates.map((currency: KurDto) => (
                     <SelectItem key={currency.dovizTipi} value={String(currency.dovizTipi)}>
                       {currency.dovizIsmi || `Döviz ${currency.dovizTipi}`}
                     </SelectItem>

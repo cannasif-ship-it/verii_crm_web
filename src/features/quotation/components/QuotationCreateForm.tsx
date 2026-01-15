@@ -4,7 +4,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
-import { useCreateQuotationBulk } from '../api/quotation-api';
+import { useCreateQuotationBulk, usePriceRuleOfQuotation } from '../api/quotation-api';
+import { useCustomerOptions } from '@/features/customer-management/hooks/useCustomerOptions';
 import { QuotationHeaderForm } from './QuotationHeaderForm';
 import { QuotationLineTable } from './QuotationLineTable';
 import { QuotationExchangeRateForm } from './QuotationExchangeRateForm';
@@ -12,7 +13,7 @@ import { QuotationSummaryCard } from './QuotationSummaryCard';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { createQuotationSchema, type CreateQuotationSchema } from '../schemas/quotation-schema';
-import type { QuotationLineFormState, QuotationExchangeRateFormState, QuotationBulkCreateDto, CreateQuotationDto } from '../types/quotation-types';
+import type { QuotationLineFormState, QuotationExchangeRateFormState, QuotationBulkCreateDto, CreateQuotationDto, PricingRuleLineGetDto } from '../types/quotation-types';
 import { useUIStore } from '@/stores/ui-store';
 import { useAuthStore } from '@/stores/auth-store';
 import { useEffect, useMemo } from 'react';
@@ -28,7 +29,9 @@ export function QuotationCreateForm(): ReactElement {
   const user = useAuthStore((state) => state.user);
   const [lines, setLines] = useState<QuotationLineFormState[]>([]);
   const [exchangeRates, setExchangeRates] = useState<QuotationExchangeRateFormState[]>([]);
+  const [pricingRules, setPricingRules] = useState<PricingRuleLineGetDto[]>([]);
   const createMutation = useCreateQuotationBulk();
+  const { data: customerOptions = [] } = useCustomerOptions();
 
   useEffect(() => {
     setPageTitle(t('quotation.create.title', 'Yeni Teklif Oluştur'));
@@ -50,9 +53,36 @@ export function QuotationCreateForm(): ReactElement {
   });
 
   const watchedCurrency = Number(form.watch('quotation.currency') ?? '2');
+  const watchedCustomerId = form.watch('quotation.potentialCustomerId');
+  const watchedErpCustomerCode = form.watch('quotation.erpCustomerCode');
+  const watchedRepresentativeId = form.watch('quotation.representativeId');
+  const watchedOfferDate = form.watch('quotation.offerDate');
   const { calculateLineTotals } = useQuotationCalculations();
   const { currencyOptions } = useCurrencyOptions();
   const { data: erpRates = [] } = useExchangeRate();
+
+  const customerCode = useMemo(() => {
+    if (watchedErpCustomerCode) {
+      return watchedErpCustomerCode;
+    }
+    if (watchedCustomerId) {
+      const customer = customerOptions.find((c) => c.id === watchedCustomerId);
+      return customer?.customerCode || null;
+    }
+    return null;
+  }, [watchedErpCustomerCode, watchedCustomerId, customerOptions]);
+
+  const { data: pricingRulesData } = usePriceRuleOfQuotation(
+    customerCode,
+    watchedRepresentativeId || undefined,
+    watchedOfferDate || undefined
+  );
+
+  useEffect(() => {
+    if (pricingRulesData) {
+      setPricingRules(pricingRulesData);
+    }
+  }, [pricingRulesData]);
 
   const onSubmit = async (data: CreateQuotationSchema): Promise<void> => {
     if (lines.length === 0) {
@@ -266,6 +296,7 @@ export function QuotationCreateForm(): ReactElement {
                 setLines={setLines}
                 currency={watchedCurrency}
                 exchangeRates={exchangeRates}
+                pricingRules={pricingRules}
               />
             </div>
 
