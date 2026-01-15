@@ -33,6 +33,7 @@ interface ProductSelectDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSelect: (result: ProductSelectionResult) => void | Promise<void>;
+  disableRelatedStocks?: boolean;
 }
 
 interface StockCardProps {
@@ -373,6 +374,7 @@ export function ProductSelectDialog({
   open,
   onOpenChange,
   onSelect,
+  disableRelatedStocks = false,
 }: ProductSelectDialogProps): ReactElement {
   const { t } = useTranslation();
   const [searchQuery, setSearchQuery] = useState('');
@@ -498,7 +500,7 @@ export function ProductSelectDialog({
   const handleStockSelect = async (stock: StockGetDto | StockGetWithMainImageDto): Promise<void> => {
     const hasRelatedStocks = stock.parentRelations && stock.parentRelations.length > 0;
     
-    if (hasRelatedStocks) {
+    if (hasRelatedStocks && !disableRelatedStocks) {
       setSelectedStock(stock);
       onOpenChange(false);
       setRelatedStocksDialogOpen(true);
