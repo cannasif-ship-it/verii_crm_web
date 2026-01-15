@@ -150,6 +150,19 @@ export interface QuotationGetDto {
   activityId?: number | null;
   createdAt: string;
   updatedAt?: string | null;
+  lines?: QuotationLineGetDto[];
+  exchangeRates?: QuotationExchangeRateGetDto[];
+}
+
+export interface QuotationExchangeRateGetDto {
+  id: number;
+  quotationId: number;
+  currency: string;
+  exchangeRate: number;
+  exchangeRateDate: string;
+  isOfficial: boolean;
+  createdAt: string;
+  updatedAt?: string | null;
 }
 
 export interface QuotationLineFormState extends Omit<CreateQuotationLineDto, 'quotationId'> {

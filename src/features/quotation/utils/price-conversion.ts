@@ -8,7 +8,7 @@ function findDovizTipiFromCurrencyCode(currencyCode: string, erpRates: KurDto[])
   return erpRate?.dovizTipi ?? null;
 }
 
-function findExchangeRateByDovizTipi(
+export function findExchangeRateByDovizTipi(
   dovizTipi: number,
   exchangeRates: QuotationExchangeRateFormState[],
   erpRates?: KurDto[]
