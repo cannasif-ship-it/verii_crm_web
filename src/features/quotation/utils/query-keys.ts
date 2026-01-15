@@ -8,6 +8,7 @@ export const QUOTATION_QUERY_KEYS = {
   PRODUCTS: 'quotation.products',
   CAN_EDIT: 'quotation.canEdit',
   APPROVAL_STATUS: 'quotation.approvalStatus',
+  PRICE_RULE_OF_QUOTATION: 'quotation.priceRuleOfQuotation',
 } as const;
 
 export const queryKeys = {
@@ -20,4 +21,6 @@ export const queryKeys = {
   products: (search?: string) => [QUOTATION_QUERY_KEYS.PRODUCTS, search] as const,
   canEdit: (quotationId: number) => [QUOTATION_QUERY_KEYS.CAN_EDIT, quotationId] as const,
   approvalStatus: (quotationId: number) => [QUOTATION_QUERY_KEYS.APPROVAL_STATUS, quotationId] as const,
+  priceRuleOfQuotation: (customerCode: string, salesmenId: number, quotationDate: string) => 
+    [QUOTATION_QUERY_KEYS.PRICE_RULE_OF_QUOTATION, customerCode, salesmenId, quotationDate] as const,
 };

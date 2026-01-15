@@ -227,3 +227,21 @@ export interface PriceOfProductDto {
   discount2?: number | null;
   discount3?: number | null;
 }
+
+export interface PricingRuleLineGetDto {
+  id: number;
+  pricingRuleHeaderId: number;
+  stokCode: string;
+  minQuantity: number;
+  maxQuantity?: number | null;
+  fixedUnitPrice?: number | null;
+  currencyCode: string;
+  discountRate1: number;
+  discountAmount1: number;
+  discountRate2: number;
+  discountAmount2: number;
+  discountRate3: number;
+  discountAmount3: number;
+  createdAt?: string | null;
+  updatedAt?: string | null;
+}

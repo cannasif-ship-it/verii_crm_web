@@ -5,6 +5,7 @@ import type {
   QuotationGetDto,
   PriceOfProductDto,
   PriceOfProductRequestDto,
+  PricingRuleLineGetDto,
 } from '../types/quotation-types';
 import { queryKeys } from '../utils/query-keys';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -113,6 +114,47 @@ export const quotationApi = {
       });
 
       return mappedData;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  getPriceRuleOfQuotation: async (
+    customerCode: string,
+    salesmenId: number,
+    quotationDate: string
+  ): Promise<PricingRuleLineGetDto[]> => {
+    try {
+      const queryParams = new URLSearchParams({
+        customerCode,
+        salesmenId: salesmenId.toString(),
+        quotationDate,
+      });
+
+      const url = `/api/quotation/price-rule-of-quotation?${queryParams.toString()}`;
+      const response = await api.get<ApiResponse<PricingRuleLineGetDto[]>>(url);
+
+      if (!response) {
+        throw new Error('API response bulunamadı');
+      }
+
+      if (response.statusCode && response.statusCode !== 200) {
+        throw new Error(response.message || `HTTP ${response.statusCode}: Fiyat kuralları yüklenemedi`);
+      }
+
+      if (!response.success) {
+        return [];
+      }
+
+      if (!response.data) {
+        return [];
+      }
+
+      if (!Array.isArray(response.data)) {
+        throw new Error('API\'den beklenmeyen veri formatı döndü');
+      }
+
+      return response.data;
     } catch (error) {
       throw error;
     }
@@ -246,6 +288,29 @@ export const usePriceOfProduct = (productCode?: string, groupCode?: string, enab
     queryKey: ['priceOfProduct', productCode, groupCode],
     queryFn: () => quotationApi.getPriceOfProduct(productCode || '', groupCode || ''),
     enabled: enabled && !!productCode && !!groupCode,
+    staleTime: 2 * 60 * 1000,
+  });
+};
+
+export const usePriceRuleOfQuotation = (
+  customerCode: string | null | undefined,
+  salesmenId: number | null | undefined,
+  quotationDate: string | null | undefined
+) => {
+  const enabled = !!customerCode && !!salesmenId && !!quotationDate;
+
+  return useQuery({
+    queryKey: queryKeys.priceRuleOfQuotation(
+      customerCode || '',
+      salesmenId || 0,
+      quotationDate || ''
+    ),
+    queryFn: () => quotationApi.getPriceRuleOfQuotation(
+      customerCode!,
+      salesmenId!,
+      quotationDate!
+    ),
+    enabled,
     staleTime: 2 * 60 * 1000,
   });
 };
