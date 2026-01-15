@@ -15,7 +15,11 @@ import { createQuotationSchema, type CreateQuotationSchema } from '../schemas/qu
 import type { QuotationLineFormState, QuotationExchangeRateFormState, QuotationBulkCreateDto, CreateQuotationDto } from '../types/quotation-types';
 import { useUIStore } from '@/stores/ui-store';
 import { useAuthStore } from '@/stores/auth-store';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
+import { useQuotationCalculations } from '../hooks/useQuotationCalculations';
+import { useCurrencyOptions } from '@/services/hooks/useCurrencyOptions';
+import { useExchangeRate } from '@/services/hooks/useExchangeRate';
+import { findExchangeRateByDovizTipi } from '../utils/price-conversion';
 
 export function QuotationCreateForm(): ReactElement {
   const { t } = useTranslation();
@@ -46,6 +50,9 @@ export function QuotationCreateForm(): ReactElement {
   });
 
   const watchedCurrency = Number(form.watch('quotation.currency') ?? '2');
+  const { calculateLineTotals } = useQuotationCalculations();
+  const { currencyOptions } = useCurrencyOptions();
+  const { data: erpRates = [] } = useExchangeRate();
 
   const onSubmit = async (data: CreateQuotationSchema): Promise<void> => {
     if (lines.length === 0) {
@@ -72,7 +79,7 @@ export function QuotationCreateForm(): ReactElement {
         };
       });
 
-      const exchangeRatesToSend = watchedCurrency !== 2 && watchedCurrency !== 1 && exchangeRates.length > 0
+      const exchangeRatesToSend = exchangeRates.length > 0
         ? exchangeRates.map(({ id, dovizTipi, ...rate }) => {
             const currencyValue = rate.currency || (dovizTipi ? String(dovizTipi) : '');
             return {
@@ -168,6 +175,42 @@ export function QuotationCreateForm(): ReactElement {
     }
   };
 
+  const handleCurrencyChange = async (newCurrency: string): Promise<void> => {
+    if (lines.length === 0) {
+      return;
+    }
+
+    const oldCurrency = watchedCurrency;
+    const newCurrencyNum = Number(newCurrency);
+
+    if (oldCurrency === newCurrencyNum) {
+      return;
+    }
+
+    const updatedLines = await Promise.all(
+      lines.map(async (line) => {
+        const oldRate = findExchangeRateByDovizTipi(oldCurrency, exchangeRates, erpRates);
+        const newRate = findExchangeRateByDovizTipi(newCurrencyNum, exchangeRates, erpRates);
+
+        if (oldRate && oldRate > 0 && newRate && newRate > 0) {
+          const conversionRatio = oldRate / newRate;
+          const newUnitPrice = line.unitPrice * conversionRatio;
+          
+          const updatedLine = {
+            ...line,
+            unitPrice: newUnitPrice,
+          };
+          
+          return calculateLineTotals(updatedLine);
+        }
+
+        return line;
+      })
+    );
+
+    setLines(updatedLines);
+  };
+
   const handleFormSubmit = async (e: React.FormEvent): Promise<void> => {
     e.preventDefault();
     
@@ -207,6 +250,13 @@ export function QuotationCreateForm(): ReactElement {
               <QuotationHeaderForm 
                 exchangeRates={exchangeRates}
                 onExchangeRatesChange={setExchangeRates}
+                lines={lines}
+                onLinesChange={async () => {
+                  const newCurrency = form.getValues('quotation.currency');
+                  if (newCurrency) {
+                    await handleCurrencyChange(newCurrency);
+                  }
+                }}
               />
             </div>
 
