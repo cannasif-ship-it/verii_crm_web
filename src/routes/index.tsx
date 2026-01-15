@@ -21,7 +21,7 @@ import { ShippingAddressManagementPage } from '@/features/shipping-address-manag
 import { DailyTasksPage } from '@/features/daily-tasks/components/DailyTasksPage';
 import { ErpCustomerManagementPage } from '@/features/erp-customer-management';
 import { ApprovalQueueList } from '@/features/approval';
-import { QuotationCreateForm } from '@/features/quotation';
+import { QuotationCreateForm, QuotationDetailPage } from '@/features/quotation';
 import { PricingRuleManagementPage } from '@/features/pricing-rule';
 import { StockListPage, StockDetailPage } from '@/features/stock';
 
@@ -109,6 +109,10 @@ export const router = createBrowserRouter([
       {
         path: 'quotations/create',
         element: <QuotationCreateForm />,
+      },
+      {
+        path: 'quotations/:id',
+        element: <QuotationDetailPage />,
       },
       {
         path: 'pricing-rules',
