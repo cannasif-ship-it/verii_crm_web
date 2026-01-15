@@ -13,6 +13,7 @@ import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { useExchangeRate } from '@/services/hooks/useExchangeRate';
+import { toast } from 'sonner';
 import { DollarSign, Edit2, Check, X } from 'lucide-react';
 import type { QuotationExchangeRateFormState } from '../types/quotation-types';
 
@@ -21,6 +22,8 @@ interface ExchangeRateDialogProps {
   onOpenChange: (open: boolean) => void;
   exchangeRates: QuotationExchangeRateFormState[];
   onSave: (rates: QuotationExchangeRateFormState[]) => void;
+  lines?: Array<{ productCode?: string | null; productName?: string | null }>;
+  currentCurrency?: number;
 }
 
 export function ExchangeRateDialog({
@@ -28,6 +31,8 @@ export function ExchangeRateDialog({
   onOpenChange,
   exchangeRates,
   onSave,
+  lines = [],
+  currentCurrency,
 }: ExchangeRateDialogProps): ReactElement {
   const { t } = useTranslation();
   const { data: erpRates = [], isLoading } = useExchangeRate();
@@ -51,10 +56,20 @@ export function ExchangeRateDialog({
     }
   }, [open, erpRates, exchangeRates]);
 
+  const isCurrencyUsedInLines = (dovizTipi: number): boolean => {
+    if (!lines || lines.length === 0 || !currentCurrency) {
+      return false;
+    }
+    return currentCurrency === dovizTipi;
+  };
+
   const handleRateChange = (id: string, value: number): void => {
     setLocalRates((prev) =>
       prev.map((rate) => {
         if (rate.id === id) {
+          if (isCurrencyUsedInLines(rate.dovizTipi || 0)) {
+            return rate;
+          }
           const originalRate = erpRates.find((er) => er.dovizTipi === rate.dovizTipi);
           const isChanged = originalRate?.kurDegeri !== value;
           return {
@@ -139,6 +154,7 @@ export function ExchangeRateDialog({
                             onChange={(e) => handleRateChange(rate.id, parseFloat(e.target.value) || 0)}
                             className="w-32 ml-auto"
                             autoFocus
+                            disabled={isCurrencyUsedInLines(rate.dovizTipi || 0)}
                           />
                         ) : (
                           <span className="font-semibold">{rate.exchangeRate.toFixed(4)}</span>
@@ -165,6 +181,7 @@ export function ExchangeRateDialog({
                               onClick={() => setEditingId(null)}
                               className="h-8 w-8 p-0"
                               title={t('common.save', 'Kaydet')}
+                              disabled={isCurrencyUsedInLines(rate.dovizTipi || 0)}
                             >
                               <Check className="h-4 w-4 text-green-600" />
                             </Button>
@@ -188,9 +205,22 @@ export function ExchangeRateDialog({
                             type="button"
                             size="sm"
                             variant="ghost"
-                            onClick={() => setEditingId(rate.id)}
+                            onClick={() => {
+                              if (isCurrencyUsedInLines(rate.dovizTipi || 0)) {
+                                toast.error(
+                                  t('quotation.exchangeRates.cannotEditUsedCurrency', 'Bu para birimine ait satırlar bulunduğu için kur değiştirilemez')
+                                );
+                                return;
+                              }
+                              setEditingId(rate.id);
+                            }}
                             className="h-8 w-8 p-0"
-                            title={t('common.edit', 'Düzenle')}
+                            title={
+                              isCurrencyUsedInLines(rate.dovizTipi || 0)
+                                ? t('quotation.exchangeRates.cannotEditUsedCurrency', 'Bu para birimine ait satırlar bulunduğu için kur değiştirilemez')
+                                : t('common.edit', 'Düzenle')
+                            }
+                            disabled={isCurrencyUsedInLines(rate.dovizTipi || 0)}
                           >
                             <Edit2 className="h-4 w-4" />
                           </Button>
