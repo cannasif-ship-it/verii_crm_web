@@ -3,9 +3,9 @@ alwaysApply: true
 ---
 
 
-# 📘 WMS Frontend - Developer & Contribution Guidelines
+# 📘 CRM Frontend - Developer & Contribution Guidelines
 
-Bu belge, WMS (Warehouse Management System) projesinde kod standartlarını, mimari kararları ve geliştirme süreçlerini tanımlar. Projeye katkıda bulunan tüm geliştiricilerin bu kurallara uyması beklenir.
+Bu belge, CRM (Customer Relationship Management) projesinde kod standartlarını, mimari kararları ve geliştirme süreçlerini tanımlar. Projeye katkıda bulunan tüm geliştiricilerin bu kurallara uyması beklenir.
 
 ---
 
