@@ -37,6 +37,8 @@
       "requiredMessage": "Please add at least one line",
       "stokCodeRequired": "Stock Code Required",
       "stokCodeRequiredMessage": "Stock code must be entered for all lines",
+      "currencyCodeRequired": "Currency Type Required",
+      "currencyCodeRequiredMessage": "Currency type must be selected for all lines",
       "minQuantityInvalid": "Invalid Min Quantity",
       "minQuantityInvalidMessage": "Minimum quantity cannot be less than 0"
     }
@@ -95,6 +97,11 @@
     "selectProduct": "Select Product",
     "stokCodePlaceholder": "Product code",
     "stokCodeRequired": "Stock code is required",
+    "minQuantityRequired": "Min quantity is required and cannot be less than 0",
+    "maxQuantityRequired": "Max quantity is required and must be greater than 0",
+    "fixedUnitPriceRequired": "List price is required and must be greater than 0",
+    "currencyCodeRequired": "Currency type is required",
+    "selectCurrency": "Select currency",
     "minQuantityInvalid": "Invalid Min Quantity",
     "minQuantityInvalidMessage": "Minimum quantity cannot be less than 0"
   },

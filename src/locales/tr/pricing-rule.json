@@ -37,6 +37,8 @@
       "requiredMessage": "Lütfen en az bir satır ekleyin",
       "stokCodeRequired": "Stok Kodu Zorunlu",
       "stokCodeRequiredMessage": "Tüm satırlarda stok kodu girilmelidir",
+      "currencyCodeRequired": "Döviz Tipi Zorunlu",
+      "currencyCodeRequiredMessage": "Tüm satırlarda döviz tipi seçilmelidir",
       "minQuantityInvalid": "Geçersiz Min Miktar",
       "minQuantityInvalidMessage": "Minimum miktar 0'dan küçük olamaz"
     }
@@ -95,6 +97,11 @@
     "selectProduct": "Ürün Seç",
     "stokCodePlaceholder": "Ürün kodu",
     "stokCodeRequired": "Stok kodu zorunludur",
+    "minQuantityRequired": "Min miktar zorunludur ve 0'dan küçük olamaz",
+    "maxQuantityRequired": "Max miktar zorunludur ve 0'dan büyük olmalıdır",
+    "fixedUnitPriceRequired": "Liste fiyatı zorunludur ve 0'dan büyük olmalıdır",
+    "currencyCodeRequired": "Döviz tipi zorunludur",
+    "selectCurrency": "Para birimi seçin",
     "minQuantityInvalid": "Geçersiz Min Miktar",
     "minQuantityInvalidMessage": "Minimum miktar 0'dan küçük olamaz"
   },
