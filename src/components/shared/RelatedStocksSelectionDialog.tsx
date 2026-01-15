@@ -12,13 +12,14 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
+import { Loader2 } from 'lucide-react';
 import type { StockRelationDto } from '@/features/stock/types';
 
 interface RelatedStocksSelectionDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   relatedStocks: StockRelationDto[];
-  onConfirm: (selectedStockIds: number[]) => void;
+  onConfirm: (selectedStockIds: number[]) => void | Promise<void>;
 }
 
 export function RelatedStocksSelectionDialog({
@@ -29,6 +30,7 @@ export function RelatedStocksSelectionDialog({
 }: RelatedStocksSelectionDialogProps): ReactElement {
   const { t } = useTranslation();
   const [selectedStockIds, setSelectedStockIds] = useState<Set<number>>(new Set());
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (open) {
@@ -36,11 +38,12 @@ export function RelatedStocksSelectionDialog({
         relatedStocks.filter((stock) => stock.isMandatory).map((stock) => stock.relatedStockId)
       );
       setSelectedStockIds(mandatoryIds);
+      setIsLoading(false);
     }
   }, [open, relatedStocks]);
 
   const handleToggleStock = (stockId: number, isMandatory: boolean): void => {
-    if (isMandatory) {
+    if (isMandatory || isLoading) {
       return;
     }
     const newSelected = new Set(selectedStockIds);
@@ -52,16 +55,23 @@ export function RelatedStocksSelectionDialog({
     setSelectedStockIds(newSelected);
   };
 
-  const handleConfirm = (): void => {
-    onConfirm(Array.from(selectedStockIds));
-    onOpenChange(false);
+  const handleConfirm = async (): Promise<void> => {
+    setIsLoading(true);
+    try {
+      await onConfirm(Array.from(selectedStockIds));
+      onOpenChange(false);
+    } catch (error) {
+      console.error('Error confirming related stocks:', error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const mandatoryStocks = relatedStocks.filter((stock) => stock.isMandatory);
   const optionalStocks = relatedStocks.filter((stock) => !stock.isMandatory);
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={(isOpen) => !isLoading && onOpenChange(isOpen)}>
       <DialogContent className="max-w-2xl max-h-[80vh] flex flex-col">
         <DialogHeader>
           <DialogTitle>
@@ -127,16 +137,19 @@ export function RelatedStocksSelectionDialog({
                   return (
                     <div
                       key={stock.id}
-                      className={`flex items-center justify-between p-3 rounded-md border cursor-pointer transition-colors ${
+                      className={`flex items-center justify-between p-3 rounded-md border transition-colors ${
+                        isLoading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
+                      } ${
                         isSelected ? 'bg-primary/5 border-primary' : 'hover:bg-muted/50'
                       }`}
-                      onClick={() => handleToggleStock(stock.relatedStockId, stock.isMandatory)}
+                      onClick={() => !isLoading && handleToggleStock(stock.relatedStockId, stock.isMandatory)}
                     >
                       <div className="flex items-center gap-3 flex-1 min-w-0">
                         <Checkbox
                           checked={isSelected}
                           onCheckedChange={() => handleToggleStock(stock.relatedStockId, stock.isMandatory)}
                           onClick={(e) => e.stopPropagation()}
+                          disabled={isLoading}
                         />
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 mb-1">
@@ -174,11 +187,18 @@ export function RelatedStocksSelectionDialog({
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
+          <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isLoading}>
             {t('common.cancel', 'İptal')}
           </Button>
-          <Button onClick={handleConfirm}>
-            {t('relatedStocksSelectionDialog.add', 'Ekle')}
+          <Button onClick={handleConfirm} disabled={isLoading}>
+            {isLoading ? (
+              <>
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                {t('relatedStocksSelectionDialog.calculating', 'Hesaplanıyor...')}
+              </>
+            ) : (
+              t('relatedStocksSelectionDialog.add', 'Ekle')
+            )}
           </Button>
         </DialogFooter>
       </DialogContent>
