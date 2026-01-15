@@ -23,6 +23,7 @@ import { QuotationLineForm } from './QuotationLineForm';
 import { ProductSelectDialog, type ProductSelectionResult } from '@/components/shared/ProductSelectDialog';
 import { useCurrencyOptions } from '@/services/hooks/useCurrencyOptions';
 import { useProductSelection } from '../hooks/useProductSelection';
+import { useQuotationCalculations } from '../hooks/useQuotationCalculations';
 import { formatCurrency } from '../utils/format-currency';
 import { Trash2, Edit, Plus, ShoppingCart } from 'lucide-react';
 import type { QuotationLineFormState, QuotationExchangeRateFormState } from '../types/quotation-types';
@@ -50,6 +51,7 @@ export function QuotationLineTable({
   const [editLineDialogOpen, setEditLineDialogOpen] = useState(false);
   const [lineToEdit, setLineToEdit] = useState<QuotationLineFormState | null>(null);
   const { currencyOptions } = useCurrencyOptions();
+  const { calculateLineTotals } = useQuotationCalculations();
   const { handleProductSelect: handleProductSelectHook, handleProductSelectWithRelatedStocks } = useProductSelection({
     currency,
     exchangeRates,
@@ -122,19 +124,87 @@ export function QuotationLineTable({
 
   const handleEditLine = (id: string): void => {
     const line = lines.find((l) => l.id === id);
-    if (line) {
-      const relatedLines = lines.filter((l) => l.relatedStockId === line.relatedStockId && l.id !== line.id && l.relatedStockId);
-      setLineToEdit({ ...line, relatedLines: relatedLines.length > 0 ? relatedLines : undefined });
-      setEditLineDialogOpen(true);
+    if (!line) {
+      return;
     }
+
+    const isRelatedStock = line.relatedStockId !== null;
+    if (isRelatedStock) {
+      const sameGroupLines = lines.filter((l) => l.relatedStockId === line.relatedStockId);
+      const mainLine = sameGroupLines[0];
+      const isMainLine = mainLine.id === line.id;
+      
+      if (!isMainLine) {
+        return;
+      }
+      
+      const relatedLines = sameGroupLines.slice(1);
+      setLineToEdit({ ...line, relatedLines: relatedLines.length > 0 ? relatedLines : undefined });
+    } else {
+      setLineToEdit({ ...line, relatedLines: undefined });
+    }
+    
+    setEditLineDialogOpen(true);
   };
 
-  const handleSaveLine = (updatedLine: QuotationLineFormState): void => {
-    setLines(
-      lines.map((line) =>
-        line.id === updatedLine.id ? { ...updatedLine, isEditing: false } : line
-      )
-    );
+  const handleSaveLine = (updatedLine: QuotationLineFormState, relatedLinesToUpdate?: QuotationLineFormState[]): void => {
+    const originalLine = lines.find((l) => l.id === updatedLine.id);
+    
+    if (!originalLine) {
+      setEditLineDialogOpen(false);
+      setLineToEdit(null);
+      return;
+    }
+
+    const isQuantityChanged = originalLine.quantity !== updatedLine.quantity;
+    const sameGroupLines = updatedLine.relatedStockId 
+      ? lines.filter((l) => l.relatedStockId === updatedLine.relatedStockId)
+      : [];
+    const isMainLine = sameGroupLines.length > 0 && sameGroupLines[0].id === updatedLine.id;
+
+    if (relatedLinesToUpdate && relatedLinesToUpdate.length > 0) {
+      const allUpdatedLines = [updatedLine, ...relatedLinesToUpdate].map((line) => ({ ...line, isEditing: false }));
+      setLines(
+        lines.map((line) => {
+          const updated = allUpdatedLines.find((ul) => ul.id === line.id);
+          if (updated) {
+            return updated;
+          }
+          if (isQuantityChanged && isMainLine && updatedLine.relatedStockId && line.relatedStockId === updatedLine.relatedStockId) {
+            const quantityRatio = updatedLine.quantity / originalLine.quantity;
+            const newQuantity = line.quantity * quantityRatio;
+            const updatedRelatedLine = { ...line, quantity: newQuantity };
+            return calculateLineTotals(updatedRelatedLine);
+          }
+          return line;
+        })
+      );
+    } else if (isQuantityChanged && isMainLine && updatedLine.relatedStockId) {
+      const quantityRatio = updatedLine.quantity / originalLine.quantity;
+      
+      const updatedLines = lines.map((line) => {
+        if (line.id === updatedLine.id) {
+          return { ...updatedLine, isEditing: false };
+        }
+        
+        if (line.relatedStockId === updatedLine.relatedStockId && line.id !== updatedLine.id) {
+          const newQuantity = line.quantity * quantityRatio;
+          const updatedRelatedLine = { ...line, quantity: newQuantity };
+          return calculateLineTotals(updatedRelatedLine);
+        }
+        
+        return line;
+      });
+      
+      setLines(updatedLines);
+    } else {
+      setLines(
+        lines.map((line) =>
+          line.id === updatedLine.id ? { ...updatedLine, isEditing: false } : line
+        )
+      );
+    }
+    
     setEditLineDialogOpen(false);
     setLineToEdit(null);
   };
@@ -300,8 +370,8 @@ export function QuotationLineTable({
                                         : 'bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 border-blue-200 dark:border-blue-800'
                                     }`}>
                                       {isMainStock 
-                                        ? t('quotation.lines.mainStock', 'Ana Stok')
-                                        : t('quotation.lines.relatedStock', 'Bağlı Stok')}
+                                        ? `${t('quotation.lines.mainStock', 'Ana Stok')} (ID: ${line.relatedStockId})`
+                                        : `${t('quotation.lines.relatedStock', 'Bağlı Stok')} (ID: ${line.relatedStockId})`}
                                     </Badge>
                                   )}
                                 </div>
@@ -375,16 +445,29 @@ export function QuotationLineTable({
                             </TableCell>
                             <TableCell>
                               <div className="flex gap-1 justify-center">
-                                <Button
-                                  type="button"
-                                  variant="ghost"
-                                  size="sm"
-                                  onClick={() => handleEditLine(line.id)}
-                                  className="h-8 w-8 p-0"
-                                  title={t('common.edit', 'Düzenle')}
-                                >
-                                  <Edit className="h-4 w-4" />
-                                </Button>
+                                {isMainStock || !isRelatedStock ? (
+                                  <Button
+                                    type="button"
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() => handleEditLine(line.id)}
+                                    className="h-8 w-8 p-0"
+                                    title={t('common.edit', 'Düzenle')}
+                                  >
+                                    <Edit className="h-4 w-4" />
+                                  </Button>
+                                ) : (
+                                  <Button
+                                    type="button"
+                                    variant="ghost"
+                                    size="sm"
+                                    disabled
+                                    className="h-8 w-8 p-0 opacity-50 cursor-not-allowed"
+                                    title={t('quotation.lines.cannotEditRelatedStock', 'Bağlı stok düzenlenemez')}
+                                  >
+                                    <Edit className="h-4 w-4" />
+                                  </Button>
+                                )}
                                 <Button
                                   type="button"
                                   variant="ghost"
@@ -493,7 +576,12 @@ export function QuotationLineTable({
           {lineToEdit && (
             <QuotationLineForm
               line={lineToEdit}
-              onSave={handleSaveLine}
+              onSave={(line) => handleSaveLine(line)}
+              onSaveMultiple={(lines) => {
+                if (lines.length > 0) {
+                  handleSaveLine(lines[0], lines.slice(1));
+                }
+              }}
               onCancel={handleCancelEditLine}
               currency={currency}
               exchangeRates={exchangeRates}
