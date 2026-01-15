@@ -26,13 +26,14 @@ import { useProductSelection } from '../hooks/useProductSelection';
 import { useQuotationCalculations } from '../hooks/useQuotationCalculations';
 import { formatCurrency } from '../utils/format-currency';
 import { Trash2, Edit, Plus, ShoppingCart } from 'lucide-react';
-import type { QuotationLineFormState, QuotationExchangeRateFormState } from '../types/quotation-types';
+import type { QuotationLineFormState, QuotationExchangeRateFormState, PricingRuleLineGetDto } from '../types/quotation-types';
 
 interface QuotationLineTableProps {
   lines: QuotationLineFormState[];
   setLines: (lines: QuotationLineFormState[]) => void;
   currency: number;
   exchangeRates?: QuotationExchangeRateFormState[];
+  pricingRules?: PricingRuleLineGetDto[];
 }
 
 export function QuotationLineTable({
@@ -40,6 +41,7 @@ export function QuotationLineTable({
   setLines,
   currency,
   exchangeRates = [],
+  pricingRules = [],
 }: QuotationLineTableProps): ReactElement {
   const { t } = useTranslation();
   const [productDialogOpen, setProductDialogOpen] = useState(false);
@@ -514,6 +516,7 @@ export function QuotationLineTable({
               onCancel={handleCancelNewLine}
               currency={currency}
               exchangeRates={exchangeRates}
+              pricingRules={pricingRules}
             />
           )}
         </DialogContent>
@@ -585,6 +588,7 @@ export function QuotationLineTable({
               onCancel={handleCancelEditLine}
               currency={currency}
               exchangeRates={exchangeRates}
+              pricingRules={pricingRules}
             />
           )}
         </DialogContent>
