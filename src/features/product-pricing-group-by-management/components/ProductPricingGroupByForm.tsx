@@ -28,7 +28,8 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { productPricingGroupByFormSchema, type ProductPricingGroupByFormSchema, calculateFinalPrice, formatPrice } from '../types/product-pricing-group-by-types';
-import { useCurrencyOptions } from '@/services/hooks/useCurrencyOptions';
+import { useExchangeRate } from '@/services/hooks/useExchangeRate';
+import type { KurDto } from '@/services/erp-types';
 import { useStokGroup } from '@/services/hooks/useStokGroup';
 import type { ProductPricingGroupByDto } from '../types/product-pricing-group-by-types';
 
@@ -48,7 +49,7 @@ export function ProductPricingGroupByForm({
   isLoading = false,
 }: ProductPricingGroupByFormProps): ReactElement {
   const { t } = useTranslation();
-  const { currencyOptions, isLoading: isLoadingCurrencies } = useCurrencyOptions();
+  const { data: exchangeRates = [], isLoading: isLoadingCurrencies } = useExchangeRate();
   const { data: stokGroups = [], isLoading: isLoadingGroups } = useStokGroup();
 
   const form = useForm<ProductPricingGroupByFormSchema>({
@@ -186,9 +187,9 @@ export function ProductPricingGroupByForm({
                       {isLoadingCurrencies ? (
                         <SelectItem value="0" disabled>Yükleniyor...</SelectItem>
                       ) : (
-                        currencyOptions.map((currency) => (
-                          <SelectItem key={currency.value} value={currency.value.toString()}>
-                            {currency.label}
+                        exchangeRates.map((currency: KurDto) => (
+                          <SelectItem key={currency.dovizTipi} value={String(currency.dovizTipi)}>
+                            {currency.dovizIsmi || `Döviz ${currency.dovizTipi}`}
                           </SelectItem>
                         ))
                       )}
@@ -333,7 +334,7 @@ export function ProductPricingGroupByForm({
                 </div>
                 <div className="text-lg font-semibold">
                   {t('productPricingGroupByManagement.finalPriceAfterDiscounts', 'İndirimler Sonrası Son Fiyat')}:{' '}
-                  {formatPrice(finalPrice, watchedValues[4] || 'TRY')}
+                  {formatPrice(finalPrice, watchedValues[4] || '1', exchangeRates)}
                 </div>
               </div>
             )}

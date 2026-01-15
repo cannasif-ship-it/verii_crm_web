@@ -28,7 +28,8 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { productPricingFormSchema, type ProductPricingFormSchema, calculateFinalPrice, calculateProfitMargin, formatPrice } from '../types/product-pricing-types';
-import { useCurrencyOptions } from '@/services/hooks/useCurrencyOptions';
+import { useExchangeRate } from '@/services/hooks/useExchangeRate';
+import type { KurDto } from '@/services/erp-types';
 import { ProductSelectDialog } from '@/components/shared/ProductSelectDialog';
 import { Search, X } from 'lucide-react';
 import type { ProductPricingGetDto } from '../types/product-pricing-types';
@@ -49,7 +50,7 @@ export function ProductPricingForm({
   isLoading = false,
 }: ProductPricingFormProps): ReactElement {
   const { t } = useTranslation();
-  const { currencyOptions, isLoading: isLoadingCurrencies } = useCurrencyOptions();
+  const { data: exchangeRates = [], isLoading: isLoadingCurrencies } = useExchangeRate();
   const [productDialogOpen, setProductDialogOpen] = useState(false);
 
   const form = useForm<ProductPricingFormSchema>({
@@ -229,9 +230,9 @@ export function ProductPricingForm({
                       {isLoadingCurrencies ? (
                         <SelectItem value="0" disabled>Yükleniyor...</SelectItem>
                       ) : (
-                        currencyOptions.map((currency) => (
-                          <SelectItem key={currency.value} value={currency.value.toString()}>
-                            {currency.label}
+                        exchangeRates.map((currency: KurDto) => (
+                          <SelectItem key={currency.dovizTipi} value={String(currency.dovizTipi)}>
+                            {currency.dovizIsmi || `Döviz ${currency.dovizTipi}`}
                           </SelectItem>
                         ))
                       )}
@@ -378,25 +379,25 @@ export function ProductPricingForm({
                   <div className="flex justify-between">
                     <span>{t('productPricingManagement.listPrice', 'Liste Fiyatı')}:</span>
                     <span className="font-medium">
-                      {formatPrice(watchedValues[0] || 0, calculations.currency, currencyOptions)}
+                      {formatPrice(watchedValues[0] || 0, calculations.currency, exchangeRates)}
                     </span>
                   </div>
                   <div className="flex justify-between">
                     <span>{t('productPricingManagement.finalPriceAfterDiscounts', 'İndirimler Sonrası Son Fiyat')}:</span>
                     <span className="font-medium">
-                      {formatPrice(calculations.finalPrice, calculations.currency, currencyOptions)}
+                      {formatPrice(calculations.finalPrice, calculations.currency, exchangeRates)}
                     </span>
                   </div>
                   <div className="flex justify-between">
                     <span>{t('productPricingManagement.costPrice', 'Maliyet Fiyatı')}:</span>
                     <span className="font-medium">
-                      {formatPrice(watchedValues[1] || 0, calculations.currency, currencyOptions)}
+                      {formatPrice(watchedValues[1] || 0, calculations.currency, exchangeRates)}
                     </span>
                   </div>
                   <div className="flex justify-between border-t pt-2">
                     <span>{t('productPricingManagement.profitAmount', 'Kar Tutarı')}:</span>
                     <span className={`font-semibold ${getProfitMarginColor(calculations.profitMargin.percentage)}`}>
-                      {formatPrice(calculations.profitMargin.amount, calculations.currency, currencyOptions)}
+                      {formatPrice(calculations.profitMargin.amount, calculations.currency, exchangeRates)}
                     </span>
                   </div>
                   <div className="flex justify-between">

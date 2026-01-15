@@ -151,19 +151,19 @@ export const calculateProfitMargin = (
   return { percentage: profitPercentage, amount: profitAmount };
 };
 
-export const getCurrencySymbol = (currency: string | number, currencyOptions?: Array<{ value: number; symbol: string; code: string }>): string => {
-  if (currencyOptions) {
+export const getCurrencySymbol = (currency: string | number, exchangeRates?: Array<{ dovizTipi: number; dovizIsmi: string | null }>): string => {
+  if (exchangeRates) {
     const currencyValue = typeof currency === 'string' ? parseInt(currency, 10) : currency;
-    const currencyData = currencyOptions.find((c) => c.value === currencyValue);
-    return currencyData?.symbol || currencyData?.code || String(currency);
+    const currencyData = exchangeRates.find((c) => c.dovizTipi === currencyValue);
+    return currencyData?.dovizIsmi || String(currency);
   }
   const currencyValue = typeof currency === 'string' ? currency : String(currency);
   const currencyData = CURRENCIES.find((c) => c.value === currencyValue);
   return currencyData?.symbol || currencyValue;
 };
 
-export const formatPrice = (price: number, currency: string | number, currencyOptions?: Array<{ value: number; symbol: string; code: string }>): string => {
-  const symbol = getCurrencySymbol(currency, currencyOptions);
+export const formatPrice = (price: number, currency: string | number, exchangeRates?: Array<{ dovizTipi: number; dovizIsmi: string | null }>): string => {
+  const symbol = getCurrencySymbol(currency, exchangeRates);
   
   return new Intl.NumberFormat('tr-TR', {
     minimumFractionDigits: 2,
