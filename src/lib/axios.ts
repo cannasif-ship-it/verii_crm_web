@@ -34,13 +34,24 @@ export const api = axios.create({
 
 initApi();
 
-api.interceptors.request.use((config) => {
+api.interceptors.request.use(async (config) => {
   const token = localStorage.getItem('access_token');
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
 
   config.headers['X-Language'] = i18n.language || 'tr';
+
+  try {
+    const { useAuthStore } = await import('@/stores/auth-store');
+    const branch = useAuthStore.getState().branch;
+    if (branch?.code) {
+      config.headers['X-Branch-Code'] = branch.code;
+    }
+  } catch (error) {
+    console.warn('Failed to get branch code from auth store:', error);
+  }
+
   return config;
 });
 
