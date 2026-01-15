@@ -74,7 +74,7 @@ export function PricingRuleForm({ open, onOpenChange, header }: PricingRuleFormP
             minQuantity: line.minQuantity,
             maxQuantity: line.maxQuantity,
             fixedUnitPrice: line.fixedUnitPrice,
-            currencyCode: line.currencyCode || 'TRY',
+            currencyCode: line.currencyCode ? (typeof line.currencyCode === 'string' ? Number(line.currencyCode) || 1 : line.currencyCode) : 1,
             discountRate1: line.discountRate1,
             discountAmount1: line.discountAmount1,
             discountRate2: line.discountRate2,
@@ -154,6 +154,23 @@ export function PricingRuleForm({ open, onOpenChange, header }: PricingRuleFormP
       return;
     }
 
+    const linesWithInvalidCurrency = validLines.filter((line) => 
+      !line.currencyCode || 
+      line.currencyCode === undefined || 
+      line.currencyCode === null
+    );
+    
+    if (linesWithInvalidCurrency.length > 0) {
+      toast.error(
+        t('pricingRule.form.lines.currencyCodeRequired', 'Döviz Tipi Zorunlu'),
+        {
+          description: t('pricingRule.form.lines.currencyCodeRequiredMessage', 'Tüm satırlarda döviz tipi seçilmelidir'),
+        }
+      );
+      setActiveTab('lines');
+      return;
+    }
+
     try {
       const payload: PricingRuleHeaderCreateDto = {
         ...headerData,
@@ -161,7 +178,7 @@ export function PricingRuleForm({ open, onOpenChange, header }: PricingRuleFormP
           ...line,
           pricingRuleHeaderId: 0,
           minQuantity: line.minQuantity ?? 0,
-          currencyCode: line.currencyCode || 'TRY',
+          currencyCode: typeof line.currencyCode === 'number' ? String(line.currencyCode) : (line.currencyCode ? String(line.currencyCode) : ''),
           discountRate1: line.discountRate1 ?? 0,
           discountAmount1: line.discountAmount1 ?? 0,
           discountRate2: line.discountRate2 ?? 0,

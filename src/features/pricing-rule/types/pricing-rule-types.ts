@@ -81,7 +81,7 @@ export interface PricingRuleLineCreateDto {
   minQuantity: number;
   maxQuantity?: number | null;
   fixedUnitPrice?: number | null;
-  currencyCode?: string;
+  currencyCode: string;
   discountRate1: number;
   discountAmount1: number;
   discountRate2: number;
@@ -96,7 +96,7 @@ export interface PricingRuleLineUpdateDto {
   minQuantity: number;
   maxQuantity?: number | null;
   fixedUnitPrice?: number | null;
-  currencyCode?: string;
+  currencyCode: string;
   discountRate1: number;
   discountAmount1: number;
   discountRate2: number;
@@ -124,9 +124,10 @@ export interface PricingRuleSalesmanUpdateDto {
   salesmanId: number;
 }
 
-export interface PricingRuleLineFormState extends Omit<PricingRuleLineCreateDto, 'pricingRuleHeaderId'> {
+export interface PricingRuleLineFormState extends Omit<PricingRuleLineCreateDto, 'pricingRuleHeaderId' | 'currencyCode'> {
   id: string;
   isEditing: boolean;
+  currencyCode?: number | string;
 }
 
 export interface PricingRuleSalesmanFormState extends Omit<PricingRuleSalesmanCreateDto, 'pricingRuleHeaderId'> {

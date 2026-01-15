@@ -1,4 +1,4 @@
-import { type ReactElement, useState } from 'react';
+import { type ReactElement, useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Table,
@@ -13,6 +13,8 @@ import { PricingRuleLineForm } from './PricingRuleLineForm';
 import { ProductSelectDialog, type ProductSelectionResult } from '@/components/shared';
 import { Trash2, Edit, Package } from 'lucide-react';
 import type { PricingRuleLineFormState } from '../types/pricing-rule-types';
+import { useExchangeRate } from '@/services/hooks/useExchangeRate';
+import type { KurDto } from '@/services/erp-types';
 
 interface PricingRuleLineTableProps {
   lines: PricingRuleLineFormState[];
@@ -26,6 +28,7 @@ export function PricingRuleLineTable({
   const { t } = useTranslation();
   const [editingLineId, setEditingLineId] = useState<string | null>(null);
   const [productDialogOpen, setProductDialogOpen] = useState(false);
+  const { data: exchangeRates = [] } = useExchangeRate();
 
 
   const handleProductSelect = (product: ProductSelectionResult): void => {
@@ -35,7 +38,7 @@ export function PricingRuleLineTable({
       minQuantity: 0,
       maxQuantity: null,
       fixedUnitPrice: null,
-      currencyCode: 'TRY',
+      currencyCode: undefined,
       discountRate1: 0,
       discountAmount1: 0,
       discountRate2: 0,
@@ -66,14 +69,39 @@ export function PricingRuleLineTable({
     setLines(lines.filter((line) => line.id !== id));
   };
 
-  const formatCurrency = (amount: number | null | undefined, currencyCode: string = 'TRY'): string => {
+  const formatCurrency = (amount: number | null | undefined, currencyCode: number | string | undefined): string => {
     if (amount === null || amount === undefined) return '-';
-    return new Intl.NumberFormat('tr-TR', {
-      style: 'currency',
-      currency: currencyCode || 'TRY',
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    }).format(amount);
+    if (!currencyCode) return '-';
+    
+    const numericCode = typeof currencyCode === 'string' ? Number(currencyCode) : currencyCode;
+    const currencyOption = exchangeRates.find((rate: KurDto) => rate.dovizTipi === numericCode);
+    const displayName = currencyOption?.dovizIsmi || `Döviz ${numericCode}`;
+    
+    try {
+      const isoCode = numericCode === 1 ? 'TRY' : numericCode === 2 ? 'USD' : numericCode === 3 ? 'EUR' : 'TRY';
+      return new Intl.NumberFormat('tr-TR', {
+        style: 'currency',
+        currency: isoCode,
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      }).format(amount);
+    } catch {
+      return new Intl.NumberFormat('tr-TR', {
+        style: 'decimal',
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      }).format(amount) + ' ' + displayName;
+    }
+  };
+
+  const getCurrencyDisplayName = (currencyCode: number | string | undefined): string => {
+    if (!currencyCode) return '-';
+    const numericCode = typeof currencyCode === 'string' ? Number(currencyCode) : currencyCode;
+    const currencyOption = exchangeRates.find((rate: KurDto) => rate.dovizTipi === numericCode);
+    if (currencyOption) {
+      return currencyOption.dovizIsmi ? `${currencyOption.dovizIsmi}(${currencyOption.dovizTipi})` : `Döviz(${currencyOption.dovizTipi})`;
+    }
+    return `Döviz(${numericCode})`;
   };
 
   return (
@@ -159,10 +187,10 @@ export function PricingRuleLineTable({
                         {line.maxQuantity ?? '-'}
                       </TableCell>
                       <TableCell className="text-right">
-                        {formatCurrency(line.fixedUnitPrice, line.currencyCode || 'TRY')}
+                        {formatCurrency(line.fixedUnitPrice, line.currencyCode)}
                       </TableCell>
                       <TableCell>
-                        {line.currencyCode || 'TRY'}
+                        {getCurrencyDisplayName(line.currencyCode)}
                       </TableCell>
                       <TableCell className="text-right">
                         {line.discountRate1 > 0 ? `${line.discountRate1}%` : '-'}
@@ -206,6 +234,7 @@ export function PricingRuleLineTable({
         open={productDialogOpen}
         onOpenChange={setProductDialogOpen}
         onSelect={handleProductSelect}
+        disableRelatedStocks={true}
       />
     </div>
   );

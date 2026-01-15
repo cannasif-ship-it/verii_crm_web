@@ -47,13 +47,23 @@ export const pricingRuleLineSchema = z
       .min(0, 'pricingRule.lines.minQuantityMin')
       .max(999999999, 'pricingRule.lines.minQuantityMax'),
     maxQuantity: z
-      .number()
-      .min(0)
-      .max(999999999)
-      .nullable()
-      .optional(),
-    fixedUnitPrice: z.number().min(0).nullable().optional(),
-    currencyCode: z.string().max(10).optional().default('TRY'),
+      .number({ message: 'pricingRule.lines.maxQuantityRequired' })
+      .min(0.01, 'pricingRule.lines.maxQuantityRequired')
+      .max(999999999),
+    fixedUnitPrice: z
+      .number({ message: 'pricingRule.lines.fixedUnitPriceRequired' })
+      .min(0.01, 'pricingRule.lines.fixedUnitPriceRequired')
+      .max(999999999),
+    currencyCode: z
+      .union([z.string(), z.number()])
+      .refine((val) => {
+        if (typeof val === 'number') return val > 0;
+        if (typeof val === 'string') return val.trim().length > 0;
+        return false;
+      }, {
+        message: 'pricingRule.lines.currencyCodeRequired',
+      })
+      .transform((val) => typeof val === 'number' ? String(val) : val),
     discountRate1: z.number().min(0).max(100).default(0),
     discountAmount1: z.number().min(0).default(0),
     discountRate2: z.number().min(0).max(100).default(0),
