@@ -27,7 +27,11 @@
     "description": "Açıklama",
     "descriptionPlaceholder": "Açıklama giriniz",
     "offerNo": "Teklif No",
-    "offerNoPlaceholder": "Teklif numarası"
+    "offerNoPlaceholder": "Teklif numarası",
+    "currencyChange": {
+      "title": "Para Birimi Değişikliği",
+      "message": "Para birimi değiştiğinde mevcut tüm satırlar yeni para birimine göre yeniden hesaplanacaktır. Bu işlemi onaylıyor musunuz?"
+    }
   },
   "lines": {
     "title": "Teklif Satırları",

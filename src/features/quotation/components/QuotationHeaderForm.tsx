@@ -18,6 +18,14 @@ import {
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { CustomerSelectDialog } from '@/components/shared/CustomerSelectDialog';
 import { useShippingAddresses, useUsers, usePaymentTypes } from '../api/quotation-api';
 import { useCurrencyOptions } from '@/services/hooks/useCurrencyOptions';
@@ -30,11 +38,15 @@ import type { QuotationExchangeRateFormState } from '../types/quotation-types';
 interface QuotationHeaderFormProps {
   exchangeRates?: QuotationExchangeRateFormState[];
   onExchangeRatesChange?: (rates: QuotationExchangeRateFormState[]) => void;
+  lines?: Array<{ productCode?: string | null; productName?: string | null }>;
+  onLinesChange?: (lines: Array<{ productCode?: string | null; productName?: string | null }>) => void;
 }
 
 export function QuotationHeaderForm({ 
   exchangeRates = [],
   onExchangeRatesChange,
+  lines = [],
+  onLinesChange,
 }: QuotationHeaderFormProps = {}): ReactElement {
   const { t } = useTranslation();
   const form = useFormContext<CreateQuotationSchema>();
@@ -42,8 +54,11 @@ export function QuotationHeaderForm({
   const user = useAuthStore((state) => state.user);
   const [customerSelectDialogOpen, setCustomerSelectDialogOpen] = useState(false);
   const [exchangeRateDialogOpen, setExchangeRateDialogOpen] = useState(false);
+  const [currencyChangeDialogOpen, setCurrencyChangeDialogOpen] = useState(false);
+  const [pendingCurrency, setPendingCurrency] = useState<string | null>(null);
   const watchedCustomerId = form.watch('quotation.potentialCustomerId');
   const watchedErpCustomerCode = form.watch('quotation.erpCustomerCode');
+  const watchedCurrency = form.watch('quotation.currency');
   const { data: shippingAddresses } = useShippingAddresses(watchedCustomerId || undefined);
   const { data: users } = useUsers();
   const { data: paymentTypes } = usePaymentTypes();
@@ -61,6 +76,29 @@ export function QuotationHeaderForm({
     if (onExchangeRatesChange) {
       onExchangeRatesChange(rates);
     }
+  };
+
+  const handleCurrencyChange = (newCurrency: string): void => {
+    if (lines && lines.length > 0 && onLinesChange) {
+      setPendingCurrency(newCurrency);
+      setCurrencyChangeDialogOpen(true);
+    } else {
+      form.setValue('quotation.currency', newCurrency);
+    }
+  };
+
+  const handleCurrencyChangeConfirm = (): void => {
+    if (pendingCurrency && onLinesChange) {
+      form.setValue('quotation.currency', pendingCurrency);
+      onLinesChange(lines || []);
+      setCurrencyChangeDialogOpen(false);
+      setPendingCurrency(null);
+    }
+  };
+
+  const handleCurrencyChangeCancel = (): void => {
+    setCurrencyChangeDialogOpen(false);
+    setPendingCurrency(null);
   };
 
   return (
@@ -217,7 +255,7 @@ export function QuotationHeaderForm({
                 )}
               </div>
               <Select
-                onValueChange={(value) => field.onChange(value)}
+                onValueChange={(value) => handleCurrencyChange(value)}
                 value={field.value || undefined}
               >
                 <FormControl>
@@ -366,8 +404,31 @@ export function QuotationHeaderForm({
           onOpenChange={setExchangeRateDialogOpen}
           exchangeRates={exchangeRates}
           onSave={handleExchangeRatesSave}
+          lines={lines}
+          currentCurrency={watchedCurrency ? (typeof watchedCurrency === 'string' ? Number(watchedCurrency) : watchedCurrency) : undefined}
         />
       )}
+
+      <Dialog open={currencyChangeDialogOpen} onOpenChange={setCurrencyChangeDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
+              {t('quotation.header.currencyChange.title', 'Para Birimi Değişikliği')}
+            </DialogTitle>
+            <DialogDescription>
+              {t('quotation.header.currencyChange.message', 'Para birimi değiştiğinde mevcut tüm satırlar yeni para birimine göre yeniden hesaplanacaktır. Bu işlemi onaylıyor musunuz?')}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={handleCurrencyChangeCancel}>
+              {t('common.cancel', 'İptal')}
+            </Button>
+            <Button onClick={handleCurrencyChangeConfirm}>
+              {t('common.yes', 'Evet')}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

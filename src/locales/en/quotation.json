@@ -27,7 +27,11 @@
     "description": "Description",
     "descriptionPlaceholder": "Enter description",
     "offerNo": "Offer No",
-    "offerNoPlaceholder": "Offer number"
+    "offerNoPlaceholder": "Offer number",
+    "currencyChange": {
+      "title": "Currency Change",
+      "message": "When the currency changes, all existing lines will be recalculated according to the new currency. Do you approve this operation?"
+    }
   },
   "lines": {
     "title": "Quotation Lines",
