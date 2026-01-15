@@ -45,9 +45,11 @@ export function QuotationLineForm({
 
   const [formData, setFormData] = useState<QuotationLineFormState>(line);
   const [relatedLines, setRelatedLines] = useState<QuotationLineFormState[]>([]);
+  const [originalQuantity, setOriginalQuantity] = useState<number>(line.quantity);
 
   useEffect(() => {
     setFormData(line);
+    setOriginalQuantity(line.quantity);
     if ((line as QuotationLineFormState & { relatedLines?: QuotationLineFormState[] }).relatedLines) {
       setRelatedLines((line as QuotationLineFormState & { relatedLines?: QuotationLineFormState[] }).relatedLines || []);
     } else {
@@ -86,6 +88,17 @@ export function QuotationLineForm({
     const updated = { ...formData, [field]: value };
     const calculated = calculateLineTotals(updated);
     setFormData(calculated);
+
+    if (field === 'quantity' && formData.relatedStockId && relatedLines.length > 0 && originalQuantity > 0) {
+      const newQuantity = value as number;
+      const quantityRatio = newQuantity / originalQuantity;
+      const updatedRelatedLines = relatedLines.map((relatedLine) => {
+        const newRelatedQuantity = relatedLine.quantity * quantityRatio;
+        const updatedRelatedLine = { ...relatedLine, quantity: newRelatedQuantity };
+        return calculateLineTotals(updatedRelatedLine);
+      });
+      setRelatedLines(updatedRelatedLines);
+    }
   };
 
   const handleSave = (): void => {
