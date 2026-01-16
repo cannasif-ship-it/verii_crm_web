@@ -17,6 +17,7 @@ import { UserDiscountLimitManagementPage } from '@/features/user-discount-limit-
 import { ProductPricingGroupByManagementPage } from '@/features/product-pricing-group-by-management';
 import { ProductPricingManagementPage } from '@/features/product-pricing-management';
 import { ActivityManagementPage } from '@/features/activity-management';
+import { ActivityTypeManagementPage } from '@/features/activity-type';
 import { ShippingAddressManagementPage } from '@/features/shipping-address-management';
 import { DailyTasksPage } from '@/features/daily-tasks/components/DailyTasksPage';
 import { ErpCustomerManagementPage } from '@/features/erp-customer-management';
@@ -89,6 +90,10 @@ export const router = createBrowserRouter([
       {
         path: 'activity-management',
         element: <ActivityManagementPage />,
+      },
+      {
+        path: 'activity-type-management',
+        element: <ActivityTypeManagementPage />,
       },
       {
         path: 'shipping-address-management',
