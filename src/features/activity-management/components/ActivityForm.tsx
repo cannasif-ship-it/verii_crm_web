@@ -31,7 +31,8 @@ import {
 } from '@/components/ui/select';
 import { activityFormSchema, type ActivityFormSchema } from '../types/activity-types';
 import type { ActivityDto } from '../types/activity-types';
-import { ACTIVITY_TYPES, ACTIVITY_STATUSES, ACTIVITY_PRIORITIES } from '../utils/activity-constants';
+import { ACTIVITY_STATUSES, ACTIVITY_PRIORITIES } from '../utils/activity-constants';
+import { activityTypeApi } from '@/features/activity-type/api/activity-type-api';
 import { useCustomerOptions } from '@/features/customer-management/hooks/useCustomerOptions';
 import { useUserOptions } from '@/features/user-discount-limit-management/hooks/useUserOptions';
 import { useQuery } from '@tanstack/react-query';
@@ -85,6 +86,22 @@ export function ActivityForm({
 
   const watchedStatus = form.watch('status');
   const watchedCustomerId = form.watch('potentialCustomerId');
+
+  const { data: activityTypesResponse } = useQuery({
+    queryKey: ['activityTypes'],
+    queryFn: async () => {
+      const response = await activityTypeApi.getList({
+        pageNumber: 1,
+        pageSize: 1000,
+        sortBy: 'Id',
+        sortDirection: 'asc',
+      });
+      return response.data || [];
+    },
+    staleTime: 5 * 60 * 1000,
+  });
+
+  const activityTypes = activityTypesResponse || [];
 
   const { data: contactData } = useQuery({
     queryKey: ['contactOptions', watchedCustomerId],
@@ -244,9 +261,9 @@ export function ActivityForm({
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {ACTIVITY_TYPES.map((type) => (
-                          <SelectItem key={type.value} value={type.value}>
-                            {t(`activityManagement.activityType${type.value}`, type.label)}
+                        {activityTypes.map((type) => (
+                          <SelectItem key={type.id} value={String(type.id)}>
+                            {type.name}
                           </SelectItem>
                         ))}
                       </SelectContent>
