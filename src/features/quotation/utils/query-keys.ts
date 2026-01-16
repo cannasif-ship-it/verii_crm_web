@@ -23,4 +23,5 @@ export const queryKeys = {
   approvalStatus: (quotationId: number) => [QUOTATION_QUERY_KEYS.APPROVAL_STATUS, quotationId] as const,
   priceRuleOfQuotation: (customerCode: string, salesmenId: number, quotationDate: string) => 
     [QUOTATION_QUERY_KEYS.PRICE_RULE_OF_QUOTATION, customerCode, salesmenId, quotationDate] as const,
+  userDiscountLimitsBySalesperson: (salespersonId: number) => ['user-discount-limits', 'salesperson', salespersonId] as const,
 };

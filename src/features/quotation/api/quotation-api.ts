@@ -6,15 +6,16 @@ import type {
   PriceOfProductDto,
   PriceOfProductRequestDto,
   PricingRuleLineGetDto,
+  UserDiscountLimitDto,
 } from '../types/quotation-types';
 import { queryKeys } from '../utils/query-keys';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient, type UseMutationResult, type UseQueryResult } from '@tanstack/react-query';
 import { useCustomerOptions } from '@/features/customer-management/hooks/useCustomerOptions';
 import { useShippingAddressesByCustomer } from '@/features/shipping-address-management/hooks/useShippingAddressesByCustomer';
 import { useUserList } from '@/features/user-management/hooks/useUserList';
 import { usePaymentTypeList } from '@/features/payment-type-management/hooks/usePaymentTypeList';
 import { useErpProducts } from '@/services/hooks/useErpProducts';
-import type { ApprovalStatus } from '../types/quotation-types';
+import type { ApprovalStatus, Customer, ShippingAddress, User, PaymentType, Product } from '../types/quotation-types';
 
 export const quotationApi = {
   createBulk: async (data: QuotationBulkCreateDto): Promise<ApiResponse<QuotationGetDto>> => {
@@ -159,9 +160,29 @@ export const quotationApi = {
       throw error;
     }
   },
+
+  getUserDiscountLimitsBySalespersonId: async (salespersonId: number): Promise<UserDiscountLimitDto[]> => {
+    try {
+      const response = await api.get<ApiResponse<UserDiscountLimitDto[]>>(
+        `/api/UserDiscountLimit/salesperson/${salespersonId}`
+      );
+      
+      if (!response.success || !response.data) {
+        return [];
+      }
+
+      if (!Array.isArray(response.data)) {
+        throw new Error('API\'den beklenmeyen veri formatı döndü');
+      }
+
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
 };
 
-export const useCreateQuotationBulk = () => {
+export const useCreateQuotationBulk = (): UseMutationResult<ApiResponse<QuotationGetDto>, Error, QuotationBulkCreateDto, unknown> => {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -172,7 +193,7 @@ export const useCreateQuotationBulk = () => {
   });
 };
 
-export const useQuotation = (id: number) => {
+export const useQuotation = (id: number): UseQueryResult<QuotationGetDto, Error> => {
   return useQuery({
     queryKey: queryKeys.quotation(id),
     queryFn: () => quotationApi.getById(id),
@@ -181,7 +202,7 @@ export const useQuotation = (id: number) => {
   });
 };
 
-export const useCanEditQuotation = (quotationId: number) => {
+export const useCanEditQuotation = (quotationId: number): UseQueryResult<boolean, Error> => {
   return useQuery({
     queryKey: queryKeys.canEdit(quotationId),
     queryFn: () => quotationApi.canEdit(quotationId),
@@ -190,7 +211,7 @@ export const useCanEditQuotation = (quotationId: number) => {
   });
 };
 
-export const useQuotationApprovalStatus = (quotationId: number) => {
+export const useQuotationApprovalStatus = (quotationId: number): UseQueryResult<ApprovalStatus, Error> => {
   return useQuery({
     queryKey: queryKeys.approvalStatus(quotationId),
     queryFn: () => quotationApi.getApprovalStatus(quotationId),
@@ -199,7 +220,12 @@ export const useQuotationApprovalStatus = (quotationId: number) => {
   });
 };
 
-export const useCustomers = () => {
+interface UseCustomersReturn {
+  data: Customer[];
+  isLoading: boolean;
+}
+
+export const useCustomers = (): UseCustomersReturn => {
   const { data, isLoading } = useCustomerOptions();
   return {
     data: data?.map((customer) => ({
@@ -212,7 +238,12 @@ export const useCustomers = () => {
   };
 };
 
-export const useShippingAddresses = (customerId?: number) => {
+interface UseShippingAddressesReturn {
+  data: ShippingAddress[];
+  isLoading: boolean;
+}
+
+export const useShippingAddresses = (customerId?: number): UseShippingAddressesReturn => {
   const { data, isLoading } = useShippingAddressesByCustomer(customerId || 0);
   return {
     data:
@@ -225,7 +256,12 @@ export const useShippingAddresses = (customerId?: number) => {
   };
 };
 
-export const useUsers = () => {
+interface UseUsersReturn {
+  data: User[];
+  isLoading: boolean;
+}
+
+export const useUsers = (): UseUsersReturn => {
   const { data, isLoading } = useUserList({
     pageNumber: 1,
     pageSize: 1000,
@@ -245,7 +281,12 @@ export const useUsers = () => {
   };
 };
 
-export const usePaymentTypes = () => {
+interface UsePaymentTypesReturn {
+  data: PaymentType[];
+  isLoading: boolean;
+}
+
+export const usePaymentTypes = (): UsePaymentTypesReturn => {
   const { data, isLoading } = usePaymentTypeList({
     pageNumber: 1,
     pageSize: 1000,
@@ -262,7 +303,12 @@ export const usePaymentTypes = () => {
   };
 };
 
-export const useProducts = (search?: string) => {
+interface UseProductsReturn {
+  data: Product[];
+  isLoading: boolean;
+}
+
+export const useProducts = (search?: string): UseProductsReturn => {
   const { data: erpProducts, isLoading: erpLoading } = useErpProducts(search);
 
   return {
@@ -283,12 +329,21 @@ export const useProducts = (search?: string) => {
   };
 };
 
-export const usePriceOfProduct = (productCode?: string, groupCode?: string, enabled = false) => {
+export const usePriceOfProduct = (productCode?: string, groupCode?: string, enabled = false): UseQueryResult<PriceOfProductDto[], Error> => {
   return useQuery({
     queryKey: ['priceOfProduct', productCode, groupCode],
-    queryFn: () => quotationApi.getPriceOfProduct(productCode || '', groupCode || ''),
+    queryFn: () => quotationApi.getPriceOfProduct([{ productCode: productCode || '', groupCode: groupCode || '' }]),
     enabled: enabled && !!productCode && !!groupCode,
     staleTime: 2 * 60 * 1000,
+  });
+};
+
+export const useUserDiscountLimitsBySalesperson = (salespersonId: number | null | undefined): UseQueryResult<UserDiscountLimitDto[], Error> => {
+  return useQuery({
+    queryKey: queryKeys.userDiscountLimitsBySalesperson(salespersonId || 0),
+    queryFn: () => quotationApi.getUserDiscountLimitsBySalespersonId(salespersonId || 0),
+    enabled: !!salespersonId && salespersonId > 0,
+    staleTime: 5 * 60 * 1000,
   });
 };
 
@@ -296,7 +351,7 @@ export const usePriceRuleOfQuotation = (
   customerCode: string | null | undefined,
   salesmenId: number | null | undefined,
   quotationDate: string | null | undefined
-) => {
+): UseQueryResult<PricingRuleLineGetDto[], Error> => {
   const enabled = !!customerCode && !!salesmenId && !!quotationDate;
 
   return useQuery({

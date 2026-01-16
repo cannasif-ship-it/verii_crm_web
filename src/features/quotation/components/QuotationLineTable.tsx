@@ -26,7 +26,7 @@ import { useProductSelection } from '../hooks/useProductSelection';
 import { useQuotationCalculations } from '../hooks/useQuotationCalculations';
 import { formatCurrency } from '../utils/format-currency';
 import { Trash2, Edit, Plus, ShoppingCart } from 'lucide-react';
-import type { QuotationLineFormState, QuotationExchangeRateFormState, PricingRuleLineGetDto } from '../types/quotation-types';
+import type { QuotationLineFormState, QuotationExchangeRateFormState, PricingRuleLineGetDto, UserDiscountLimitDto } from '../types/quotation-types';
 
 interface QuotationLineTableProps {
   lines: QuotationLineFormState[];
@@ -34,6 +34,7 @@ interface QuotationLineTableProps {
   currency: number;
   exchangeRates?: QuotationExchangeRateFormState[];
   pricingRules?: PricingRuleLineGetDto[];
+  userDiscountLimits?: UserDiscountLimitDto[];
 }
 
 export function QuotationLineTable({
@@ -42,6 +43,7 @@ export function QuotationLineTable({
   currency,
   exchangeRates = [],
   pricingRules = [],
+  userDiscountLimits = [],
 }: QuotationLineTableProps): ReactElement {
   const { t } = useTranslation();
   const [productDialogOpen, setProductDialogOpen] = useState(false);
@@ -357,14 +359,21 @@ export function QuotationLineTable({
                       }
                     }
 
+                    const hasApprovalWarning = line.approvalStatus === 1;
+
                     return (
-                      <TableRow key={line.id} className="hover:bg-muted/50 transition-colors">
+                      <TableRow key={line.id} className={`hover:bg-muted/50 transition-colors ${hasApprovalWarning ? 'bg-red-50/50 dark:bg-red-950/20 border-l-4 border-l-red-500' : ''}`}>
                             <TableCell className="min-w-[200px]">
                               <div className="space-y-1">
                                 <div className="flex items-center gap-2">
                                   <div className="font-medium text-sm truncate flex-1" title={stockDisplay}>
                                     {line.productCode || '-'}
                                   </div>
+                                  {hasApprovalWarning && (
+                                    <Badge variant="outline" className="text-xs text-red-600 border-red-600 bg-red-50 dark:bg-red-950/30">
+                                      {t('quotation.lines.approvalRequired', 'Onay Gerekli')}
+                                    </Badge>
+                                  )}
                                   {isRelatedStock && (
                                     <Badge variant="outline" className={`text-xs ${
                                       isMainStock 
@@ -517,6 +526,7 @@ export function QuotationLineTable({
               currency={currency}
               exchangeRates={exchangeRates}
               pricingRules={pricingRules}
+              userDiscountLimits={userDiscountLimits}
             />
           )}
         </DialogContent>
@@ -589,6 +599,7 @@ export function QuotationLineTable({
               currency={currency}
               exchangeRates={exchangeRates}
               pricingRules={pricingRules}
+              userDiscountLimits={userDiscountLimits}
             />
           )}
         </DialogContent>

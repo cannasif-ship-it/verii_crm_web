@@ -33,7 +33,12 @@ interface UseProductSelectionParams {
   exchangeRates: QuotationExchangeRateFormState[];
 }
 
-export function useProductSelection({ currency, exchangeRates }: UseProductSelectionParams) {
+interface UseProductSelectionReturn {
+  handleProductSelect: (product: ProductSelectionResult) => Promise<QuotationLineFormState>;
+  handleProductSelectWithRelatedStocks: (product: ProductSelectionResult, relatedStockIds: number[]) => Promise<QuotationLineFormState[]>;
+}
+
+export function useProductSelection({ currency, exchangeRates }: UseProductSelectionParams): UseProductSelectionReturn {
   const { calculateLineTotals } = useQuotationCalculations();
   const { currencyOptions } = useCurrencyOptions();
   const { data: erpRates = [] } = useExchangeRate();

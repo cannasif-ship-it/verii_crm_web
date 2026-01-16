@@ -1,7 +1,18 @@
 import type { QuotationLineFormState } from '../types/quotation-types';
 
-export function useQuotationCalculations() {
-  const calculateLineTotals = (line: QuotationLineFormState) => {
+interface CalculationTotals {
+  subtotal: number;
+  totalVat: number;
+  grandTotal: number;
+}
+
+interface UseQuotationCalculationsReturn {
+  calculateLineTotals: (line: QuotationLineFormState) => QuotationLineFormState;
+  calculateTotals: (lines: QuotationLineFormState[]) => CalculationTotals;
+}
+
+export function useQuotationCalculations(): UseQuotationCalculationsReturn {
+  const calculateLineTotals = (line: QuotationLineFormState): QuotationLineFormState => {
     const baseAmount = line.quantity * line.unitPrice;
     
     let currentAmount = baseAmount;
@@ -30,7 +41,7 @@ export function useQuotationCalculations() {
     };
   };
 
-  const calculateTotals = (lines: QuotationLineFormState[]) => {
+  const calculateTotals = (lines: QuotationLineFormState[]): CalculationTotals => {
     const subtotal = lines.reduce((sum, line) => sum + line.lineTotal, 0);
     const totalVat = lines.reduce((sum, line) => sum + line.vatAmount, 0);
     const grandTotal = lines.reduce((sum, line) => sum + line.lineGrandTotal, 0);

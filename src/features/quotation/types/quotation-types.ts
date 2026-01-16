@@ -168,6 +168,7 @@ export interface QuotationExchangeRateGetDto {
 export interface QuotationLineFormState extends Omit<CreateQuotationLineDto, 'quotationId'> {
   id: string;
   isEditing: boolean;
+  approvalStatus?: ApprovalStatus;
 }
 
 export interface QuotationExchangeRateFormState {
@@ -244,4 +245,19 @@ export interface PricingRuleLineGetDto {
   discountAmount3: number;
   createdAt?: string | null;
   updatedAt?: string | null;
+}
+
+export interface UserDiscountLimitDto {
+  erpProductGroupCode: string;
+  salespersonId: number;
+  salespersonName: string;
+  maxDiscount1: number;
+  maxDiscount2?: number | null;
+  maxDiscount3?: number | null;
+  id?: number;
+  createdAt?: string | null;
+  updatedAt?: string | null;
+  createdBy?: number | null;
+  updatedBy?: number | null;
+  deletedBy?: number | null;
 }
