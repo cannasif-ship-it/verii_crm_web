@@ -76,8 +76,9 @@ export function useProductSelection({ currency, exchangeRates }: UseProductSelec
       const baseLine = createEmptyLine(product);
       const hasRelatedStocks = product.relatedStockIds && product.relatedStockIds.length > 0;
 
-      if (hasRelatedStocks) {
-        return await handleProductSelectWithRelatedStocks(product, product.relatedStockIds);
+      if (hasRelatedStocks && product.relatedStockIds) {
+        const allLines = await handleProductSelectWithRelatedStocks(product, product.relatedStockIds);
+        return allLines[0] || baseLine;
       }
 
       try {
@@ -115,6 +116,7 @@ export function useProductSelection({ currency, exchangeRates }: UseProductSelec
         if (!sourceDovizTipi) {
           const updatedLine: QuotationLineFormState = {
             ...baseLine,
+            groupCode: selectedPrice.groupCode || product.groupCode || null,
             unitPrice: selectedPrice.listPrice ?? 0,
             discountRate1: selectedPrice.discount1 ?? 0,
             discountRate2: selectedPrice.discount2 ?? 0,
@@ -135,6 +137,7 @@ export function useProductSelection({ currency, exchangeRates }: UseProductSelec
 
         const updatedLine: QuotationLineFormState = {
           ...baseLine,
+          groupCode: selectedPrice.groupCode || product.groupCode || null,
           unitPrice: convertedPrice,
           discountRate1: selectedPrice.discount1 ?? 0,
           discountRate2: selectedPrice.discount2 ?? 0,
@@ -209,6 +212,7 @@ export function useProductSelection({ currency, exchangeRates }: UseProductSelec
               productId: null,
               productCode,
               productName,
+              groupCode: request.groupCode || null,
               quantity: 1,
               unitPrice: 0,
               discountRate1: 0,
@@ -257,6 +261,7 @@ export function useProductSelection({ currency, exchangeRates }: UseProductSelec
             productId: null,
             productCode,
             productName,
+            groupCode: priceData.groupCode || request.groupCode || null,
             quantity: 1,
             unitPrice: convertedPrice,
             discountRate1: priceData.discount1 ?? 0,

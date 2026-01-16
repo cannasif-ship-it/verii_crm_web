@@ -51,6 +51,7 @@ export interface CreateQuotationLineDto {
   productId?: number | null;
   productCode: string;
   productName: string;
+  groupCode?: string | null;
   quantity: number;
   unitPrice: number;
   discountRate1: number;
@@ -66,12 +67,14 @@ export interface CreateQuotationLineDto {
   description?: string | null;
   pricingRuleHeaderId?: number | null;
   relatedStockId?: number | null;
+  approvalStatus?: ApprovalStatus;
 }
 
 export interface UpdateQuotationLineDto {
   productId: number;
   productCode?: string | null;
   productName: string;
+  groupCode?: string | null;
   quantity: number;
   unitPrice: number;
   discountRate1: number;
@@ -87,6 +90,7 @@ export interface UpdateQuotationLineDto {
   description?: string | null;
   pricingRuleHeaderId?: number | null;
   relatedStockId?: number | null;
+  approvalStatus?: ApprovalStatus;
 }
 
 export interface QuotationLineGetDto {
@@ -95,6 +99,7 @@ export interface QuotationLineGetDto {
   productId?: number | null;
   productCode?: string | null;
   productName: string;
+  groupCode?: string | null;
   quantity: number;
   unitPrice: number;
   discountRate1: number;
@@ -110,6 +115,7 @@ export interface QuotationLineGetDto {
   description?: string | null;
   pricingRuleHeaderId?: number | null;
   relatedStockId?: number | null;
+  approvalStatus?: ApprovalStatus;
   createdAt: string;
   updatedAt?: string | null;
 }
@@ -168,7 +174,6 @@ export interface QuotationExchangeRateGetDto {
 export interface QuotationLineFormState extends Omit<CreateQuotationLineDto, 'quotationId'> {
   id: string;
   isEditing: boolean;
-  approvalStatus?: ApprovalStatus;
 }
 
 export interface QuotationExchangeRateFormState {

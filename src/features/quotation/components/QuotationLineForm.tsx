@@ -89,6 +89,10 @@ export function QuotationLineForm({
 
 
   useEffect(() => {
+    console.log('🔄 [QuotationLineForm] useEffect - line prop değişti:', {
+      ...line,
+      groupCode: line.groupCode,
+    });
     setFormData(line);
     setQuantityInputValue(String(line.quantity || ''));
     setVatRateInputValue(String(line.vatRate || ''));
@@ -105,7 +109,30 @@ export function QuotationLineForm({
     const loadTemporaryStockData = async (): Promise<void> => {
       if (line.productCode && line.productName) {
         const targetCurrencyCode = currencyOptions.find((opt) => opt.dovizTipi === currency)?.code || 'TRY';
-        const shouldLoadFromApi = temporaryStockData.length === 0 && lastLoadedProductCode !== line.productCode;
+        
+        const existingMainStockData = temporaryStockData.find((data) => data.productCode === line.productCode);
+        const hasAllRelatedStocks = lineRelatedLines.every((relatedLine) => {
+          if (!relatedLine.productCode) return true;
+          return temporaryStockData.some((data) => data.productCode === relatedLine.productCode);
+        });
+        
+        const shouldLoadFromApi = 
+          (temporaryStockData.length === 0 || !existingMainStockData || !existingMainStockData.groupCode) &&
+          lastLoadedProductCode !== line.productCode &&
+          (!hasAllRelatedStocks || lineRelatedLines.some((relatedLine) => {
+            if (!relatedLine.productCode) return false;
+            const existingRelatedData = temporaryStockData.find((data) => data.productCode === relatedLine.productCode);
+            return !existingRelatedData || !existingRelatedData.groupCode;
+          }));
+
+        console.log('🔍 [QuotationLineForm] loadTemporaryStockData - shouldLoadFromApi kontrolü:', {
+          temporaryStockDataLength: temporaryStockData.length,
+          existingMainStockData: existingMainStockData ? { productCode: existingMainStockData.productCode, groupCode: existingMainStockData.groupCode } : null,
+          hasAllRelatedStocks,
+          lastLoadedProductCode,
+          currentProductCode: line.productCode,
+          shouldLoadFromApi,
+        });
 
         if (shouldLoadFromApi) {
           try {
@@ -172,7 +199,7 @@ export function QuotationLineForm({
 
             const mainStockData: TemporaryStockData = {
               productCode: line.productCode,
-              groupCode: undefined,
+              groupCode: mainPrice?.groupCode || undefined,
               quantity: line.quantity,
               unitPrice: mainUnitPrice,
               discountRate1: mainDiscountRate1,
@@ -180,6 +207,27 @@ export function QuotationLineForm({
               discountRate3: mainDiscountRate3,
               currencyCode: targetCurrencyCode,
             };
+            
+            console.log('🟢 [QuotationLineForm] loadTemporaryStockData - API\'den gelen mainPrice:', {
+              productCode: mainPrice?.productCode,
+              groupCode: mainPrice?.groupCode,
+            });
+            console.log('🟡 [QuotationLineForm] loadTemporaryStockData - mainStockData oluşturuldu:', {
+              ...mainStockData,
+              groupCode: mainStockData.groupCode,
+            });
+            
+            setFormData((prev) => {
+              const updated = {
+                ...prev,
+                groupCode: mainStockData.groupCode || null,
+              };
+              console.log('🟢 [QuotationLineForm] loadTemporaryStockData - formData güncellendi:', {
+                ...updated,
+                groupCode: updated.groupCode,
+              });
+              return updated;
+            });
 
             const relatedStocksData: TemporaryStockData[] = await Promise.all(
               lineRelatedLines.map(async (relatedLine) => {
@@ -241,7 +289,7 @@ export function QuotationLineForm({
 
                 return {
                   productCode: relatedLine.productCode,
-                  groupCode: undefined,
+                  groupCode: relatedPrice?.groupCode || undefined,
                   quantity: relatedLine.quantity,
                   unitPrice: relatedUnitPrice,
                   discountRate1: relatedDiscountRate1,
@@ -251,12 +299,18 @@ export function QuotationLineForm({
                 };
               })
             );
+            
+            console.log('🟢 [QuotationLineForm] loadTemporaryStockData - relatedStocksData oluşturuldu:', relatedStocksData.map(data => ({
+              productCode: data.productCode,
+              groupCode: data.groupCode,
+            })));
 
             setTemporaryStockData([mainStockData, ...relatedStocksData]);
+            setLastLoadedProductCode(line.productCode);
           } catch (error) {
             const mainStockData: TemporaryStockData = {
               productCode: line.productCode,
-              groupCode: undefined,
+              groupCode: line.groupCode || undefined,
               quantity: line.quantity,
               unitPrice: line.unitPrice,
               discountRate1: line.discountRate1,
@@ -265,24 +319,33 @@ export function QuotationLineForm({
               currencyCode: targetCurrencyCode,
             };
 
-            const relatedStocksData: TemporaryStockData[] = lineRelatedLines.map((relatedLine) => ({
-              productCode: relatedLine.productCode || '',
-              groupCode: undefined,
-              quantity: relatedLine.quantity,
-              unitPrice: relatedLine.unitPrice,
-              discountRate1: relatedLine.discountRate1,
-              discountRate2: relatedLine.discountRate2,
-              discountRate3: relatedLine.discountRate3,
-              currencyCode: targetCurrencyCode,
-            }));
+            const relatedStocksData: TemporaryStockData[] = lineRelatedLines.map((relatedLine) => {
+              const groupCode = relatedLine.groupCode || undefined;
+              console.log('🟡 [QuotationLineForm] loadTemporaryStockData - Catch bloğu related stock için groupCode:', {
+                productCode: relatedLine.productCode,
+                groupCodeFromLine: relatedLine.groupCode,
+                finalGroupCode: groupCode,
+              });
+              return {
+                productCode: relatedLine.productCode || '',
+                groupCode: groupCode,
+                quantity: relatedLine.quantity,
+                unitPrice: relatedLine.unitPrice,
+                discountRate1: relatedLine.discountRate1,
+                discountRate2: relatedLine.discountRate2,
+                discountRate3: relatedLine.discountRate3,
+                currencyCode: targetCurrencyCode,
+              };
+            });
 
             setTemporaryStockData([mainStockData, ...relatedStocksData]);
             setLastLoadedProductCode(line.productCode);
           }
         } else {
+          const existingMainStockData = temporaryStockData.find((data) => data.productCode === line.productCode);
           const mainStockData: TemporaryStockData = {
             productCode: line.productCode,
-            groupCode: undefined,
+            groupCode: existingMainStockData?.groupCode || undefined,
             quantity: line.quantity,
             unitPrice: line.unitPrice,
             discountRate1: line.discountRate1,
@@ -290,17 +353,34 @@ export function QuotationLineForm({
             discountRate3: line.discountRate3,
             currencyCode: targetCurrencyCode,
           };
+          
+          if (existingMainStockData?.groupCode) {
+            setFormData((prev) => ({
+              ...prev,
+              groupCode: existingMainStockData.groupCode || null,
+            }));
+          }
 
-          const relatedStocksData: TemporaryStockData[] = lineRelatedLines.map((relatedLine) => ({
-            productCode: relatedLine.productCode || '',
-            groupCode: undefined,
-            quantity: relatedLine.quantity,
-            unitPrice: relatedLine.unitPrice,
-            discountRate1: relatedLine.discountRate1,
-            discountRate2: relatedLine.discountRate2,
-            discountRate3: relatedLine.discountRate3,
-            currencyCode: targetCurrencyCode,
-          }));
+          const relatedStocksData: TemporaryStockData[] = lineRelatedLines.map((relatedLine) => {
+            const existingRelatedStockData = temporaryStockData.find((data) => data.productCode === relatedLine.productCode);
+            const groupCode = existingRelatedStockData?.groupCode || relatedLine.groupCode || undefined;
+            console.log('🟡 [QuotationLineForm] loadTemporaryStockData - Else bloğu related stock için groupCode:', {
+              productCode: relatedLine.productCode,
+              groupCodeFromExisting: existingRelatedStockData?.groupCode,
+              groupCodeFromLine: relatedLine.groupCode,
+              finalGroupCode: groupCode,
+            });
+            return {
+              productCode: relatedLine.productCode || '',
+              groupCode: groupCode,
+              quantity: relatedLine.quantity,
+              unitPrice: relatedLine.unitPrice,
+              discountRate1: relatedLine.discountRate1,
+              discountRate2: relatedLine.discountRate2,
+              discountRate3: relatedLine.discountRate3,
+              currencyCode: targetCurrencyCode,
+            };
+          });
 
           setTemporaryStockData([mainStockData, ...relatedStocksData]);
         }
@@ -365,18 +445,44 @@ export function QuotationLineForm({
   };
 
   const handleProductSelect = async (product: ProductSelectionResult): Promise<void> => {
+    console.log('🔵 [QuotationLineForm] handleProductSelect - Product seçildi:', {
+      productCode: product.code,
+      productName: product.name,
+      groupCode: product.groupCode,
+      hasRelatedStocks: product.relatedStockIds && product.relatedStockIds.length > 0,
+    });
+
     const hasRelatedStocks = product.relatedStockIds && product.relatedStockIds.length > 0;
 
     if (hasRelatedStocks && handleProductSelectWithRelatedStocks && product.relatedStockIds) {
       const allLines = await handleProductSelectWithRelatedStocks(product, product.relatedStockIds);
+      console.log('🟢 [QuotationLineForm] handleProductSelect - Related stocks ile gelen lines:', allLines);
 
       if (allLines.length > 0) {
         const mainLine = {
           ...allLines[0],
           id: formData.id,
+          groupCode: product.groupCode || null,
         };
+        console.log('🟡 [QuotationLineForm] handleProductSelect - MainLine oluşturuldu:', {
+          ...mainLine,
+          groupCode: mainLine.groupCode,
+        });
         setFormData(mainLine);
-        const relatedLinesData = allLines.slice(1);
+        const relatedLinesData = allLines.slice(1).map((relatedLine, index) => {
+          const relatedStockIdFromArray = product.relatedStockIds?.[index];
+          if (relatedStockIdFromArray) {
+            return {
+              ...relatedLine,
+              groupCode: relatedLine.groupCode || null,
+            };
+          }
+          return relatedLine;
+        });
+        console.log('🟢 [QuotationLineForm] handleProductSelect - relatedLinesData oluşturuldu:', relatedLinesData.map(line => ({
+          ...line,
+          groupCode: line.groupCode,
+        })));
         setRelatedLines(relatedLinesData);
 
         const targetCurrencyCode = currencyOptions.find((opt) => opt.dovizTipi === currency)?.code || 'TRY';
@@ -393,7 +499,7 @@ export function QuotationLineForm({
 
         const relatedStocksData: TemporaryStockData[] = relatedLinesData.map((relatedLine) => ({
           productCode: relatedLine.productCode || '',
-          groupCode: undefined,
+          groupCode: relatedLine.groupCode || undefined,
           quantity: relatedLine.quantity,
           unitPrice: relatedLine.unitPrice,
           discountRate1: relatedLine.discountRate1,
@@ -406,11 +512,17 @@ export function QuotationLineForm({
       }
     } else {
       const newLine = await handleProductSelectHook(product);
+      console.log('🟢 [QuotationLineForm] handleProductSelect - Hook\'tan gelen newLine:', newLine);
 
       const updatedFormData = {
         ...newLine,
         id: formData.id,
+        groupCode: product.groupCode || null,
       };
+      console.log('🟡 [QuotationLineForm] handleProductSelect - updatedFormData oluşturuldu:', {
+        ...updatedFormData,
+        groupCode: updatedFormData.groupCode,
+      });
 
       setFormData(updatedFormData);
       setRelatedLines([]);
@@ -545,7 +657,16 @@ export function QuotationLineForm({
 
         if (relatedStockData) {
           const newRelatedQuantity = relatedStockData.quantity * newQuantity;
-          const updatedRelatedLine = { ...relatedLine, quantity: newRelatedQuantity };
+          const updatedRelatedLine = { 
+            ...relatedLine, 
+            quantity: newRelatedQuantity,
+            groupCode: relatedLine.groupCode || relatedStockData.groupCode || null,
+          };
+          console.log('🟡 [QuotationLineForm] handleFieldChange - Related line güncellendi (quantity):', {
+            productCode: updatedRelatedLine.productCode,
+            groupCode: updatedRelatedLine.groupCode,
+            quantity: updatedRelatedLine.quantity,
+          });
           return calculateLineTotals(updatedRelatedLine);
         }
 
@@ -556,9 +677,28 @@ export function QuotationLineForm({
   };
 
   const handleSave = (): void => {
+    console.log('💾 [QuotationLineForm] handleSave - Kaydet butonuna tıklandı');
+    console.log('📦 [QuotationLineForm] handleSave - formData:', {
+      ...formData,
+      groupCode: formData.groupCode,
+    });
+    console.log('📦 [QuotationLineForm] handleSave - relatedLines:', relatedLines.map(line => ({
+      ...line,
+      groupCode: line.groupCode,
+    })));
+
     if (onSaveMultiple && relatedLines.length > 0) {
-      onSaveMultiple([formData, ...relatedLines]);
+      const linesToSave = [formData, ...relatedLines];
+      console.log('📤 [QuotationLineForm] handleSave - onSaveMultiple çağrılıyor:', linesToSave.map(line => ({
+        ...line,
+        groupCode: line.groupCode,
+      })));
+      onSaveMultiple(linesToSave);
     } else {
+      console.log('📤 [QuotationLineForm] handleSave - onSave çağrılıyor:', {
+        ...formData,
+        groupCode: formData.groupCode,
+      });
       onSave(formData);
     }
   };
@@ -608,10 +748,16 @@ export function QuotationLineForm({
                 {t('quotation.lines.selectStock', 'Stok Seç')}
               </Button>
             </div>
-            <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
+            <div className="grid grid-cols-1 gap-2 md:grid-cols-3">
               <Input
                 value={formData.productCode || ''}
                 placeholder={t('quotation.lines.productCode', 'Stok Kodu')}
+                readOnly
+                className="bg-muted/50 font-mono text-sm h-9"
+              />
+              <Input
+                value={formData.groupCode || ''}
+                placeholder={t('quotation.lines.groupCode', 'Grup Kodu')}
                 readOnly
                 className="bg-muted/50 font-mono text-sm h-9"
               />

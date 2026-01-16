@@ -92,13 +92,33 @@ export function QuotationLineTable({
   };
 
   const handleSaveNewLine = (line: QuotationLineFormState): void => {
-    setLines([...lines, { ...line, isEditing: false }]);
+    console.log('💾 [QuotationLineTable] handleSaveNewLine - Yeni satır kaydediliyor:', {
+      ...line,
+      groupCode: line.groupCode,
+    });
+    const lineToAdd = { ...line, isEditing: false };
+    console.log('📦 [QuotationLineTable] handleSaveNewLine - Eklenecek satır:', {
+      ...lineToAdd,
+      groupCode: lineToAdd.groupCode,
+    });
+    setLines([...lines, lineToAdd]);
+    console.log('✅ [QuotationLineTable] handleSaveNewLine - Satır eklendi, yeni liste uzunluğu:', lines.length + 1);
     setAddLineDialogOpen(false);
     setNewLine(null);
   };
 
   const handleSaveMultipleLines = (newLines: QuotationLineFormState[]): void => {
-    setLines([...lines, ...newLines.map((line) => ({ ...line, isEditing: false }))]);
+    console.log('💾 [QuotationLineTable] handleSaveMultipleLines - Çoklu satır kaydediliyor:', newLines.map(line => ({
+      ...line,
+      groupCode: line.groupCode,
+    })));
+    const linesToAdd = newLines.map((line) => ({ ...line, isEditing: false }));
+    console.log('📦 [QuotationLineTable] handleSaveMultipleLines - Eklenecek satırlar:', linesToAdd.map(line => ({
+      ...line,
+      groupCode: line.groupCode,
+    })));
+    setLines([...lines, ...linesToAdd]);
+    console.log('✅ [QuotationLineTable] handleSaveMultipleLines - Satırlar eklendi, yeni liste uzunluğu:', lines.length + linesToAdd.length);
     setAddLineDialogOpen(false);
     setNewLine(null);
   };
@@ -152,9 +172,19 @@ export function QuotationLineTable({
   };
 
   const handleSaveLine = (updatedLine: QuotationLineFormState, relatedLinesToUpdate?: QuotationLineFormState[]): void => {
+    console.log('💾 [QuotationLineTable] handleSaveLine - Satır güncelleniyor:', {
+      ...updatedLine,
+      groupCode: updatedLine.groupCode,
+    });
+    console.log('📦 [QuotationLineTable] handleSaveLine - relatedLinesToUpdate:', relatedLinesToUpdate?.map(line => ({
+      ...line,
+      groupCode: line.groupCode,
+    })));
+    
     const originalLine = lines.find((l) => l.id === updatedLine.id);
     
     if (!originalLine) {
+      console.log('❌ [QuotationLineTable] handleSaveLine - Orijinal satır bulunamadı');
       setEditLineDialogOpen(false);
       setLineToEdit(null);
       return;
@@ -369,6 +399,11 @@ export function QuotationLineTable({
                                   <div className="font-medium text-sm truncate flex-1" title={stockDisplay}>
                                     {line.productCode || '-'}
                                   </div>
+                                  {line.groupCode && (
+                                    <div className="text-xs text-muted-foreground font-mono">
+                                      [{line.groupCode}]
+                                    </div>
+                                  )}
                                   {hasApprovalWarning && (
                                     <Badge variant="outline" className="text-xs text-red-600 border-red-600 bg-red-50 dark:bg-red-950/30">
                                       {t('quotation.lines.approvalRequired', 'Onay Gerekli')}
