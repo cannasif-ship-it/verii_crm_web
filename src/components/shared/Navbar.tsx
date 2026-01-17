@@ -1,8 +1,10 @@
 import { type ReactElement, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
+import { Menu, Search, X } from 'lucide-react';
+
 import { useAuthStore } from '@/stores/auth-store';
 import { useUIStore } from '@/stores/ui-store';
-import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { NotificationIcon } from '@/features/notification/components/NotificationIcon';
 import { LanguageSwitcher } from './LanguageSwitcher';
@@ -13,111 +15,125 @@ import { cn } from '@/lib/utils';
 
 export function Navbar(): ReactElement {
   const { t } = useTranslation();
+  const navigate = useNavigate();
+
   const { user } = useAuthStore();
-  const { isSidebarOpen, toggleSidebar, pageTitle } = useUIStore();
+  const { toggleSidebar, searchQuery, setSearchQuery, setSidebarOpen } = useUIStore(); 
   const [userDetailDialogOpen, setUserDetailDialogOpen] = useState(false);
   const { data: userDetail } = useUserDetailByUserId(user?.id || 0);
 
+  const displayName = user?.name || user?.email || 'Kullanıcı';
+  const displayInitials = user?.name?.[0]?.toUpperCase() || user?.email?.[0]?.toUpperCase() || 'MK';
+
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value;
+    setSearchQuery(val);
+    
+    if (val.trim().length > 0) {
+      setSidebarOpen(true);
+    }
+  };
+
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
-      <div className="flex h-16 items-center justify-between px-4">
+    <>
+      <header 
+        className={cn(
+          "h-20 px-8 flex items-center justify-between border-b border-border backdrop-blur-md sticky top-0 z-50 shrink-0 transition-all",
+          // DÜZELTME BURADA:
+          // Light Mode: bg-background/80 (Genelde beyaz olur)
+          // Dark Mode: dark:bg-[#0c0516]/80 (Senin istediğin özel koyu renk)
+          "bg-background/80 dark:bg-[#0c0516]/80"
+        )}
+      >
+        
         <div className="flex items-center gap-4">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={toggleSidebar}
-            className="lg:hidden"
-            aria-label="Toggle sidebar"
+          <button 
+            onClick={toggleSidebar} 
+            className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent transition-colors focus:outline-none"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <line x1="3" y1="6" x2="21" y2="6" />
-              <line x1="3" y1="12" x2="21" y2="12" />
-              <line x1="3" y1="18" x2="21" y2="18" />
-            </svg>
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={toggleSidebar}
-            className={cn('hidden lg:flex', !isSidebarOpen && 'lg:flex')}
-            aria-label="Toggle sidebar"
-          >
-            {isSidebarOpen ? (
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
+            <Menu size={24} />
+          </button>
+
+          {/* Arama Alanı */}
+          <div className="relative hidden md:block group">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground w-4 h-4 group-focus-within:text-pink-500 transition-colors" />
+            
+            <input
+              type="text"
+              value={searchQuery} 
+              onChange={handleSearch} 
+              placeholder={t('navbar.search_placeholder', 'Müşteri, Teklif, Sipariş ara...')}
+              className={cn(
+                "bg-secondary/50 border border-input text-foreground placeholder:text-muted-foreground",
+                "rounded-full py-2.5 pl-10 pr-10 w-80 text-sm transition-all outline-none",
+                // Pembe Vurgu (Focus)
+                "focus:border-pink-500/50 focus:ring-1 focus:ring-pink-500/20" 
+              )}
+            />
+            
+            {searchQuery && (
+              <button 
+                onClick={() => setSearchQuery('')}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
               >
-                <line x1="18" y1="6" x2="6" y2="18" />
-                <line x1="6" y1="6" x2="18" y2="18" />
-              </svg>
-            ) : (
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <line x1="3" y1="6" x2="21" y2="6" />
-                <line x1="3" y1="12" x2="21" y2="12" />
-                <line x1="3" y1="18" x2="21" y2="18" />
-              </svg>
+                <X size={14} />
+              </button>
             )}
-          </Button>
-          <h1 className="text-xl font-semibold">{pageTitle || t('navbar.crm')}</h1>
+          </div>
         </div>
-        <div className="ml-auto flex items-center gap-4">
-          <LanguageSwitcher />
-          <NotificationIcon />
-          <ThemeToggle />
+
+        <div className="flex items-center gap-6">
+          <div className="flex items-center gap-4">
+            <LanguageSwitcher />
+            
+            <div className="relative p-2 rounded-full hover:bg-accent transition-colors group cursor-pointer text-muted-foreground hover:text-foreground flex items-center justify-center">
+               <NotificationIcon />
+            </div>
+            
+            <div className="p-2 rounded-full hover:bg-accent transition-colors text-muted-foreground hover:text-foreground cursor-pointer flex items-center justify-center">
+              <ThemeToggle />
+            </div>
+          </div>
+
           {user && (
             <div 
-              className="flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-accent cursor-pointer"
-              onClick={() => setUserDetailDialogOpen(true)}
+              onClick={() => setUserDetailDialogOpen(true)} 
+              className="flex items-center gap-3 pl-6 border-l border-border cursor-pointer group"
             >
-              {userDetail?.profilePictureUrl ? (
-                <img
-                  src={getImageUrl(userDetail.profilePictureUrl) || ''}
-                  alt={user.name || user.email}
-                  className="w-8 h-8 rounded-full object-cover"
-                />
-              ) : (
-                <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-                  <span className="text-xs font-medium">
-                    {user.name?.[0]?.toUpperCase() || user.email[0]?.toUpperCase()}
-                  </span>
+              <div className="text-right hidden md:block">
+                <p className="text-sm font-semibold text-foreground group-hover:text-pink-500 transition-colors">
+                  {displayName}
+                </p>
+                <p className="text-[11px] text-muted-foreground uppercase tracking-wider">
+                  {t('roles.admin', 'Yönetici')}
+                </p>
+              </div>
+              
+              <div className="w-10 h-10 rounded-full p-[2px] bg-gradient-to-tr from-pink-500 to-yellow-500 hover:shadow-[0_0_15px_rgba(236,72,153,0.4)] transition-all">
+                {/* Avatar Arkaplanı: Koyu modda özel renk, açık modda beyaz */}
+                <div className="w-full h-full rounded-full bg-background dark:bg-[#0c0516] flex items-center justify-center overflow-hidden">
+                  {userDetail?.profilePictureUrl ? (
+                    <img
+                      src={getImageUrl(userDetail.profilePictureUrl) || ''}
+                      alt={displayName}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <span className="text-xs font-bold text-orange-400">
+                      {displayInitials}
+                    </span>
+                  )}
                 </div>
-              )}
-              <span className="text-sm hidden sm:inline">{user.name || user.email}</span>
+              </div>
             </div>
           )}
         </div>
-      </div>
+      </header>
+
       <UserDetailDialog 
         open={userDetailDialogOpen} 
         onOpenChange={setUserDetailDialogOpen} 
       />
-    </header>
+    </>
   );
 }

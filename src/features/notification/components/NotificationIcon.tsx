@@ -1,49 +1,31 @@
 import { type ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
-import { BellIcon } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
+import { Bell } from 'lucide-react';
 import { useNotificationStore } from '../stores/notification-store';
 import { NotificationDropdown } from './NotificationDropdown';
 
 export function NotificationIcon(): ReactElement {
   const { t } = useTranslation();
-  const { unreadCount, connectionState } = useNotificationStore();
+  const { unreadCount } = useNotificationStore();
+  
+  // Eğer bildirim sayısı 0'dan büyükse true döner
   const hasUnread = unreadCount > 0;
 
   return (
-    <NotificationDropdown
-      children={
-        <Button
-          variant="ghost"
-          size="icon"
-          className="relative"
-          aria-label={`${t('notification.notifications')}${hasUnread ? ` (${unreadCount} ${t('notification.new')})` : ''}`}
-        >
-          <BellIcon className="size-5" />
-          {hasUnread && (
-            <span className="absolute top-1 right-1 flex size-2">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-destructive opacity-75" />
-              <span className="relative inline-flex size-2 rounded-full bg-destructive" />
-            </span>
-          )}
-          {unreadCount > 0 && (
-            <span className="absolute -top-1 -right-1 flex size-5 items-center justify-center rounded-full bg-destructive text-[10px] font-bold text-destructive-foreground">
-              {unreadCount > 99 ? '99+' : unreadCount}
-            </span>
-          )}
-          {connectionState === 'disconnected' && (
-            <span
-              className={cn(
-                'absolute bottom-0 right-0 size-2 rounded-full border-2 border-background',
-                'bg-yellow-500'
-              )}
-              title={t('notification.connectionDisconnected')}
-            />
-          )}
-        </Button>
-      }
-    />
+    <NotificationDropdown>
+      {/* Trigger Button */}
+      <button
+        className="relative p-2 rounded-full hover:bg-white/5 transition-colors group focus:outline-none"
+        aria-label={`${t('notification.notifications')}${hasUnread ? ` (${unreadCount} ${t('notification.new')})` : ''}`}
+      >
+        {/* Zil İkonu */}
+        <Bell size={22} className="text-slate-400 group-hover:text-white transition-colors" />
+        
+        {/* SADECE Okunmamış Bildirim Varsa Pembe Nokta Göster */}
+        {hasUnread && (
+          <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-pink-500 border-2 border-[#0c0516] rounded-full" />
+        )}
+      </button>
+    </NotificationDropdown>
   );
 }
-

@@ -4,16 +4,8 @@ import { useTranslation } from 'react-i18next';
 import { useUIStore } from '@/stores/ui-store';
 import { useAuthStore } from '@/stores/auth-store';
 import { cn } from '@/lib/utils';
-import { Input } from '@/components/ui/input';
-import { Search, X } from 'lucide-react';
 import { toast } from 'sonner';
-
-interface NavItem {
-  title: string;
-  href?: string;
-  icon?: ReactElement;
-  children?: NavItem[];
-}
+import { ChevronDown, ChevronRight, LogOut } from 'lucide-react';
 
 interface NavItem {
   title: string;
@@ -26,6 +18,7 @@ interface SidebarProps {
   items: NavItem[];
 }
 
+// --- NAV ITEM COMPONENT ---
 function NavItemComponent({
   item,
   searchQuery,
@@ -41,11 +34,11 @@ function NavItemComponent({
 }): ReactElement {
   const location = useLocation();
   const { isSidebarOpen, setSidebarOpen } = useUIStore();
+  
   const hasChildren = item.children && item.children.length > 0;
+  const isChildActive = item.children?.some((child) => child.href && location.pathname === child.href);
   const isActive = item.href ? location.pathname === item.href : false;
-  const isChildActive = item.children?.some(
-    (child) => child.href && location.pathname === child.href
-  );
+  
   const itemKey = item.href || item.title;
   const isExpanded = expandedItemKey === itemKey;
   const onToggleRef = useRef(onToggle);
@@ -56,69 +49,36 @@ function NavItemComponent({
   onToggleRef.current = onToggle;
 
   const normalizeText = (text: string): string => {
-    return text
-      .toLowerCase()
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
-      .replace(/ı/g, 'i')
-      .replace(/ş/g, 's')
-      .replace(/ğ/g, 'g')
-      .replace(/ü/g, 'u')
-      .replace(/ö/g, 'o')
-      .replace(/ç/g, 'c')
-      .replace(/İ/g, 'i')
-      .replace(/Ş/g, 's')
-      .replace(/Ğ/g, 'g')
-      .replace(/Ü/g, 'u')
-      .replace(/Ö/g, 'o')
-      .replace(/Ç/g, 'c');
+    return text.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/ı/g, 'i').replace(/ş/g, 's').replace(/ğ/g, 'g').replace(/ü/g, 'u').replace(/ö/g, 'o').replace(/ç/g, 'c').replace(/İ/g, 'i').replace(/Ş/g, 's').replace(/Ğ/g, 'g').replace(/Ü/g, 'u').replace(/Ö/g, 'o').replace(/Ç/g, 'c');
   };
 
   const childMatchesSearch = useCallback((childTitle: string): boolean => {
     if (!searchQuery.trim()) return true;
-    
     const normalizedQuery = normalizeText(searchQuery);
     const queryWords = normalizedQuery.split(/\s+/).filter((word) => word.length > 0);
-    
     if (queryWords.length === 0) return true;
-    
     const normalizedChildTitle = normalizeText(childTitle);
     const childWords = normalizedChildTitle.split(/\s+/).filter((word) => word.length > 0);
-    
-    return queryWords.every((queryWord) =>
-      childWords.some((childWord) => childWord.includes(queryWord))
-    );
+    return queryWords.every((queryWord) => childWords.some((childWord) => childWord.includes(queryWord)));
   }, [searchQuery]);
 
   const matchesSearch = useMemo(() => {
     if (!searchQuery.trim()) return true;
-    
     const normalizedQuery = normalizeText(searchQuery);
     const queryWords = normalizedQuery.split(/\s+/).filter((word) => word.length > 0);
-    
     if (queryWords.length === 0) return true;
-    
     const normalizedTitle = normalizeText(item.title);
     const titleWords = normalizedTitle.split(/\s+/).filter((word) => word.length > 0);
-    
-    const titleMatch = queryWords.every((queryWord) =>
-      titleWords.some((titleWord) => titleWord.includes(queryWord))
-    );
-    
+    const titleMatch = queryWords.every((queryWord) => titleWords.some((titleWord) => titleWord.includes(queryWord)));
     if (titleMatch) return true;
-    
     const childrenMatch = item.children?.some((child) => childMatchesSearch(child.title));
-    
     return childrenMatch || false;
   }, [item, searchQuery, childMatchesSearch]);
 
   useEffect(() => {
     const pathnameChanged = lastPathnameRef.current !== location.pathname;
     lastPathnameRef.current = location.pathname;
-    
-    if (pathnameChanged) {
-      lastActiveRef.current = false;
-    }
+    if (pathnameChanged) lastActiveRef.current = false;
     
     if (isChildActive && hasChildren && !isExpanded && !lastActiveRef.current && !isManualClick) {
       lastActiveRef.current = true;
@@ -131,112 +91,100 @@ function NavItemComponent({
   useEffect(() => {
     const searchChanged = lastSearchRef.current !== searchQuery;
     lastSearchRef.current = searchQuery;
-
     if (searchQuery.trim() && matchesSearch && hasChildren && !isExpanded && searchChanged) {
       onToggleRef.current(itemKey);
     }
   }, [searchQuery, matchesSearch, hasChildren, itemKey, isExpanded]);
 
-  if (!matchesSearch) {
-    return <></>;
-  }
+  if (!matchesSearch) return <></>;
 
   const handleIconClick = (e: React.MouseEvent): void => {
     if (!isSidebarOpen) {
-      e.preventDefault();
-      e.stopPropagation();
-      setSidebarOpen(true);
-      if (hasChildren) {
-        onToggleRef.current(itemKey);
-      }
+      e.preventDefault(); e.stopPropagation(); setSidebarOpen(true);
+      if (hasChildren) onToggleRef.current(itemKey);
     }
   };
 
   if (hasChildren) {
+    const visualActive = isChildActive; 
+    
     return (
-      <div className="space-y-1">
-        <button
-          type="button"
-          onClick={() => {
-            if (!isSidebarOpen) {
-              setSidebarOpen(true);
-              setTimeout(() => {
-                onToggleRef.current(itemKey);
-              }, 100);
-            } else {
-              onToggle(itemKey);
-            }
-          }}
-          className={cn(
-            'flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
-            'hover:bg-accent hover:text-accent-foreground',
-            isChildActive
-              ? 'bg-accent text-accent-foreground'
-              : 'text-muted-foreground',
-            !isSidebarOpen && 'justify-center'
-          )}
+      <div className="mb-1">
+        <button 
+            type="button"
+            className={cn(
+                "relative flex w-full items-center gap-3 rounded-xl px-3 py-2 transition-colors cursor-pointer select-none text-left group",
+                visualActive 
+                  ? 'bg-slate-100 dark:bg-white/5' 
+                  : 'hover:bg-slate-100 dark:hover:bg-white/5',
+                !isSidebarOpen && "justify-center px-0"
+            )}
+            onClick={() => {
+                if (!isSidebarOpen) {
+                  setSidebarOpen(true);
+                  setTimeout(() => onToggleRef.current(itemKey), 100);
+                } else {
+                  onToggle(itemKey);
+                }
+            }}
         >
           {item.icon && (
-            <span
-              className={cn('flex-shrink-0', !isSidebarOpen && 'mx-auto')}
-              onClick={handleIconClick}
+            <div 
+                className={cn(
+                    "w-9 h-9 rounded-lg flex items-center justify-center transition-colors shrink-0",
+                    visualActive 
+                      ? 'bg-pink-50 text-pink-600 dark:bg-pink-500/20 dark:text-pink-400' 
+                      : 'bg-white border border-slate-200 text-slate-500 group-hover:text-slate-700 dark:bg-slate-800 dark:border-none dark:text-slate-400 dark:group-hover:text-white'
+                )}
+                onClick={handleIconClick}
             >
               {item.icon}
-            </span>
+            </div>
           )}
-          <span
-            className={cn(
-              'flex-1 truncate text-left transition-opacity',
-              !isSidebarOpen && 'hidden'
-            )}
-          >
-            {item.title}
-          </span>
+
           {isSidebarOpen && (
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className={cn(
-                'transition-transform',
-                isExpanded && 'rotate-90'
-              )}
-            >
-              <polyline points="9 18 15 12 9 6" />
-            </svg>
+             <span className={cn(
+               "flex-1 text-sm font-medium transition-colors",
+               visualActive 
+                 ? 'text-slate-900 dark:text-white' 
+                 : 'text-slate-600 dark:text-slate-300'
+             )}>
+                {item.title}
+             </span>
+          )}
+
+          {isSidebarOpen && (
+            <div className="text-slate-400 dark:text-slate-500">
+                {isExpanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+            </div>
+          )}
+
+          {visualActive && !isExpanded && !isSidebarOpen && (
+             <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 rounded-r-full bg-gradient-to-b from-pink-500 to-orange-500" />
           )}
         </button>
+
         {isExpanded && isSidebarOpen && (
-          <div className="ml-4 space-y-1 border-l pl-4">
+          <div className="ml-12 mt-2 space-y-1 border-l border-slate-200 dark:border-white/10 pl-2">
             {item.children?.map((child) => {
-              const isChildActive = location.pathname === child.href;
-              
               if (!childMatchesSearch(child.title)) return null;
-              
+              const isSubActive = location.pathname === child.href;
               return (
                 <Link
                   key={child.href}
                   to={child.href || '#'}
                   className={cn(
-                    'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
-                    'hover:bg-accent hover:text-accent-foreground',
-                    isChildActive
-                      ? 'bg-accent text-accent-foreground'
-                      : 'text-muted-foreground'
+                    "flex items-center justify-between px-3 py-2 rounded-lg transition-colors text-sm block w-full",
+                    isSubActive 
+                      ? 'bg-slate-100 text-slate-900 font-medium dark:bg-white/10 dark:text-white' 
+                      : 'text-slate-500 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-white/5'
                   )}
                   onClick={() => {
-                    if (window.innerWidth < 1024) {
-                      useUIStore.getState().setSidebarOpen(false);
-                    }
+                    if (window.innerWidth < 1024) useUIStore.getState().setSidebarOpen(false);
                   }}
                 >
                   <span className="truncate">{child.title}</span>
+                  {isSubActive && <span className="w-2 h-2 rounded-full bg-pink-500 shrink-0" />}
                 </Link>
               );
             })}
@@ -246,86 +194,74 @@ function NavItemComponent({
     );
   }
 
-  if (!item.href) {
-    return <></>;
-  }
+  if (!item.href) return <></>;
 
   return (
-    <Link
-      to={item.href}
-      className={cn(
-        'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
-        'hover:bg-accent hover:text-accent-foreground',
-        isActive
-          ? 'bg-accent text-accent-foreground'
-          : 'text-muted-foreground',
-        !isSidebarOpen && 'justify-center'
-      )}
-      onClick={(e) => {
-        if (!isSidebarOpen) {
-          e.preventDefault();
-          setSidebarOpen(true);
-        } else {
-          if (window.innerWidth < 1024) {
-            setSidebarOpen(false);
-          }
-        }
-      }}
-    >
-      {item.icon && (
-        <span
-          className={cn('flex-shrink-0', !isSidebarOpen && 'mx-auto')}
-          onClick={handleIconClick}
-        >
-          {item.icon}
-        </span>
-      )}
-      <span
+    <div className="mb-1">
+        <Link
+        to={item.href}
         className={cn(
-          'truncate transition-opacity',
-          !isSidebarOpen && 'hidden'
+            "relative flex items-center gap-3 rounded-xl px-3 py-2 transition-colors group",
+            isActive 
+              ? 'bg-slate-100 dark:bg-white/5' 
+              : 'hover:bg-slate-100 dark:hover:bg-white/5',
+            !isSidebarOpen && "justify-center px-0"
         )}
-      >
-        {item.title}
-      </span>
-    </Link>
+        onClick={(e) => {
+            if (!isSidebarOpen) { e.preventDefault(); setSidebarOpen(true); } else if (window.innerWidth < 1024) { setSidebarOpen(false); }
+        }}
+        >
+            {item.icon && (
+                <div className={cn(
+                    "w-9 h-9 rounded-lg flex items-center justify-center transition-colors shrink-0",
+                    isActive 
+                      ? 'bg-pink-50 text-pink-600 dark:bg-pink-500/20 dark:text-pink-400' 
+                      : 'bg-white border border-slate-200 text-slate-500 group-hover:text-slate-700 dark:bg-slate-800 dark:border-none dark:text-slate-400 dark:group-hover:text-white'
+                )} onClick={handleIconClick}>
+                    {item.icon}
+                </div>
+            )}
+            
+            {isSidebarOpen && (
+                <span className={cn(
+                  "text-sm font-medium transition-colors", 
+                  isActive ? 'text-slate-900 dark:text-white' : 'text-slate-600 dark:text-slate-300'
+                )}>
+                    {item.title}
+                </span>
+            )}
+
+            {isActive && (
+                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 rounded-r-full bg-gradient-to-b from-pink-500 to-orange-500" />
+            )}
+        </Link>
+    </div>
   );
 }
 
+// --- ANA SIDEBAR ---
 export function Sidebar({ items }: SidebarProps): ReactElement {
   const { t } = useTranslation();
-  const { isSidebarOpen } = useUIStore();
+  const { isSidebarOpen, searchQuery } = useUIStore(); 
   const { logout } = useAuthStore();
   const navigate = useNavigate();
-  const [searchQuery, setSearchQuery] = useState('');
   const [expandedItemKey, setExpandedItemKey] = useState<string | null>(null);
   const [isManualClick, setIsManualClick] = useState(false);
 
   useEffect(() => {
-    if (!isSidebarOpen) {
-      setExpandedItemKey(null);
-    }
+    if (!isSidebarOpen) setExpandedItemKey(null);
   }, [isSidebarOpen]);
 
   const handleToggle = useCallback((key: string | null): void => {
     setIsManualClick(true);
-    setExpandedItemKey((prev) => {
-      if (key === null) {
-        return null;
-      }
-      if (prev === key) {
-        return null;
-      }
-      return key;
-    });
+    setExpandedItemKey((prev) => (key === null || prev === key ? null : key));
   }, []);
-
 
   return (
     <>
       {isSidebarOpen && (
         <div
-          className="fixed inset-0 z-40 bg-black/50 lg:hidden"
+          className="fixed inset-0 z-50 bg-black/50 lg:hidden"
           onClick={() => useUIStore.getState().setSidebarOpen(false)}
           aria-hidden="true"
         />
@@ -333,93 +269,81 @@ export function Sidebar({ items }: SidebarProps): ReactElement {
 
       <aside
         className={cn(
-          'fixed left-0 top-16 bottom-0 z-40 w-64 border-r bg-background transition-transform duration-300 ease-in-out lg:translate-x-0 overflow-y-auto',
-          isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:w-16'
+          'sticky top-0 h-screen z-40 flex flex-col transition-all duration-300 ease-in-out shrink-0 overflow-hidden shadow-2xl',
+          'bg-white border-r border-slate-200 dark:bg-[#130822]/90 dark:border-white/5 dark:backdrop-blur-2xl',
+          isSidebarOpen ? 'w-72' : 'w-20' 
         )}
       >
-        <nav className="flex h-full flex-col gap-1 p-4">
-          {isSidebarOpen && (
-            <div className="mb-4 pb-4 border-b">
-              <h2 className="text-lg font-bold text-primary">V3RII CRM</h2>
-            </div>
-          )}
-          {!isSidebarOpen && (
-            <div className="mb-4 pb-4 border-b flex justify-center">
-              <div className="w-8 h-8 bg-primary rounded flex items-center justify-center">
-                <span className="text-xs font-bold text-primary-foreground">V3</span>
-              </div>
-            </div>
-          )}
-          {isSidebarOpen && (
-            <div className="mb-3">
-              <div className="relative">
-                <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  type="text"
-                  placeholder={t('sidebar.search', 'Ara...')}
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className={cn('h-9', searchQuery ? 'pl-8 pr-8' : 'pl-8')}
-                />
-                {searchQuery && (
-                  <button
-                    type="button"
-                    onClick={() => setSearchQuery('')}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground hover:text-foreground transition-colors"
-                    aria-label="Temizle"
-                  >
-                    <X className="h-4 w-4" />
-                  </button>
-                )}
-              </div>
-            </div>
-          )}
-          <div className="flex-1">
-            {items.map((item, index) => (
-              <NavItemComponent
-                key={item.href || item.title || index}
-                item={item}
-                searchQuery={searchQuery}
-                expandedItemKey={expandedItemKey}
-                onToggle={handleToggle}
-                isManualClick={isManualClick}
-              />
-            ))}
-          </div>
-          <div className="mt-auto pt-4 border-t">
-            <button
-              type="button"
-              onClick={() => {
-                logout();
-                toast.success(t('auth.logout'));
-                navigate('/auth/login');
-              }}
-              className={cn(
-                'flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors text-red-600 hover:bg-red-50 dark:hover:bg-red-950',
-                !isSidebarOpen && 'justify-center'
-              )}
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-                <polyline points="16 17 21 12 16 7" />
-                <line x1="21" y1="12" x2="9" y2="12" />
-              </svg>
-              {isSidebarOpen && <span>{t('sidebar.logout')}</span>}
-            </button>
-          </div>
+        <div className={cn(
+            "h-24 flex items-center justify-center border-b border-slate-100 dark:border-white/5 shrink-0 relative",
+            isSidebarOpen ? "px-4" : "px-0"
+        )}>
+            {isSidebarOpen ? (
+                 <div className="overflow-hidden w-full flex justify-center">
+                    <img 
+                        src="/src/Assets/logo.png" 
+                        alt="Logo" 
+                        className="h-28 object-contain" 
+                    />
+                 </div>
+            ) : (
+                <div className="flex items-center justify-center w-full h-full">
+                
+                     <div className="w-full h-full flex items-center justify-center p-1">
+                         <img 
+                            src="/src/Assets/v3logo.png" 
+                            alt="V3" 
+                            className="w-full h-full object-contain scale-150" 
+                        />
+                     </div>
+                </div>
+            )}
+        </div>
+        <nav className="flex-1 min-h-0 py-6 px-3 space-y-1 overflow-y-auto custom-scrollbar">
+          {items.map((item, index) => (
+            <NavItemComponent
+              key={item.href || item.title || index}
+              item={item}
+              searchQuery={searchQuery}
+              expandedItemKey={expandedItemKey}
+              onToggle={handleToggle}
+              isManualClick={isManualClick}
+            />
+          ))}
         </nav>
+
+        {/* ÇIKIŞ YAP */}
+        <div className="p-3 border-t border-slate-100 dark:border-white/5 shrink-0 bg-white/80 dark:bg-[#130822]/95 backdrop-blur-xl mt-auto">
+          <button
+            type="button"
+            onClick={() => {
+              logout();
+              toast.success(t('auth.logout'));
+              navigate('/auth/login');
+            }}
+            className={cn(
+              "w-full flex items-center gap-3 px-2 py-2 rounded-xl transition-colors group",
+              "hover:bg-slate-100 dark:hover:bg-white/5",
+              !isSidebarOpen && "justify-center"
+            )}
+          >
+            <div className="w-9 h-9 rounded-lg flex items-center justify-center transition-colors shrink-0 bg-slate-100 text-slate-500 group-hover:bg-red-50 group-hover:text-red-600 dark:bg-slate-800 dark:text-slate-400 dark:group-hover:text-red-400 dark:group-hover:bg-slate-800">
+               <LogOut size={18} />
+            </div>
+
+            {isSidebarOpen && (
+               <div className="text-left overflow-hidden">
+                 <span className="text-sm font-medium block truncate text-slate-700 group-hover:text-red-600 dark:text-slate-300 dark:group-hover:text-white">
+                    {t('sidebar.logout', 'Çıkış Yap')}
+                 </span>
+                 <span className="text-[10px] truncate block text-slate-500 dark:text-slate-600">
+                    {t('auth.endSession', 'Oturumu sonlandır')}
+                 </span>
+               </div>
+            )}
+          </button>
+        </div>
       </aside>
     </>
   );
 }
-
