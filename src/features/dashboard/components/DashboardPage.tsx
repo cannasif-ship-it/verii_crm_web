@@ -1,4 +1,4 @@
-import { type ReactElement, useEffect } from 'react';
+import { type ReactElement, type ReactNode, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useUIStore } from '@/stores/ui-store';
 import { useDashboardQuery } from '../hooks/useDashboardQuery';
@@ -11,6 +11,19 @@ import {
 } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Wallet, Users, ShoppingCart, ArrowUpRight, ArrowDownRight, Clock, FileText, Package } from 'lucide-react';
+
+type GlassContainerProps = {
+  children: ReactNode;
+};
+
+function GlassContainer({ children }: GlassContainerProps): ReactElement {
+  return (
+    <div className="bg-[#1a1025]/60 backdrop-blur-xl border border-white/5 p-6 rounded-2xl shadow-[0_0_40px_rgba(15,23,42,0.8)]">
+      {children}
+    </div>
+  );
+}
 
 export function DashboardPage(): ReactElement {
   const { t } = useTranslation();
@@ -146,246 +159,252 @@ export function DashboardPage(): ReactElement {
   const activities = data?.activities || [];
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="w-4 h-4 bg-primary rounded" />
-          <div>
-            <h1 className="text-2xl font-bold">{t('dashboard.title')}</h1>
-            <p className="text-sm text-muted-foreground">
-              {formatDate()} • {formatTime()}
-            </p>
-          </div>
-        </div>
-        <div className="flex gap-2">
-          <Button variant="default">{t('dashboard.report')}</Button>
-          <Button variant="default" className="bg-green-600 hover:bg-green-700">
-            {t('dashboard.customer')}
-          </Button>
-        </div>
+    <div className="relative min-h-[calc(100vh-5rem)] bg-gradient-to-br from-[#050816] via-[#120323] to-[#020617] overflow-hidden">
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute -top-40 -right-24 w-[420px] h-[420px] rounded-full bg-pink-500/10 blur-xl" />
+        <div className="absolute -bottom-52 -left-32 w-[460px] h-[460px] rounded-full bg-orange-500/5 blur-lg" />
       </div>
-
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              {t('dashboard.monthlyRevenue')}
-            </CardTitle>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="text-orange-500"
-            >
-              <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-            </svg>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {kpis ? formatCurrency(kpis.monthlyRevenue) : '₺0,00'}
-            </div>
-            <p className="text-xs text-green-600">
-              +{kpis?.monthlyRevenueChange || 0}% {t('dashboard.thisMonth')}
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              {t('dashboard.conversionRate')}
-            </CardTitle>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="text-purple-500"
-            >
-              <rect x="2" y="4" width="20" height="16" rx="2" />
-              <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
-            </svg>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              %{kpis?.conversionRate.toFixed(1) || '0.0'}
-            </div>
-            <p className="text-xs text-green-600">
-              +{kpis?.conversionRateChange || 0}% {t('dashboard.thisMonth')}
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              {t('dashboard.totalCustomers')}
-            </CardTitle>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="text-blue-500"
-            >
-              <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-              <circle cx="9" cy="7" r="4" />
-              <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
-              <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-            </svg>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {kpis?.totalCustomers.toLocaleString('tr-TR') || '0'}
-            </div>
-            <p className="text-xs text-green-600">
-              +{kpis?.totalCustomersChange || 0}% {t('dashboard.thisMonth')}
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              {t('dashboard.activeAgreements')}
-            </CardTitle>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="text-green-500"
-            >
-              <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-              <circle cx="8.5" cy="7" r="4" />
-              <path d="M20 8v6" />
-              <path d="M23 11h-6" />
-            </svg>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {kpis?.activeAgreements || '0'}
-            </div>
-            <p className="text-xs text-green-600">
-              +{kpis?.activeAgreementsChange || 0}% {t('dashboard.thisMonth')}
-            </p>
-          </CardContent>
-        </Card>
-      </div>
-
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-        <Card className="col-span-4">
-          <CardHeader>
-            <CardTitle>{t('dashboard.recentTransactions')}</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {activities.length === 0 ? (
-                <p className="text-sm text-muted-foreground">
-                  {t('dashboard.noActivities')}
+      <div className="relative px-4 py-6">
+        <GlassContainer>
+          <div className="space-y-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-pink-500 via-purple-500 to-orange-400 flex items-center justify-center shadow-[0_0_18px_rgba(236,72,153,0.6)]">
+                <span className="text-xs font-semibold text-white">VR</span>
+              </div>
+              <div>
+                <h1 className="text-3xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-pink-400 via-purple-300 to-orange-300">
+                  {t('dashboard.title')}
+                </h1>
+                <p className="text-sm text-slate-400/80">
+                  {formatDate()} • {formatTime()}
                 </p>
-              ) : (
-                activities.map((activity) => (
-                  <div
-                    key={activity.id}
-                    className="flex items-center justify-between"
-                  >
-                    <div className="flex items-center gap-3">
-                      {getActivityIcon(activity.type)}
-                      <div className="space-y-1">
-                        <p className="text-sm font-medium">
-                          {activity.title}
-                          {activity.amount && (
-                            <span className="ml-2">
-                              - {formatCurrency(activity.amount)}
-                            </span>
-                          )}
-                        </p>
-                        <p className="text-xs text-muted-foreground">
-                          {activity.timeAgo}
-                        </p>
-                      </div>
-                    </div>
-                    <Badge
-                      variant={
-                        activity.type === 'sale'
-                          ? 'default'
-                          : activity.type === 'task'
-                            ? 'secondary'
-                            : 'outline'
-                      }
-                    >
-                      {t(`dashboard.activityType.${activity.type}`)}
-                    </Badge>
-                  </div>
-                ))
-              )}
+              </div>
             </div>
-          </CardContent>
-        </Card>
+            <div className="flex gap-2">
+              <Button className="flex gap-2 items-center px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-sm text-white hover:bg-white/10">
+                Rapor AI
+              </Button>
+              <Button className="flex gap-2 items-center px-4 py-2 bg-gradient-to-r from-pink-600 to-orange-600 rounded-lg text-sm text-white shadow-lg hover:scale-105 transition">
+                Hızlı İşlemler
+              </Button>
+            </div>
+          </div>
 
-        <Card className="col-span-3">
-          <CardHeader>
-            <div className="flex items-center gap-2">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="text-yellow-500"
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+            {[
+              {
+                label: 'Toplam Gelir',
+                value: '₺845,200',
+                change: '+12.5%',
+                positive: true,
+                Icon: Wallet,
+              },
+              {
+                label: 'Aktif Fırsatlar',
+                value: '142',
+                change: '+8.2%',
+                positive: true,
+                Icon: Users,
+              },
+              {
+                label: 'Yeni Potansiyeller',
+                value: '38',
+                change: '-2.4%',
+                positive: false,
+                Icon: Users,
+              },
+              {
+                label: 'Bekleyen Siparişler',
+                value: '12',
+                change: '+5.0%',
+                positive: true,
+                Icon: ShoppingCart,
+              },
+            ].map((item, index) => (
+              <Card
+                key={index}
+                className="bg-[#150f1e] border border-white/5 rounded-2xl flex flex-col justify-between h-[160px]"
               >
-                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
-              </svg>
-              <CardTitle>{t('dashboard.latestActivities')}</CardTitle>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              {activities.slice(0, 4).map((activity) => (
-                <div key={activity.id} className="flex items-start gap-3">
-                  <div className="mt-1">{getActivityIcon(activity.type)}</div>
-                  <div className="flex-1 space-y-1">
-                    <p className="text-sm font-medium">{activity.title}</p>
-                    {activity.description && (
-                      <p className="text-xs text-muted-foreground">
-                        {activity.description}
-                      </p>
-                    )}
-                    <p className="text-xs text-muted-foreground">
-                      {activity.timeAgo}
-                    </p>
+                <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-4">
+                  <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-slate-300">
+                    <item.Icon size={20} />
                   </div>
+                  <span
+                    className={`flex items-center gap-1 text-[11px] font-bold px-3 py-1 rounded-full border ${
+                      item.positive
+                        ? 'border-green-400/60 bg-green-500/5 text-green-300'
+                        : 'border-red-400/60 bg-red-500/5 text-red-300'
+                    }`}
+                  >
+                    {item.positive ? (
+                      <ArrowUpRight size={12} />
+                    ) : (
+                      <ArrowDownRight size={12} />
+                    )}
+                    {item.change}
+                  </span>
+                </CardHeader>
+                <CardContent className="pt-0">
+                  <p className="text-slate-400 text-xs mb-1">{item.label}</p>
+                  <h3 className="text-2xl font-bold tracking-tight text-white">
+                    {item.value}
+                  </h3>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-7 mt-6">
+            <Card className="col-span-4 bg-[#150f1e] border border-white/5 rounded-2xl flex flex-col h-[380px] lg:h-[420px]">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+                <div className="flex items-center gap-2">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="text-pink-500"
+                  >
+                    <path d="M3 3v18h18" />
+                    <path d="M7 14l4-4 4 4 4-8" />
+                  </svg>
+                  <CardTitle className="text-lg font-bold text-white">
+                    {t('dashboard.monthlySalesAnalysis', 'Aylık Satış Analizi')}
+                  </CardTitle>
                 </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+                <div className="flex gap-4 text-xs font-medium text-slate-400">
+                  <span>
+                    <span className="w-2 h-2 rounded-full bg-pink-600 inline-block mr-2" />
+                    Hedef
+                  </span>
+                  <span>
+                    <span className="w-2 h-2 rounded-full bg-orange-500 inline-block mr-2" />
+                    Gerçekleşen
+                  </span>
+                </div>
+              </CardHeader>
+              <CardContent className="flex-1 flex items-end gap-3 px-2 pb-6">
+                {[40, 65, 45, 80, 55, 90, 70, 85, 60, 75, 95, 60].map(
+                  (height, index) => (
+                    <div
+                      key={index}
+                      className="flex-1 flex flex-col items-center gap-3 h-full justify-end cursor-pointer"
+                    >
+                      <div className="w-full relative flex items-end justify-center h-full">
+                        <div
+                          style={{ height: `${height}%` }}
+                          className="w-full bg-gradient-to-t from-pink-600 via-orange-500 to-yellow-500 opacity-90 rounded-t-sm transition"
+                        />
+                      </div>
+                      <span className="text-[10px] text-slate-500 font-medium">
+                        {['Oca', 'Şub', 'Mar', 'Nis', 'May', 'Haz', 'Tem', 'Ağu', 'Eyl', 'Eki', 'Kas', 'Ara'][index]}
+                      </span>
+                    </div>
+                  ),
+                )}
+              </CardContent>
+            </Card>
+
+            <Card className="col-span-3 bg-[#150f1e] border border-white/5 rounded-2xl flex flex-col h-[380px] lg:h-[420px]">
+              <CardHeader className="flex items-center justify-between pb-4">
+                <div className="flex items-center gap-2">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="text-yellow-400"
+                  >
+                    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+                  </svg>
+                  <CardTitle className="text-white">
+                    {t('dashboard.latestActivities')}
+                  </CardTitle>
+                </div>
+              </CardHeader>
+              <CardContent className="flex-1 overflow-y-auto pr-2">
+                <div className="space-y-3">
+                  {activities.length === 0 ? (
+                    <p className="text-sm text-slate-400">
+                      {t('dashboard.noActivities')}
+                    </p>
+                  ) : (
+                    activities.map((activity) => (
+                      <div
+                        key={activity.id}
+                        className="flex items-start gap-3 p-3 rounded-xl bg-[#1a1425] border border-white/[0.02] hover:bg-white/[0.03] transition"
+                      >
+                        <div className="mt-1">
+                          {getActivityIcon(activity.type)}
+                        </div>
+                        <div className="flex-1 space-y-1">
+                          <p className="text-sm font-medium text-white">
+                            {activity.title}
+                          </p>
+                          {activity.description && (
+                            <p className="text-xs text-slate-400">
+                              {activity.description}
+                            </p>
+                          )}
+                          <p className="text-xs text-slate-500">
+                            {activity.timeAgo}
+                          </p>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+          <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+            {[
+              {
+                title: 'Bekleyen Görevler',
+                description: 'Bugün için 5 toplantın var',
+                Icon: Clock,
+                iconColor: 'text-orange-400',
+              },
+              {
+                title: 'Açık Teklifler',
+                description: '8 teklif onay bekliyor',
+                Icon: FileText,
+                iconColor: 'text-pink-400',
+              },
+              {
+                title: 'Kritik Stok',
+                description: '3 ürün kritik seviyede',
+                Icon: Package,
+                iconColor: 'text-yellow-400',
+              },
+            ].map((item, index) => (
+              <Card
+                key={index}
+                className="bg-[#150f1e] border border-white/5 rounded-2xl flex flex-col items-center justify-center text-center py-8"
+              >
+                <div className="w-16 h-16 rounded-full bg-[#1a1425] border border-white/5 flex items-center justify-center mb-4">
+                  <item.Icon className={item.iconColor} size={32} />
+                </div>
+                <h4 className="font-bold text-lg text-white">{item.title}</h4>
+                <p className="text-xs text-slate-400 mt-2 font-medium">
+                  {item.description}
+                </p>
+              </Card>
+            ))}
+          </div>
+          </div>
+        </GlassContainer>
       </div>
     </div>
   );
