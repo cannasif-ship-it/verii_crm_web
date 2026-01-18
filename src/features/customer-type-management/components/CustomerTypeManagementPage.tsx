@@ -1,6 +1,7 @@
 import { type ReactElement, useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useUIStore } from '@/stores/ui-store';
+import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { CustomerTypeStats } from './CustomerTypeStats';
 import { CustomerTypeTable } from './CustomerTypeTable';
@@ -67,24 +68,29 @@ export function CustomerTypeManagementPage(): ReactElement {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="w-full space-y-8 relative">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold">
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-white mb-1 transition-colors">
             {t('customerTypeManagement.menu', 'Müşteri Tipi Yönetimi')}
           </h1>
-          <p className="text-muted-foreground mt-1 text-sm">
+          <p className="text-slate-500 dark:text-slate-400 text-xs font-medium transition-colors">
             {t('customerTypeManagement.description', 'Müşteri tiplerini yönetin ve düzenleyin')}
           </p>
         </div>
-        <Button onClick={handleAddClick}>
+        
+        <Button 
+          onClick={handleAddClick}
+          className="px-6 py-2 bg-gradient-to-r from-pink-600 to-orange-600 rounded-lg text-white text-sm font-bold shadow-lg shadow-pink-500/20 hover:scale-105 transition-transform border-0 hover:text-white"
+        >
+          <Plus size={18} className="mr-2" />
           {t('customerTypeManagement.addButton', 'Yeni Müşteri Tipi Ekle')}
         </Button>
       </div>
 
       <CustomerTypeStats />
 
-      <div className="space-y-4">
+      <div className="bg-white/70 dark:bg-[#1a1025]/60 backdrop-blur-xl border border-white/60 dark:border-white/5 shadow-sm rounded-2xl p-6 transition-all duration-300">
         <CustomerTypeTable
           onEdit={handleEdit}
           pageNumber={pageNumber}

@@ -238,8 +238,6 @@ function NavItemComponent({
     </div>
   );
 }
-
-// --- ANA SIDEBAR ---
 export function Sidebar({ items }: SidebarProps): ReactElement {
   const { t } = useTranslation();
   const { isSidebarOpen, searchQuery } = useUIStore(); 
@@ -281,7 +279,7 @@ export function Sidebar({ items }: SidebarProps): ReactElement {
             {isSidebarOpen ? (
                  <div className="overflow-hidden w-full flex justify-center">
                     <img 
-                        src="/src/Assets/logo.png" 
+                        src="/src/Assets/veriicrmlogo.png" 
                         alt="Logo" 
                         className="h-28 object-contain" 
                     />
