@@ -21,6 +21,7 @@ import { useCustomerList } from '../hooks/useCustomerList';
 import { useDeleteCustomer } from '../hooks/useDeleteCustomer';
 import type { CustomerDto } from '../types/customer-types';
 import type { PagedFilter } from '@/types/api';
+import { Edit2, Trash2, ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react'; // İkonları Lucide'den alırsak daha şık durur
 
 interface CustomerTableProps {
   onEdit: (customer: CustomerDto) => void;
@@ -76,64 +77,26 @@ export function CustomerTable({
     onSortChange(column, newDirection);
   };
 
+  // Modern Sort İkonu Bileşeni
   const SortIcon = ({ column }: { column: string }): ReactElement => {
     if (sortBy !== column) {
-      return (
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="16"
-          height="16"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className="ml-1 inline-block text-muted-foreground"
-        >
-          <path d="M8 9l4-4 4 4" />
-          <path d="M16 15l-4 4-4-4" />
-        </svg>
-      );
+      return <ArrowUpDown size={14} className="ml-2 inline-block text-slate-400 opacity-50" />;
     }
     return sortDirection === 'asc' ? (
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="16"
-        height="16"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        className="ml-1 inline-block"
-      >
-        <path d="M8 9l4-4 4 4" />
-      </svg>
+      <ArrowUp size={14} className="ml-2 inline-block text-pink-600 dark:text-pink-400" />
     ) : (
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="16"
-        height="16"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        className="ml-1 inline-block"
-      >
-        <path d="M16 15l-4 4-4-4" />
-      </svg>
+      <ArrowDown size={14} className="ml-2 inline-block text-pink-600 dark:text-pink-400" />
     );
   };
 
   if (isLoading || isFetching) {
     return (
-      <div className="flex items-center justify-center py-8">
-        <div className="text-muted-foreground">
-          {t('common.loading', 'Yükleniyor...')}
+      <div className="flex items-center justify-center py-12">
+        <div className="flex flex-col items-center gap-2">
+           <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-current text-pink-500" />
+           <div className="text-sm text-muted-foreground animate-pulse">
+             {t('common.loading', 'Yükleniyor...')}
+           </div>
         </div>
       </div>
     );
@@ -143,8 +106,8 @@ export function CustomerTable({
 
   if (!data || customers.length === 0) {
     return (
-      <div className="flex items-center justify-center py-8">
-        <div className="text-muted-foreground">
+      <div className="flex items-center justify-center py-12">
+        <div className="text-muted-foreground bg-slate-50 dark:bg-white/5 px-6 py-4 rounded-xl border border-dashed border-slate-200 dark:border-white/10">
           {t('common.noData', 'Veri yok')}
         </div>
       </div>
@@ -153,105 +116,107 @@ export function CustomerTable({
 
   const totalPages = Math.ceil((data.totalCount || 0) / pageSize);
 
+  // Tablo Başlık Stili
+  const headStyle = "cursor-pointer select-none text-slate-500 dark:text-slate-400 hover:text-pink-600 dark:hover:text-pink-400 transition-colors py-4";
+
   return (
     <>
-      <div className="rounded-md border">
+      <div className="rounded-xl border border-slate-200 dark:border-white/10 overflow-hidden">
         <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead
-                className="cursor-pointer select-none"
-                onClick={() => handleSort('Id')}
-              >
+          <TableHeader className="bg-slate-50/50 dark:bg-white/5">
+            <TableRow className="border-b border-slate-200 dark:border-white/10 hover:bg-transparent">
+              <TableHead onClick={() => handleSort('Id')} className={headStyle}>
                 <div className="flex items-center">
                   {t('customerManagement.table.id', 'ID')}
                   <SortIcon column="Id" />
                 </div>
               </TableHead>
-              <TableHead
-                className="cursor-pointer select-none"
-                onClick={() => handleSort('CustomerCode')}
-              >
+              <TableHead onClick={() => handleSort('CustomerCode')} className={headStyle}>
                 <div className="flex items-center">
                   {t('customerManagement.table.customerCode', 'Müşteri Kodu')}
                   <SortIcon column="CustomerCode" />
                 </div>
               </TableHead>
-              <TableHead
-                className="cursor-pointer select-none"
-                onClick={() => handleSort('Name')}
-              >
+              <TableHead onClick={() => handleSort('Name')} className={headStyle}>
                 <div className="flex items-center">
                   {t('customerManagement.table.name', 'Müşteri Adı')}
                   <SortIcon column="Name" />
                 </div>
               </TableHead>
-              <TableHead>
+              <TableHead className="text-slate-500 dark:text-slate-400">
                 {t('customerManagement.table.customerType', 'Müşteri Tipi')}
               </TableHead>
-              <TableHead>
+              <TableHead className="text-slate-500 dark:text-slate-400">
                 {t('customerManagement.table.tcknNumber', 'TCKN Numarası')}
               </TableHead>
-              <TableHead>
+              <TableHead className="text-slate-500 dark:text-slate-400">
                 {t('customerManagement.table.country', 'Ülke')}
               </TableHead>
-              <TableHead>
+              <TableHead className="text-slate-500 dark:text-slate-400">
                 {t('customerManagement.table.city', 'Şehir')}
               </TableHead>
-              <TableHead>
+              <TableHead className="text-slate-500 dark:text-slate-400">
                 {t('customerManagement.table.district', 'İlçe')}
               </TableHead>
-              <TableHead>
+              <TableHead className="text-slate-500 dark:text-slate-400">
                 {t('customerManagement.table.phone', 'Telefon')}
               </TableHead>
-              <TableHead>
+              <TableHead className="text-slate-500 dark:text-slate-400">
                 {t('customerManagement.table.phone2', 'Telefon 2')}
               </TableHead>
-              <TableHead>
+              <TableHead className="text-slate-500 dark:text-slate-400">
                 {t('customerManagement.table.email', 'E-posta')}
               </TableHead>
-              <TableHead>
+              <TableHead className="text-slate-500 dark:text-slate-400">
                 {t('customerManagement.table.salesRepCode', 'Satış Temsilcisi')}
               </TableHead>
-              <TableHead>
+              <TableHead className="text-slate-500 dark:text-slate-400">
                 {t('customerManagement.table.branchCode', 'Şube Kodu')}
               </TableHead>
-              <TableHead className="text-right">
+              <TableHead className="text-right text-slate-500 dark:text-slate-400">
                 {t('common.actions', 'İşlemler')}
               </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {customers.map((customer: CustomerDto, index: number) => (
-              <TableRow key={customer.id || `customer-${index}`}>
-                <TableCell>{customer.id}</TableCell>
-                <TableCell>{customer.customerCode || '-'}</TableCell>
-                <TableCell className="font-medium">{customer.name}</TableCell>
-                <TableCell>{customer.customerTypeName || '-'}</TableCell>
-                <TableCell>{customer.tcknNumber || '-'}</TableCell>
-                <TableCell>{customer.countryName || '-'}</TableCell>
-                <TableCell>{customer.cityName || '-'}</TableCell>
-                <TableCell>{customer.districtName || '-'}</TableCell>
-                <TableCell>{customer.phone || '-'}</TableCell>
-                <TableCell>{customer.phone2 || '-'}</TableCell>
-                <TableCell>{customer.email || '-'}</TableCell>
-                <TableCell>{customer.salesRepCode || '-'}</TableCell>
-                <TableCell>{customer.branchCode || '-'}</TableCell>
+              <TableRow 
+                key={customer.id || `customer-${index}`}
+                // TASARIM GİYDİRME: Hover Efekti Buraya Eklendi
+                className="border-b border-slate-100 dark:border-white/5 transition-colors duration-200 hover:bg-pink-50/40 dark:hover:bg-pink-500/5 group"
+              >
+                <TableCell className="font-medium text-slate-700 dark:text-slate-300 group-hover:text-pink-600 dark:group-hover:text-pink-400 transition-colors">
+                    {customer.id}
+                </TableCell>
+                <TableCell className="text-slate-600 dark:text-slate-400">{customer.customerCode || '-'}</TableCell>
+                <TableCell className="font-medium text-slate-900 dark:text-white">{customer.name}</TableCell>
+                <TableCell className="text-slate-600 dark:text-slate-400">{customer.customerTypeName || '-'}</TableCell>
+                <TableCell className="text-slate-600 dark:text-slate-400">{customer.tcknNumber || '-'}</TableCell>
+                <TableCell className="text-slate-600 dark:text-slate-400">{customer.countryName || '-'}</TableCell>
+                <TableCell className="text-slate-600 dark:text-slate-400">{customer.cityName || '-'}</TableCell>
+                <TableCell className="text-slate-600 dark:text-slate-400">{customer.districtName || '-'}</TableCell>
+                <TableCell className="text-slate-600 dark:text-slate-400">{customer.phone || '-'}</TableCell>
+                <TableCell className="text-slate-600 dark:text-slate-400">{customer.phone2 || '-'}</TableCell>
+                <TableCell className="text-slate-600 dark:text-slate-400">{customer.email || '-'}</TableCell>
+                <TableCell className="text-slate-600 dark:text-slate-400">{customer.salesRepCode || '-'}</TableCell>
+                <TableCell className="text-slate-600 dark:text-slate-400">{customer.branchCode || '-'}</TableCell>
                 <TableCell className="text-right">
-                  <div className="flex justify-end gap-2">
+                  <div className="flex justify-end gap-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
                     <Button
-                      variant="outline"
-                      size="sm"
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-500/10"
                       onClick={() => onEdit(customer)}
                     >
-                      {t('common.edit', 'Düzenle')}
+                      <Edit2 size={16} />
                     </Button>
                     <Button
-                      variant="destructive"
-                      size="sm"
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-500/10"
                       onClick={() => handleDeleteClick(customer)}
                     >
-                      {t('common.delete', 'Sil')}
+                      <Trash2 size={16} />
                     </Button>
                   </div>
                 </TableCell>
@@ -261,8 +226,9 @@ export function CustomerTable({
         </Table>
       </div>
 
-      <div className="flex items-center justify-between py-4">
-        <div className="text-sm text-muted-foreground">
+      {/* Pagination Alanı */}
+      <div className="flex flex-col sm:flex-row items-center justify-between py-4 gap-4">
+        <div className="text-sm text-slate-500 dark:text-slate-400">
           {t('customerManagement.table.showing', '{{from}}-{{to}} / {{total}} gösteriliyor', {
             from: (pageNumber - 1) * pageSize + 1,
             to: Math.min(pageNumber * pageSize, data.totalCount || 0),
@@ -275,10 +241,11 @@ export function CustomerTable({
             size="sm"
             onClick={() => onPageChange(pageNumber - 1)}
             disabled={pageNumber <= 1}
+            className="bg-white dark:bg-transparent border-slate-200 dark:border-white/10 hover:bg-slate-50 dark:hover:bg-white/5"
           >
             {t('common.previous', 'Önceki')}
           </Button>
-          <div className="flex items-center px-4 text-sm">
+          <div className="flex items-center px-4 text-sm font-medium text-slate-700 dark:text-slate-200">
             {t('customerManagement.table.page', 'Sayfa {{current}} / {{total}}', {
               current: pageNumber,
               total: totalPages,
@@ -289,6 +256,7 @@ export function CustomerTable({
             size="sm"
             onClick={() => onPageChange(pageNumber + 1)}
             disabled={pageNumber >= totalPages}
+            className="bg-white dark:bg-transparent border-slate-200 dark:border-white/10 hover:bg-slate-50 dark:hover:bg-white/5"
           >
             {t('common.next', 'Sonraki')}
           </Button>
@@ -296,22 +264,23 @@ export function CustomerTable({
       </div>
 
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <DialogContent>
+        <DialogContent className="bg-white dark:bg-[#130822] border border-slate-100 dark:border-white/10 text-slate-900 dark:text-white sm:rounded-2xl">
           <DialogHeader>
-            <DialogTitle>
+            <DialogTitle className="text-slate-900 dark:text-white">
               {t('customerManagement.delete.confirmTitle', 'Müşteriyi Sil')}
             </DialogTitle>
-            <DialogDescription>
+            <DialogDescription className="text-slate-500 dark:text-slate-400">
               {t('customerManagement.delete.confirmMessage', '{{name}} müşterisini silmek istediğinizden emin misiniz?', {
                 name: selectedCustomer?.name || '',
               })}
             </DialogDescription>
           </DialogHeader>
-          <DialogFooter>
+          <DialogFooter className="gap-2 sm:gap-0">
             <Button
               variant="outline"
               onClick={() => setDeleteDialogOpen(false)}
               disabled={deleteCustomer.isPending}
+              className="bg-white dark:bg-transparent border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/5"
             >
               {t('common.cancel', 'İptal')}
             </Button>
@@ -319,6 +288,7 @@ export function CustomerTable({
               variant="destructive"
               onClick={handleDeleteConfirm}
               disabled={deleteCustomer.isPending}
+              className="bg-red-600 hover:bg-red-700 dark:bg-red-900/50 dark:hover:bg-red-900/70 border border-transparent dark:border-red-500/20 text-white"
             >
               {deleteCustomer.isPending
                 ? t('common.loading', 'Yükleniyor...')

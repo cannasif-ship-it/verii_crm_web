@@ -28,7 +28,7 @@ import {
 } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 
-import loginImage from '@/assets/logo.png';
+import loginImage from '@/assets/veriicrmlogo.png';
 import { Building2, Eye, EyeOff, Lock, Mail, MapPin, UserCheck, ArrowLeft, Check, Globe, MessageCircle, ChevronDown } from 'lucide-react';
 
 export function LoginPage(): React.JSX.Element {
