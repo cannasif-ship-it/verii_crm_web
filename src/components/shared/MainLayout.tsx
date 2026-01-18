@@ -356,23 +356,49 @@ export function MainLayout({ navItems }: MainLayoutProps): ReactElement {
   // useNotificationConnection();
 
   return (
-    // DÜZELTİLEN KISIM: 
-    // 1. "bg-background" ile tema uyumu sağlandı.
-    // 2. "flex h-screen overflow-hidden" ile Flex yapısı korundu.
-    <div className="flex h-screen w-full overflow-hidden bg-background">
+    // ANA WRAPPER: Hem Light hem Dark mode zemin rengi ve Font burada
+    <div className="relative flex h-screen w-full overflow-hidden bg-[#f8f9fc] dark:bg-[#0c0516] font-['Outfit'] transition-colors duration-300">
       
-      {/* Sidebar: Fixed, Flexbox veya Sticky olabilir (Sidebar bileşeninin iç yapısına bağlı). 
-          Burada sadece bileşeni çağırıyoruz. */}
-      <Sidebar items={items} />
+      {/* Font Enjeksiyonu */}
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+        .font-outfit { font-family: 'Outfit', sans-serif; }
+        
+        /* Scrollbar Ayarları */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        .dark ::-webkit-scrollbar-track { background: #0c0516; }
+        .dark ::-webkit-scrollbar-thumb { background: #333; }
+        .dark ::-webkit-scrollbar-thumb:hover { background: #555; }
+      `}</style>
 
-      {/* İçerik Alanı: Flex ile kalan alanı doldurur. */}
-      <div className="flex flex-1 flex-col h-full overflow-hidden relative transition-all duration-300">
+      {/* --- GLOBAL AMBIENT GLOWS (Tüm Ekranı Kaplayan Işıklar) --- */}
+      <div className="absolute inset-0 w-full h-full pointer-events-none z-0 overflow-hidden">
+         {/* Light Mode: Sol Üst Pembe */}
+         <div className="absolute top-[-10%] left-[-10%] w-[800px] h-[800px] rounded-full bg-pink-300/30 dark:bg-pink-600/5 blur-[120px] mix-blend-multiply dark:mix-blend-normal transition-colors duration-500" />
+         
+         {/* Light Mode: Sağ Alt Turuncu */}
+         <div className="absolute bottom-[-10%] right-[-10%] w-[600px] h-[600px] rounded-full bg-orange-300/30 dark:bg-orange-600/5 blur-[100px] mix-blend-multiply dark:mix-blend-normal transition-colors duration-500" />
+         
+         {/* Orta Kısım Hafif Geçiş */}
+         <div className="absolute top-[40%] left-[30%] w-[500px] h-[500px] rounded-full bg-indigo-300/20 dark:bg-purple-900/10 blur-[130px] mix-blend-multiply dark:mix-blend-normal transition-colors duration-500" />
+      </div>
+
+      {/* Sidebar - z-20 ile en önde ama arkaplanı şeffaf olmalı */}
+      <div className="relative z-20 h-full">
+        <Sidebar items={items} />
+      </div>
+
+      {/* İçerik Alanı */}
+      <div className="flex flex-1 flex-col h-full overflow-hidden relative z-10">
         
         {/* Navbar */}
         <Navbar />
 
-        {/* Ana İçerik: Sadece burası scroll olur */}
-        <main className="flex-1 overflow-y-auto p-6 text-foreground"> {/* text-foreground ile yazı rengi de temaya uyar */}
+        {/* Ana İçerik */}
+        <main className="flex-1 overflow-y-auto p-6 text-foreground">
            <div className="container mx-auto min-h-full">
              <Outlet />
            </div>

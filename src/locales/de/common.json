@@ -63,13 +63,35 @@
     "offers": "Angebote",
     "activities": "Aktivitäten",
     "dailyTasks": "Tägliche Aufgaben",
+    "erpCustomerManagement": "ERP-Kunde",
+    "approvals": "Ausstehende Genehmigungen",
     "routes": "Routen",
     "orders": "Bestellungen",
     "campaigns": "Kampagnen",
     "reports": "Berichte",
     "powerbi": "PowerBI",
     "titleManagement": "Titelverwaltung",
+    "shippingAddressManagement": "Lieferadressenverwaltung",
     "userManagement": "Benutzerverwaltung",
+    "customerDefinitions": "Kundendefinitionen",
+    "countryManagement": "Länderverwaltung",
+    "cityManagement": "Stadtverwaltung",
+    "districtManagement": "Bezirksverwaltung",
+    "customerTypeManagement": "Kundentypverwaltung",
+    "customerManagement": "Kundenverwaltung",
+    "contactManagement": "Kundenkontaktverwaltung",
+    "paymentTypeManagement": "Zahlungsartenverwaltung",
+    "userDiscountLimitManagement": "Benutzerrabattlimitverwaltung",
+    "productPricingGroupByManagement": "Produktpreisgruppierungsverwaltung",
+    "quotationLineManagement": "Angebotspositionsverwaltung",
+    "quotationCreateWizard": "Neues Angebot erstellen",
+    "productPricingManagement": "Produktpreisverwaltung",
+    "quotationApprovalManagement": "Angebotsgenehmigungsverwaltung",
+    "approvalWorkflowManagement": "Genehmigungs-Workflow-Verwaltung",
+    "activityManagement": "Aktivitätsverwaltung",
+    "activityTypeManagement": "Aktivitätstypverwaltung",
+    "pricingRuleManagement": "Preisregelverwaltung",
+    "stockManagement": "Lagerverwaltung",
     "settings": "Einstellungen",
     "logout": "Abmelden"
   },
@@ -85,12 +107,61 @@
     "customer": "Kunde",
     "recentTransactions": "Letzte Transaktionen",
     "latestActivities": "Letzte Aktivitäten",
+    "viewAll": "Alle anzeigen",
     "noActivities": "Noch keine Aktivitäten",
     "activityType": {
       "sale": "Verkauf",
       "customer": "Kunde",
       "task": "Aufgabe",
       "meeting": "Besprechung"
+    },
+    "stats": {
+      "totalRevenue": "Gesamtumsatz",
+      "activeOpportunities": "Aktive Chancen",
+      "newLeads": "Neue Leads",
+      "pendingOrders": "Offene Bestellungen"
+    },
+    "salesAnalysis": "Verkaufsanalyse",
+    "targetVsActual": "Ziel / Ist",
+    "reportDownload": "Bericht herunterladen",
+    "quickAction": "Schnellaktion",
+    "monthsShort": {
+      "jan": "Jan",
+      "feb": "Feb",
+      "mar": "Mär",
+      "apr": "Apr",
+      "may": "Mai",
+      "jun": "Jun",
+      "jul": "Jul",
+      "aug": "Aug",
+      "sep": "Sep",
+      "oct": "Okt",
+      "nov": "Nov",
+      "dec": "Dez"
+    },
+    "quickStats": {
+      "pendingTasks": "Ausstehende Aufgaben",
+      "pendingTasksDescription": "Sie haben 5 Besprechungen",
+      "openQuotations": "Offene Angebote",
+      "openQuotationsDescription": "8 Angebote offen",
+      "criticalStock": "Kritischer Bestand",
+      "criticalStockDescription": "3 Artikel kritisch"
+    },
+    "deals": {
+      "status": {
+        "orderReceived": "Bestellung erhalten",
+        "quotationSent": "Angebot gesendet",
+        "negotiating": "In Verhandlung",
+        "cancelled": "Storniert",
+        "invoiced": "Rechnung gestellt"
+      },
+      "time": {
+        "twoHoursAgo": "vor 2 Stunden",
+        "fiveHoursAgo": "vor 5 Stunden",
+        "oneDayAgo": "vor 1 Tag",
+        "twoDaysAgo": "vor 2 Tagen",
+        "threeDaysAgo": "vor 3 Tagen"
+      }
     }
   },
   "goodsReceipt": {

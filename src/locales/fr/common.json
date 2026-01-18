@@ -63,13 +63,35 @@
     "offers": "Offres",
     "activities": "Activités",
     "dailyTasks": "Tâches quotidiennes",
+    "erpCustomerManagement": "Client ERP",
+    "approvals": "Approbations en attente",
     "routes": "Itinéraires",
     "orders": "Commandes",
     "campaigns": "Campagnes",
     "reports": "Rapports",
     "powerbi": "PowerBI",
     "titleManagement": "Gestion des titres",
+    "shippingAddressManagement": "Gestion des adresses de livraison",
     "userManagement": "Gestion des utilisateurs",
+    "customerDefinitions": "Définitions des clients",
+    "countryManagement": "Gestion des pays",
+    "cityManagement": "Gestion des villes",
+    "districtManagement": "Gestion des districts",
+    "customerTypeManagement": "Gestion des types de clients",
+    "customerManagement": "Gestion des clients",
+    "contactManagement": "Gestion des contacts clients",
+    "paymentTypeManagement": "Gestion des types de paiement",
+    "userDiscountLimitManagement": "Gestion des limites de remise utilisateur",
+    "productPricingGroupByManagement": "Gestion des groupes de tarification produit",
+    "quotationLineManagement": "Gestion des lignes de devis",
+    "quotationCreateWizard": "Créer un nouveau devis",
+    "productPricingManagement": "Gestion de la tarification produit",
+    "quotationApprovalManagement": "Gestion des approbations de devis",
+    "approvalWorkflowManagement": "Gestion du workflow d'approbation",
+    "activityManagement": "Gestion des activités",
+    "activityTypeManagement": "Gestion des types d'activités",
+    "pricingRuleManagement": "Gestion des règles de tarification",
+    "stockManagement": "Gestion des stocks",
     "settings": "Paramètres",
     "logout": "Déconnexion"
   },
@@ -85,12 +107,61 @@
     "customer": "Client",
     "recentTransactions": "Transactions récentes",
     "latestActivities": "Dernières activités",
+    "viewAll": "Tout afficher",
     "noActivities": "Aucune activité pour le moment",
     "activityType": {
       "sale": "Vente",
       "customer": "Client",
       "task": "Tâche",
       "meeting": "Réunion"
+    },
+    "stats": {
+      "totalRevenue": "Revenu total",
+      "activeOpportunities": "Opportunités actives",
+      "newLeads": "Nouveaux leads",
+      "pendingOrders": "Commandes en attente"
+    },
+    "salesAnalysis": "Analyse des ventes",
+    "targetVsActual": "Objectif / Réalisé",
+    "reportDownload": "Télécharger le rapport",
+    "quickAction": "Action rapide",
+    "monthsShort": {
+      "jan": "Janv",
+      "feb": "Févr",
+      "mar": "Mars",
+      "apr": "Avr",
+      "may": "Mai",
+      "jun": "Juin",
+      "jul": "Juil",
+      "aug": "Août",
+      "sep": "Sept",
+      "oct": "Oct",
+      "nov": "Nov",
+      "dec": "Déc"
+    },
+    "quickStats": {
+      "pendingTasks": "Tâches en attente",
+      "pendingTasksDescription": "Vous avez 5 réunions",
+      "openQuotations": "Devis ouverts",
+      "openQuotationsDescription": "8 devis en attente",
+      "criticalStock": "Stock critique",
+      "criticalStockDescription": "3 articles critiques"
+    },
+    "deals": {
+      "status": {
+        "orderReceived": "Commande reçue",
+        "quotationSent": "Devis envoyé",
+        "negotiating": "En négociation",
+        "cancelled": "Annulé",
+        "invoiced": "Facturé"
+      },
+      "time": {
+        "twoHoursAgo": "il y a 2 heures",
+        "fiveHoursAgo": "il y a 5 heures",
+        "oneDayAgo": "il y a 1 jour",
+        "twoDaysAgo": "il y a 2 jours",
+        "threeDaysAgo": "il y a 3 jours"
+      }
     }
   },
   "goodsReceipt": {
