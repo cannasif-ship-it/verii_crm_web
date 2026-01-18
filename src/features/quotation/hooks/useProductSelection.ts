@@ -182,6 +182,7 @@ export function useProductSelection({ currency, exchangeRates }: UseProductSelec
         const targetCurrencyOption = currencyOptions.find((opt) => opt.dovizTipi === currency);
         const targetCurrencyCode = targetCurrencyOption?.code || 'TRY';
         const mainStockId = product.id || null;
+        const relatedProductKey = crypto.randomUUID();
 
         for (let i = 0; i < requests.length; i++) {
           const request = requests[i];
@@ -228,6 +229,8 @@ export function useProductSelection({ currency, exchangeRates }: UseProductSelec
               description: null,
               pricingRuleHeaderId: null,
               relatedStockId,
+              relatedProductKey,
+              isMainRelatedProduct: isMainProduct,
               isEditing: true,
             };
             lines.push(calculateLineTotals(emptyLine));
@@ -277,6 +280,8 @@ export function useProductSelection({ currency, exchangeRates }: UseProductSelec
             description: null,
             pricingRuleHeaderId: null,
             relatedStockId,
+            relatedProductKey,
+            isMainRelatedProduct: isMainProduct,
             isEditing: true,
           };
 

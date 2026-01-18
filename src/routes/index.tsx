@@ -21,7 +21,10 @@ import { ActivityTypeManagementPage } from '@/features/activity-type';
 import { ShippingAddressManagementPage } from '@/features/shipping-address-management';
 import { DailyTasksPage } from '@/features/daily-tasks/components/DailyTasksPage';
 import { ErpCustomerManagementPage } from '@/features/erp-customer-management';
-import { ApprovalQueueList } from '@/features/approval';
+import { ApprovalRoleGroupManagementPage } from '@/features/approval-role-group-management';
+import { ApprovalUserRoleManagementPage } from '@/features/approval-user-role-management';
+import { ApprovalRoleManagementPage } from '@/features/approval-role-management';
+import { ApprovalFlowManagementPage } from '@/features/approval-flow-management';
 import { QuotationCreateForm, QuotationDetailPage } from '@/features/quotation';
 import { PricingRuleManagementPage } from '@/features/pricing-rule';
 import { StockListPage, StockDetailPage } from '@/features/stock';
@@ -108,8 +111,20 @@ export const router = createBrowserRouter([
         element: <ErpCustomerManagementPage />,
       },
       {
-        path: 'approvals',
-        element: <ApprovalQueueList />,
+        path: 'approval-role-group-management',
+        element: <ApprovalRoleGroupManagementPage />,
+      },
+      {
+        path: 'approval-user-role-management',
+        element: <ApprovalUserRoleManagementPage />,
+      },
+      {
+        path: 'approval-role-management',
+        element: <ApprovalRoleManagementPage />,
+      },
+      {
+        path: 'approval-flow-management',
+        element: <ApprovalFlowManagementPage />,
       },
       {
         path: 'quotations/create',

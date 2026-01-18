@@ -67,6 +67,8 @@ export interface CreateQuotationLineDto {
   description?: string | null;
   pricingRuleHeaderId?: number | null;
   relatedStockId?: number | null;
+  relatedProductKey?: string | null;
+  isMainRelatedProduct?: boolean;
   approvalStatus?: ApprovalStatus;
 }
 
@@ -90,6 +92,8 @@ export interface UpdateQuotationLineDto {
   description?: string | null;
   pricingRuleHeaderId?: number | null;
   relatedStockId?: number | null;
+  relatedProductKey?: string | null;
+  isMainRelatedProduct?: boolean;
   approvalStatus?: ApprovalStatus;
 }
 
@@ -115,6 +119,8 @@ export interface QuotationLineGetDto {
   description?: string | null;
   pricingRuleHeaderId?: number | null;
   relatedStockId?: number | null;
+  relatedProductKey?: string | null;
+  isMainRelatedProduct?: boolean;
   approvalStatus?: ApprovalStatus;
   createdAt: string;
   updatedAt?: string | null;

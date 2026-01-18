@@ -144,14 +144,60 @@ export function MainLayout({ navItems }: MainLayoutProps): ReactElement {
         ),
       },
       {
-        title: t('sidebar.approvals', 'Bekleyen Onaylar'),
-        href: '/approvals',
+        title: t('sidebar.approvalDefinitions', 'Onay Tanım Grubu'),
         icon: (
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-teal-500">
             <path d="M9 11l3 3L22 4" />
             <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
           </svg>
         ),
+        children: [
+          {
+            title: t('sidebar.approvalRoleGroupManagement', 'Onay Rol Grubu Yönetimi'),
+            href: '/approval-role-group-management',
+            icon: (
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-cyan-500">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                <circle cx="9" cy="7" r="4" />
+                <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+                <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+              </svg>
+            ),
+          },
+          {
+            title: t('sidebar.approvalUserRoleManagement', 'Onay Kullanıcı Rolü Yönetimi'),
+            href: '/approval-user-role-management',
+            icon: (
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-blue-500">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                <circle cx="12" cy="7" r="4" />
+              </svg>
+            ),
+          },
+          {
+            title: t('sidebar.approvalRoleManagement', 'Onay Rolü Yönetimi'),
+            href: '/approval-role-management',
+            icon: (
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-indigo-500">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                <circle cx="9" cy="7" r="4" />
+                <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+                <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+              </svg>
+            ),
+          },
+          {
+            title: t('sidebar.approvalFlowManagement', 'Onay Akışı Yönetimi'),
+            href: '/approval-flow-management',
+            icon: (
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-green-500">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                <polyline points="17 8 12 3 7 8" />
+                <line x1="12" y1="3" x2="12" y2="15" />
+              </svg>
+            ),
+          },
+        ],
       },
       {
         title: t('sidebar.erpCustomerManagement'),

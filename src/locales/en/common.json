@@ -68,6 +68,11 @@
     "dailyTasks": "Daily Tasks",
     "erpCustomerManagement": "ERP Customer",
     "approvals": "Pending Approvals",
+    "approvalDefinitions": "Approval Definitions",
+    "approvalRoleGroupManagement": "Approval Role Group Management",
+    "approvalUserRoleManagement": "Approval User Role Management",
+    "approvalRoleManagement": "Approval Role Management",
+    "approvalFlowManagement": "Approval Flow Management",
     "routes": "Routes",
     "orders": "Orders",
     "campaigns": "Campaigns",
@@ -1171,6 +1176,168 @@
       "updateError": "Failed to update title",
       "deleteSuccess": "Title deleted successfully",
       "deleteError": "Failed to delete title"
+    }
+  },
+  "approvalRoleGroup": {
+    "menu": "Approval Role Group Management",
+    "description": "Manage and edit approval role groups",
+    "addButton": "Add New Approval Role Group",
+    "table": {
+      "id": "ID",
+      "name": "Group Name",
+      "createdDate": "Created Date",
+      "createdBy": "Created By",
+      "showing": "Showing {{from}}-{{to}} of {{total}}",
+      "page": "Page {{current}} of {{total}}"
+    },
+    "form": {
+      "addTitle": "Add New Approval Role Group",
+      "editTitle": "Edit Approval Role Group",
+      "addDescription": "Enter new approval role group information",
+      "editDescription": "Edit approval role group information",
+      "name": "Group Name",
+      "namePlaceholder": "Enter group name",
+      "name.required": "Group name is required",
+      "name.maxLength": "Group name must be at most 100 characters"
+    },
+    "delete": {
+      "confirmTitle": "Delete Approval Role Group",
+      "confirmMessage": "Are you sure you want to delete the approval role group {{name}}?"
+    },
+    "messages": {
+      "createSuccess": "Approval role group created successfully",
+      "createError": "Failed to create approval role group",
+      "updateSuccess": "Approval role group updated successfully",
+      "updateError": "Failed to update approval role group",
+      "deleteSuccess": "Approval role group deleted successfully",
+      "deleteError": "Failed to delete approval role group"
+    }
+  },
+  "approvalUserRole": {
+    "menu": "Approval User Role Management",
+    "description": "Manage and edit approval user roles",
+    "addButton": "Add New Approval User Role",
+    "table": {
+      "id": "ID",
+      "userFullName": "User",
+      "approvalRoleName": "Approval Role",
+      "createdDate": "Created Date",
+      "createdBy": "Created By",
+      "showing": "Showing {{from}}-{{to}} of {{total}}",
+      "page": "Page {{current}} of {{total}}"
+    },
+    "form": {
+      "addTitle": "Add New Approval User Role",
+      "editTitle": "Edit Approval User Role",
+      "addDescription": "Enter new approval user role information",
+      "editDescription": "Edit approval user role information",
+      "userId": "User",
+      "selectUser": "Select User",
+      "noUserSelected": "No user selected",
+      "userId.required": "User selection is required",
+      "approvalRoleId": "Approval Role",
+      "selectApprovalRole": "Select Approval Role",
+      "noApprovalRoleSelected": "No approval role selected",
+      "approvalRoleId.required": "Approval role selection is required"
+    },
+    "delete": {
+      "confirmTitle": "Delete Approval User Role",
+      "confirmMessage": "Are you sure you want to delete this approval user role?"
+    },
+    "messages": {
+      "createSuccess": "Approval user role created successfully",
+      "createError": "Failed to create approval user role",
+      "updateSuccess": "Approval user role updated successfully",
+      "updateError": "Failed to update approval user role",
+      "deleteSuccess": "Approval user role deleted successfully",
+      "deleteError": "Failed to delete approval user role"
+    }
+  },
+  "approvalRole": {
+    "menu": "Approval Role Management",
+    "description": "Manage and edit approval roles",
+    "addButton": "Add New Approval Role",
+    "table": {
+      "id": "ID",
+      "approvalRoleGroupName": "Role Group",
+      "name": "Role Name",
+      "createdDate": "Created Date",
+      "createdBy": "Created By",
+      "showing": "Showing {{from}}-{{to}} of {{total}}",
+      "page": "Page {{current}} of {{total}}"
+    },
+    "form": {
+      "addTitle": "Add New Approval Role",
+      "editTitle": "Edit Approval Role",
+      "addDescription": "Enter new approval role information",
+      "editDescription": "Edit approval role information",
+      "approvalRoleGroupId": "Approval Role Group",
+      "selectApprovalRoleGroup": "Select Approval Role Group",
+      "noApprovalRoleGroupSelected": "No approval role group selected",
+      "approvalRoleGroupId.required": "Approval role group selection is required",
+      "name": "Role Name",
+      "namePlaceholder": "Enter role name",
+      "name.required": "Role name is required",
+      "name.maxLength": "Role name must be at most 100 characters"
+    },
+    "delete": {
+      "confirmTitle": "Delete Approval Role",
+      "confirmMessage": "Are you sure you want to delete the approval role {{name}}?"
+    },
+    "messages": {
+      "createSuccess": "Approval role created successfully",
+      "createError": "Failed to create approval role",
+      "updateSuccess": "Approval role updated successfully",
+      "updateError": "Failed to update approval role",
+      "deleteSuccess": "Approval role deleted successfully",
+      "deleteError": "Failed to delete approval role"
+    }
+  },
+  "approvalFlow": {
+    "menu": "Approval Flow Management",
+    "description": "Manage and edit approval flows",
+    "addButton": "Add New Approval Flow",
+    "documentType": {
+      "offer": "Offer",
+      "request": "Request",
+      "order": "Order"
+    },
+    "table": {
+      "id": "ID",
+      "documentType": "Document Type",
+      "description": "Description",
+      "isActive": "Active",
+      "createdDate": "Created Date",
+      "createdBy": "Created By",
+      "showing": "Showing {{from}}-{{to}} of {{total}}",
+      "page": "Page {{current}} of {{total}}"
+    },
+    "form": {
+      "addTitle": "Add New Approval Flow",
+      "editTitle": "Edit Approval Flow",
+      "addDescription": "Enter new approval flow information",
+      "editDescription": "Edit approval flow information",
+      "documentType": "Document Type",
+      "selectDocumentType": "Select document type",
+      "noDocumentTypeSelected": "No document type selected",
+      "documentType.required": "Document type selection is required",
+      "description": "Description",
+      "descriptionPlaceholder": "Enter description (optional)",
+      "description.maxLength": "Description must be at most 200 characters",
+      "isActive": "Active",
+      "isActiveDescription": "Approval flow active status"
+    },
+    "delete": {
+      "confirmTitle": "Delete Approval Flow",
+      "confirmMessage": "Are you sure you want to delete this approval flow?"
+    },
+    "messages": {
+      "createSuccess": "Approval flow created successfully",
+      "createError": "Failed to create approval flow",
+      "updateSuccess": "Approval flow updated successfully",
+      "updateError": "Failed to update approval flow",
+      "deleteSuccess": "Approval flow deleted successfully",
+      "deleteError": "Failed to delete approval flow"
     }
   },
   "userManagement": {
