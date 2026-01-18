@@ -110,12 +110,61 @@
     "customer": "Müşteri",
     "recentTransactions": "Son İşlemler",
     "latestActivities": "Son Aktiviteler",
+    "viewAll": "Tümünü Gör",
     "noActivities": "Henüz aktivite bulunmuyor",
     "activityType": {
       "sale": "Satış",
       "customer": "Müşteri",
       "task": "Görev",
       "meeting": "Toplantı"
+    },
+    "stats": {
+      "totalRevenue": "Toplam Gelir",
+      "activeOpportunities": "Aktif Fırsatlar",
+      "newLeads": "Yeni Potansiyeller",
+      "pendingOrders": "Bekleyen Siparişler"
+    },
+    "salesAnalysis": "Satış Analizi",
+    "targetVsActual": "Hedef / Gerçekleşen",
+    "reportDownload": "Rapor Al",
+    "quickAction": "Hızlı İşlem",
+    "monthsShort": {
+      "jan": "Oca",
+      "feb": "Şub",
+      "mar": "Mar",
+      "apr": "Nis",
+      "may": "May",
+      "jun": "Haz",
+      "jul": "Tem",
+      "aug": "Ağu",
+      "sep": "Eyl",
+      "oct": "Eki",
+      "nov": "Kas",
+      "dec": "Ara"
+    },
+    "quickStats": {
+      "pendingTasks": "Bekleyen Görevler",
+      "pendingTasksDescription": "5 toplantı var",
+      "openQuotations": "Açık Teklifler",
+      "openQuotationsDescription": "8 teklif bekliyor",
+      "criticalStock": "Kritik Stok",
+      "criticalStockDescription": "3 ürün kritik"
+    },
+    "deals": {
+      "status": {
+        "orderReceived": "Sipariş Alındı",
+        "quotationSent": "Teklif Gönderildi",
+        "negotiating": "Görüşülüyor",
+        "cancelled": "İptal",
+        "invoiced": "Faturalandı"
+      },
+      "time": {
+        "twoHoursAgo": "2 Saat önce",
+        "fiveHoursAgo": "5 Saat önce",
+        "oneDayAgo": "1 Gün önce",
+        "twoDaysAgo": "2 Gün önce",
+        "threeDaysAgo": "3 Gün önce"
+      }
     }
   },
   "goodsReceipt": {

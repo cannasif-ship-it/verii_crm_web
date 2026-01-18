@@ -110,12 +110,61 @@
     "customer": "Customer",
     "recentTransactions": "Recent Transactions",
     "latestActivities": "Latest Activities",
+    "viewAll": "View All",
     "noActivities": "No activities yet",
     "activityType": {
       "sale": "Sale",
       "customer": "Customer",
       "task": "Task",
       "meeting": "Meeting"
+    },
+    "stats": {
+      "totalRevenue": "Total Revenue",
+      "activeOpportunities": "Active Opportunities",
+      "newLeads": "New Leads",
+      "pendingOrders": "Pending Orders"
+    },
+    "salesAnalysis": "Sales Analysis",
+    "targetVsActual": "Target vs. Actual",
+    "reportDownload": "Download Report",
+    "quickAction": "Quick Action",
+    "monthsShort": {
+      "jan": "Jan",
+      "feb": "Feb",
+      "mar": "Mar",
+      "apr": "Apr",
+      "may": "May",
+      "jun": "Jun",
+      "jul": "Jul",
+      "aug": "Aug",
+      "sep": "Sep",
+      "oct": "Oct",
+      "nov": "Nov",
+      "dec": "Dec"
+    },
+    "quickStats": {
+      "pendingTasks": "Pending Tasks",
+      "pendingTasksDescription": "You have 5 meetings",
+      "openQuotations": "Open Quotations",
+      "openQuotationsDescription": "8 quotations pending",
+      "criticalStock": "Critical Stock",
+      "criticalStockDescription": "3 items critical"
+    },
+    "deals": {
+      "status": {
+        "orderReceived": "Order Received",
+        "quotationSent": "Quotation Sent",
+        "negotiating": "Negotiating",
+        "cancelled": "Cancelled",
+        "invoiced": "Invoiced"
+      },
+      "time": {
+        "twoHoursAgo": "2 hours ago",
+        "fiveHoursAgo": "5 hours ago",
+        "oneDayAgo": "1 day ago",
+        "twoDaysAgo": "2 days ago",
+        "threeDaysAgo": "3 days ago"
+      }
     }
   },
   "goodsReceipt": {
