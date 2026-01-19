@@ -5,6 +5,20 @@ import { Navbar } from './Navbar';
 import { Sidebar } from './Sidebar';
 import { Footer } from './Footer';
 
+// --- HUGEICONS IMPORTLARI ---
+import { 
+  DashboardSquare02Icon, 
+  UserGroupIcon, 
+  Calendar03Icon, 
+  PackageIcon, 
+  ShoppingBag03Icon, 
+  CheckmarkCircle02Icon, 
+  SlidersHorizontalIcon, 
+  UserCircleIcon, 
+  Settings02Icon 
+} from 'hugeicons-react';
+
+// --- TİP TANIMLAMALARI ---
 interface NavItem {
   title: string;
   href?: string;
@@ -16,355 +30,153 @@ interface MainLayoutProps {
   navItems?: NavItem[];
 }
 
+// --- YARDIMCI FONKSİYONLAR ---
+const trCollator = new Intl.Collator('tr', { sensitivity: 'base', numeric: true });
+
+// Sadece alt listeleri alfabetik sıralar, ana menü dizilişini elle verdiğimiz gibi bırakır.
+const sortNavItems = (items: NavItem[]): NavItem[] => {
+  return items.map((item) => {
+    if (item.children && item.children.length > 0) {
+      // Çocukları sırala
+      const sortedChildren = [...item.children].sort((a, b) => 
+        trCollator.compare(a.title, b.title)
+      );
+      // Recursive sıralama (3. seviye için)
+      return { ...item, children: sortNavItems(sortedChildren) };
+    }
+    return item;
+  });
+};
+
 export function MainLayout({ navItems }: MainLayoutProps): ReactElement {
   const { t } = useTranslation();
+
   const defaultNavItems: NavItem[] = useMemo(() => {
-    const items: NavItem[] = [
+    
+    const iconSize = 22;
+
+    // --- TAM İSTEDİĞİN MENÜ YAPISI ---
+    const logicalMenuStructure: NavItem[] = [
+      
+      // 1. ANA SAYFA
       {
-        title: t('sidebar.customerDefinitions'),
-        icon: (
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-blue-500">
-            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-            <circle cx="9" cy="7" r="4" />
-            <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
-            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-          </svg>
-        ),
+        title: t('sidebar.home', 'Ana Sayfa'),
+        href: '/',
+        icon: <DashboardSquare02Icon size={iconSize} className="text-blue-500" />,
+      },
+
+      // 2. MÜŞTERİLER
+      {
+        title: t('sidebar.customers', 'Müşteriler'),
+        icon: <UserGroupIcon size={iconSize} className="text-purple-500"  />,
+        children: [
+          { title: t('sidebar.customerManagement', 'Müşteri Yönetimi'), href: '/customer-management' },
+          { title: t('sidebar.customerTypeManagement', 'Müşteri Tipi Yönetimi'), href: '/customer-type-management' },
+          { title: t('sidebar.contactManagement', 'Müşteri İletişim Yönetimi'), href: '/contact-management' },
+          { title: t('sidebar.erpCustomerManagement', 'ERP Müşteri'), href: '/erp-customers' },
+        ]
+      },
+
+      // 3. AKTİVİTELER
+      {
+        title: t('sidebar.activities', 'Aktiviteler'),
+        icon: <Calendar03Icon size={iconSize} className="text-emerald-500"  />,
+        children: [
+          { title: t('sidebar.activityTypeManagement', 'Aktivite Tipi Yönetimi'), href: '/activity-type-management' },
+          { title: t('sidebar.activityManagement', 'Aktivite Yönetimi'), href: '/activity-management' },
+          { title: t('sidebar.dailyTasks', 'Günlük İşler'), href: '/daily-tasks' },
+        ]
+      },
+
+      // 4. ÜRÜN & STOK
+      {
+        title: t('sidebar.productAndStock', 'Ürün & Stok'),
+        icon: <PackageIcon size={iconSize} className="text-pink-500" />,
+        children: [
+          { title: t('sidebar.stockManagement', 'Stok Yönetimi'), href: '/stocks' },
+          { title: t('sidebar.productPricingManagement', 'Ürün Fiyatlandırma Yönetimi'), href: '/product-pricing-management' },
+          { title: t('sidebar.productPricingGroupByManagement', 'Ürün Fiyatlandırma Grubu Yönetimi'), href: '/product-pricing-group-by-management' },
+        ]
+      },
+
+      // 5. SATIŞ YÖNETİMİ (3 SEVİYELİ: Satış -> Teklifler -> Yeni Teklif)
+      {
+        title: t('sidebar.salesManagement', 'Satış Yönetimi'),
+        icon: <ShoppingBag03Icon size={iconSize} className="text-orange-500" />,
         children: [
           {
-            title: t('sidebar.countryManagement'),
-            href: '/country-management',
-            icon: (
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-indigo-500">
-                <circle cx="12" cy="12" r="10" />
-                <line x1="2" y1="12" x2="22" y2="12" />
-                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
-              </svg>
-            ),
-          },
-          {
-            title: t('sidebar.cityManagement'),
-            href: '/city-management',
-            icon: (
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-sky-500">
-                <rect x="3" y="3" width="18" height="18" rx="2" />
-                <path d="M3 9h18" />
-                <path d="M9 3v18" />
-              </svg>
-            ),
-          },
-          {
-            title: t('sidebar.districtManagement'),
-            href: '/district-management',
-            icon: (
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-rose-500">
-                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
-                <circle cx="12" cy="10" r="3" />
-              </svg>
-            ),
-          },
-          {
-            title: t('sidebar.titleManagement'),
-            href: '/title-management',
-            icon: (
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-violet-500">
-                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-                <circle cx="9" cy="7" r="4" />
-                <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
-                <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-              </svg>
-            ),
-          },
-          {
-            title: t('sidebar.shippingAddressManagement'),
-            href: '/shipping-address-management',
-            icon: (
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-emerald-500">
-                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
-                <circle cx="12" cy="10" r="3" />
-              </svg>
-            ),
-          },
-        ],
+            title: t('sidebar.proposals', 'Teklifler'),
+            // href YOK, çünkü açılır menü (Grup)
+            children: [
+              {
+                title: t('sidebar.quotationCreateWizard', 'Yeni Teklif Oluştur'),
+                href: '/quotations/create',
+              },
+            ]
+          }
+        ]
       },
-      {
-        title: t('sidebar.customerManagement'),
-        href: '/customer-management',
-        icon: (
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-purple-500">
-            <path d="M17 18a2 2 0 0 0-2-2H9a2 2 0 0 0-2 2" />
-            <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-            <path d="M12 12V4" />
-            <path d="M8 8h8" />
-          </svg>
-        ),
-      },
-      {
-        title: t('sidebar.customerTypeManagement'),
-        href: '/customer-type-management',
-        icon: (
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-lime-500">
-            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-            <circle cx="9" cy="7" r="4" />
-            <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
-            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-          </svg>
-        ),
-      },
-      {
-        title: t('sidebar.contactManagement'),
-        href: '/contact-management',
-        icon: (
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-fuchsia-500">
-            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
-          </svg>
-        ),
-      },
-      {
-        title: t('sidebar.home'),
-        href: '/',
-        icon: (
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-blue-500">
-            <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-            <polyline points="9 22 9 12 15 12 15 22" />
-          </svg>
-        ),
-      },
-      {
-        title: t('sidebar.dailyTasks'),
-        href: '/daily-tasks',
-        icon: (
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-cyan-500">
-            <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-            <line x1="16" y1="2" x2="16" y2="6" />
-            <line x1="8" y1="2" x2="8" y2="6" />
-            <line x1="3" y1="10" x2="21" y2="10" />
-            <path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01M16 18h.01" />
-          </svg>
-        ),
-      },
+
+      // 6. ONAY TANIM GRUBU
       {
         title: t('sidebar.approvalDefinitions', 'Onay Tanım Grubu'),
-        icon: (
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-teal-500">
-            <path d="M9 11l3 3L22 4" />
-            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
-          </svg>
-        ),
+        icon: <CheckmarkCircle02Icon size={iconSize} className="text-teal-500" />,
         children: [
-          {
-            title: t('sidebar.approvalRoleGroupManagement', 'Onay Rol Grubu Yönetimi'),
-            href: '/approval-role-group-management',
-            icon: (
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-cyan-500">
-                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-                <circle cx="9" cy="7" r="4" />
-                <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
-                <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-              </svg>
-            ),
-          },
-          {
-            title: t('sidebar.approvalUserRoleManagement', 'Onay Kullanıcı Rolü Yönetimi'),
-            href: '/approval-user-role-management',
-            icon: (
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-blue-500">
-                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                <circle cx="12" cy="7" r="4" />
-              </svg>
-            ),
-          },
-          {
-            title: t('sidebar.approvalRoleManagement', 'Onay Rolü Yönetimi'),
-            href: '/approval-role-management',
-            icon: (
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-indigo-500">
-                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-                <circle cx="9" cy="7" r="4" />
-                <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
-                <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-              </svg>
-            ),
-          },
-          {
-            title: t('sidebar.approvalFlowManagement', 'Onay Akışı Yönetimi'),
-            href: '/approval-flow-management',
-            icon: (
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-green-500">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                <polyline points="17 8 12 3 7 8" />
-                <line x1="12" y1="3" x2="12" y2="15" />
-              </svg>
-            ),
-          },
-        ],
+          { title: t('sidebar.approvalFlowManagement', 'Onay Akış Yönetimi'), href: '/approval-flow-management' },
+          { title: t('sidebar.approvalRoleManagement', 'Onay Rol Yönetimi'), href: '/approval-role-management' },
+          { title: t('sidebar.approvalRoleGroupManagement', 'Onay Rol Grubu Yönetimi'), href: '/approval-role-group-management' },
+          { title: t('sidebar.approvalUserRoleManagement', 'Onay Kullanıcı Rolü Yönetimi'), href: '/approval-user-role-management' },
+        ]
       },
+
+      // 7. TANIMLAR (İstediğin liste)
       {
-        title: t('sidebar.erpCustomerManagement'),
-        href: '/erp-customers',
-        icon: (
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-emerald-500">
-            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-            <circle cx="9" cy="7" r="4" />
-            <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
-            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-            <path d="M20 8v8M16 12h8" />
-          </svg>
-        ),
+        title: t('sidebar.definitions', 'Tanımlar'),
+        icon: <SlidersHorizontalIcon size={iconSize} className="text-slate-500"  />,
+        children: [
+          { title: t('sidebar.districtManagement', 'İlçe Yönetimi'), href: '/district-management' },
+          { title: t('sidebar.cityManagement', 'Şehir Yönetimi'), href: '/city-management' },
+          { title: t('sidebar.countryManagement', 'Ülke Yönetimi'), href: '/country-management' },
+          { title: t('sidebar.shippingAddressManagement', 'Sevk Adresi Yönetimi'), href: '/shipping-address-management' },
+          { title: t('sidebar.paymentTypeManagement', 'Ödeme Tipi Yönetimi'), href: '/payment-type-management' },
+          { title: t('sidebar.titleManagement', 'Ünvan Yönetimi'), href: '/title-management' },
+          { title: t('sidebar.pricingRuleManagement', 'Fiyat Kuralı Yönetimi'), href: '/pricing-rules' },
+        ]
       },
+
+      // 8. KULLANICILAR
       {
-        title: t('sidebar.paymentTypeManagement'),
-        href: '/payment-type-management',
-        icon: (
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-amber-500">
-            <rect x="1" y="4" width="22" height="16" rx="2" ry="2" />
-            <line x1="1" y1="10" x2="23" y2="10" />
-          </svg>
-        ),
+        title: t('sidebar.users', 'Kullanıcılar'),
+        icon: <UserCircleIcon size={iconSize} className="text-indigo-500" stroke="currentColor" />,
+        children: [
+          { title: t('sidebar.userManagement', 'Kullanıcı Yönetimi'), href: '/user-management' },
+          // Kullanıcı altındaki diğer linkler (varsa)
+          { title: t('sidebar.userDiscountLimitManagement', 'Kullanıcı İskonto Limit Yönetimi'), href: '/user-discount-limit-management' },
+        ]
       },
+
+      // 9. AYARLAR
       {
-        title: t('sidebar.userManagement'),
-        href: '/user-management',
-        icon: (
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-emerald-500">
-            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-            <circle cx="12" cy="7" r="4" />
-          </svg>
-        ),
-      },
-      {
-        title: t('sidebar.userDiscountLimitManagement'),
-        href: '/user-discount-limit-management',
-        icon: (
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-blue-500">
-            <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-          </svg>
-        ),
-      },
-      {
-        title: t('sidebar.productPricingGroupByManagement'),
-        href: '/product-pricing-group-by-management',
-        icon: (
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-green-500">
-            <rect x="1" y="4" width="22" height="16" rx="2" ry="2" />
-            <line x1="1" y1="10" x2="23" y2="10" />
-            <path d="M7 4v16" />
-            <path d="M17 4v16" />
-          </svg>
-        ),
-      },
-      {
-        title: t('sidebar.quotationCreateWizard', 'Yeni Teklif Oluştur'),
-        href: '/quotations/create',
-        icon: (
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-orange-500">
-            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-            <polyline points="14 2 14 8 20 8" />
-            <line x1="12" y1="18" x2="12" y2="12" />
-            <line x1="9" y1="15" x2="15" y2="15" />
-          </svg>
-        ),
-      },
-      {
-        title: t('sidebar.productPricingManagement'),
-        href: '/product-pricing-management',
-        icon: (
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-indigo-500">
-            <line x1="12" y1="1" x2="12" y2="23" />
-            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-          </svg>
-        ),
-      },
-      {
-        title: t('sidebar.activityManagement'),
-        href: '/activity-management',
-        icon: (
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-purple-500">
-            <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-            <circle cx="12" cy="12" r="3" />
-          </svg>
-        ),
-      },
-      {
-        title: t('sidebar.activityTypeManagement'),
-        href: '/activity-type-management',
-        icon: (
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-indigo-500">
-            <path d="M9 11l3 3L22 4" />
-            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
-          </svg>
-        ),
-      },
-      {
-        title: t('sidebar.pricingRuleManagement'),
-        href: '/pricing-rules',
-        icon: (
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-rose-500">
-            <line x1="12" y1="1" x2="12" y2="23" />
-            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-            <path d="M21 12h-8" />
-          </svg>
-        ),
-      },
-      {
-        title: t('sidebar.stockManagement'),
-        href: '/stocks',
-        icon: (
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-500">
-            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z" />
-            <path d="M3 6h18" />
-            <path d="M16 10a4 4 0 0 1-8 0" />
-          </svg>
-        ),
-      },
+        title: t('sidebar.settings', 'Ayarlar'),
+        icon: <Settings02Icon size={iconSize} className="text-gray-500"  />,
+        href: '#' 
+      }
     ];
 
-    const sortedItems = items.map((item) => {
-      if (item.children && item.children.length > 0) {
-        const sortedChildren = [...item.children].sort((a, b) => {
-          const titleA = a.title.toLowerCase().replace(/[çğıöşü]/g, (char) => {
-            const map: Record<string, string> = { ç: 'c', ğ: 'g', ı: 'i', ö: 'o', ş: 's', ü: 'u' };
-            return map[char] || char;
-          });
-          const titleB = b.title.toLowerCase().replace(/[çğıöşü]/g, (char) => {
-            const map: Record<string, string> = { ç: 'c', ğ: 'g', ı: 'i', ö: 'o', ş: 's', ü: 'u' };
-            return map[char] || char;
-          });
-          return titleA.localeCompare(titleB, 'tr');
-        });
-        return { ...item, children: sortedChildren };
-      }
-      return item;
-    });
-
-    return sortedItems.sort((a, b) => {
-      const titleA = a.title.toLowerCase().replace(/[çğıöşü]/g, (char) => {
-        const map: Record<string, string> = { ç: 'c', ğ: 'g', ı: 'i', ö: 'o', ş: 's', ü: 'u' };
-        return map[char] || char;
-      });
-      const titleB = b.title.toLowerCase().replace(/[çğıöşü]/g, (char) => {
-        const map: Record<string, string> = { ç: 'c', ğ: 'g', ı: 'i', ö: 'o', ş: 's', ü: 'u' };
-        return map[char] || char;
-      });
-      return titleA.localeCompare(titleB, 'tr');
-    });
+    // Listeleri alfabetik sırala (recursive)
+    return sortNavItems(logicalMenuStructure);
   }, [t]);
 
   const items = navItems || defaultNavItems;
-  
-  
-  // useNotificationConnection();
 
   return (
-    // ANA WRAPPER: Hem Light hem Dark mode zemin rengi ve Font burada
+    // ANA WRAPPER
     <div className="relative flex h-screen w-full overflow-hidden bg-[#f8f9fc] dark:bg-[#0c0516] font-['Outfit'] transition-colors duration-300">
       
-      {/* Font Enjeksiyonu */}
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
         .font-outfit { font-family: 'Outfit', sans-serif; }
         
-        /* Scrollbar Ayarları */
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
@@ -374,37 +186,23 @@ export function MainLayout({ navItems }: MainLayoutProps): ReactElement {
         .dark ::-webkit-scrollbar-thumb:hover { background: #555; }
       `}</style>
 
-      {/* --- GLOBAL AMBIENT GLOWS (Tüm Ekranı Kaplayan Işıklar) --- */}
+      {/* --- AMBIENT GLOWS --- */}
       <div className="absolute inset-0 w-full h-full pointer-events-none z-0 overflow-hidden">
-         {/* Light Mode: Sol Üst Pembe */}
          <div className="absolute top-[-10%] left-[-10%] w-[800px] h-[800px] rounded-full bg-pink-300/30 dark:bg-pink-600/5 blur-[120px] mix-blend-multiply dark:mix-blend-normal transition-colors duration-500" />
-         
-         {/* Light Mode: Sağ Alt Turuncu */}
          <div className="absolute bottom-[-10%] right-[-10%] w-[600px] h-[600px] rounded-full bg-orange-300/30 dark:bg-orange-600/5 blur-[100px] mix-blend-multiply dark:mix-blend-normal transition-colors duration-500" />
-         
-         {/* Orta Kısım Hafif Geçiş */}
-         <div className="absolute top-[40%] left-[30%] w-[500px] h-[500px] rounded-full bg-indigo-300/20 dark:bg-purple-900/10 blur-[130px] mix-blend-multiply dark:mix-blend-normal transition-colors duration-500" />
       </div>
 
-      {/* Sidebar - z-20 ile en önde ama arkaplanı şeffaf olmalı */}
       <div className="relative z-20 h-full">
         <Sidebar items={items} />
       </div>
 
-      {/* İçerik Alanı */}
       <div className="flex flex-1 flex-col h-full overflow-hidden relative z-10">
-        
-        {/* Navbar */}
         <Navbar />
-
-        {/* Ana İçerik */}
         <main className="flex-1 overflow-y-auto p-6 text-foreground">
            <div className="container mx-auto min-h-full">
              <Outlet />
            </div>
         </main>
-
-        {/* Footer */}
         <Footer />
       </div>
       

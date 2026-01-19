@@ -16,7 +16,6 @@ import {
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from '@/components/ui/form';
 import {
@@ -29,13 +28,29 @@ import {
 import { Input } from '@/components/ui/input';
 
 import loginImage from '@/assets/veriicrmlogo.png';
-import { Building2, Eye, EyeOff, Lock, Mail, MapPin, UserCheck, ArrowLeft, Check, Globe, MessageCircle, ChevronDown } from 'lucide-react';
+
+// --- HUGEICONS IMPORTLARI ---
+// --- HUGEICONS IMPORTLARI ---
+import { 
+  Location01Icon, 
+  Mail02Icon, 
+  LockKeyIcon, 
+  ViewIcon, 
+  ViewOffIcon, 
+  Globe02Icon, 
+  WhatsappIcon,
+  // YENİ EKLENENLER:
+  Call02Icon,        // Telefon için
+  TelegramIcon,      // Telegram için
+  InstagramIcon,     // Instagram için
+  NewTwitterIcon     // X (Twitter) logosu için
+} from 'hugeicons-react';
 
 export function LoginPage(): React.JSX.Element {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-  const { data: branches, isLoading: branchesLoading } = useBranches();
+  const { data: branches } = useBranches();
   const { mutate: login, isPending } = useLogin(branches);
   const { token, isAuthenticated, logout } = useAuthStore();
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
@@ -49,13 +64,12 @@ export function LoginPage(): React.JSX.Element {
       email: '',
       password: '',
       branchId: '',
-     
     },
   });
   
   const [rememberMe, setRememberMe] = useState(false);
 
-  // --- THREE.JS ANIMASYON KODU ---
+  // --- THREE.JS ANIMASYON KODU (AYNEN KORUNDU) ---
   useEffect(() => {
     if (!mountRef.current) return;
 
@@ -274,10 +288,7 @@ export function LoginPage(): React.JSX.Element {
   }, [searchParams, setSearchParams, t, token, isAuthenticated, navigate, logout]);
 
   const onSubmit = (data: LoginRequest): void => {
-    login({
-      ...data,
-    
-    });
+    login({ ...data });
   };
 
   return (
@@ -306,9 +317,11 @@ export function LoginPage(): React.JSX.Element {
               Satış & Müşteri Yönetimi
             </p>
           </div>
+          
           {/* BACKEND FORM */}
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+              
               {/* ŞUBE */}
               <FormField
                 control={form.control}
@@ -317,15 +330,16 @@ export function LoginPage(): React.JSX.Element {
                   <FormItem>
                     <FormControl>
                       <div className="relative group">
-                        {/* Sol İkon */}
-                        <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4 transition-colors group-focus-within:text-orange-400" />
+                        {/* HugeIcon: Location */}
+                        <Location01Icon 
+                          className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 transition-colors group-focus-within:text-orange-400" 
+                          size={18} 
+                          
+                        />
                         <Select
                           onValueChange={field.onChange}
                           value={field.value}
-                         
-
                         >
-                          {/* SELECT TRIGGER: Email inputu ile aynı stil (text-white ve focus:bg-black/50 eklendi) */}
                           <SelectTrigger className="w-full h-auto bg-black/10 border border-white/10 rounded-xl px-4 py-6 pl-12 text-sm text-white focus:ring-0 focus:ring-offset-0 focus:border-pink-500 focus:bg-black/30 transition-colors">
                             <SelectValue placeholder="Şube Seçiniz" />
                           </SelectTrigger>
@@ -347,6 +361,7 @@ export function LoginPage(): React.JSX.Element {
                   </FormItem>
                 )}
               />
+
               {/* EMAIL */}
               <FormField
                 control={form.control}
@@ -355,7 +370,12 @@ export function LoginPage(): React.JSX.Element {
                   <FormItem>
                     <FormControl>
                       <div className="relative group">
-                        <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4 group-focus-within:text-orange-400 " />
+                        {/* HugeIcon: Mail */}
+                        <Mail02Icon 
+                          className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-orange-400" 
+                          size={18} 
+                         
+                        />
                         <Input
                           {...field}
                           type="email"
@@ -368,6 +388,7 @@ export function LoginPage(): React.JSX.Element {
                   </FormItem>
                 )}
               />
+
               {/* PASSWORD */}
               <FormField
                 control={form.control}
@@ -376,7 +397,12 @@ export function LoginPage(): React.JSX.Element {
                   <FormItem>
                     <FormControl>
                       <div className="relative group">
-                        <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4 group-focus-within:text-orange-400" />
+                        {/* HugeIcon: Lock */}
+                        <LockKeyIcon 
+                          className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-orange-400" 
+                          size={18} 
+                         
+                        />
                         <Input
                           {...field}
                           type={isPasswordVisible ? 'text' : 'password'}
@@ -388,7 +414,12 @@ export function LoginPage(): React.JSX.Element {
                           onClick={() => setIsPasswordVisible(v => !v)}
                           className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white"
                         >
-                          {isPasswordVisible ? <EyeOff size={16} /> : <Eye size={16} />}
+                          {/* HugeIcon: Eye/EyeOff */}
+                          {isPasswordVisible ? (
+                            <ViewOffIcon size={20}  />
+                          ) : (
+                            <ViewIcon size={20} />
+                          )}
                         </button>
                       </div>
                     </FormControl>
@@ -403,6 +434,7 @@ export function LoginPage(): React.JSX.Element {
                 </label>
                 <a href="#" className="hover:text-orange-400 transition">Şifremi Unuttum?</a>
               </div>
+
               {/* BUTTON */}
               <button
                 type="submit"
@@ -416,24 +448,57 @@ export function LoginPage(): React.JSX.Element {
           </Form>
         </div>
 
-        {/* --- FOOTER --- */}
-        <div className="w-full max-w-4xl z-20 mt-8 flex flex-col items-center gap-6">
+{/* --- FOOTER --- */}
+        <div className="w-full max-w-4xl z-20 mt-8 flex flex-col items-center gap-8 pb-8">
           <p className="text-slate-400 text-sm font-light tracking-[0.2em] uppercase opacity-80 text-center">
           "İŞİNİZİ TAHMİNLERLE DEĞİL, <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-yellow-400 font-bold border-b border-pink-500/20 pb-0.5">v3rii</span> 'yle yönetin."
           </p>
-          <div className="flex flex-wrap justify-center gap-4 text-sm">
-            <a href="https://v3rii.com" target="_blank" rel="noreferrer" className="flex items-center gap-3 px-5 py-2.5 rounded-full bg-white/5 border border-white/5 text-slate-400 hover:text-white hover:bg-white/10 hover:border-white/10 transition-all group">
-              <Globe className="w-4 h-4 group-hover:text-pink-400 transition-colors" />
+          
+          {/* GRID YAPISI: Mobilde 2'li, Tablet/PC'de 3'lü düzenli sıralama */}
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-2 w-full max-w-l px-2">
+            
+            {/* 1. Telefon */}
+            <a href="tel:+905070123018" className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-white/5 border border-white/5 text-slate-400 hover:text-white hover:bg-white/10 hover:border-white/10 transition-all group w-full">
+              <Call02Icon className="group-hover:text-lime-400 transition-colors shrink-0" size={16} />
+              <span className="font-medium truncate">+90 507 012 30 18</span>
+            </a>
+
+            {/* 2. Website */}
+            <a href="https://v3rii.com" target="_blank" rel="noreferrer" className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-white/5 border border-white/5 text-slate-400 hover:text-white hover:bg-white/10 hover:border-white/10 transition-all group w-full">
+              <Globe02Icon className="group-hover:text-pink-400 transition-colors shrink-0" size={16} />
               <span className="font-medium">v3rii.com</span>
             </a>
-            <a href="mailto:info@v3rii.com" className="flex items-center gap-3 px-5 py-2.5 rounded-full bg-white/5 border border-white/5 text-slate-400 hover:text-white hover:bg-white/10 hover:border-white/10 transition-all group">
-              <Mail className="w-4 h-4 group-hover:text-orange-400 transition-colors" />
-              <span className="font-medium">info@v3rii.com</span>
+
+            {/* 3. E-Posta */}
+            <a href="mailto:info@v3rii.com" className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-white/5 border border-white/5 text-slate-400 hover:text-white hover:bg-white/10 hover:border-white/10 transition-all group w-full">
+              <Mail02Icon className="group-hover:text-orange-400 transition-colors shrink-0" size={16} />
+              <span className="font-medium">E-Posta</span>
             </a>
-            <a href="https://wa.me/905070123018" target="_blank" rel="noreferrer" className="flex items-center gap-3 px-5 py-2.5 rounded-full bg-white/5 border border-white/5 text-slate-400 hover:text-white hover:bg-white/10 hover:border-white/10 transition-all group">
-              <MessageCircle className="w-4 h-4 group-hover:text-emerald-400 transition-colors" />
+
+            {/* 4. WhatsApp */}
+            <a href="https://wa.me/905070123018" target="_blank" rel="noreferrer" className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-white/5 border border-white/5 text-slate-400 hover:text-white hover:bg-white/10 hover:border-white/10 transition-all group w-full">
+              <WhatsappIcon className="group-hover:text-emerald-400 transition-colors shrink-0" size={16} />
               <span className="font-medium">WhatsApp</span>
             </a>
+
+            {/* 5. Telegram */}
+            <a href="https://t.me/v3rii" target="_blank" rel="noreferrer" className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-white/5 border border-white/5 text-slate-400 hover:text-white hover:bg-white/10 hover:border-white/10 transition-all group w-full">
+              <TelegramIcon className="group-hover:text-sky-400 transition-colors shrink-0" size={16} />
+              <span className="font-medium">Telegram</span>
+            </a>
+
+            {/* 6. Instagram */}
+            <a href="https://instagram.com/v3rii" target="_blank" rel="noreferrer" className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-white/5 border border-white/5 text-slate-400 hover:text-white hover:bg-white/10 hover:border-white/10 transition-all group w-full">
+              <InstagramIcon className="group-hover:text-fuchsia-400 transition-colors shrink-0" size={16}/>
+              <span className="font-medium">Instagram</span>
+            </a>
+
+            {/* 7. X (Twitter) - Tek kaldığı için mobilde tam genişlik, PC'de ortalı */}
+            <a href="https://x.com/v3rii" target="_blank" rel="noreferrer" className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-white/5 border border-white/5 text-slate-400 hover:text-white hover:bg-white/10 hover:border-white/10 transition-all group w-full col-span-2 md:col-span-1 md:col-start-2">
+              <NewTwitterIcon className="group-hover:text-white transition-colors shrink-0" size={16}  />
+              <span className="font-medium">X</span>
+            </a>
+
           </div>
         </div>
       </div>
