@@ -1,5 +1,5 @@
 import { api } from '@/lib/axios';
-import type { ApiResponse } from '@/types/api';
+import type { ApiResponse, PagedResponse, PagedParams, PagedFilter } from '@/types/api';
 import type {
   QuotationBulkCreateDto,
   QuotationGetDto,
@@ -7,9 +7,14 @@ import type {
   PriceOfProductRequestDto,
   PricingRuleLineGetDto,
   UserDiscountLimitDto,
+  ApprovalActionGetDto,
+  ApproveActionDto,
+  RejectActionDto,
 } from '../types/quotation-types';
 import { queryKeys } from '../utils/query-keys';
 import { useQuery, useMutation, useQueryClient, type UseMutationResult, type UseQueryResult } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner';
 import { useCustomerOptions } from '@/features/customer-management/hooks/useCustomerOptions';
 import { useShippingAddressesByCustomer } from '@/features/shipping-address-management/hooks/useShippingAddressesByCustomer';
 import { useUserList } from '@/features/user-management/hooks/useUserList';
@@ -34,6 +39,36 @@ export const quotationApi = {
       }
       throw error;
     }
+  },
+
+  getList: async (params: PagedParams & { filters?: PagedFilter[] | Record<string, unknown> }): Promise<PagedResponse<QuotationGetDto>> => {
+    const queryParams = new URLSearchParams();
+    if (params.pageNumber) queryParams.append('pageNumber', params.pageNumber.toString());
+    if (params.pageSize) queryParams.append('pageSize', params.pageSize.toString());
+    if (params.sortBy) queryParams.append('sortBy', params.sortBy);
+    if (params.sortDirection) queryParams.append('sortDirection', params.sortDirection);
+    if (params.filters) {
+      queryParams.append('filters', JSON.stringify(params.filters));
+    }
+
+    const response = await api.get<ApiResponse<PagedResponse<QuotationGetDto>>>(
+      `/api/quotation?${queryParams.toString()}`
+    );
+    
+    if (response.success && response.data) {
+      const pagedData = response.data;
+      
+      const pagedDataWithItems = pagedData as PagedResponse<QuotationGetDto> & { items?: QuotationGetDto[] };
+      if (pagedDataWithItems.items && !pagedData.data) {
+        return {
+          ...pagedData,
+          data: pagedDataWithItems.items,
+        };
+      }
+      
+      return pagedData;
+    }
+    throw new Error(response.message || 'Teklif listesi yüklenemedi');
   },
 
   getById: async (id: number): Promise<QuotationGetDto> => {
@@ -180,6 +215,38 @@ export const quotationApi = {
       throw error;
     }
   },
+
+  startApprovalFlow: async (data: { entityId: number; documentType: number; totalAmount: number }): Promise<ApiResponse<boolean>> => {
+    const response = await api.post<ApiResponse<boolean>>('/api/quotation/start-approval-flow', data);
+    if (!response.success) {
+      throw new Error(response.message || 'Onay akışı başlatılamadı');
+    }
+    return response;
+  },
+
+  getWaitingApprovals: async (): Promise<ApprovalActionGetDto[]> => {
+    const response = await api.get<ApiResponse<ApprovalActionGetDto[]>>('/api/quotation/waiting-approvals');
+    if (response.success && response.data) {
+      return response.data;
+    }
+    return [];
+  },
+
+  approve: async (data: ApproveActionDto): Promise<ApiResponse<boolean>> => {
+    const response = await api.post<ApiResponse<boolean>>('/api/quotation/approve', data);
+    if (!response.success) {
+      throw new Error(response.message || 'Onay işlemi gerçekleştirilemedi');
+    }
+    return response;
+  },
+
+  reject: async (data: RejectActionDto): Promise<ApiResponse<boolean>> => {
+    const response = await api.post<ApiResponse<boolean>>('/api/quotation/reject', data);
+    if (!response.success) {
+      throw new Error(response.message || 'Red işlemi gerçekleştirilemedi');
+    }
+    return response;
+  },
 };
 
 export const useCreateQuotationBulk = (): UseMutationResult<ApiResponse<QuotationGetDto>, Error, QuotationBulkCreateDto, unknown> => {
@@ -190,6 +257,16 @@ export const useCreateQuotationBulk = (): UseMutationResult<ApiResponse<Quotatio
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.quotations() });
     },
+  });
+};
+
+export const useQuotationList = (
+  params: PagedParams & { filters?: PagedFilter[] | Record<string, unknown> }
+): UseQueryResult<PagedResponse<QuotationGetDto>, Error> => {
+  return useQuery({
+    queryKey: queryKeys.quotations(params),
+    queryFn: () => quotationApi.getList(params),
+    staleTime: 2 * 60 * 1000,
   });
 };
 
@@ -273,9 +350,9 @@ export const useUsers = (): UseUsersReturn => {
     data:
       data?.data?.map((user) => ({
         id: user.id,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        fullName: `${user.firstName} ${user.lastName}`,
+        firstName: user.firstName || '',
+        lastName: user.lastName || '',
+        fullName: `${user.firstName || ''} ${user.lastName || ''}`.trim(),
       })) || [],
     isLoading,
   };
@@ -367,5 +444,66 @@ export const usePriceRuleOfQuotation = (
     ),
     enabled,
     staleTime: 2 * 60 * 1000,
+  });
+};
+
+export const useStartApprovalFlow = (): UseMutationResult<ApiResponse<boolean>, Error, { entityId: number; documentType: number; totalAmount: number }, unknown> => {
+  const queryClient = useQueryClient();
+  const { t } = useTranslation();
+
+  return useMutation({
+    mutationFn: (data: { entityId: number; documentType: number; totalAmount: number }) => 
+      quotationApi.startApprovalFlow(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.quotations() });
+      queryClient.invalidateQueries({ queryKey: queryKeys.waitingApprovals() });
+      toast.success(t('quotation.approval.startSuccess', 'Onay akışı başarıyla başlatıldı'));
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || t('quotation.approval.startError', 'Onay akışı başlatılamadı'));
+    },
+  });
+};
+
+export const useWaitingApprovals = (): UseQueryResult<ApprovalActionGetDto[], Error> => {
+  return useQuery({
+    queryKey: queryKeys.waitingApprovals(),
+    queryFn: () => quotationApi.getWaitingApprovals(),
+    staleTime: 30 * 1000,
+    refetchInterval: 60 * 1000,
+  });
+};
+
+export const useApproveAction = (): UseMutationResult<ApiResponse<boolean>, Error, ApproveActionDto, unknown> => {
+  const queryClient = useQueryClient();
+  const { t } = useTranslation();
+
+  return useMutation({
+    mutationFn: (data: ApproveActionDto) => quotationApi.approve(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.waitingApprovals() });
+      queryClient.invalidateQueries({ queryKey: queryKeys.quotations() });
+      toast.success(t('quotation.approval.approveSuccess', 'Onay işlemi başarıyla gerçekleştirildi'));
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || t('quotation.approval.approveError', 'Onay işlemi gerçekleştirilemedi'));
+    },
+  });
+};
+
+export const useRejectAction = (): UseMutationResult<ApiResponse<boolean>, Error, RejectActionDto, unknown> => {
+  const queryClient = useQueryClient();
+  const { t } = useTranslation();
+
+  return useMutation({
+    mutationFn: (data: RejectActionDto) => quotationApi.reject(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.waitingApprovals() });
+      queryClient.invalidateQueries({ queryKey: queryKeys.quotations() });
+      toast.success(t('quotation.approval.rejectSuccess', 'Red işlemi başarıyla gerçekleştirildi'));
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || t('quotation.approval.rejectError', 'Red işlemi gerçekleştirilemedi'));
+    },
   });
 };

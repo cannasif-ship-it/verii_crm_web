@@ -18,7 +18,6 @@ import { useUIStore } from '@/stores/ui-store';
 import { useAuthStore } from '@/stores/auth-store';
 import { useEffect, useMemo } from 'react';
 import { useQuotationCalculations } from '../hooks/useQuotationCalculations';
-import { useCurrencyOptions } from '@/services/hooks/useCurrencyOptions';
 import { useExchangeRate } from '@/services/hooks/useExchangeRate';
 import { findExchangeRateByDovizTipi } from '../utils/price-conversion';
 
@@ -59,7 +58,6 @@ export function QuotationCreateForm(): ReactElement {
   const watchedRepresentativeId = form.watch('quotation.representativeId');
   const watchedOfferDate = form.watch('quotation.offerDate');
   const { calculateLineTotals } = useQuotationCalculations();
-  const { currencyOptions } = useCurrencyOptions();
   const { data: erpRates = [] } = useExchangeRate();
 
   const customerCode = useMemo(() => {

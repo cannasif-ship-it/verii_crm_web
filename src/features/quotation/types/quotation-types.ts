@@ -162,6 +162,8 @@ export interface QuotationGetDto {
   activityId?: number | null;
   createdAt: string;
   updatedAt?: string | null;
+  createdBy?: string | null;
+  updatedBy?: string | null;
   lines?: QuotationLineGetDto[];
   exchangeRates?: QuotationExchangeRateGetDto[];
 }
@@ -180,6 +182,7 @@ export interface QuotationExchangeRateGetDto {
 export interface QuotationLineFormState extends Omit<CreateQuotationLineDto, 'quotationId'> {
   id: string;
   isEditing: boolean;
+  relatedLines?: QuotationLineFormState[];
 }
 
 export interface QuotationExchangeRateFormState {
@@ -271,4 +274,30 @@ export interface UserDiscountLimitDto {
   createdBy?: number | null;
   updatedBy?: number | null;
   deletedBy?: number | null;
+}
+
+export interface ApprovalActionGetDto {
+  id: number;
+  approvalRequestId: number;
+  approvalRequestDescription?: string | null;
+  stepOrder: number;
+  approvedByUserId: number;
+  approvedByUserFullName?: string | null;
+  actionDate: string;
+  status: number;
+  statusName?: string | null;
+  createdDate: string;
+  updatedDate?: string | null;
+  createdBy?: string | null;
+  createdByFullName?: string | null;
+  createdByFullUser?: string | null;
+}
+
+export interface ApproveActionDto {
+  approvalActionId: number;
+}
+
+export interface RejectActionDto {
+  approvalActionId: number;
+  rejectReason?: string | null;
 }

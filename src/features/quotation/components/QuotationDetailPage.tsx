@@ -1,7 +1,7 @@
 import { type ReactElement, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { useQuotation } from '../api/quotation-api';
+import { useQuotation, useStartApprovalFlow } from '../api/quotation-api';
 import { useUIStore } from '@/stores/ui-store';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -14,8 +14,9 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Skeleton } from '@/components/ui/skeleton';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Send } from 'lucide-react';
 import { formatCurrency } from '../utils/format-currency';
+import { PricingRuleType } from '@/features/pricing-rule/types/pricing-rule-types';
 
 export function QuotationDetailPage(): ReactElement {
   const { t } = useTranslation();
@@ -25,6 +26,7 @@ export function QuotationDetailPage(): ReactElement {
   const quotationId = id ? parseInt(id, 10) : 0;
 
   const { data: quotation, isLoading } = useQuotation(quotationId);
+  const startApprovalFlow = useStartApprovalFlow();
 
   useEffect(() => {
     if (quotation) {
@@ -75,12 +77,31 @@ export function QuotationDetailPage(): ReactElement {
 
   const currencyCode = quotation.currency || 'TRY';
 
+  const handleStartApprovalFlow = (): void => {
+    if (!quotation) {
+      return;
+    }
+
+    startApprovalFlow.mutate({
+      entityId: quotation.id,
+      documentType: PricingRuleType.Quotation,
+      totalAmount: quotation.grandTotal,
+    });
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <Button variant="outline" onClick={() => navigate('/quotations/create')}>
           <ArrowLeft className="h-4 w-4 mr-2" />
           {t('common.back', 'Geri')}
+        </Button>
+        <Button 
+          onClick={handleStartApprovalFlow}
+          disabled={startApprovalFlow.isPending || !quotation}
+        >
+          <Send className="h-4 w-4 mr-2" />
+          {t('quotation.approval.sendForApproval', 'Onaya Gönder')}
         </Button>
       </div>
 
