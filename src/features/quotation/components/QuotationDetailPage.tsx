@@ -8,8 +8,7 @@ import { useQuotation, useStartApprovalFlow, useQuotationExchangeRates, useQuota
 import { useCustomerOptions } from '@/features/customer-management/hooks/useCustomerOptions';
 import { useUIStore } from '@/stores/ui-store';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft, Send } from 'lucide-react';
+import { ArrowLeft, Send, Save, Calculator, Layers, X } from 'lucide-react'; // İkonlar güncellendi
 import { createQuotationSchema, type CreateQuotationSchema } from '../schemas/quotation-schema';
 import type { QuotationLineFormState, QuotationExchangeRateFormState, QuotationBulkCreateDto, CreateQuotationDto, PricingRuleLineGetDto, UserDiscountLimitDto } from '../types/quotation-types';
 import { QuotationHeaderForm } from './QuotationHeaderForm';
@@ -29,6 +28,7 @@ export function QuotationDetailPage(): ReactElement {
   const { setPageTitle } = useUIStore();
   const quotationId = id ? parseInt(id, 10) : 0;
 
+  // API Hooks
   const { data: quotation, isLoading } = useQuotation(quotationId);
   const { data: exchangeRatesData = [], isLoading: isLoadingExchangeRates } = useQuotationExchangeRates(quotationId);
   const { data: linesData = [], isLoading: isLoadingLines } = useQuotationLines(quotationId);
@@ -36,10 +36,13 @@ export function QuotationDetailPage(): ReactElement {
   const startApprovalFlow = useStartApprovalFlow();
   const { data: customerOptions = [] } = useCustomerOptions();
 
+  // Local State
   const [lines, setLines] = useState<QuotationLineFormState[]>([]);
   const [exchangeRates, setExchangeRates] = useState<QuotationExchangeRateFormState[]>([]);
   const [pricingRules, setPricingRules] = useState<PricingRuleLineGetDto[]>([]);
   const [temporarySallerData, setTemporarySallerData] = useState<UserDiscountLimitDto[]>([]);
+  
+  // Refs to prevent infinite re-renders or overwrites
   const linesInitializedRef = useRef(false);
   const exchangeRatesInitializedRef = useRef(false);
   const formInitializedRef = useRef(false);
@@ -56,6 +59,7 @@ export function QuotationDetailPage(): ReactElement {
     },
   });
 
+  // Başlık Ayarı
   useEffect(() => {
     if (quotation) {
       setPageTitle(
@@ -71,6 +75,7 @@ export function QuotationDetailPage(): ReactElement {
     };
   }, [quotation, t, setPageTitle]);
 
+  // Form Verilerinin Yüklenmesi
   useEffect(() => {
     if (quotation && !formInitializedRef.current) {
       form.reset({
@@ -95,6 +100,7 @@ export function QuotationDetailPage(): ReactElement {
     }
   }, [quotation, form]);
 
+  // Satırların Yüklenmesi
   useEffect(() => {
     if (linesData && linesData.length > 0 && !linesInitializedRef.current) {
       const formattedLines: QuotationLineFormState[] = linesData.map((line, index) => ({
@@ -131,6 +137,7 @@ export function QuotationDetailPage(): ReactElement {
   const { data: erpRates = [] } = useExchangeRate();
   const { currencyOptions: currencyOptionsForExchangeRates } = useCurrencyOptions();
 
+  // Döviz Kurlarının Yüklenmesi
   useEffect(() => {
     if (exchangeRatesData && exchangeRatesData.length > 0 && !exchangeRatesInitializedRef.current && currencyOptionsForExchangeRates.length > 0) {
       const formattedExchangeRates: QuotationExchangeRateFormState[] = exchangeRatesData.map((rate) => {
@@ -192,21 +199,19 @@ export function QuotationDetailPage(): ReactElement {
     }
   }, [watchedRepresentativeId, userDiscountLimitsData]);
 
+  // Submit İşlemi
   const onSubmit = async (data: CreateQuotationSchema): Promise<void> => {
     if (lines.length === 0) {
-      toast.error(
-        t('quotation.update.error', 'Teklif Güncellenemedi'),
-        {
-          description: t('quotation.lines.required', 'En az 1 satır eklenmelidir'),
-        }
-      );
+      toast.error(t('quotation.update.error', 'Teklif Güncellenemedi'), {
+        description: t('quotation.lines.required', 'En az 1 satır eklenmelidir'),
+      });
       return;
     }
 
     try {
       const linesToSend = lines.map((line) => {
         const { id, isEditing, ...lineData } = line;
-        const { relatedLines, ...cleanLineData } = lineData as QuotationLineFormState & { relatedLines?: QuotationLineFormState[] };
+        const { relatedLines, ...cleanLineData } = lineData as QuotationLineFormState & { relatedLines?: unknown[] };
         return {
           ...cleanLineData,
           quotationId: quotationId,
@@ -263,66 +268,39 @@ export function QuotationDetailPage(): ReactElement {
       const result = await updateMutation.mutateAsync({ id: quotationId, data: payload });
 
       if (result.success && result.data) {
-        toast.success(
-          t('quotation.update.success', 'Teklif Başarıyla Güncellendi'),
-          {
-            description: t('quotation.update.successMessage', 'Teklif başarıyla güncellendi.'),
-          }
-        );
+        toast.success(t('quotation.update.success', 'Teklif Başarıyla Güncellendi'), {
+          description: t('quotation.update.successMessage', 'Teklif başarıyla güncellendi.'),
+        });
       } else {
         throw new Error(result.message || t('quotation.update.errorMessage', 'Teklif güncellenirken bir hata oluştu.'));
       }
     } catch (error: unknown) {
       let errorMessage = t('quotation.update.errorMessage', 'Teklif güncellenirken bir hata oluştu.');
-      
       if (error instanceof Error) {
-        try {
-          const parsedError = JSON.parse(error.message);
-          if (parsedError && typeof parsedError === 'object') {
-            if (parsedError.errors && typeof parsedError.errors === 'object') {
-              const validationErrors = Object.entries(parsedError.errors)
-                .map(([key, value]) => {
-                  if (Array.isArray(value)) {
-                    return `${key}: ${value.join(', ')}`;
-                  }
-                  return `${key}: ${String(value)}`;
-                })
-                .join('\n');
-              errorMessage = validationErrors;
-            } else if (parsedError.message) {
-              errorMessage = parsedError.message;
-            } else if (parsedError.exceptionMessage) {
-              errorMessage = parsedError.exceptionMessage;
-            }
-          } else {
-            errorMessage = error.message;
+          // Hata mesajı ayrıştırma (önceki koddaki gibi)
+          try {
+             const parsedError = JSON.parse(error.message);
+             if (parsedError?.errors) errorMessage = JSON.stringify(parsedError.errors);
+             else if (parsedError?.message) errorMessage = parsedError.message;
+             else errorMessage = error.message;
+          } catch {
+             errorMessage = error.message;
           }
-        } catch {
-          errorMessage = error.message;
-        }
       }
-      
-      toast.error(
-        t('quotation.update.error', 'Teklif Güncellenemedi'),
-        {
-          description: errorMessage,
-          duration: 10000,
-        }
-      );
+      toast.error(t('quotation.update.error', 'Teklif Güncellenemedi'), {
+        description: errorMessage,
+        duration: 10000,
+      });
     }
   };
 
   const handleCurrencyChange = async (newCurrency: string): Promise<void> => {
-    if (lines.length === 0) {
-      return;
-    }
+    if (lines.length === 0) return;
 
     const oldCurrency = watchedCurrency;
     const newCurrencyNum = Number(newCurrency);
 
-    if (oldCurrency === newCurrencyNum) {
-      return;
-    }
+    if (oldCurrency === newCurrencyNum) return;
 
     const updatedLines = await Promise.all(
       lines.map(async (line) => {
@@ -332,51 +310,30 @@ export function QuotationDetailPage(): ReactElement {
         if (oldRate && oldRate > 0 && newRate && newRate > 0) {
           const conversionRatio = oldRate / newRate;
           const newUnitPrice = line.unitPrice * conversionRatio;
-          
-          const updatedLine = {
-            ...line,
-            unitPrice: newUnitPrice,
-          };
-          
+          const updatedLine = { ...line, unitPrice: newUnitPrice };
           return calculateLineTotals(updatedLine);
         }
-
         return line;
       })
     );
-
     setLines(updatedLines);
   };
 
   const handleFormSubmit = async (e: React.FormEvent): Promise<void> => {
     e.preventDefault();
-    
     const isValid = await form.trigger();
     if (!isValid) {
-      const errors = form.formState.errors;
-      const errorFields = Object.keys(errors);
-      if (errorFields.length > 0) {
-        const firstError = errors[errorFields[0] as keyof typeof errors];
-        const errorMessage = firstError?.message || t('quotation.update.validationError', 'Lütfen form alanlarını kontrol ediniz.');
-        toast.error(
-          t('quotation.update.error', 'Teklif Güncellenemedi'),
-          {
-            description: errorMessage,
-          }
-        );
-      }
+      toast.error(t('quotation.update.error', 'Form Hatalı'), {
+        description: t('quotation.update.validationError', 'Lütfen zorunlu alanları kontrol ediniz.'),
+      });
       return;
     }
-
     const formData = form.getValues();
     await onSubmit(formData);
   };
 
   const handleStartApprovalFlow = (): void => {
-    if (!quotation) {
-      return;
-    }
-
+    if (!quotation) return;
     startApprovalFlow.mutate({
       entityId: quotation.id,
       documentType: PricingRuleType.Quotation,
@@ -384,6 +341,7 @@ export function QuotationDetailPage(): ReactElement {
     });
   };
 
+  // Loading Durumu
   if (isLoading || isLoadingExchangeRates || isLoadingLines) {
     return (
       <div className="flex flex-col items-center justify-center py-24 gap-4 border border-zinc-300 dark:border-zinc-700/80 rounded-xl bg-white/50 dark:bg-card/50">
@@ -395,7 +353,7 @@ export function QuotationDetailPage(): ReactElement {
     );
   }
 
-  // Not Found State
+  // Not Found Durumu
   if (!quotation) {
     return (
       <div className="flex flex-col items-center justify-center py-16">
@@ -411,47 +369,74 @@ export function QuotationDetailPage(): ReactElement {
   }
 
   return (
-    <FormProvider {...form}>
-      <form onSubmit={handleFormSubmit} className="space-y-4">
-        <div className="flex items-center justify-end">
-          <Button 
-            type="button"
-            onClick={handleStartApprovalFlow}
-            disabled={startApprovalFlow.isPending || !quotation}
-          >
-            <Send className="h-4 w-4 mr-2" />
-            {t('quotation.approval.sendForApproval', 'Onaya Gönder')}
-          </Button>
-        </div>
-
-        <Card>
-          <CardHeader className="pb-4">
-            <CardTitle className="text-2xl">
-              {t('quotation.detail.title', 'Teklif Detayı: {{offerNo}}', {
-                offerNo: quotation.offerNo || `#${quotation.id}`,
-              })}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="space-y-1">
-              <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
-                {t('quotation.header.title', 'Teklif Bilgileri')}
-              </h3>
-              <QuotationHeaderForm 
-                exchangeRates={exchangeRates}
-                onExchangeRatesChange={setExchangeRates}
-                lines={lines}
-                onLinesChange={async () => {
-                  const newCurrency = form.getValues('quotation.currency');
-                  if (newCurrency) {
-                    await handleCurrencyChange(newCurrency);
-                  }
-                }}
-                initialCurrency={quotation?.currency}
-              />
+    <div className="w-full space-y-8 relative pb-10">
+      <FormProvider {...form}>
+        <form onSubmit={handleFormSubmit} className="space-y-6">
+          
+          {/* HEADER SECTION */}
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div className="flex items-center gap-5">
+              <Button
+                type="button"
+                variant="outline"
+                size="icon"
+                onClick={() => navigate('/quotations')}
+                className="group h-12 w-12 rounded-2xl bg-white/80 dark:bg-zinc-900/50 border-zinc-200 dark:border-white/10 shadow-sm hover:border-pink-500/50 hover:shadow-pink-500/20 transition-all duration-300"
+              >
+                <ArrowLeft className="h-5 w-5 text-zinc-500 group-hover:text-pink-600 transition-colors" />
+              </Button>
+              <div>
+                <h2 className="text-2xl font-bold tracking-tight">
+                    {t('quotation.detail.title', 'Teklif Detayı: {{offerNo}}', { offerNo: quotation.offerNo || `#${quotation.id}` })}
+                </h2>
+                <p className="text-muted-foreground text-sm">
+                    {t('quotation.detail.subtitle', 'Teklif detaylarını görüntüleyin ve düzenleyin.')}
+                </p>
+              </div>
             </div>
 
-            <div className="space-y-1 pt-2 border-t">
+            <div className="flex items-center gap-3">
+                 <Button 
+                    type="button"
+                    variant="secondary"
+                    onClick={handleStartApprovalFlow}
+                    disabled={startApprovalFlow.isPending || !quotation}
+                    className="h-10"
+                >
+                    <Send className="h-4 w-4 mr-2" />
+                    {t('quotation.approval.sendForApproval', 'Onaya Gönder')}
+                </Button>
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-6">
+            
+            {/* 1. SECTON: HEADER FORM */}
+            <div className="space-y-1">
+                <div className="flex items-center gap-2 pb-2 mb-4 border-b border-zinc-200 dark:border-white/5">
+                    <div className="p-2 rounded-lg bg-blue-100 dark:bg-blue-900/20 text-blue-600">
+                        <Layers className="h-5 w-5" />
+                    </div>
+                    <h3 className="text-lg font-semibold text-zinc-900 dark:text-white">
+                        {t('quotation.header.title', 'Teklif Bilgileri')}
+                    </h3>
+                </div>
+                <QuotationHeaderForm 
+                    exchangeRates={exchangeRates}
+                    onExchangeRatesChange={setExchangeRates}
+                    lines={lines}
+                    onLinesChange={async () => {
+                        const newCurrency = form.getValues('quotation.currency');
+                        if (newCurrency) {
+                            await handleCurrencyChange(newCurrency);
+                        }
+                    }}
+                    initialCurrency={quotation?.currency}
+                />
+            </div>
+
+            {/* 2. SECTION: LINE TABLE */}
+            <div className="space-y-1 pt-2">
               <QuotationLineTable
                 lines={lines}
                 setLines={setLines}
@@ -465,67 +450,63 @@ export function QuotationDetailPage(): ReactElement {
               />
             </div>
 
+            {/* 3. SECTION: EXCHANGE RATES (Conditional) */}
             {watchedCurrency !== 2 && watchedCurrency !== 1 && (
-              <div className="space-y-1 pt-2 border-t">
-                <QuotationExchangeRateForm
-                  exchangeRates={exchangeRates}
-                  setExchangeRates={setExchangeRates}
-                  baseCurrency={watchedCurrency}
-                />
+              <div className="space-y-1 pt-2">
+                 <QuotationExchangeRateForm
+                    exchangeRates={exchangeRates}
+                    setExchangeRates={setExchangeRates}
+                    baseCurrency={watchedCurrency}
+                 />
               </div>
             )}
 
-            <div className="pt-2 border-t">
-              <QuotationSummaryCard lines={lines} currency={watchedCurrency} />
+            {/* 4. SECTION: SUMMARY */}
+            <div className="space-y-4 pt-4">
+                <div className="flex items-center gap-2 pb-2 border-b border-zinc-200 dark:border-white/5">
+                    <div className="p-2 rounded-lg bg-green-100 dark:bg-green-900/20 text-green-600">
+                        <Calculator className="h-5 w-5" />
+                    </div>
+                    <h3 className="text-lg font-semibold text-zinc-900 dark:text-white">
+                        {t('quotation.summary.title', 'Teklif Özeti')}
+                    </h3>
+                </div>
+                <div className="grid md:grid-cols-2 gap-6">
+                    <div className="hidden md:block">
+                        {/* Sol taraf boş bırakıldı */}
+                    </div>
+                    <div className="bg-zinc-50/80 dark:bg-zinc-900/50 rounded-xl p-6 border border-zinc-200 dark:border-white/10 shadow-sm">
+                         <QuotationSummaryCard lines={lines} currency={watchedCurrency} />
+                    </div>
+                </div>
             </div>
-          </CardContent>
-        </Card>
 
-        <div className="flex justify-end gap-3 pt-2">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => navigate('/quotations')}
-            size="lg"
-          >
-            {t('common.cancel', 'İptal')}
-          </Button>
-          <Button type="submit" disabled={updateMutation.isPending} size="lg">
-            {updateMutation.isPending
-              ? t('common.saving', 'Kaydediliyor...')
-              : t('common.save', 'Kaydet')}
-          </Button>
-        </div>
-      </form>
-    </FormProvider>
+            {/* ACTION BUTTONS */}
+            <div className="flex items-center justify-end gap-3 pt-6 border-t border-zinc-200 dark:border-white/10">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => navigate('/quotations')}
+                className="group"
+              >
+                <X className="mr-2 h-4 w-4" />
+                {t('common.cancel', 'İptal')}
+              </Button>
+              <Button
+                type="submit"
+                disabled={updateMutation.isPending}
+                className="group bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-700 hover:to-purple-700 text-white min-w-[140px]"
+              >
+                <Save className="mr-2 h-4 w-4" />
+                {updateMutation.isPending
+                  ? t('common.saving', 'Kaydediliyor...')
+                  : t('common.save', 'Kaydet')}
+              </Button>
+            </div>
+
+          </div>
+        </form>
+      </FormProvider>
+    </div>
   );
-}
-
-// --- YARDIMCI BİLEŞEN ---
-function InfoRow({ 
-    label, 
-    value, 
-    icon: Icon, 
-    highlight = false 
-}: { 
-    label: string, 
-    value?: string | null, 
-    icon?: any,
-    highlight?: boolean
-}) {
-    return (
-        <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 text-zinc-500">
-                {Icon && <Icon className="w-3.5 h-3.5 opacity-70" />}
-                <span className="text-xs font-medium uppercase tracking-wide">{label}</span>
-            </div>
-            <span className={cn(
-                "text-sm font-medium truncate pl-4",
-                highlight ? "text-pink-600 dark:text-pink-400 font-bold" : "text-zinc-900 dark:text-zinc-200",
-                !value && "text-zinc-400 italic font-normal"
-            )}>
-                {value || '-'}
-            </span>
-        </div>
-    )
 }
