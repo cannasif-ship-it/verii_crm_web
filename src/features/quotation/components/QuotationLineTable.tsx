@@ -1,5 +1,6 @@
 import { type ReactElement, useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner';
 import {
   Table,
   TableBody,
@@ -35,6 +36,9 @@ interface QuotationLineTableProps {
   exchangeRates?: QuotationExchangeRateFormState[];
   pricingRules?: PricingRuleLineGetDto[];
   userDiscountLimits?: UserDiscountLimitDto[];
+  customerId?: number | null;
+  erpCustomerCode?: string | null;
+  representativeId?: number | null;
 }
 
 export function QuotationLineTable({
@@ -44,6 +48,9 @@ export function QuotationLineTable({
   exchangeRates = [],
   pricingRules = [],
   userDiscountLimits = [],
+  customerId,
+  erpCustomerCode,
+  representativeId,
 }: QuotationLineTableProps): ReactElement {
   const { t } = useTranslation();
   const [productDialogOpen, setProductDialogOpen] = useState(false);
@@ -67,6 +74,36 @@ export function QuotationLineTable({
   }, [currency, currencyOptions]);
 
   const handleAddLine = (): void => {
+    if (!customerId && !erpCustomerCode) {
+      toast.error(
+        t('quotation.lines.customerRequired', 'Müşteri Seçilmedi'),
+        {
+          description: t('quotation.lines.customerRequiredMessage', 'Satır eklemek için önce müşteri seçilmelidir'),
+        }
+      );
+      return;
+    }
+
+    if (!representativeId) {
+      toast.error(
+        t('quotation.lines.representativeRequired', 'Temsilci Seçilmedi'),
+        {
+          description: t('quotation.lines.representativeRequiredMessage', 'Satır eklemek için önce temsilci seçilmelidir'),
+        }
+      );
+      return;
+    }
+
+    if (!currency || currency === 0) {
+      toast.error(
+        t('quotation.lines.currencyRequired', 'Para Birimi Seçilmedi'),
+        {
+          description: t('quotation.lines.currencyRequiredMessage', 'Satır eklemek için önce para birimi seçilmelidir'),
+        }
+      );
+      return;
+    }
+
     const line: QuotationLineFormState = {
       id: `temp-${Date.now()}`,
       productId: null,
@@ -111,6 +148,36 @@ export function QuotationLineTable({
   };
 
   const handleProductSelect = async (product: ProductSelectionResult): Promise<void> => {
+    if (!customerId && !erpCustomerCode) {
+      toast.error(
+        t('quotation.lines.customerRequired', 'Müşteri Seçilmedi'),
+        {
+          description: t('quotation.lines.customerRequiredMessage', 'Satır eklemek için önce müşteri seçilmelidir'),
+        }
+      );
+      return;
+    }
+
+    if (!representativeId) {
+      toast.error(
+        t('quotation.lines.representativeRequired', 'Temsilci Seçilmedi'),
+        {
+          description: t('quotation.lines.representativeRequiredMessage', 'Satır eklemek için önce temsilci seçilmelidir'),
+        }
+      );
+      return;
+    }
+
+    if (!currency || currency === 0) {
+      toast.error(
+        t('quotation.lines.currencyRequired', 'Para Birimi Seçilmedi'),
+        {
+          description: t('quotation.lines.currencyRequiredMessage', 'Satır eklemek için önce para birimi seçilmelidir'),
+        }
+      );
+      return;
+    }
+
     const hasRelatedStocks = product.relatedStockIds && product.relatedStockIds.length > 0;
 
     if (hasRelatedStocks && handleProductSelectWithRelatedStocks && product.relatedStockIds) {

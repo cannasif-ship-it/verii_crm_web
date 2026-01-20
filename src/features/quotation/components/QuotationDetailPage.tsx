@@ -458,6 +458,9 @@ export function QuotationDetailPage(): ReactElement {
                 exchangeRates={exchangeRates}
                 pricingRules={pricingRules}
                 userDiscountLimits={temporarySallerData}
+                customerId={watchedCustomerId}
+                erpCustomerCode={watchedErpCustomerCode}
+                representativeId={watchedRepresentativeId}
               />
             </div>
 
