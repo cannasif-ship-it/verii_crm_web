@@ -109,8 +109,16 @@ export function MainLayout({ navItems }: MainLayoutProps): ReactElement {
             // href YOK, çünkü açılır menü (Grup)
             children: [
               {
+                title: t('sidebar.quotationList', 'Teklif Listesi'),
+                href: '/quotations',
+              },
+              {
                 title: t('sidebar.quotationCreateWizard', 'Yeni Teklif Oluştur'),
                 href: '/quotations/create',
+              },
+              {
+                title: t('sidebar.waitingApprovals', 'Onay Bekleyen Teklifler'),
+                href: '/quotations/waiting-approvals',
               },
             ]
           }
