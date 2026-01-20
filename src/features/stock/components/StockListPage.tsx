@@ -5,7 +5,6 @@ import { useUIStore } from '@/stores/ui-store';
 import { Input } from '@/components/ui/input';
 import { StockTable } from './StockTable';
 import { Search, RefreshCw, X } from 'lucide-react'; 
-import { Button } from '@/components/ui/button'; 
 import type { PagedFilter } from '@/types/api';
 
 export function StockListPage(): ReactElement {

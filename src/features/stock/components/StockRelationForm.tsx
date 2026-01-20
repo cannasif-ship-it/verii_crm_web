@@ -13,17 +13,26 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
+  FormDescription,
 } from '@/components/ui/form';
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from '@/components/ui/command';
+import { Check, ChevronsUpDown, PackagePlus, Box, FileText, Scale, AlertCircle, Loader2 } from 'lucide-react';
 import { useStockRelationCreate } from '../hooks/useStockRelationCreate';
 import { useStockList } from '../hooks/useStockList';
 import { stockRelationSchema, type StockRelationFormSchema } from '../types/schemas';
+import { cn } from '@/lib/utils';
 
 interface StockRelationFormProps {
   stockId: number;
@@ -32,11 +41,11 @@ interface StockRelationFormProps {
 export function StockRelationForm({ stockId }: StockRelationFormProps): ReactElement {
   const { t } = useTranslation();
   const createRelation = useStockRelationCreate();
-  const [searchTerm, setSearchTerm] = useState('');
+  const [openCombobox, setOpenCombobox] = useState(false);
   
   const { data: stocksData } = useStockList({
     pageNumber: 1,
-    pageSize: 100,
+    pageSize: 100, 
     sortBy: 'StockName',
     sortDirection: 'asc',
   });
@@ -62,6 +71,7 @@ export function StockRelationForm({ stockId }: StockRelationFormProps): ReactEle
       description: data.description,
       isMandatory: data.isMandatory,
     });
+    
     form.reset({
       stockId,
       relatedStockId: 0,
@@ -69,105 +79,147 @@ export function StockRelationForm({ stockId }: StockRelationFormProps): ReactEle
       description: '',
       isMandatory: false,
     });
-    setSearchTerm('');
   };
-
-  const filteredStocks = stocks.filter((stock: any) =>
-    stock.id !== stockId &&
-    (stock.stockName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-     stock.erpStockCode?.toLowerCase().includes(searchTerm.toLowerCase()))
-  );
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-500">
+        
+        {/* --- 1. İLGİLİ STOK SEÇİMİ (Combobox) --- */}
         <FormField
           control={form.control}
           name="relatedStockId"
           render={({ field }) => (
-            <FormItem>
-              <FormLabel>
-                {t('stock.relations.relatedStock', 'Bağlı Stok')} *
+            <FormItem className="flex flex-col">
+              <FormLabel className="text-zinc-800 dark:text-zinc-200 font-semibold flex items-center gap-2 text-sm">
+                 <Box className="w-4 h-4 text-pink-600" />
+                 {t('stock.relations.relatedStock', 'Bağlı Stok Seçimi')}
               </FormLabel>
-              <Select
-                value={field.value ? field.value.toString() : ''}
-                onValueChange={(value) => {
-                  field.onChange(parseInt(value, 10));
-                  setSearchTerm('');
-                }}
-              >
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder={t('stock.relations.selectStock', 'Stok seçin')} />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  <div className="p-2">
-                    <Input
-                      placeholder={t('stock.relations.search', 'Ara...')}
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      onClick={(e) => e.stopPropagation()}
-                    />
-                  </div>
-                  {filteredStocks.length === 0 ? (
-                    <div className="p-2 text-sm text-muted-foreground">
-                      {t('common.noData', 'Veri yok')}
-                    </div>
-                  ) : (
-                    filteredStocks.slice(0, 50).map((stock: any) => (
-                      <SelectItem
-                        key={stock.id}
-                        value={stock.id.toString()}
-                      >
-                        {stock.stockName} ({stock.erpStockCode})
-                      </SelectItem>
-                    ))
-                  )}
-                </SelectContent>
-              </Select>
+              
+              <Popover open={openCombobox} onOpenChange={setOpenCombobox}>
+                <PopoverTrigger asChild>
+                  <FormControl>
+                    <Button
+                      variant="outline"
+                      role="combobox"
+                      aria-expanded={openCombobox}
+                      className={cn(
+                        "w-full justify-between h-12 rounded-xl border-zinc-200 dark:border-white/10",
+                        "bg-white/50 dark:bg-zinc-900/50 backdrop-blur-sm", 
+                        "hover:bg-white dark:hover:bg-zinc-800 hover:border-pink-500/50 hover:shadow-[0_0_15px_rgba(236,72,153,0.1)]", 
+                        "transition-all duration-300",
+                        !field.value && "text-muted-foreground font-normal"
+                      )}
+                    >
+                      {field.value
+                        ? stocks.find((stock) => stock.id === field.value)?.stockName
+                        : t('stock.relations.selectStock', 'Listeden bir stok seçiniz...')}
+                      <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                    </Button>
+                  </FormControl>
+                </PopoverTrigger>
+                <PopoverContent className="w-[350px] p-0 rounded-xl shadow-xl border-zinc-200 dark:border-zinc-800 overflow-hidden">
+                  <Command className="bg-white dark:bg-zinc-900">
+                    <CommandInput placeholder={t('stock.relations.search', 'Stok adı veya kodu ara...')} className="h-11 border-none focus:ring-0" />
+                    <CommandList>
+                        <CommandEmpty className="py-6 text-center text-sm text-muted-foreground">
+                            {t('common.noData', 'Stok bulunamadı.')}
+                        </CommandEmpty>
+                        <CommandGroup className="max-h-[240px] overflow-y-auto p-1">
+                        {stocks
+                            .filter(stock => stock.id !== stockId)
+                            .map((stock) => (
+                            <CommandItem
+                                value={stock.stockName}
+                                key={stock.id}
+                                onSelect={() => {
+                                    form.setValue("relatedStockId", stock.id);
+                                    setOpenCombobox(false);
+                                }}
+                                className="flex items-center justify-between py-2.5 px-3 rounded-lg cursor-pointer aria-selected:bg-pink-50 dark:aria-selected:bg-pink-900/20 aria-selected:text-pink-900 dark:aria-selected:text-pink-100 mb-1"
+                            >
+                                <div className="flex flex-col gap-0.5">
+                                    <span className="font-medium text-sm">{stock.stockName}</span>
+                                    <span className="text-[10px] text-muted-foreground font-mono bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded w-fit">
+                                        {stock.erpStockCode}
+                                    </span>
+                                </div>
+                                <Check
+                                    className={cn(
+                                    "ml-2 h-4 w-4 text-pink-600",
+                                    stock.id === field.value ? "opacity-100" : "opacity-0"
+                                    )}
+                                />
+                            </CommandItem>
+                        ))}
+                        </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
               <FormMessage />
             </FormItem>
           )}
         />
 
+        {/* --- 2. MİKTAR (ADET YAZISI KALDIRILDI) --- */}
         <FormField
           control={form.control}
           name="quantity"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>
-                {t('stock.relations.quantity', 'Miktar')} *
+              <FormLabel className="text-zinc-800 dark:text-zinc-200 font-semibold flex items-center gap-2 text-sm">
+                <Scale className="w-4 h-4 text-orange-500" />
+                {t('stock.relations.quantity', 'Miktar / Katsayı')}
               </FormLabel>
               <FormControl>
-                <Input
-                  type="number"
-                  min="0.01"
-                  step="0.01"
-                  {...field}
-                  value={field.value || ''}
-                  onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
-                />
+                <div className="relative group">
+                    <Input
+                        type="number"
+                        min="0.01"
+                        step="0.01"
+                        className="
+                            h-12 rounded-xl pl-4
+                            bg-white/50 dark:bg-zinc-900/50 
+                            border-zinc-200 dark:border-white/10
+                            focus-visible:ring-2 focus-visible:ring-pink-500/20 focus-visible:border-pink-500
+                            group-hover:border-pink-300 dark:group-hover:border-pink-700/50
+                            transition-all duration-300
+                        "
+                        {...field}
+                        value={field.value || ''}
+                        onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
+                    />
+                </div>
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
 
+        {/* --- 3. AÇIKLAMA --- */}
         <FormField
           control={form.control}
           name="description"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>
-                {t('stock.relations.description', 'Açıklama')}
+              <FormLabel className="text-zinc-800 dark:text-zinc-200 font-semibold flex items-center gap-2 text-sm">
+                <FileText className="w-4 h-4 text-purple-500" />
+                {t('stock.relations.description', 'Açıklama / Not')}
               </FormLabel>
               <FormControl>
                 <Textarea
                   {...field}
                   value={field.value || ''}
-                  placeholder={t('stock.relations.descriptionPlaceholder', 'Açıklama giriniz (opsiyonel)')}
-                  rows={3}
+                  placeholder={t('stock.relations.descriptionPlaceholder', 'İlişki hakkında opsiyonel bir not ekleyin...')}
+                  className="
+                    min-h-[100px] rounded-xl resize-none
+                    bg-white/50 dark:bg-zinc-900/50 
+                    border-zinc-200 dark:border-white/10
+                    focus-visible:ring-2 focus-visible:ring-pink-500/20 focus-visible:border-pink-500
+                    hover:border-pink-300 dark:hover:border-pink-700/50
+                    transition-all duration-300
+                  "
                 />
               </FormControl>
               <FormMessage />
@@ -175,34 +227,65 @@ export function StockRelationForm({ stockId }: StockRelationFormProps): ReactEle
           )}
         />
 
+        {/* --- 4. ZORUNLULUK KARTI (CHECKBOX) --- */}
         <FormField
           control={form.control}
           name="isMandatory"
           render={({ field }) => (
-            <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+            <FormItem 
+                className={cn(
+                    "group flex flex-row items-start space-x-3 space-y-0 rounded-xl border p-4 transition-all duration-300 cursor-pointer",
+                    field.value 
+                        ? "bg-pink-50/50 border-pink-200 dark:bg-pink-900/10 dark:border-pink-800" 
+                        : "bg-white/40 dark:bg-white/5 border-zinc-200 dark:border-white/10 hover:border-pink-300 dark:hover:border-pink-700 hover:shadow-md"
+                )}
+            >
               <FormControl>
                 <Checkbox
                   checked={field.value}
                   onCheckedChange={field.onChange}
+                  className="data-[state=checked]:bg-pink-600 data-[state=checked]:border-pink-600 border-zinc-400 dark:border-zinc-500 mt-1"
                 />
               </FormControl>
-              <div className="space-y-1 leading-none">
-                <FormLabel>
-                  {t('stock.relations.isMandatory', 'Zorunlu')}
+              <div className="space-y-1 leading-none select-none">
+                <FormLabel className="text-sm font-bold text-zinc-900 dark:text-white cursor-pointer flex items-center gap-2">
+                  {t('stock.relations.isMandatory', 'Zorunlu İlişki')}
+                  {field.value && <AlertCircle className="w-3 h-3 text-pink-600 animate-pulse" />}
                 </FormLabel>
+                <FormDescription className="text-xs text-zinc-500 dark:text-zinc-400 line-clamp-2">
+                  Bu seçenek işaretlendiğinde, ana ürün satıldığında bu alt ürünün de stoktan düşmesi zorunlu hale gelir.
+                </FormDescription>
               </div>
             </FormItem>
           )}
         />
 
+        {/* --- 5. KAYDET BUTONU --- */}
         <Button
           type="submit"
           disabled={createRelation.isPending}
-          className="w-full"
+          className="
+            w-full h-12 relative overflow-hidden
+            bg-gradient-to-r from-pink-600 to-orange-600 
+            hover:from-pink-500 hover:to-orange-500
+            text-white font-bold tracking-wide rounded-xl
+            shadow-lg shadow-pink-500/25 
+            hover:shadow-pink-500/40 hover:scale-[1.02] active:scale-[0.98]
+            transition-all duration-300
+            border-0 mt-2
+          "
         >
-          {createRelation.isPending
-            ? t('common.loading', 'Yükleniyor...')
-            : t('stock.relations.add', 'Bağlı Stok Ekle')}
+          {createRelation.isPending ? (
+            <>
+                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                {t('common.saving', 'İşleniyor...')}
+            </>
+          ) : (
+            <>
+                <PackagePlus className="mr-2 h-5 w-5" />
+                {t('stock.relations.add', 'İlişkiyi Ekle')}
+            </>
+          )}
         </Button>
       </form>
     </Form>

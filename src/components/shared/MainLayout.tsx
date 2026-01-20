@@ -5,7 +5,6 @@ import { Navbar } from './Navbar';
 import { Sidebar } from './Sidebar';
 import { Footer } from './Footer';
 
-// --- HUGEICONS IMPORTLARI ---
 import { 
   DashboardSquare02Icon, 
   UserGroupIcon, 
