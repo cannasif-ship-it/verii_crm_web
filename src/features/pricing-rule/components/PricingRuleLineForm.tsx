@@ -3,7 +3,6 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslation } from 'react-i18next';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -148,7 +147,7 @@ export function PricingRuleLineForm({
                       size="icon"
                       onClick={() => {
                         form.setValue('stokCode', '');
-                        form.setValue('fixedUnitPrice', null);
+                        form.setValue('fixedUnitPrice', undefined);
                       }}
                       className="shrink-0"
                     >
