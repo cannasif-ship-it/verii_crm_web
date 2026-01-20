@@ -25,7 +25,7 @@ import { ApprovalRoleGroupManagementPage } from '@/features/approval-role-group-
 import { ApprovalUserRoleManagementPage } from '@/features/approval-user-role-management';
 import { ApprovalRoleManagementPage } from '@/features/approval-role-management';
 import { ApprovalFlowManagementPage } from '@/features/approval-flow-management';
-import { QuotationCreateForm, QuotationDetailPage } from '@/features/quotation';
+import { QuotationCreateForm, QuotationDetailPage, QuotationListPage, WaitingApprovalsPage } from '@/features/quotation';
 import { PricingRuleManagementPage } from '@/features/pricing-rule';
 import { StockListPage, StockDetailPage } from '@/features/stock';
 
@@ -127,12 +127,20 @@ export const router = createBrowserRouter([
         element: <ApprovalFlowManagementPage />,
       },
       {
+        path: 'quotations',
+        element: <QuotationListPage />,
+      },
+      {
         path: 'quotations/create',
         element: <QuotationCreateForm />,
       },
       {
         path: 'quotations/:id',
         element: <QuotationDetailPage />,
+      },
+      {
+        path: 'quotations/waiting-approvals',
+        element: <WaitingApprovalsPage />,
       },
       {
         path: 'pricing-rules',
