@@ -2,7 +2,6 @@ import { useQuery } from '@tanstack/react-query';
 import { approvalFlowStepApi } from '../api/approval-flow-step-api';
 import { queryKeys } from '../utils/query-keys';
 import type { ApprovalFlowStepGetDto } from '../types/approval-flow-step-types';
-import type { PagedResponse } from '@/types/api';
 
 export const useApprovalFlowStepList = (
   approvalFlowId: number

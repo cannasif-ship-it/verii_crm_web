@@ -1,10 +1,12 @@
 import { z } from 'zod';
 
-export enum DocumentTypeEnum {
-  Offer = 1,
-  Request = 2,
-  Order = 3,
-}
+export const DocumentTypeEnum = {
+  Offer: 1,
+  Request: 2,
+  Order: 3,
+} as const;
+
+export type DocumentTypeEnum = typeof DocumentTypeEnum[keyof typeof DocumentTypeEnum];
 
 export interface ApprovalFlowDto {
   id: number;
@@ -51,9 +53,9 @@ export const approvalFlowFormSchema = z.object({
   description: z
     .string()
     .max(200, 'approvalFlow.form.description.maxLength')
-    .optional()
-    .nullable(),
-  isActive: z.boolean().default(true),
+    .nullable()
+    .optional(),
+  isActive: z.boolean(),
 });
 
 export type ApprovalFlowFormSchema = z.infer<typeof approvalFlowFormSchema>;

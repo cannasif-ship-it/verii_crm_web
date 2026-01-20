@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { approvalRoleGroupApi } from '../api/approval-role-group-api';
-import { approvalRoleGroupQueryKeys, APPROVAL_ROLE_GROUP_QUERY_KEYS } from '../utils/query-keys';
+import { APPROVAL_ROLE_GROUP_QUERY_KEYS } from '../utils/query-keys';
 
 export const useDeleteApprovalRoleGroup = () => {
   const { t } = useTranslation();

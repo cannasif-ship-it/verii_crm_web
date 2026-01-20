@@ -8,7 +8,6 @@ import { useCreateQuotationBulk, usePriceRuleOfQuotation, useUserDiscountLimitsB
 import { useCustomerOptions } from '@/features/customer-management/hooks/useCustomerOptions';
 import { QuotationHeaderForm } from './QuotationHeaderForm';
 import { QuotationLineTable } from './QuotationLineTable';
-import { QuotationExchangeRateForm } from './QuotationExchangeRateForm';
 import { QuotationSummaryCard } from './QuotationSummaryCard';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
@@ -18,7 +17,6 @@ import type { QuotationLineFormState, QuotationExchangeRateFormState, QuotationB
 import { useUIStore } from '@/stores/ui-store';
 import { useAuthStore } from '@/stores/auth-store';
 import { useQuotationCalculations } from '../hooks/useQuotationCalculations';
-import { useCurrencyOptions } from '@/services/hooks/useCurrencyOptions';
 import { useExchangeRate } from '@/services/hooks/useExchangeRate';
 import { findExchangeRateByDovizTipi } from '../utils/price-conversion';
 import { cn } from '@/lib/utils';
@@ -60,7 +58,6 @@ export function QuotationCreateForm(): ReactElement {
   const watchedRepresentativeId = form.watch('quotation.representativeId');
   const watchedOfferDate = form.watch('quotation.offerDate');
   const { calculateLineTotals } = useQuotationCalculations();
-  const { currencyOptions } = useCurrencyOptions();
   const { data: erpRates = [] } = useExchangeRate();
 
   const customerCode = useMemo(() => {
@@ -229,6 +226,29 @@ export function QuotationCreateForm(): ReactElement {
 
   const handleFormSubmit = async (e: React.FormEvent): Promise<void> => {
     e.preventDefault();
+    
+    const formData = form.getValues();
+
+    if (!formData.quotation.paymentTypeId) {
+      toast.error(
+        t('quotation.create.error', 'Teklif Oluşturulamadı'),
+        {
+          description: t('quotation.create.paymentTypeRequired', 'Ödeme tipi seçilmelidir'),
+        }
+      );
+      return;
+    }
+
+    if (!formData.quotation.deliveryDate) {
+      toast.error(
+        t('quotation.create.error', 'Teklif Oluşturulamadı'),
+        {
+          description: t('quotation.create.deliveryDateRequired', 'Teslimat tarihi girilmelidir'),
+        }
+      );
+      return;
+    }
+    
     const isValid = await form.trigger();
     if (!isValid) {
       toast.error(
@@ -239,7 +259,7 @@ export function QuotationCreateForm(): ReactElement {
       );
       return;
     }
-    const formData = form.getValues();
+
     await onSubmit(formData);
   };
 
@@ -259,111 +279,35 @@ export function QuotationCreateForm(): ReactElement {
             </Button>
             
             <div className="space-y-1">
-                <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white flex items-center gap-3">
-                    <FileText className="w-8 h-8 text-pink-600" />
-                    {t('quotation.create.title', 'Yeni Teklif Oluştur')}
-                </h1>
-                <p className="text-slate-600 dark:text-slate-400 text-sm font-medium pl-1">
-                    {t('quotation.create.subtitle', 'Müşteri için yeni bir satış teklifi hazırlayın.')}
-                </p>
-            </div>
-        </div>
-
-        {/* TOP ACTIONS */}
-        <div className="flex gap-3">
-            <Button 
-                variant="outline" 
-                onClick={() => navigate(-1)}
-                className="h-11 px-6 rounded-xl border-zinc-300 dark:border-white/10 hover:bg-zinc-100 dark:hover:bg-white/5"
-            >
-                {t('common.cancel', 'İptal')}
-            </Button>
-            <Button 
-                type="submit" 
-                onClick={handleFormSubmit}
-                disabled={createMutation.isPending}
-                className="h-11 px-8 bg-gradient-to-r from-pink-600 to-orange-600 hover:from-pink-500 hover:to-orange-500 text-white font-bold rounded-xl shadow-lg shadow-pink-500/25 transition-all hover:scale-105"
-            >
-                <Save className="mr-2 h-4 w-4" />
-                {createMutation.isPending ? t('common.saving', 'Kaydediliyor...') : t('common.save', 'Kaydet')}
-            </Button>
-        </div>
-      </div>
-
-      {/* MAIN FORM CARD */}
-      <div className="bg-white/80 dark:bg-[#1a1025]/80 backdrop-blur-xl border border-white/60 dark:border-white/5 shadow-sm rounded-2xl p-6 transition-all duration-300">
-        <FormProvider {...form}>
-          <form onSubmit={handleFormSubmit} className="space-y-8">
-            
-            {/* 1. SECTION: HEADER INFO */}
-            <div className="space-y-4">
-                <div className="flex items-center gap-2 pb-2 border-b border-zinc-200 dark:border-white/5">
-                    <div className="p-2 rounded-lg bg-pink-100 dark:bg-pink-900/20 text-pink-600">
-                        <FileText className="h-5 w-5" />
-                    </div>
-                    <h3 className="text-lg font-semibold text-zinc-900 dark:text-white">
-                        {t('quotation.header.title', 'Teklif Başlık Bilgileri')}
-                    </h3>
-                </div>
-                
-                <div className="bg-zinc-50/50 dark:bg-zinc-900/20 rounded-xl p-6 border border-zinc-100 dark:border-white/5">
-                    <QuotationHeaderForm 
-                        exchangeRates={exchangeRates}
-                        onExchangeRatesChange={setExchangeRates}
-                        lines={lines}
-                        onLinesChange={async () => {
-                            const newCurrency = form.getValues('quotation.currency');
-                            if (newCurrency) {
-                                await handleCurrencyChange(newCurrency);
-                            }
-                        }}
-                    />
-                </div>
+              <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
+                {t('quotation.header.title', 'Teklif Bilgileri')}
+              </h3>
+              <QuotationHeaderForm 
+                exchangeRates={exchangeRates}
+                onExchangeRatesChange={setExchangeRates}
+                lines={lines}
+                onLinesChange={async () => {
+                  const newCurrency = form.getValues('quotation.currency');
+                  if (newCurrency) {
+                    await handleCurrencyChange(newCurrency);
+                  }
+                }}
+              />
             </div>
 
-            {/* 2. SECTION: LINES (PRODUCTS) */}
-            <div className="space-y-4">
-                <div className="flex items-center gap-2 pb-2 border-b border-zinc-200 dark:border-white/5">
-                    <div className="p-2 rounded-lg bg-orange-100 dark:bg-orange-900/20 text-orange-600">
-                        <Layers className="h-5 w-5" />
-                    </div>
-                    <h3 className="text-lg font-semibold text-zinc-900 dark:text-white">
-                        {t('quotation.lines.title', 'Ürün Kalemleri')}
-                    </h3>
-                </div>
-
-                <div className="bg-white dark:bg-zinc-900/40 rounded-xl border border-zinc-200 dark:border-white/10 shadow-sm overflow-hidden">
-                    <QuotationLineTable
-                        lines={lines}
-                        setLines={setLines}
-                        currency={watchedCurrency}
-                        exchangeRates={exchangeRates}
-                        pricingRules={pricingRules}
-                        userDiscountLimits={temporarySallerData}
-                    />
-                </div>
+            <div className="space-y-1 pt-2 border-t">
+              <QuotationLineTable
+                lines={lines}
+                setLines={setLines}
+                currency={watchedCurrency}
+                exchangeRates={exchangeRates}
+                pricingRules={pricingRules}
+                userDiscountLimits={temporarySallerData}
+                customerId={watchedCustomerId}
+                erpCustomerCode={watchedErpCustomerCode}
+                representativeId={watchedRepresentativeId}
+              />
             </div>
-
-            {/* 3. SECTION: EXCHANGE RATES (CONDITIONAL) */}
-            {watchedCurrency !== 2 && watchedCurrency !== 1 && (
-              <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2">
-                 <div className="flex items-center gap-2 pb-2 border-b border-zinc-200 dark:border-white/5">
-                    <div className="p-2 rounded-lg bg-blue-100 dark:bg-blue-900/20 text-blue-600">
-                        <Banknote className="h-5 w-5" />
-                    </div>
-                    <h3 className="text-lg font-semibold text-zinc-900 dark:text-white">
-                        {t('quotation.exchangeRates.title', 'Döviz Kurları')}
-                    </h3>
-                </div>
-                <div className="bg-blue-50/30 dark:bg-blue-900/5 rounded-xl p-6 border border-blue-100 dark:border-blue-900/20">
-                    <QuotationExchangeRateForm
-                        exchangeRates={exchangeRates}
-                        setExchangeRates={setExchangeRates}
-                        baseCurrency={watchedCurrency}
-                    />
-                </div>
-              </div>
-            )}
 
             {/* 4. SECTION: SUMMARY */}
             <div className="space-y-4">

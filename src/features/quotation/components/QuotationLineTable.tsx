@@ -1,5 +1,6 @@
-import React, { type ReactElement, useState, useMemo } from 'react';
+import { type ReactElement, useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner';
 import {
   Table,
   TableBody,
@@ -35,6 +36,9 @@ interface QuotationLineTableProps {
   exchangeRates?: QuotationExchangeRateFormState[];
   pricingRules?: PricingRuleLineGetDto[];
   userDiscountLimits?: UserDiscountLimitDto[];
+  customerId?: number | null;
+  erpCustomerCode?: string | null;
+  representativeId?: number | null;
 }
 
 export function QuotationLineTable({
@@ -44,6 +48,9 @@ export function QuotationLineTable({
   exchangeRates = [],
   pricingRules = [],
   userDiscountLimits = [],
+  customerId,
+  erpCustomerCode,
+  representativeId,
 }: QuotationLineTableProps): ReactElement {
   const { t } = useTranslation();
   const [productDialogOpen, setProductDialogOpen] = useState(false);
@@ -67,6 +74,36 @@ export function QuotationLineTable({
   }, [currency, currencyOptions]);
 
   const handleAddLine = (): void => {
+    if (!customerId && !erpCustomerCode) {
+      toast.error(
+        t('quotation.lines.customerRequired', 'Müşteri Seçilmedi'),
+        {
+          description: t('quotation.lines.customerRequiredMessage', 'Satır eklemek için önce müşteri seçilmelidir'),
+        }
+      );
+      return;
+    }
+
+    if (!representativeId) {
+      toast.error(
+        t('quotation.lines.representativeRequired', 'Temsilci Seçilmedi'),
+        {
+          description: t('quotation.lines.representativeRequiredMessage', 'Satır eklemek için önce temsilci seçilmelidir'),
+        }
+      );
+      return;
+    }
+
+    if (!currency || currency === 0) {
+      toast.error(
+        t('quotation.lines.currencyRequired', 'Para Birimi Seçilmedi'),
+        {
+          description: t('quotation.lines.currencyRequiredMessage', 'Satır eklemek için önce para birimi seçilmelidir'),
+        }
+      );
+      return;
+    }
+
     const line: QuotationLineFormState = {
       id: `temp-${Date.now()}`,
       productId: null,
@@ -92,33 +129,15 @@ export function QuotationLineTable({
   };
 
   const handleSaveNewLine = (line: QuotationLineFormState): void => {
-    console.log('💾 [QuotationLineTable] handleSaveNewLine - Yeni satır kaydediliyor:', {
-      ...line,
-      groupCode: line.groupCode,
-    });
     const lineToAdd = { ...line, isEditing: false };
-    console.log('📦 [QuotationLineTable] handleSaveNewLine - Eklenecek satır:', {
-      ...lineToAdd,
-      groupCode: lineToAdd.groupCode,
-    });
     setLines([...lines, lineToAdd]);
-    console.log('✅ [QuotationLineTable] handleSaveNewLine - Satır eklendi, yeni liste uzunluğu:', lines.length + 1);
     setAddLineDialogOpen(false);
     setNewLine(null);
   };
 
   const handleSaveMultipleLines = (newLines: QuotationLineFormState[]): void => {
-    console.log('💾 [QuotationLineTable] handleSaveMultipleLines - Çoklu satır kaydediliyor:', newLines.map(line => ({
-      ...line,
-      groupCode: line.groupCode,
-    })));
     const linesToAdd = newLines.map((line) => ({ ...line, isEditing: false }));
-    console.log('📦 [QuotationLineTable] handleSaveMultipleLines - Eklenecek satırlar:', linesToAdd.map(line => ({
-      ...line,
-      groupCode: line.groupCode,
-    })));
     setLines([...lines, ...linesToAdd]);
-    console.log('✅ [QuotationLineTable] handleSaveMultipleLines - Satırlar eklendi, yeni liste uzunluğu:', lines.length + linesToAdd.length);
     setAddLineDialogOpen(false);
     setNewLine(null);
   };
@@ -129,14 +148,44 @@ export function QuotationLineTable({
   };
 
   const handleProductSelect = async (product: ProductSelectionResult): Promise<void> => {
+    if (!customerId && !erpCustomerCode) {
+      toast.error(
+        t('quotation.lines.customerRequired', 'Müşteri Seçilmedi'),
+        {
+          description: t('quotation.lines.customerRequiredMessage', 'Satır eklemek için önce müşteri seçilmelidir'),
+        }
+      );
+      return;
+    }
+
+    if (!representativeId) {
+      toast.error(
+        t('quotation.lines.representativeRequired', 'Temsilci Seçilmedi'),
+        {
+          description: t('quotation.lines.representativeRequiredMessage', 'Satır eklemek için önce temsilci seçilmelidir'),
+        }
+      );
+      return;
+    }
+
+    if (!currency || currency === 0) {
+      toast.error(
+        t('quotation.lines.currencyRequired', 'Para Birimi Seçilmedi'),
+        {
+          description: t('quotation.lines.currencyRequiredMessage', 'Satır eklemek için önce para birimi seçilmelidir'),
+        }
+      );
+      return;
+    }
+
     const hasRelatedStocks = product.relatedStockIds && product.relatedStockIds.length > 0;
 
-    if (hasRelatedStocks && handleProductSelectWithRelatedStocks) {
+    if (hasRelatedStocks && handleProductSelectWithRelatedStocks && product.relatedStockIds) {
       const newLines = await handleProductSelectWithRelatedStocks(product, product.relatedStockIds);
 
       const firstLine = newLines[0];
       if (firstLine) {
-        setNewLine({ ...firstLine, relatedLines: newLines.slice(1) });
+        setNewLine(firstLine);
         setAddLineDialogOpen(true);
       }
     } else {
@@ -152,17 +201,17 @@ export function QuotationLineTable({
       return;
     }
 
-    const isRelatedStock = line.relatedStockId !== null;
-    if (isRelatedStock) {
-      const sameGroupLines = lines.filter((l) => l.relatedStockId === line.relatedStockId);
-      const mainLine = sameGroupLines[0];
+    const isRelatedProduct = line.relatedProductKey !== null && line.relatedProductKey !== undefined;
+    if (isRelatedProduct) {
+      const sameGroupLines = lines.filter((l) => l.relatedProductKey === line.relatedProductKey);
+      const mainLine = sameGroupLines.find((l) => l.isMainRelatedProduct === true) || sameGroupLines[0];
       const isMainLine = mainLine.id === line.id;
       
       if (!isMainLine) {
         return;
       }
       
-      const relatedLines = sameGroupLines.slice(1);
+      const relatedLines = sameGroupLines.filter((l) => l.id !== line.id);
       setLineToEdit({ ...line, relatedLines: relatedLines.length > 0 ? relatedLines : undefined });
     } else {
       setLineToEdit({ ...line, relatedLines: undefined });
@@ -172,29 +221,16 @@ export function QuotationLineTable({
   };
 
   const handleSaveLine = (updatedLine: QuotationLineFormState, relatedLinesToUpdate?: QuotationLineFormState[]): void => {
-    console.log('💾 [QuotationLineTable] handleSaveLine - Satır güncelleniyor:', {
-      ...updatedLine,
-      groupCode: updatedLine.groupCode,
-    });
-    console.log('📦 [QuotationLineTable] handleSaveLine - relatedLinesToUpdate:', relatedLinesToUpdate?.map(line => ({
-      ...line,
-      groupCode: line.groupCode,
-    })));
-    
     const originalLine = lines.find((l) => l.id === updatedLine.id);
     
     if (!originalLine) {
-      console.log('❌ [QuotationLineTable] handleSaveLine - Orijinal satır bulunamadı');
       setEditLineDialogOpen(false);
       setLineToEdit(null);
       return;
     }
 
     const isQuantityChanged = originalLine.quantity !== updatedLine.quantity;
-    const sameGroupLines = updatedLine.relatedStockId 
-      ? lines.filter((l) => l.relatedStockId === updatedLine.relatedStockId)
-      : [];
-    const isMainLine = sameGroupLines.length > 0 && sameGroupLines[0].id === updatedLine.id;
+    const isMainLine = updatedLine.isMainRelatedProduct === true;
 
     if (relatedLinesToUpdate && relatedLinesToUpdate.length > 0) {
       const allUpdatedLines = [updatedLine, ...relatedLinesToUpdate].map((line) => ({ ...line, isEditing: false }));
@@ -204,7 +240,7 @@ export function QuotationLineTable({
           if (updated) {
             return updated;
           }
-          if (isQuantityChanged && isMainLine && updatedLine.relatedStockId && line.relatedStockId === updatedLine.relatedStockId) {
+          if (isQuantityChanged && isMainLine && updatedLine.relatedProductKey && line.relatedProductKey === updatedLine.relatedProductKey) {
             const quantityRatio = updatedLine.quantity / originalLine.quantity;
             const newQuantity = line.quantity * quantityRatio;
             const updatedRelatedLine = { ...line, quantity: newQuantity };
@@ -213,7 +249,7 @@ export function QuotationLineTable({
           return line;
         })
       );
-    } else if (isQuantityChanged && isMainLine && updatedLine.relatedStockId) {
+    } else if (isQuantityChanged && isMainLine && updatedLine.relatedProductKey) {
       const quantityRatio = updatedLine.quantity / originalLine.quantity;
       
       const updatedLines = lines.map((line) => {
@@ -221,7 +257,7 @@ export function QuotationLineTable({
           return { ...updatedLine, isEditing: false };
         }
         
-        if (line.relatedStockId === updatedLine.relatedStockId && line.id !== updatedLine.id) {
+        if (line.relatedProductKey === updatedLine.relatedProductKey && line.id !== updatedLine.id) {
           const newQuantity = line.quantity * quantityRatio;
           const updatedRelatedLine = { ...line, quantity: newQuantity };
           return calculateLineTotals(updatedRelatedLine);
@@ -252,8 +288,8 @@ export function QuotationLineTable({
     const line = lines.find((l) => l.id === id);
     setLineToDelete(id);
     
-    if (line?.relatedStockId) {
-      const count = lines.filter((l) => l.relatedStockId === line.relatedStockId).length;
+    if (line?.relatedProductKey) {
+      const count = lines.filter((l) => l.relatedProductKey === line.relatedProductKey).length;
       setRelatedLinesCount(count);
     } else {
       setRelatedLinesCount(0);
@@ -266,13 +302,10 @@ export function QuotationLineTable({
     if (lineToDelete) {
       const lineToDeleteObj = lines.find((line) => line.id === lineToDelete);
       
-      if (lineToDeleteObj?.relatedStockId) {
-        const relatedStockId = lineToDeleteObj.relatedStockId;
-        const linesToDelete = lines.filter(
-          (line) => line.relatedStockId === relatedStockId
-        );
+      if (lineToDeleteObj?.relatedProductKey) {
+        const relatedProductKey = lineToDeleteObj.relatedProductKey;
         
-        setLines(lines.filter((line) => line.relatedStockId !== relatedStockId));
+        setLines(lines.filter((line) => line.relatedProductKey !== relatedProductKey));
         setLineToDelete(null);
         setDeleteDialogOpen(false);
         
@@ -371,28 +404,28 @@ export function QuotationLineTable({
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {lines.map((line) => {
+                  {lines.map((line, index) => {
                     const totalDiscountAmount = (line.discountAmount1 || 0) + (line.discountAmount2 || 0) + (line.discountAmount3 || 0);
                     const stockDisplay = line.productCode && line.productName 
                       ? `${line.productCode} - ${line.productName}`
                       : line.productCode || line.productName || '-';
                     const hasDiscount = totalDiscountAmount > 0;
                     
-                    const isRelatedStock = line.relatedStockId !== null;
+                    const isRelatedProduct = line.relatedProductKey !== null && line.relatedProductKey !== undefined;
                     let mainStock: QuotationLineFormState | null = null;
-                    let isMainStock = false;
-                    if (isRelatedStock) {
-                      const sameGroupLines = lines.filter((l) => l.relatedStockId === line.relatedStockId);
+                    let isMainStock = line.isMainRelatedProduct === true;
+                    if (isRelatedProduct) {
+                      const sameGroupLines = lines.filter((l) => l.relatedProductKey === line.relatedProductKey);
                       if (sameGroupLines.length > 1) {
-                        mainStock = sameGroupLines[0];
-                        isMainStock = mainStock.id === line.id;
+                        mainStock = sameGroupLines.find((l) => l.isMainRelatedProduct === true) || sameGroupLines[0];
+                        isMainStock = line.isMainRelatedProduct === true;
                       }
                     }
 
                     const hasApprovalWarning = line.approvalStatus === 1;
 
                     return (
-                      <TableRow key={line.id} className={`hover:bg-muted/50 transition-colors ${hasApprovalWarning ? 'bg-red-50/50 dark:bg-red-950/20 border-l-4 border-l-red-500' : ''}`}>
+                      <TableRow key={line.id || `line-${index}`} className={`hover:bg-muted/50 transition-colors ${hasApprovalWarning ? 'bg-red-50/50 dark:bg-red-950/20 border-l-4 border-l-red-500' : ''}`}>
                             <TableCell className="min-w-[200px]">
                               <div className="space-y-1">
                                 <div className="flex items-center gap-2">
@@ -409,15 +442,15 @@ export function QuotationLineTable({
                                       {t('quotation.lines.approvalRequired', 'Onay Gerekli')}
                                     </Badge>
                                   )}
-                                  {isRelatedStock && (
+                                  {isRelatedProduct && (
                                     <Badge variant="outline" className={`text-xs ${
                                       isMainStock 
                                         ? 'bg-green-50 text-green-700 dark:bg-green-900/30 dark:text-green-300 border-green-200 dark:border-green-800'
                                         : 'bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 border-blue-200 dark:border-blue-800'
                                     }`}>
                                       {isMainStock 
-                                        ? `${t('quotation.lines.mainStock', 'Ana Stok')} (ID: ${line.relatedStockId})`
-                                        : `${t('quotation.lines.relatedStock', 'Bağlı Stok')} (ID: ${line.relatedStockId})`}
+                                        ? t('quotation.lines.mainStock', 'Ana Stok')
+                                        : t('quotation.lines.relatedStock', 'Bağlı Stok')}
                                     </Badge>
                                   )}
                                 </div>
@@ -426,14 +459,14 @@ export function QuotationLineTable({
                                     {line.productName}
                                   </div>
                                 )}
-                                {isRelatedStock && !isMainStock && mainStock && (
+                                {isRelatedProduct && !isMainStock && mainStock && (
                                   <div className="text-xs text-muted-foreground">
                                     {t('quotation.lines.relatedTo', 'Bağlı')}: {mainStock.productCode || mainStock.productName || '-'}
                                   </div>
                                 )}
-                                {isRelatedStock && isMainStock && (
+                                {isRelatedProduct && isMainStock && (
                                   <div className="text-xs text-muted-foreground">
-                                    {t('quotation.lines.hasRelatedStocks', '{count} bağlı stok', { count: lines.filter((l) => l.relatedStockId === line.relatedStockId && l.id !== line.id).length })}
+                                    {t('quotation.lines.hasRelatedStocks', '{count} bağlı stok', { count: lines.filter((l) => l.relatedProductKey === line.relatedProductKey && l.id !== line.id).length })}
                                   </div>
                                 )}
                               </div>
@@ -491,7 +524,7 @@ export function QuotationLineTable({
                             </TableCell>
                             <TableCell>
                               <div className="flex gap-1 justify-center">
-                                {isMainStock || !isRelatedStock ? (
+                                {isMainStock || !isRelatedProduct ? (
                                   <Button
                                     type="button"
                                     variant="ghost"

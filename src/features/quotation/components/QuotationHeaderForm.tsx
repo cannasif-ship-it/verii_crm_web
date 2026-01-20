@@ -1,4 +1,4 @@
-import { type ReactElement, useState, useEffect } from 'react';
+import { type ReactElement, useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFormContext } from 'react-hook-form';
 import {
@@ -42,6 +42,7 @@ interface QuotationHeaderFormProps {
   onExchangeRatesChange?: (rates: QuotationExchangeRateFormState[]) => void;
   lines?: Array<{ productCode?: string | null; productName?: string | null }>;
   onLinesChange?: (lines: Array<{ productCode?: string | null; productName?: string | null }>) => void;
+  initialCurrency?: string | number | null;
 }
 
 export function QuotationHeaderForm({ 
@@ -49,6 +50,7 @@ export function QuotationHeaderForm({
   onExchangeRatesChange,
   lines = [],
   onLinesChange,
+  initialCurrency,
 }: QuotationHeaderFormProps = {}): ReactElement {
   const { t } = useTranslation();
   const form = useFormContext<CreateQuotationSchema>();
@@ -58,6 +60,7 @@ export function QuotationHeaderForm({
   const [exchangeRateDialogOpen, setExchangeRateDialogOpen] = useState(false);
   const [currencyChangeDialogOpen, setCurrencyChangeDialogOpen] = useState(false);
   const [pendingCurrency, setPendingCurrency] = useState<string | null>(null);
+  const isInitialLoadRef = useRef(true);
   const watchedCustomerId = form.watch('quotation.potentialCustomerId');
   const watchedErpCustomerCode = form.watch('quotation.erpCustomerCode');
   const watchedCurrency = form.watch('quotation.currency');
@@ -72,6 +75,30 @@ export function QuotationHeaderForm({
     }
   }, [form, user]);
 
+  useEffect(() => {
+    if (initialCurrency !== null && initialCurrency !== undefined) {
+      isInitialLoadRef.current = true;
+      const timer = setTimeout(() => {
+        isInitialLoadRef.current = false;
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [initialCurrency]);
+
+  useEffect(() => {
+    if (watchedCurrency && initialCurrency !== null && initialCurrency !== undefined) {
+      const watchedCurrencyNum = typeof watchedCurrency === 'string' ? Number(watchedCurrency) : watchedCurrency;
+      const initialCurrencyNum = typeof initialCurrency === 'string' ? Number(initialCurrency) : initialCurrency;
+      if (watchedCurrencyNum === initialCurrencyNum) {
+        isInitialLoadRef.current = true;
+        const timer = setTimeout(() => {
+          isInitialLoadRef.current = false;
+        }, 100);
+        return () => clearTimeout(timer);
+      }
+    }
+  }, [watchedCurrency, initialCurrency]);
+
   const selectedCustomer = watchedCustomerId || watchedErpCustomerCode;
 
   const handleExchangeRatesSave = (rates: QuotationExchangeRateFormState[]): void => {
@@ -81,6 +108,27 @@ export function QuotationHeaderForm({
   };
 
   const handleCurrencyChange = (newCurrency: string): void => {
+    const currentCurrency = form.watch('quotation.currency');
+    const newCurrencyNum = Number(newCurrency);
+    const currentCurrencyNum = typeof currentCurrency === 'string' ? Number(currentCurrency) : currentCurrency;
+    
+    if (isInitialLoadRef.current) {
+      form.setValue('quotation.currency', newCurrency, { shouldValidate: false, shouldDirty: false });
+      return;
+    }
+    
+    if (initialCurrency !== null && initialCurrency !== undefined) {
+      const initialCurrencyNum = typeof initialCurrency === 'string' ? Number(initialCurrency) : initialCurrency;
+      if (initialCurrencyNum === newCurrencyNum) {
+        form.setValue('quotation.currency', newCurrency, { shouldValidate: false, shouldDirty: false });
+        return;
+      }
+    }
+    
+    if (currentCurrencyNum === newCurrencyNum) {
+      return;
+    }
+    
     if (lines && lines.length > 0 && onLinesChange) {
       setPendingCurrency(newCurrency);
       setCurrencyChangeDialogOpen(true);
@@ -229,7 +277,7 @@ export function QuotationHeaderForm({
               </FormLabel>
               <Select
                 onValueChange={field.onChange}
-                value={field.value}
+                value={field.value || ''}
               >
                 <FormControl>
                   <SelectTrigger className={inputClass}>
@@ -275,7 +323,7 @@ export function QuotationHeaderForm({
               </div>
               <Select
                 onValueChange={(value) => handleCurrencyChange(value)}
-                value={field.value || undefined}
+                value={field.value ? String(field.value) : ''}
               >
                 <FormControl>
                   <SelectTrigger className={inputClass}>

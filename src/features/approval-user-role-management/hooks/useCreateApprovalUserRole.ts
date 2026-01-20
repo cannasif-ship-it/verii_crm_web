@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { approvalUserRoleApi } from '../api/approval-user-role-api';
-import { approvalUserRoleQueryKeys, APPROVAL_USER_ROLE_QUERY_KEYS } from '../utils/query-keys';
+import { APPROVAL_USER_ROLE_QUERY_KEYS } from '../utils/query-keys';
 import type { CreateApprovalUserRoleDto } from '../types/approval-user-role-types';
 
 export const useCreateApprovalUserRole = () => {

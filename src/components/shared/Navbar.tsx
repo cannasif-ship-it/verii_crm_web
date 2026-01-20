@@ -1,6 +1,5 @@
 import { type ReactElement, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
 import { Menu, Search, X } from 'lucide-react';
 
 import { useAuthStore } from '@/stores/auth-store';
@@ -14,7 +13,6 @@ import { cn } from '@/lib/utils';
 
 export function Navbar(): ReactElement {
   const { t } = useTranslation();
-  const navigate = useNavigate();
 
   const { user } = useAuthStore();
   const { toggleSidebar, searchQuery, setSearchQuery, setSidebarOpen } = useUIStore(); 

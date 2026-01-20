@@ -5,6 +5,7 @@ export interface ApprovalRoleDto {
   approvalRoleGroupId: number;
   approvalRoleGroupName?: string;
   name: string;
+  maxAmount: number;
   createdDate: string;
   updatedDate?: string;
   createdBy?: string;
@@ -15,11 +16,13 @@ export interface ApprovalRoleDto {
 export interface CreateApprovalRoleDto {
   approvalRoleGroupId: number;
   name: string;
+  maxAmount: number;
 }
 
 export interface UpdateApprovalRoleDto {
   approvalRoleGroupId: number;
   name: string;
+  maxAmount: number;
 }
 
 export interface ApprovalRoleListFilters {
@@ -30,6 +33,7 @@ export interface ApprovalRoleListFilters {
 export interface ApprovalRoleFormData {
   approvalRoleGroupId: number;
   name: string;
+  maxAmount: number;
 }
 
 export const approvalRoleFormSchema = z.object({
@@ -40,6 +44,9 @@ export const approvalRoleFormSchema = z.object({
     .string()
     .min(1, 'approvalRole.form.name.required')
     .max(100, 'approvalRole.form.name.maxLength'),
+  maxAmount: z
+    .number()
+    .min(0, 'approvalRole.form.maxAmount.min'),
 });
 
 export type ApprovalRoleFormSchema = z.infer<typeof approvalRoleFormSchema>;

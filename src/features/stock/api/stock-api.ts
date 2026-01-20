@@ -9,7 +9,6 @@ import type {
   StockImageDto,
   StockRelationDto,
   StockRelationCreateDto,
-  StockRelationUpdateDto,
 } from '../types';
 
 export const stockApi = {

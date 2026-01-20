@@ -99,8 +99,6 @@ export function useProductSelection({ currency, exchangeRates }: UseProductSelec
         }
 
         const sourceCurrencyFromApi = selectedPrice.currency || '';
-        const targetCurrencyOption = currencyOptions.find((opt) => opt.dovizTipi === currency);
-        const targetCurrencyCode = targetCurrencyOption?.code || 'TRY';
 
         let sourceDovizTipi: number | null = null;
         if (sourceCurrencyFromApi) {
@@ -179,8 +177,6 @@ export function useProductSelection({ currency, exchangeRates }: UseProductSelec
         const prices = await quotationApi.getPriceOfProduct(requests);
 
         const lines: QuotationLineFormState[] = [];
-        const targetCurrencyOption = currencyOptions.find((opt) => opt.dovizTipi === currency);
-        const targetCurrencyCode = targetCurrencyOption?.code || 'TRY';
         const mainStockId = product.id || null;
         const relatedProductKey = crypto.randomUUID();
 

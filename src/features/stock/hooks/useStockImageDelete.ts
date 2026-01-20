@@ -9,7 +9,7 @@ export const useStockImageDelete = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ id, stockId }: { id: number; stockId: number }): Promise<void> => {
+    mutationFn: async ({ id }: { id: number; stockId: number }): Promise<void> => {
       return await stockApi.deleteImage(id);
     },
     onSuccess: (_, variables: { id: number; stockId: number }) => {

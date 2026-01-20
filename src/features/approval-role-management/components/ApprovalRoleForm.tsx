@@ -54,6 +54,7 @@ export function ApprovalRoleForm({
     defaultValues: {
       approvalRoleGroupId: 0,
       name: '',
+      maxAmount: 0,
     },
   });
 
@@ -62,11 +63,13 @@ export function ApprovalRoleForm({
       form.reset({
         approvalRoleGroupId: role.approvalRoleGroupId,
         name: role.name,
+        maxAmount: role.maxAmount,
       });
     } else {
       form.reset({
         approvalRoleGroupId: 0,
         name: '',
+        maxAmount: 0,
       });
     }
   }, [role, form]);
@@ -143,6 +146,29 @@ export function ApprovalRoleForm({
                       {...field}
                       placeholder={t('approvalRole.form.namePlaceholder', 'Rol adını girin')}
                       maxLength={100}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="maxAmount"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    {t('approvalRole.form.maxAmount', 'Maksimum Tutar')}
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      step="0.01"
+                      {...field}
+                      value={field.value || ''}
+                      onChange={(e) => field.onChange(e.target.value ? parseFloat(e.target.value) : 0)}
+                      placeholder={t('approvalRole.form.maxAmountPlaceholder', 'Maksimum tutarı girin')}
                     />
                   </FormControl>
                   <FormMessage />

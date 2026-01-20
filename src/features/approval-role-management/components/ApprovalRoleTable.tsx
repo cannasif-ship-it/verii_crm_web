@@ -186,6 +186,15 @@ export function ApprovalRoleTable({
                   <SortIcon column="Name" />
                 </div>
               </TableHead>
+              <TableHead
+                className="cursor-pointer select-none"
+                onClick={() => handleSort('MaxAmount')}
+              >
+                <div className="flex items-center">
+                  {t('approvalRole.table.maxAmount', 'Maksimum Tutar')}
+                  <SortIcon column="MaxAmount" />
+                </div>
+              </TableHead>
               <TableHead>
                 {t('approvalRole.table.createdDate', 'Oluşturulma Tarihi')}
               </TableHead>
@@ -203,6 +212,12 @@ export function ApprovalRoleTable({
                 <TableCell>{role.id}</TableCell>
                 <TableCell>{role.approvalRoleGroupName || '-'}</TableCell>
                 <TableCell className="font-medium">{role.name}</TableCell>
+                <TableCell>
+                  {new Intl.NumberFormat('tr-TR', {
+                    style: 'currency',
+                    currency: 'TRY',
+                  }).format(role.maxAmount)}
+                </TableCell>
                 <TableCell>
                   {new Date(role.createdDate).toLocaleDateString('tr-TR')}
                 </TableCell>

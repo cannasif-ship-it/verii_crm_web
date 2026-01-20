@@ -1,3 +1,5 @@
+import type { PagedParams, PagedFilter } from '@/types/api';
+
 export const QUOTATION_QUERY_KEYS = {
   QUOTATIONS: 'quotation.quotations',
   QUOTATION: 'quotation.quotation',
@@ -9,10 +11,14 @@ export const QUOTATION_QUERY_KEYS = {
   CAN_EDIT: 'quotation.canEdit',
   APPROVAL_STATUS: 'quotation.approvalStatus',
   PRICE_RULE_OF_QUOTATION: 'quotation.priceRuleOfQuotation',
+  WAITING_APPROVALS: 'quotation.waitingApprovals',
+  QUOTATION_EXCHANGE_RATES: 'quotation.exchangeRates',
+  QUOTATION_LINES: 'quotation.lines',
 } as const;
 
 export const queryKeys = {
-  quotations: () => [QUOTATION_QUERY_KEYS.QUOTATIONS] as const,
+  quotations: (params?: PagedParams & { filters?: PagedFilter[] | Record<string, unknown> }) => 
+    [QUOTATION_QUERY_KEYS.QUOTATIONS, params] as const,
   quotation: (id: number) => [QUOTATION_QUERY_KEYS.QUOTATION, id] as const,
   customers: (search?: string) => [QUOTATION_QUERY_KEYS.CUSTOMERS, search] as const,
   shippingAddresses: (customerId?: number) => [QUOTATION_QUERY_KEYS.SHIPPING_ADDRESSES, customerId] as const,
@@ -24,4 +30,7 @@ export const queryKeys = {
   priceRuleOfQuotation: (customerCode: string, salesmenId: number, quotationDate: string) => 
     [QUOTATION_QUERY_KEYS.PRICE_RULE_OF_QUOTATION, customerCode, salesmenId, quotationDate] as const,
   userDiscountLimitsBySalesperson: (salespersonId: number) => ['user-discount-limits', 'salesperson', salespersonId] as const,
+  waitingApprovals: () => [QUOTATION_QUERY_KEYS.WAITING_APPROVALS] as const,
+  quotationExchangeRates: (quotationId: number) => [QUOTATION_QUERY_KEYS.QUOTATION_EXCHANGE_RATES, quotationId] as const,
+  quotationLines: (quotationId: number) => [QUOTATION_QUERY_KEYS.QUOTATION_LINES, quotationId] as const,
 };
