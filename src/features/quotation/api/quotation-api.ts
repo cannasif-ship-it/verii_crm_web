@@ -10,6 +10,8 @@ import type {
   ApprovalActionGetDto,
   ApproveActionDto,
   RejectActionDto,
+  QuotationExchangeRateGetDto,
+  QuotationLineGetDto,
 } from '../types/quotation-types';
 import { queryKeys } from '../utils/query-keys';
 import { useQuery, useMutation, useQueryClient, type UseMutationResult, type UseQueryResult } from '@tanstack/react-query';
@@ -247,6 +249,44 @@ export const quotationApi = {
     }
     return response;
   },
+
+  getQuotationExchangeRatesByQuotationId: async (quotationId: number): Promise<QuotationExchangeRateGetDto[]> => {
+    const response = await api.get<ApiResponse<QuotationExchangeRateGetDto[]>>(
+      `/api/QuotationExchangeRate/quotation/${quotationId}`
+    );
+    if (response.success && response.data) {
+      return response.data;
+    }
+    return [];
+  },
+
+  getQuotationLinesByQuotationId: async (quotationId: number): Promise<QuotationLineGetDto[]> => {
+    const response = await api.get<ApiResponse<QuotationLineGetDto[]>>(
+      `/api/QuotationLine/by-quotation/${quotationId}`
+    );
+    if (response.success && response.data) {
+      return response.data;
+    }
+    return [];
+  },
+
+  updateBulk: async (id: number, data: QuotationBulkCreateDto): Promise<ApiResponse<QuotationGetDto>> => {
+    try {
+      const response = await api.put<ApiResponse<QuotationGetDto>>(
+        `/api/quotation/bulk-quotation/${id}`,
+        data
+      );
+      return response;
+    } catch (error: unknown) {
+      if (error && typeof error === 'object' && 'response' in error) {
+        const axiosError = error as { response?: { data?: unknown; status?: number } };
+        if (axiosError.response?.data) {
+          throw new Error(JSON.stringify(axiosError.response.data));
+        }
+      }
+      throw error;
+    }
+  },
 };
 
 export const useCreateQuotationBulk = (): UseMutationResult<ApiResponse<QuotationGetDto>, Error, QuotationBulkCreateDto, unknown> => {
@@ -256,6 +296,22 @@ export const useCreateQuotationBulk = (): UseMutationResult<ApiResponse<Quotatio
     mutationFn: (data: QuotationBulkCreateDto) => quotationApi.createBulk(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.quotations() });
+    },
+  });
+};
+
+export const useUpdateQuotationBulk = (): UseMutationResult<ApiResponse<QuotationGetDto>, Error, { id: number; data: QuotationBulkCreateDto }, unknown> => {
+  const queryClient = useQueryClient();
+  const { t } = useTranslation();
+
+  return useMutation({
+    mutationFn: ({ id, data }: { id: number; data: QuotationBulkCreateDto }) => quotationApi.updateBulk(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.quotations() });
+      toast.success(t('quotation.update.success', 'Teklif başarıyla güncellendi'));
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || t('quotation.update.error', 'Teklif güncellenirken bir hata oluştu'));
     },
   });
 };
@@ -505,5 +561,23 @@ export const useRejectAction = (): UseMutationResult<ApiResponse<boolean>, Error
     onError: (error: Error) => {
       toast.error(error.message || t('quotation.approval.rejectError', 'Red işlemi gerçekleştirilemedi'));
     },
+  });
+};
+
+export const useQuotationExchangeRates = (quotationId: number): UseQueryResult<QuotationExchangeRateGetDto[], Error> => {
+  return useQuery({
+    queryKey: queryKeys.quotationExchangeRates(quotationId),
+    queryFn: () => quotationApi.getQuotationExchangeRatesByQuotationId(quotationId),
+    enabled: !!quotationId && quotationId > 0,
+    staleTime: 5 * 60 * 1000,
+  });
+};
+
+export const useQuotationLines = (quotationId: number): UseQueryResult<QuotationLineGetDto[], Error> => {
+  return useQuery({
+    queryKey: queryKeys.quotationLines(quotationId),
+    queryFn: () => quotationApi.getQuotationLinesByQuotationId(quotationId),
+    enabled: !!quotationId && quotationId > 0,
+    staleTime: 5 * 60 * 1000,
   });
 };

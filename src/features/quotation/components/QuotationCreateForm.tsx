@@ -8,7 +8,6 @@ import { useCreateQuotationBulk, usePriceRuleOfQuotation, useUserDiscountLimitsB
 import { useCustomerOptions } from '@/features/customer-management/hooks/useCustomerOptions';
 import { QuotationHeaderForm } from './QuotationHeaderForm';
 import { QuotationLineTable } from './QuotationLineTable';
-import { QuotationExchangeRateForm } from './QuotationExchangeRateForm';
 import { QuotationSummaryCard } from './QuotationSummaryCard';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -309,16 +308,6 @@ export function QuotationCreateForm(): ReactElement {
                 userDiscountLimits={temporarySallerData}
               />
             </div>
-
-            {watchedCurrency !== 2 && watchedCurrency !== 1 && (
-              <div className="space-y-1 pt-2 border-t">
-                <QuotationExchangeRateForm
-                  exchangeRates={exchangeRates}
-                  setExchangeRates={setExchangeRates}
-                  baseCurrency={watchedCurrency}
-                />
-              </div>
-            )}
 
             <div className="pt-2 border-t">
               <QuotationSummaryCard lines={lines} currency={watchedCurrency} />

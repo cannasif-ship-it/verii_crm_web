@@ -12,6 +12,8 @@ export const QUOTATION_QUERY_KEYS = {
   APPROVAL_STATUS: 'quotation.approvalStatus',
   PRICE_RULE_OF_QUOTATION: 'quotation.priceRuleOfQuotation',
   WAITING_APPROVALS: 'quotation.waitingApprovals',
+  QUOTATION_EXCHANGE_RATES: 'quotation.exchangeRates',
+  QUOTATION_LINES: 'quotation.lines',
 } as const;
 
 export const queryKeys = {
@@ -29,4 +31,6 @@ export const queryKeys = {
     [QUOTATION_QUERY_KEYS.PRICE_RULE_OF_QUOTATION, customerCode, salesmenId, quotationDate] as const,
   userDiscountLimitsBySalesperson: (salespersonId: number) => ['user-discount-limits', 'salesperson', salespersonId] as const,
   waitingApprovals: () => [QUOTATION_QUERY_KEYS.WAITING_APPROVALS] as const,
+  quotationExchangeRates: (quotationId: number) => [QUOTATION_QUERY_KEYS.QUOTATION_EXCHANGE_RATES, quotationId] as const,
+  quotationLines: (quotationId: number) => [QUOTATION_QUERY_KEYS.QUOTATION_LINES, quotationId] as const,
 };

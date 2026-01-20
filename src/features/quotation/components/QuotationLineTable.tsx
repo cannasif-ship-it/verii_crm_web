@@ -337,7 +337,7 @@ export function QuotationLineTable({
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {lines.map((line) => {
+                  {lines.map((line, index) => {
                     const totalDiscountAmount = (line.discountAmount1 || 0) + (line.discountAmount2 || 0) + (line.discountAmount3 || 0);
                     const stockDisplay = line.productCode && line.productName 
                       ? `${line.productCode} - ${line.productName}`
@@ -358,7 +358,7 @@ export function QuotationLineTable({
                     const hasApprovalWarning = line.approvalStatus === 1;
 
                     return (
-                      <TableRow key={line.id} className={`hover:bg-muted/50 transition-colors ${hasApprovalWarning ? 'bg-red-50/50 dark:bg-red-950/20 border-l-4 border-l-red-500' : ''}`}>
+                      <TableRow key={line.id || `line-${index}`} className={`hover:bg-muted/50 transition-colors ${hasApprovalWarning ? 'bg-red-50/50 dark:bg-red-950/20 border-l-4 border-l-red-500' : ''}`}>
                             <TableCell className="min-w-[200px]">
                               <div className="space-y-1">
                                 <div className="flex items-center gap-2">

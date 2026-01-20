@@ -41,6 +41,7 @@ interface QuotationHeaderFormProps {
   onExchangeRatesChange?: (rates: QuotationExchangeRateFormState[]) => void;
   lines?: Array<{ productCode?: string | null; productName?: string | null }>;
   onLinesChange?: (lines: Array<{ productCode?: string | null; productName?: string | null }>) => void;
+  initialCurrency?: string | number | null;
 }
 
 export function QuotationHeaderForm({ 
@@ -48,6 +49,7 @@ export function QuotationHeaderForm({
   onExchangeRatesChange,
   lines = [],
   onLinesChange,
+  initialCurrency,
 }: QuotationHeaderFormProps = {}): ReactElement {
   const { t } = useTranslation();
   const form = useFormContext<CreateQuotationSchema>();
@@ -80,7 +82,19 @@ export function QuotationHeaderForm({
   };
 
   const handleCurrencyChange = (newCurrency: string): void => {
-    if (lines && lines.length > 0 && onLinesChange) {
+    const currentCurrency = form.watch('quotation.currency');
+    const newCurrencyNum = Number(newCurrency);
+    const currentCurrencyNum = typeof currentCurrency === 'string' ? Number(currentCurrency) : currentCurrency;
+    
+    if (initialCurrency !== null && initialCurrency !== undefined) {
+      const initialCurrencyNum = typeof initialCurrency === 'string' ? Number(initialCurrency) : initialCurrency;
+      if (initialCurrencyNum === newCurrencyNum) {
+        form.setValue('quotation.currency', newCurrency);
+        return;
+      }
+    }
+    
+    if (lines && lines.length > 0 && onLinesChange && currentCurrencyNum !== newCurrencyNum) {
       setPendingCurrency(newCurrency);
       setCurrencyChangeDialogOpen(true);
     } else {
@@ -212,7 +226,7 @@ export function QuotationHeaderForm({
               </FormLabel>
               <Select
                 onValueChange={field.onChange}
-                value={field.value}
+                value={field.value || ''}
               >
                 <FormControl>
                   <SelectTrigger>
@@ -257,7 +271,7 @@ export function QuotationHeaderForm({
               </div>
               <Select
                 onValueChange={(value) => handleCurrencyChange(value)}
-                value={field.value || undefined}
+                value={field.value ? String(field.value) : ''}
               >
                 <FormControl>
                   <SelectTrigger>
