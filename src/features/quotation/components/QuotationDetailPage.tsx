@@ -9,7 +9,6 @@ import { useCustomerOptions } from '@/features/customer-management/hooks/useCust
 import { useUIStore } from '@/stores/ui-store';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Skeleton } from '@/components/ui/skeleton';
 import { ArrowLeft, Send } from 'lucide-react';
 import { createQuotationSchema, type CreateQuotationSchema } from '../schemas/quotation-schema';
 import type { QuotationLineFormState, QuotationExchangeRateFormState, QuotationBulkCreateDto, CreateQuotationDto, PricingRuleLineGetDto, UserDiscountLimitDto } from '../types/quotation-types';
@@ -387,9 +386,11 @@ export function QuotationDetailPage(): ReactElement {
 
   if (isLoading || isLoadingExchangeRates || isLoadingLines) {
     return (
-      <div className="space-y-6">
-        <Skeleton className="h-64 w-full" />
-        <Skeleton className="h-64 w-full" />
+      <div className="flex flex-col items-center justify-center py-24 gap-4 border border-zinc-300 dark:border-zinc-700/80 rounded-xl bg-white/50 dark:bg-card/50">
+        <div className="w-10 h-10 border-4 border-muted border-t-pink-500 rounded-full animate-spin" />
+        <span className="text-muted-foreground animate-pulse text-sm font-medium">
+          {t('common.loading', 'Yükleniyor...')}
+        </span>
       </div>
     );
   }
