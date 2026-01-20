@@ -13,7 +13,7 @@ export const useStockImageUpload = () => {
     mutationFn: async ({ stockId, files, altTexts }: { stockId: number; files: File[]; altTexts?: string[] }): Promise<StockImageDto[]> => {
       return await stockApi.uploadImages(stockId, files, altTexts);
     },
-    onSuccess: (data: StockImageDto[], variables: { stockId: number; files: File[]; altTexts?: string[] }) => {
+    onSuccess: (_, variables: { stockId: number; files: File[]; altTexts?: string[] }) => {
       queryClient.invalidateQueries({ queryKey: queryKeys.images(variables.stockId) });
       queryClient.invalidateQueries({ queryKey: queryKeys.detail(variables.stockId) });
       toast.success(t('stock.messages.uploadSuccess', 'Görseller başarıyla yüklendi'));
