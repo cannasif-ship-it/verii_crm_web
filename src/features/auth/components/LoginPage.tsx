@@ -30,7 +30,6 @@ import { Input } from '@/components/ui/input';
 import loginImage from '../../../../public/veriicrmlogo.png';
 
 // --- HUGEICONS IMPORTLARI ---
-// --- HUGEICONS IMPORTLARI ---
 import { 
   Location01Icon, 
   Mail02Icon, 
@@ -39,7 +38,6 @@ import {
   ViewOffIcon, 
   Globe02Icon, 
   WhatsappIcon,
-  // YENİ EKLENENLER:
   Call02Icon,        // Telefon için
   TelegramIcon,      // Telegram için
   InstagramIcon,     // Instagram için
@@ -69,7 +67,7 @@ export function LoginPage(): React.JSX.Element {
   
   const [rememberMe, setRememberMe] = useState(false);
 
-  // --- THREE.JS ANIMASYON KODU (AYNEN KORUNDU) ---
+  // --- THREE.JS ANIMASYON KODU ---
   useEffect(() => {
     if (!mountRef.current) return;
 
@@ -136,7 +134,8 @@ export function LoginPage(): React.JSX.Element {
     const pulsesCount = 15;
     const pulsesGeo = new THREE.BufferGeometry();
     const pulsesPos = new Float32Array(pulsesCount * 3);
-    pulsesGeo.setAttribute('position', new THREE.BufferAttribute(pulsesPos, 3));
+    const pulsesGeoAttr = new THREE.BufferAttribute(pulsesPos, 3);
+    pulsesGeo.setAttribute('position', pulsesGeoAttr);
     const pulsesMat = new THREE.PointsMaterial({
       color: 0xfbbf24,
       size: 0.9,
@@ -449,54 +448,47 @@ export function LoginPage(): React.JSX.Element {
         </div>
 
 {/* --- FOOTER --- */}
-        <div className="w-full max-w-4xl z-20 mt-8 flex flex-col items-center gap-8 pb-8">
+        <div className="w-full max-w-4xl z-20 mt-8 flex flex-col items-center gap-6 pb-6">
           <p className="text-slate-400 text-sm font-light tracking-[0.2em] uppercase opacity-80 text-center">
           "İŞİNİZİ TAHMİNLERLE DEĞİL, <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-yellow-400 font-bold border-b border-pink-500/20 pb-0.5">v3rii</span> 'yle yönetin."
           </p>
           
-          {/* GRID YAPISI: Mobilde 2'li, Tablet/PC'de 3'lü düzenli sıralama */}
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-2 w-full max-w-l px-2">
+          {/* YENİ SOSYAL BUTON ALANI: Flex + Round Icons Only */}
+          <div className="flex flex-wrap items-center justify-center gap-4 px-4">
             
             {/* 1. Telefon */}
-            <a href="tel:+905070123018" className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-white/5 border border-white/5 text-slate-400 hover:text-white hover:bg-white/10 hover:border-white/10 transition-all group w-full">
-              <Call02Icon className="group-hover:text-lime-400 transition-colors shrink-0" size={16} />
-              <span className="font-medium truncate">+90 507 012 30 18</span>
+            <a href="tel:+905070123018" className="flex items-center justify-center w-12 h-12 rounded-full bg-white/5 border border-white/5 text-slate-400 hover:text-lime-400 hover:bg-white/10 hover:border-lime-500/30 hover:shadow-[0_0_15px_rgba(132,204,22,0.3)] hover:scale-110 transition-all duration-300 group">
+              <Call02Icon size={20} />
             </a>
 
             {/* 2. Website */}
-            <a href="https://v3rii.com" target="_blank" rel="noreferrer" className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-white/5 border border-white/5 text-slate-400 hover:text-white hover:bg-white/10 hover:border-white/10 transition-all group w-full">
-              <Globe02Icon className="group-hover:text-pink-400 transition-colors shrink-0" size={16} />
-              <span className="font-medium">v3rii.com</span>
+            <a href="https://v3rii.com" target="_blank" rel="noreferrer" className="flex items-center justify-center w-12 h-12 rounded-full bg-white/5 border border-white/5 text-slate-400 hover:text-pink-400 hover:bg-white/10 hover:border-pink-500/30 hover:shadow-[0_0_15px_rgba(244,114,182,0.3)] hover:scale-110 transition-all duration-300 group">
+              <Globe02Icon size={20} />
             </a>
 
             {/* 3. E-Posta */}
-            <a href="mailto:info@v3rii.com" className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-white/5 border border-white/5 text-slate-400 hover:text-white hover:bg-white/10 hover:border-white/10 transition-all group w-full">
-              <Mail02Icon className="group-hover:text-orange-400 transition-colors shrink-0" size={16} />
-              <span className="font-medium">E-Posta</span>
+            <a href="mailto:info@v3rii.com" className="flex items-center justify-center w-12 h-12 rounded-full bg-white/5 border border-white/5 text-slate-400 hover:text-orange-400 hover:bg-white/10 hover:border-orange-500/30 hover:shadow-[0_0_15px_rgba(251,146,60,0.3)] hover:scale-110 transition-all duration-300 group">
+              <Mail02Icon size={20} />
             </a>
 
             {/* 4. WhatsApp */}
-            <a href="https://wa.me/905070123018" target="_blank" rel="noreferrer" className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-white/5 border border-white/5 text-slate-400 hover:text-white hover:bg-white/10 hover:border-white/10 transition-all group w-full">
-              <WhatsappIcon className="group-hover:text-emerald-400 transition-colors shrink-0" size={16} />
-              <span className="font-medium">WhatsApp</span>
+            <a href="https://wa.me/905070123018" target="_blank" rel="noreferrer" className="flex items-center justify-center w-12 h-12 rounded-full bg-white/5 border border-white/5 text-slate-400 hover:text-emerald-400 hover:bg-white/10 hover:border-emerald-500/30 hover:shadow-[0_0_15px_rgba(52,211,153,0.3)] hover:scale-110 transition-all duration-300 group">
+              <WhatsappIcon size={20} />
             </a>
 
             {/* 5. Telegram */}
-            <a href="https://t.me/v3rii" target="_blank" rel="noreferrer" className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-white/5 border border-white/5 text-slate-400 hover:text-white hover:bg-white/10 hover:border-white/10 transition-all group w-full">
-              <TelegramIcon className="group-hover:text-sky-400 transition-colors shrink-0" size={16} />
-              <span className="font-medium">Telegram</span>
+            <a href="https://t.me/v3rii" target="_blank" rel="noreferrer" className="flex items-center justify-center w-12 h-12 rounded-full bg-white/5 border border-white/5 text-slate-400 hover:text-sky-400 hover:bg-white/10 hover:border-sky-500/30 hover:shadow-[0_0_15px_rgba(56,189,248,0.3)] hover:scale-110 transition-all duration-300 group">
+              <TelegramIcon size={20} />
             </a>
 
             {/* 6. Instagram */}
-            <a href="https://instagram.com/v3rii" target="_blank" rel="noreferrer" className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-white/5 border border-white/5 text-slate-400 hover:text-white hover:bg-white/10 hover:border-white/10 transition-all group w-full">
-              <InstagramIcon className="group-hover:text-fuchsia-400 transition-colors shrink-0" size={16}/>
-              <span className="font-medium">Instagram</span>
+            <a href="https://instagram.com/v3rii" target="_blank" rel="noreferrer" className="flex items-center justify-center w-12 h-12 rounded-full bg-white/5 border border-white/5 text-slate-400 hover:text-fuchsia-400 hover:bg-white/10 hover:border-fuchsia-500/30 hover:shadow-[0_0_15px_rgba(232,121,249,0.3)] hover:scale-110 transition-all duration-300 group">
+              <InstagramIcon size={20} />
             </a>
 
-            {/* 7. X (Twitter) - Tek kaldığı için mobilde tam genişlik, PC'de ortalı */}
-            <a href="https://x.com/v3rii" target="_blank" rel="noreferrer" className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-white/5 border border-white/5 text-slate-400 hover:text-white hover:bg-white/10 hover:border-white/10 transition-all group w-full col-span-2 md:col-span-1 md:col-start-2">
-              <NewTwitterIcon className="group-hover:text-white transition-colors shrink-0" size={16}  />
-              <span className="font-medium">X</span>
+            {/* 7. X (Twitter) */}
+            <a href="https://x.com/v3rii" target="_blank" rel="noreferrer" className="flex items-center justify-center w-12 h-12 rounded-full bg-white/5 border border-white/5 text-slate-400 hover:text-white hover:bg-white/10 hover:border-white/30 hover:shadow-[0_0_15px_rgba(255,255,255,0.3)] hover:scale-110 transition-all duration-300 group">
+              <NewTwitterIcon size={20} />
             </a>
 
           </div>
