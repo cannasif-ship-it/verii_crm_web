@@ -6,6 +6,7 @@ import { useAuthStore } from '@/stores/auth-store';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { ChevronDown, ChevronRight, LogOut } from 'lucide-react';
+import Logo from '@/assets/v3logo.png';
 
 interface NavItem {
   title: string;
@@ -300,7 +301,6 @@ export function Sidebar({ items }: SidebarProps): ReactElement {
   const navigate = useNavigate();
   const [expandedItemKey, setExpandedItemKey] = useState<string | null>(null);
   const [isManualClick, setIsManualClick] = useState(false);
-
   useEffect(() => {
     if (!isSidebarOpen) setExpandedItemKey(null);
   }, [isSidebarOpen]);
@@ -335,7 +335,7 @@ export function Sidebar({ items }: SidebarProps): ReactElement {
             {isSidebarOpen ? (
                  <div className="overflow-hidden w-full flex justify-center">
                     <img 
-                        src="/src/Assets/veriicrmlogo.png" 
+                        src={Logo}
                         alt="Logo" 
                         className="h-28 object-contain" 
                     />
@@ -344,7 +344,7 @@ export function Sidebar({ items }: SidebarProps): ReactElement {
                 <div className="flex items-center justify-center w-full h-full">
                      <div className="w-full h-full flex items-center justify-center p-1">
                          <img 
-                            src="/src/Assets/v3logo.png" 
+                            src={Logo}
                             alt="V3" 
                             className="w-full h-full object-contain scale-150" 
                         />
