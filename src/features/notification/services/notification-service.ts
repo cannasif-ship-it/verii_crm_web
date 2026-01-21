@@ -31,7 +31,7 @@ class NotificationService {
       console.warn('[NotificationService] Failed to get API URL from axios:', error);
     }
     
-    return 'http://localhost:5000';
+    return 'https://crmapi.v3rii.com';
   }
 
   private getToken(): string | null {
