@@ -16,13 +16,12 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogClose,
 } from '@/components/ui/dialog';
 import { useApprovalUserRoleList } from '../hooks/useApprovalUserRoleList';
 import { useDeleteApprovalUserRole } from '../hooks/useDeleteApprovalUserRole';
 import type { ApprovalUserRoleDto } from '../types/approval-user-role-types';
 import type { PagedFilter } from '@/types/api';
-import { Edit2, Trash2, ArrowUpDown, ArrowUp, ArrowDown, ShieldCheck, AlertCircle } from 'lucide-react';
+import { Edit2, Trash2, ArrowUpDown, ArrowUp, ArrowDown, ShieldCheck } from 'lucide-react';
 
 interface ApprovalUserRoleTableProps {
   onEdit: (userRole: ApprovalUserRoleDto) => void;

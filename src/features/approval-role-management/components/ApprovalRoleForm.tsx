@@ -156,15 +156,12 @@ export function ApprovalRoleForm({
               )}
             />
 
-<<<<<<< HEAD
-            <DialogFooter className="gap-2 sm:gap-0 pt-2">
-=======
             <FormField
               control={form.control}
               name="maxAmount"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel>
+                <FormItem className="space-y-2">
+                  <FormLabel className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">
                     {t('approvalRole.form.maxAmount', 'Maksimum Tutar')}
                   </FormLabel>
                   <FormControl>
@@ -175,6 +172,7 @@ export function ApprovalRoleForm({
                       value={field.value || ''}
                       onChange={(e) => field.onChange(e.target.value ? parseFloat(e.target.value) : 0)}
                       placeholder={t('approvalRole.form.maxAmountPlaceholder', 'Maksimum tutarı girin')}
+                      className={inputClass}
                     />
                   </FormControl>
                   <FormMessage />
@@ -182,8 +180,7 @@ export function ApprovalRoleForm({
               )}
             />
 
-            <DialogFooter>
->>>>>>> 79ff09db19627f10303ff94848b8decd41e6d301
+            <DialogFooter className="gap-2 sm:gap-0 pt-2">
               <Button
                 type="button"
                 variant="outline"

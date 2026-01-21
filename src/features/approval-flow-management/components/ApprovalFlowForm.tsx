@@ -6,7 +6,6 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
@@ -28,7 +27,6 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
-import { Separator } from '@/components/ui/separator';
 import { approvalFlowFormSchema, type ApprovalFlowFormSchema } from '../types/approval-flow-types';
 import type { ApprovalFlowDto } from '../types/approval-flow-types';
 import { DocumentTypeEnum } from '../types/approval-flow-types';

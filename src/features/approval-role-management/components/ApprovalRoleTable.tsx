@@ -130,11 +130,19 @@ export function ApprovalRoleTable({
               </div>
             </TableHead>
             <TableHead 
-              className={`cursor-pointer select-none py-4 px-4 text-xs font-bold uppercase tracking-wider text-zinc-900 dark:text-foreground/90 hover:text-pink-600 dark:hover:text-pink-500 transition-colors border-b border-r border-zinc-300 dark:border-zinc-700 last:border-r-0`}
+              className={`cursor-pointer select-none py-4 px-4 text-xs font-bold uppercase tracking-wider text-zinc-900 dark:text-foreground/90 hover:text-pink-600 dark:hover:text-pink-500 transition-colors border-b border-r border-zinc-300 dark:border-zinc-700`}
               onClick={() => handleSort('Name')}
             >
               <div className="flex items-center gap-1">
                 {t('approvalRole.table.name', 'Rol Adı')} <SortIcon column="Name" />
+              </div>
+            </TableHead>
+            <TableHead 
+              className={`cursor-pointer select-none py-4 px-4 text-xs font-bold uppercase tracking-wider text-zinc-900 dark:text-foreground/90 hover:text-pink-600 dark:hover:text-pink-500 transition-colors border-b border-r border-zinc-300 dark:border-zinc-700`}
+              onClick={() => handleSort('MaxAmount')}
+            >
+              <div className="flex items-center gap-1">
+                {t('approvalRole.table.maxAmount', 'Maksimum Tutar')} <SortIcon column="MaxAmount" />
               </div>
             </TableHead>
             <TableHead className={`py-4 px-4 text-xs font-bold uppercase tracking-wider text-zinc-900 dark:text-foreground/90 border-b border-r border-zinc-300 dark:border-zinc-700`}>
@@ -163,6 +171,12 @@ export function ApprovalRoleTable({
               <TableCell className={`text-sm text-foreground/80 border-b border-r ${borderClass} px-4 py-3`}>
                 {role.name || '-'}
               </TableCell>
+              <TableCell className={`text-sm text-foreground/80 border-b border-r ${borderClass} px-4 py-3`}>
+                {new Intl.NumberFormat('tr-TR', {
+                  style: 'currency',
+                  currency: 'TRY',
+                }).format(role.maxAmount || 0)}
+              </TableCell>
               <TableCell className={`text-sm text-muted-foreground border-b border-r ${borderClass} px-4 py-3`}>
                  {role.createdDate ? new Date(role.createdDate).toLocaleDateString('tr-TR') : '-'}
               </TableCell>
@@ -188,94 +202,11 @@ export function ApprovalRoleTable({
                     <Trash2 className="h-4 w-4" />
                   </Button>
                 </div>
-<<<<<<< HEAD
               </TableCell>
             </TableRow>
           ))}
         </TableBody>
       </Table>
-=======
-              </TableHead>
-              <TableHead
-                className="cursor-pointer select-none"
-                onClick={() => handleSort('ApprovalRoleGroupName')}
-              >
-                <div className="flex items-center">
-                  {t('approvalRole.table.approvalRoleGroupName', 'Rol Grubu')}
-                  <SortIcon column="ApprovalRoleGroupName" />
-                </div>
-              </TableHead>
-              <TableHead
-                className="cursor-pointer select-none"
-                onClick={() => handleSort('Name')}
-              >
-                <div className="flex items-center">
-                  {t('approvalRole.table.name', 'Rol Adı')}
-                  <SortIcon column="Name" />
-                </div>
-              </TableHead>
-              <TableHead
-                className="cursor-pointer select-none"
-                onClick={() => handleSort('MaxAmount')}
-              >
-                <div className="flex items-center">
-                  {t('approvalRole.table.maxAmount', 'Maksimum Tutar')}
-                  <SortIcon column="MaxAmount" />
-                </div>
-              </TableHead>
-              <TableHead>
-                {t('approvalRole.table.createdDate', 'Oluşturulma Tarihi')}
-              </TableHead>
-              <TableHead>
-                {t('approvalRole.table.createdBy', 'Oluşturan Kullanıcı')}
-              </TableHead>
-              <TableHead className="text-right">
-                {t('common.actions', 'İşlemler')}
-              </TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {roles.map((role: ApprovalRoleDto) => (
-              <TableRow key={role.id}>
-                <TableCell>{role.id}</TableCell>
-                <TableCell>{role.approvalRoleGroupName || '-'}</TableCell>
-                <TableCell className="font-medium">{role.name}</TableCell>
-                <TableCell>
-                  {new Intl.NumberFormat('tr-TR', {
-                    style: 'currency',
-                    currency: 'TRY',
-                  }).format(role.maxAmount)}
-                </TableCell>
-                <TableCell>
-                  {new Date(role.createdDate).toLocaleDateString('tr-TR')}
-                </TableCell>
-                <TableCell>
-                  {role.createdByFullUser || role.createdByFullName || role.createdBy || '-'}
-                </TableCell>
-                <TableCell className="text-right">
-                  <div className="flex justify-end gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => onEdit(role)}
-                    >
-                      {t('common.edit', 'Düzenle')}
-                    </Button>
-                    <Button
-                      variant="destructive"
-                      size="sm"
-                      onClick={() => handleDeleteClick(role)}
-                    >
-                      {t('common.delete', 'Sil')}
-                    </Button>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </div>
->>>>>>> 79ff09db19627f10303ff94848b8decd41e6d301
 
       <div className={`flex flex-col md:flex-row items-center justify-between px-6 py-4 bg-zinc-50/50 dark:bg-muted/20 border-t-0 rounded-b-xl gap-4 border-x border-b ${borderClass}`}>
         <div className="text-xs text-muted-foreground font-medium">

@@ -9,7 +9,7 @@ import { useCreateApprovalUserRole } from '../hooks/useCreateApprovalUserRole';
 import { useUpdateApprovalUserRole } from '../hooks/useUpdateApprovalUserRole';
 import type { ApprovalUserRoleDto } from '../types/approval-user-role-types';
 import type { ApprovalUserRoleFormSchema } from '../types/approval-user-role-types';
-import { Search, RefreshCw, X, Plus, ShieldCheck } from 'lucide-react';
+import { Search, RefreshCw, X, Plus } from 'lucide-react';
 import type { PagedFilter } from '@/types/api';
 import { useQueryClient } from '@tanstack/react-query';
 import { APPROVAL_USER_ROLE_QUERY_KEYS } from '../utils/query-keys';
