@@ -27,7 +27,7 @@ import {
 } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 
-import loginImage from '@/assets/veriicrmlogo.png';
+import loginImage from '../../../../public/veriicrmlogo.png';
 
 // --- HUGEICONS IMPORTLARI ---
 // --- HUGEICONS IMPORTLARI ---

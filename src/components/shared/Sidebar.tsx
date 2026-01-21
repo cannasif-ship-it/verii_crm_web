@@ -6,7 +6,7 @@ import { useAuthStore } from '@/stores/auth-store';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { ChevronDown, ChevronRight, LogOut } from 'lucide-react';
-import Logo from '@/public/v3logo.png';
+import Logo from '../../../public/v3logo.png';
 
 interface NavItem {
   title: string;
