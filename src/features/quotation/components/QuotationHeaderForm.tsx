@@ -1,4 +1,4 @@
-import { type ReactElement, useState, useEffect, useRef } from 'react';
+import { type ReactElement, useState, useEffect, useRef, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFormContext } from 'react-hook-form';
 import {
@@ -29,6 +29,11 @@ import {
 import { CustomerSelectDialog } from '@/components/shared/CustomerSelectDialog';
 import { useShippingAddresses, useUsers, usePaymentTypes } from '../api/quotation-api';
 import { useExchangeRate } from '@/services/hooks/useExchangeRate';
+import { useErpCustomers } from '@/services/hooks/useErpCustomers';
+import { useCustomerOptions } from '@/features/customer-management/hooks/useCustomerOptions';
+import { useCustomer } from '@/features/customer-management/hooks/useCustomer';
+import { useAvailableDocumentSerialTypes } from '@/features/document-serial-type-management/hooks/useAvailableDocumentSerialTypes';
+import { PricingRuleType } from '@/features/pricing-rule/types/pricing-rule-types';
 import type { KurDto } from '@/services/erp-types';
 import { ExchangeRateDialog } from './ExchangeRateDialog';
 import { DollarSign, Search, User, Truck, Briefcase, Globe, Calendar, CreditCard, Hash, FileText } from 'lucide-react';
@@ -43,6 +48,7 @@ interface QuotationHeaderFormProps {
   lines?: Array<{ productCode?: string | null; productName?: string | null }>;
   onLinesChange?: (lines: Array<{ productCode?: string | null; productName?: string | null }>) => void;
   initialCurrency?: string | number | null;
+  revisionNo?: string | null;
 }
 
 export function QuotationHeaderForm({ 
@@ -51,6 +57,7 @@ export function QuotationHeaderForm({
   lines = [],
   onLinesChange,
   initialCurrency,
+  revisionNo,
 }: QuotationHeaderFormProps = {}): ReactElement {
   const { t } = useTranslation();
   const form = useFormContext<CreateQuotationSchema>();
@@ -64,9 +71,44 @@ export function QuotationHeaderForm({
   const watchedCustomerId = form.watch('quotation.potentialCustomerId');
   const watchedErpCustomerCode = form.watch('quotation.erpCustomerCode');
   const watchedCurrency = form.watch('quotation.currency');
+  const watchedRepresentativeId = form.watch('quotation.representativeId');
   const { data: shippingAddresses } = useShippingAddresses(watchedCustomerId || undefined);
   const { data: users } = useUsers();
   const { data: paymentTypes } = usePaymentTypes();
+  const { data: customerOptions = [] } = useCustomerOptions();
+  const { data: erpCustomers = [] } = useErpCustomers();
+  const { data: customer } = useCustomer(watchedCustomerId ?? 0);
+  
+  const customerTypeId = useMemo(() => {
+    if (watchedErpCustomerCode) {
+      return 0;
+    }
+    return customer?.customerTypeId ?? undefined;
+  }, [watchedErpCustomerCode, customer?.customerTypeId]);
+  
+  const { data: availableDocumentSerialTypes = [] } = useAvailableDocumentSerialTypes(
+    customerTypeId,
+    watchedRepresentativeId ?? undefined,
+    PricingRuleType.Quotation
+  );
+
+  const customerDisplayValue = useMemo(() => {
+    if (watchedCustomerId) {
+      const customer = customerOptions.find((c) => c.id === watchedCustomerId);
+      if (customer) {
+        return `CRM: ${watchedCustomerId} / ${customer.name}`;
+      }
+      return `CRM: ${watchedCustomerId}`;
+    }
+    if (watchedErpCustomerCode) {
+      const erpCustomer = erpCustomers.find((c) => c.cariKod === watchedErpCustomerCode);
+      if (erpCustomer) {
+        return `ERP: ${watchedErpCustomerCode} / ${erpCustomer.cariIsim || watchedErpCustomerCode}`;
+      }
+      return `ERP: ${watchedErpCustomerCode}`;
+    }
+    return '';
+  }, [watchedCustomerId, watchedErpCustomerCode, customerOptions, erpCustomers]);
 
   useEffect(() => {
     const currentRepresentativeId = form.watch('quotation.representativeId');
@@ -174,13 +216,7 @@ export function QuotationHeaderForm({
                 <FormControl>
                   <Input
                     className={cn(inputClass, "font-medium text-zinc-900 dark:text-white")}
-                    value={
-                      watchedCustomerId
-                        ? `CRM: ${watchedCustomerId}`
-                        : watchedErpCustomerCode
-                        ? `ERP: ${watchedErpCustomerCode}`
-                        : ''
-                    }
+                    value={customerDisplayValue}
                     placeholder={t('quotation.header.selectCustomer', 'Lütfen bir müşteri seçiniz...')}
                     readOnly
                   />
@@ -429,20 +465,56 @@ export function QuotationHeaderForm({
             <FormItem>
               <FormLabel className={labelClass}>
                 <Hash className="h-4 w-4 text-zinc-500" />
-                {t('quotation.header.offerNo', 'Teklif No')}
+                {t('quotation.header.offerNo', 'Teklif Tipi')}
               </FormLabel>
-              <FormControl>
-                <Input 
-                    {...field} 
-                    value={field.value || ''} 
-                    placeholder={t('quotation.header.offerNoPlaceholder', 'Otomatik')} 
-                    className={cn(inputClass, "font-mono placeholder:font-sans")}
-                />
-              </FormControl>
+              <Select
+                onValueChange={(value) => field.onChange(value || null)}
+                value={field.value || ''}
+                disabled={customerTypeId === undefined || !watchedRepresentativeId}
+              >
+                <FormControl>
+                  <SelectTrigger className={inputClass}>
+                    <SelectValue placeholder={t('common.select', 'Seçiniz')} />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {availableDocumentSerialTypes.length === 0 ? (
+                    <div className="px-2 py-6 text-center text-sm text-muted-foreground">
+                      {t('quotation.header.noDocumentSerialType', 'Uygun dosya tipi bulunamadı')}
+                    </div>
+                  ) : (
+                    availableDocumentSerialTypes
+                      .filter((docType) => docType.serialPrefix && docType.serialPrefix.trim() !== '')
+                      .map((docType) => (
+                        <SelectItem key={docType.id} value={docType.id.toString()}>
+                          {docType.serialPrefix}
+                        </SelectItem>
+                      ))
+                  )}
+                </SelectContent>
+              </Select>
               <FormMessage />
             </FormItem>
           )}
         />
+
+        {/* REVİZYON NO */}
+        {revisionNo && (
+          <FormItem>
+            <FormLabel className={labelClass}>
+              <Hash className="h-4 w-4 text-zinc-500" />
+              {t('quotation.header.revisionNo', 'Revizyon No')}
+            </FormLabel>
+            <FormControl>
+              <Input
+                value={revisionNo}
+                readOnly
+                disabled
+                className={cn(inputClass, "bg-zinc-100 dark:bg-zinc-800/50 cursor-not-allowed")}
+              />
+            </FormControl>
+          </FormItem>
+        )}
       </div>
 
       {/* AÇIKLAMA (TAM GENİŞLİK) */}

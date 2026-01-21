@@ -147,7 +147,7 @@ export function QuotationCreateForm(): ReactElement {
       }
 
       const quotationData: CreateQuotationDto = {
-        offerType: data.quotation.offerType,
+        offerType: data.quotation.offerNo || data.quotation.offerType,
         currency: currencyValue,
         potentialCustomerId: (data.quotation.potentialCustomerId && data.quotation.potentialCustomerId > 0) ? data.quotation.potentialCustomerId : null,
         erpCustomerCode: data.quotation.erpCustomerCode || null,

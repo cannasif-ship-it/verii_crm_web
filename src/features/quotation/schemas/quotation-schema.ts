@@ -10,7 +10,7 @@ export const createQuotationSchema = z.object({
     status: z.number().nullable().optional(),
     description: z.string().max(500, 'Açıklama en fazla 500 karakter olabilir').nullable().optional(),
     paymentTypeId: z.number().nullable().optional(),
-    offerType: z.enum(['Domestic', 'Export'], {
+    offerType: z.string({
       message: 'Teklif tipi seçilmelidir',
     }),
     offerDate: z.string().nullable().optional(),

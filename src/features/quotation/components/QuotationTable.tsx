@@ -1,5 +1,6 @@
 import { type ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import {
   Table,
   TableBody,
@@ -10,7 +11,7 @@ import {
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { useQuotationList } from '../api/quotation-api';
+import { useQuotationList, useCreateRevisionOfQuotation } from '../api/quotation-api';
 import type { QuotationGetDto } from '../types/quotation-types';
 import type { PagedFilter } from '@/types/api';
 import { formatCurrency } from '../utils/format-currency';
@@ -38,7 +39,8 @@ export function QuotationTable({
   onRowClick,
 }: QuotationTableProps): ReactElement {
   const { t } = useTranslation();
-
+  const navigate = useNavigate();
+  const createRevisionMutation = useCreateRevisionOfQuotation();
 
   const { data, isLoading, isFetching } = useQuotationList({
     pageNumber,
@@ -47,6 +49,17 @@ export function QuotationTable({
     sortDirection,
     filters: filters as PagedFilter[] | undefined,
   });
+
+  const handleRevision = async (e: React.MouseEvent, quotationId: number): Promise<void> => {
+    e.stopPropagation();
+    try {
+      const result = await createRevisionMutation.mutateAsync(quotationId);
+      if (result.success && result.data?.id) {
+        navigate(`/quotations/${result.data.id}`);
+      }
+    } catch (error) {
+    }
+  };
 
   const handleSort = (column: string): void => {
     const newDirection = sortBy === column && sortDirection === 'asc' ? 'desc' : 'asc';
@@ -170,6 +183,9 @@ export function QuotationTable({
                   <SortIcon column="Status" />
                 </div>
               </TableHead>
+              <TableHead className="text-center">
+                {t('quotation.list.actions', 'İşlemler')}
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -192,6 +208,19 @@ export function QuotationTable({
                   <Badge variant={quotation.status === 1 ? 'default' : 'secondary'}>
                     {quotation.status ? t('quotation.list.statusActive', 'Aktif') : t('quotation.list.statusInactive', 'Pasif')}
                   </Badge>
+                </TableCell>
+                <TableCell>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={(e) => handleRevision(e, quotation.id)}
+                    disabled={createRevisionMutation.isPending}
+                    className="w-full"
+                  >
+                    {createRevisionMutation.isPending
+                      ? t('common.loading', 'Yükleniyor...')
+                      : t('quotation.list.revise', 'Revize et')}
+                  </Button>
                 </TableCell>
               </TableRow>
             ))}

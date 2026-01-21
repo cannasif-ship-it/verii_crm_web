@@ -8,12 +8,11 @@ import { useQuotation, useStartApprovalFlow, useQuotationExchangeRates, useQuota
 import { useCustomerOptions } from '@/features/customer-management/hooks/useCustomerOptions';
 import { useUIStore } from '@/stores/ui-store';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Send, Save, Calculator, Layers, X } from 'lucide-react'; // İkonlar güncellendi
+import { Send, Save, Calculator, Layers, X } from 'lucide-react'; // İkonlar güncellendi
 import { createQuotationSchema, type CreateQuotationSchema } from '../schemas/quotation-schema';
 import type { QuotationLineFormState, QuotationExchangeRateFormState, QuotationBulkCreateDto, CreateQuotationDto, PricingRuleLineGetDto, UserDiscountLimitDto } from '../types/quotation-types';
 import { QuotationHeaderForm } from './QuotationHeaderForm';
 import { QuotationLineTable } from './QuotationLineTable';
-import { QuotationExchangeRateForm } from './QuotationExchangeRateForm';
 import { QuotationSummaryCard } from './QuotationSummaryCard';
 import { useQuotationCalculations } from '../hooks/useQuotationCalculations';
 import { useExchangeRate } from '@/services/hooks/useExchangeRate';
@@ -361,7 +360,6 @@ export function QuotationDetailPage(): ReactElement {
           {t('quotation.detail.notFound', 'Teklif bulunamadı')}
         </p>
         <Button variant="outline" onClick={() => navigate('/quotations')}>
-          <ArrowLeft className="h-4 w-4 mr-2" />
           {t('common.backToQuotations', 'Tekliflere Dön')}
         </Button>
       </div>
@@ -375,37 +373,13 @@ export function QuotationDetailPage(): ReactElement {
           
           {/* HEADER SECTION */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <div className="flex items-center gap-5">
-              <Button
-                type="button"
-                variant="outline"
-                size="icon"
-                onClick={() => navigate('/quotations')}
-                className="group h-12 w-12 rounded-2xl bg-white/80 dark:bg-zinc-900/50 border-zinc-200 dark:border-white/10 shadow-sm hover:border-pink-500/50 hover:shadow-pink-500/20 transition-all duration-300"
-              >
-                <ArrowLeft className="h-5 w-5 text-zinc-500 group-hover:text-pink-600 transition-colors" />
-              </Button>
-              <div>
-                <h2 className="text-2xl font-bold tracking-tight">
-                    {t('quotation.detail.title', 'Teklif Detayı: {{offerNo}}', { offerNo: quotation.offerNo || `#${quotation.id}` })}
-                </h2>
-                <p className="text-muted-foreground text-sm">
-                    {t('quotation.detail.subtitle', 'Teklif detaylarını görüntüleyin ve düzenleyin.')}
-                </p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-3">
-                 <Button 
-                    type="button"
-                    variant="secondary"
-                    onClick={handleStartApprovalFlow}
-                    disabled={startApprovalFlow.isPending || !quotation}
-                    className="h-10"
-                >
-                    <Send className="h-4 w-4 mr-2" />
-                    {t('quotation.approval.sendForApproval', 'Onaya Gönder')}
-                </Button>
+            <div>
+              <h2 className="text-2xl font-bold tracking-tight">
+                  {t('quotation.detail.title', 'Teklif Detayı: {{offerNo}}', { offerNo: quotation.offerNo || `#${quotation.id}` })}
+              </h2>
+              <p className="text-muted-foreground text-sm">
+                  {t('quotation.detail.subtitle', 'Teklif detaylarını görüntüleyin ve düzenleyin.')}
+              </p>
             </div>
           </div>
 
@@ -432,6 +406,7 @@ export function QuotationDetailPage(): ReactElement {
                         }
                     }}
                     initialCurrency={quotation?.currency}
+                    revisionNo={quotation?.revisionNo}
                 />
             </div>
 
@@ -449,17 +424,6 @@ export function QuotationDetailPage(): ReactElement {
                 representativeId={watchedRepresentativeId}
               />
             </div>
-
-            {/* 3. SECTION: EXCHANGE RATES (Conditional) */}
-            {watchedCurrency !== 2 && watchedCurrency !== 1 && (
-              <div className="space-y-1 pt-2">
-                 <QuotationExchangeRateForm
-                    exchangeRates={exchangeRates}
-                    setExchangeRates={setExchangeRates}
-                    baseCurrency={watchedCurrency}
-                 />
-              </div>
-            )}
 
             {/* 4. SECTION: SUMMARY */}
             <div className="space-y-4 pt-4">
@@ -491,6 +455,16 @@ export function QuotationDetailPage(): ReactElement {
               >
                 <X className="mr-2 h-4 w-4" />
                 {t('common.cancel', 'İptal')}
+              </Button>
+              <Button 
+                type="button"
+                variant="secondary"
+                onClick={handleStartApprovalFlow}
+                disabled={startApprovalFlow.isPending || !quotation}
+                className="h-10"
+              >
+                <Send className="h-4 w-4 mr-2" />
+                {t('quotation.approval.sendForApproval', 'Onaya Gönder')}
               </Button>
               <Button
                 type="submit"

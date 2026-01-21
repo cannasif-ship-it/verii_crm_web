@@ -287,6 +287,27 @@ export const quotationApi = {
       throw error;
     }
   },
+
+  createRevisionOfQuotation: async (quotationId: number): Promise<ApiResponse<QuotationGetDto>> => {
+    try {
+      const response = await api.post<ApiResponse<QuotationGetDto>>(
+        '/api/Quotation/revision-of-quotation',
+        quotationId
+      );
+      if (!response.success) {
+        throw new Error(response.message || 'Teklif revizyonu oluşturulamadı');
+      }
+      return response;
+    } catch (error: unknown) {
+      if (error && typeof error === 'object' && 'response' in error) {
+        const axiosError = error as { response?: { data?: unknown; status?: number } };
+        if (axiosError.response?.data) {
+          throw new Error(JSON.stringify(axiosError.response.data));
+        }
+      }
+      throw error;
+    }
+  },
 };
 
 export const useCreateQuotationBulk = (): UseMutationResult<ApiResponse<QuotationGetDto>, Error, QuotationBulkCreateDto, unknown> => {
@@ -579,5 +600,21 @@ export const useQuotationLines = (quotationId: number): UseQueryResult<Quotation
     queryFn: () => quotationApi.getQuotationLinesByQuotationId(quotationId),
     enabled: !!quotationId && quotationId > 0,
     staleTime: 5 * 60 * 1000,
+  });
+};
+
+export const useCreateRevisionOfQuotation = (): UseMutationResult<ApiResponse<QuotationGetDto>, Error, number, unknown> => {
+  const queryClient = useQueryClient();
+  const { t } = useTranslation();
+
+  return useMutation({
+    mutationFn: (quotationId: number) => quotationApi.createRevisionOfQuotation(quotationId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.quotations() });
+      toast.success(t('quotation.revision.success', 'Teklif revizyonu başarıyla oluşturuldu'));
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || t('quotation.revision.error', 'Teklif revizyonu oluşturulurken bir hata oluştu'));
+    },
   });
 };
