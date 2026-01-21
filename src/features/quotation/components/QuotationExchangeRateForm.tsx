@@ -1,4 +1,4 @@
-import { type ReactElement, useState } from 'react';
+import { type ReactElement, useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -19,9 +19,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Plus, Trash2 } from 'lucide-react';
+import { Plus, Trash2, DollarSign, Calendar, Calculator } from 'lucide-react';
 import { useCurrencyOptions } from '@/services/hooks/useCurrencyOptions';
 import type { QuotationExchangeRateFormState } from '../types/quotation-types';
+import { cn } from '@/lib/utils';
+import { Badge } from '@/components/ui/badge';
 
 interface QuotationExchangeRateFormProps {
   exchangeRates: QuotationExchangeRateFormState[];
@@ -41,6 +43,15 @@ export function QuotationExchangeRateForm({
     new Date().toISOString().split('T')[0]
   );
   const [newIsOfficial, setNewIsOfficial] = useState(false);
+
+  // --- 🎨 TASARIM SİSTEMİ ---
+  const styles = {
+    glassCard: "relative overflow-hidden rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white/95 dark:bg-zinc-900/50 backdrop-blur-xl shadow-lg shadow-zinc-200/50 dark:shadow-none",
+    inputBase: "h-10 bg-zinc-50/50 dark:bg-zinc-900/50 border-zinc-200 dark:border-zinc-800 focus-visible:border-pink-500 focus-visible:ring-4 focus-visible:ring-pink-500/20 rounded-xl transition-all duration-200 font-medium",
+    tableHead: "h-10 px-4 text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider bg-zinc-50/80 dark:bg-zinc-900/50 border-b border-zinc-200 dark:border-zinc-800",
+    tableRow: "hover:bg-zinc-50 dark:hover:bg-zinc-800/40 transition-colors border-b border-zinc-100 dark:border-zinc-800 last:border-0",
+    label: "text-xs font-bold text-zinc-600 dark:text-zinc-400 mb-1.5 block uppercase tracking-wide",
+  };
 
   const handleAdd = (): void => {
     if (!newDovizTipi || !newExchangeRate || !newExchangeRateDate) return;
@@ -74,111 +85,168 @@ export function QuotationExchangeRateForm({
   };
 
   return (
-    <div className="space-y-4">
-      <div className="flex justify-between items-center">
-        <h3 className="text-lg font-semibold">
-          {t('quotation.exchangeRates.title', 'Döviz Kurları')}
-        </h3>
+    <div className={styles.glassCard}>
+      
+      {/* HEADER & FORM SECTION */}
+      <div className="p-5 border-b border-zinc-200 dark:border-zinc-800 bg-white/50 dark:bg-zinc-900/20">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="p-2 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 shadow-lg shadow-emerald-500/20 text-white">
+            <DollarSign className="h-5 w-5" />
+          </div>
+          <div>
+            <h3 className="text-base font-bold text-zinc-900 dark:text-white">
+              {t('quotation.exchangeRates.title', 'Döviz Kurları')}
+            </h3>
+            <p className="text-xs text-zinc-500">
+              Manuel kur girişi ve yönetimi
+            </p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-12 items-end">
+          {/* Para Birimi Seçimi */}
+          <div className="md:col-span-3">
+            <Label className={styles.label}>{t('quotation.exchangeRates.currency', 'Para Birimi')}</Label>
+            <Select
+              value={newDovizTipi === '' ? undefined : String(newDovizTipi)}
+              onValueChange={(value) => setNewDovizTipi(parseInt(value, 10))}
+            >
+              <SelectTrigger className={styles.inputBase}>
+                <SelectValue placeholder={t('common.select', 'Seçiniz')} />
+              </SelectTrigger>
+              <SelectContent>
+                {currencyOptions
+                  .filter((opt) => !exchangeRates.some((er) => er.dovizTipi === opt.dovizTipi))
+                  .map((opt) => (
+                    <SelectItem key={opt.dovizTipi} value={String(opt.dovizTipi)}>
+                      <span className="font-medium">{opt.code}</span>
+                      <span className="text-muted-foreground ml-2 text-xs">{opt.label}</span>
+                    </SelectItem>
+                  ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Kur Değeri */}
+          <div className="md:col-span-3">
+            <Label className={styles.label}>{t('quotation.exchangeRates.rate', 'Kur Değeri')}</Label>
+            <div className="relative">
+              <div className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none">
+                <Calculator className="h-4 w-4" />
+              </div>
+              <Input
+                type="number"
+                step="0.01"
+                min="0.01"
+                value={newExchangeRate}
+                onChange={(e) => setNewExchangeRate(e.target.value)}
+                placeholder="0.00"
+                className={cn(styles.inputBase, "pl-9 font-mono text-sm")}
+              />
+            </div>
+          </div>
+
+          {/* Tarih */}
+          <div className="md:col-span-3">
+            <Label className={styles.label}>{t('quotation.exchangeRates.date', 'Kur Tarihi')}</Label>
+            <div className="relative">
+              <div className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none">
+                <Calendar className="h-4 w-4" />
+              </div>
+              <Input
+                type="date"
+                value={newExchangeRateDate}
+                onChange={(e) => setNewExchangeRateDate(e.target.value)}
+                className={cn(styles.inputBase, "pl-9 text-xs")}
+              />
+            </div>
+          </div>
+
+          {/* Switch ve Buton */}
+          <div className="md:col-span-3 flex items-center justify-between gap-4">
+            <div className="flex items-center gap-2 bg-zinc-100 dark:bg-zinc-800/50 px-3 h-10 rounded-xl border border-zinc-200 dark:border-zinc-800">
+              <Switch
+                checked={newIsOfficial}
+                onCheckedChange={setNewIsOfficial}
+                id="isOfficial"
+                className="data-[state=checked]:bg-emerald-600"
+              />
+              <Label htmlFor="isOfficial" className="mb-0 text-[10px] font-medium cursor-pointer">
+                {t('quotation.exchangeRates.isOfficial', 'Resmi')}
+              </Label>
+            </div>
+            
+            <Button 
+              type="button" 
+              onClick={handleAdd} 
+              size="sm"
+              className="h-10 px-4 rounded-xl bg-gradient-to-r from-pink-600 to-orange-600 hover:from-pink-700 hover:to-orange-700 text-white shadow-md hover:shadow-lg transition-all border-0 flex-1 font-bold"
+            >
+              <Plus className="h-4 w-4 mr-1.5" />
+              {t('common.add', 'Ekle')}
+            </Button>
+          </div>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-5 items-end">
-        <div>
-          <Label>{t('quotation.exchangeRates.currency', 'Para Birimi')}</Label>
-          <Select
-            value={newDovizTipi === '' ? undefined : String(newDovizTipi)}
-            onValueChange={(value) => setNewDovizTipi(parseInt(value, 10))}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder={t('quotation.exchangeRates.selectCurrency', 'Para Birimi Seç')} />
-            </SelectTrigger>
-            <SelectContent>
-              {currencyOptions
-                .filter((opt) => !exchangeRates.some((er) => er.dovizTipi === opt.dovizTipi))
-                .map((opt) => (
-                  <SelectItem key={opt.dovizTipi} value={String(opt.dovizTipi)}>
-                    {opt.code} - {opt.label} {opt.kurDegeri ? `(${opt.kurDegeri})` : ''}
-                  </SelectItem>
-                ))}
-            </SelectContent>
-          </Select>
-        </div>
-        <div>
-          <Label>{t('quotation.exchangeRates.rate', 'Kur')}</Label>
-          <Input
-            type="number"
-            step="0.01"
-            min="0.01"
-            value={newExchangeRate}
-            onChange={(e) => setNewExchangeRate(e.target.value)}
-            placeholder="1.00"
-          />
-        </div>
-        <div>
-          <Label>{t('quotation.exchangeRates.date', 'Kur Tarihi')}</Label>
-          <Input
-            type="date"
-            value={newExchangeRateDate}
-            onChange={(e) => setNewExchangeRateDate(e.target.value)}
-          />
-        </div>
-        <div className="flex items-center gap-2">
-          <Switch
-            checked={newIsOfficial}
-            onCheckedChange={setNewIsOfficial}
-            id="isOfficial"
-          />
-          <Label htmlFor="isOfficial">
-            {t('quotation.exchangeRates.isOfficial', 'Resmi Kur')}
-          </Label>
-        </div>
-        <Button type="button" onClick={handleAdd} size="sm">
-          <Plus className="h-4 w-4 mr-2" />
-          {t('common.add', 'Ekle')}
-        </Button>
-      </div>
-
-      {exchangeRates.length > 0 && (
-        <div className="rounded-md border">
+      {/* TABLE SECTION */}
+      {exchangeRates.length > 0 ? (
+        <div className="p-0">
           <Table>
             <TableHeader>
-              <TableRow>
-                <TableHead>{t('quotation.exchangeRates.currency', 'Para Birimi')}</TableHead>
-                <TableHead className="text-right">
-                  {t('quotation.exchangeRates.rate', 'Kur')}
-                </TableHead>
-                <TableHead>{t('quotation.exchangeRates.date', 'Kur Tarihi')}</TableHead>
-                <TableHead>{t('quotation.exchangeRates.isOfficial', 'Resmi Kur')}</TableHead>
-                <TableHead>{t('common.actions', 'İşlemler')}</TableHead>
+              <TableRow className="hover:bg-transparent border-0">
+                <TableHead className={cn(styles.tableHead, "pl-6")}>{t('quotation.exchangeRates.currency', 'Para Birimi')}</TableHead>
+                <TableHead className={cn(styles.tableHead, "text-right")}>{t('quotation.exchangeRates.rate', 'Kur')}</TableHead>
+                <TableHead className={cn(styles.tableHead, "text-center")}>{t('quotation.exchangeRates.date', 'Tarih')}</TableHead>
+                <TableHead className={cn(styles.tableHead, "text-center")}>{t('quotation.exchangeRates.isOfficial', 'Durum')}</TableHead>
+                <TableHead className={cn(styles.tableHead, "text-center w-[80px]")}>{t('common.actions', 'İşlem')}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {exchangeRates.map((rate) => {
                 const currencyCode = rate.currency || (rate.dovizTipi ? `DOVIZ_${rate.dovizTipi}` : '');
                 return (
-                <TableRow key={rate.id}>
-                  <TableCell>{currencyCode}</TableCell>
-                  <TableCell className="text-right">{rate.exchangeRate}</TableCell>
-                  <TableCell>{rate.exchangeRateDate}</TableCell>
-                  <TableCell>
-                    {rate.isOfficial
-                      ? t('common.yes', 'Evet')
-                      : t('common.no', 'Hayır')}
-                  </TableCell>
-                  <TableCell>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleDelete(rate.id)}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </TableCell>
-                </TableRow>
+                  <TableRow key={rate.id} className={styles.tableRow}>
+                    <TableCell className="pl-6 font-semibold text-zinc-700 dark:text-zinc-200">
+                      {currencyCode}
+                    </TableCell>
+                    <TableCell className="text-right font-mono text-zinc-600 dark:text-zinc-300">
+                      {rate.exchangeRate.toFixed(4)}
+                    </TableCell>
+                    <TableCell className="text-center text-xs text-zinc-500">
+                      {rate.exchangeRateDate}
+                    </TableCell>
+                    <TableCell className="text-center">
+                      {rate.isOfficial ? (
+                        <Badge variant="secondary" className="bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-900/30 dark:text-emerald-400 dark:border-emerald-800 text-[10px] px-2 h-5">
+                          {t('quotation.exchangeRates.official', 'Resmi')}
+                        </Badge>
+                      ) : (
+                        <Badge variant="secondary" className="bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-900/30 dark:text-amber-400 dark:border-amber-800 text-[10px] px-2 h-5">
+                          {t('quotation.exchangeRates.custom', 'Özel')}
+                        </Badge>
+                      )}
+                    </TableCell>
+                    <TableCell className="text-center">
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleDelete(rate.id)}
+                        className="h-8 w-8 text-zinc-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30 rounded-lg transition-colors"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </TableCell>
+                  </TableRow>
                 );
               })}
             </TableBody>
           </Table>
+        </div>
+      ) : (
+        <div className="flex flex-col items-center justify-center py-8 text-center text-zinc-400 dark:text-zinc-600">
+          <p className="text-sm">{t('quotation.exchangeRates.empty', 'Henüz eklenmiş özel kur bulunmuyor.')}</p>
         </div>
       )}
     </div>

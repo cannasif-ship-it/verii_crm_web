@@ -1,10 +1,11 @@
 import { type ReactElement, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useQuotationCalculations } from '../hooks/useQuotationCalculations';
 import { useCurrencyOptions } from '@/services/hooks/useCurrencyOptions';
 import { formatCurrency } from '../utils/format-currency';
 import type { QuotationLineFormState } from '../types/quotation-types';
+import { cn } from '@/lib/utils';
+import { Calculator, Wallet } from 'lucide-react';
 
 interface QuotationSummaryCardProps {
   lines: QuotationLineFormState[];
@@ -26,25 +27,61 @@ export function QuotationSummaryCard({
     return found?.code || 'TRY';
   }, [currency, currencyOptions]);
 
+  // --- TASARIM STİLLERİ ---
+  const styles = {
+    // Kart: Diğer bileşenlerle (LineTable) birebir aynı cam efekti ve border yapısı
+    glassCard: "relative overflow-hidden rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white/95 dark:bg-zinc-900/50 shadow-sm",
+    
+    // Satır Yapısı
+    row: "flex items-center justify-between text-sm py-1",
+    label: "text-zinc-500 dark:text-zinc-400 font-medium",
+    value: "font-semibold text-zinc-900 dark:text-zinc-100 font-mono",
+    
+    // Alt Bölüm (Genel Toplam)
+    footer: "mt-4 pt-4 border-t border-zinc-100 dark:border-zinc-800",
+  };
+
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{t('quotation.summary.title', 'Özet')}</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-2">
-        <div className="flex justify-between">
-          <span>{t('quotation.summary.subtotal', 'Ara Toplam')}:</span>
-          <span className="font-semibold">{formatCurrency(totals.subtotal, currencyCode)}</span>
+    <div className={styles.glassCard}>
+      <div className="p-6">
+        
+        {/* Başlık */}
+        <div className="flex items-center gap-2 mb-6 text-zinc-900 dark:text-white">
+          <div className="p-2 rounded-lg bg-zinc-100 dark:bg-zinc-800">
+            <Calculator className="h-4 w-4 text-zinc-500 dark:text-zinc-400" />
+          </div>
+          <h3 className="font-bold text-base">{t('quotation.summary.title', 'Özet')}</h3>
         </div>
-        <div className="flex justify-between">
-          <span>{t('quotation.summary.totalVat', 'Toplam KDV')}:</span>
-          <span className="font-semibold">{formatCurrency(totals.totalVat, currencyCode)}</span>
+
+        {/* Hesaplamalar */}
+        <div className="space-y-3">
+          <div className={styles.row}>
+            <span className={styles.label}>{t('quotation.summary.subtotal', 'Ara Toplam')}</span>
+            <span className={styles.value}>{formatCurrency(totals.subtotal, currencyCode)}</span>
+          </div>
+          
+          <div className={styles.row}>
+            <span className={styles.label}>{t('quotation.summary.totalVat', 'Toplam KDV')}</span>
+            <span className={styles.value}>{formatCurrency(totals.totalVat, currencyCode)}</span>
+          </div>
         </div>
-        <div className="flex justify-between text-lg font-bold pt-2 border-t">
-          <span>{t('quotation.summary.grandTotal', 'Genel Toplam')}:</span>
-          <span>{formatCurrency(totals.grandTotal, currencyCode)}</span>
+
+        {/* Genel Toplam */}
+        <div className={styles.footer}>
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-bold text-zinc-500 uppercase tracking-wider flex items-center gap-2">
+              <Wallet className="h-4 w-4" />
+              {t('quotation.summary.grandTotal', 'Genel Toplam')}
+            </span>
+            
+            {/* Vurgulu Alan: Sade ama renkli text */}
+            <span className="text-3xl font-black font-mono tracking-tight bg-gradient-to-r from-pink-600 to-orange-600 bg-clip-text text-transparent">
+              {formatCurrency(totals.grandTotal, currencyCode)}
+            </span>
+          </div>
         </div>
-      </CardContent>
-    </Card>
+
+      </div>
+    </div>
   );
 }

@@ -10,7 +10,6 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import {
   Dialog,
@@ -26,8 +25,9 @@ import { useCurrencyOptions } from '@/services/hooks/useCurrencyOptions';
 import { useProductSelection } from '../hooks/useProductSelection';
 import { useQuotationCalculations } from '../hooks/useQuotationCalculations';
 import { formatCurrency } from '../utils/format-currency';
-import { Trash2, Edit, Plus, ShoppingCart } from 'lucide-react';
+import { Trash2, Edit, Plus, ShoppingCart, Box, AlertTriangle, Layers } from 'lucide-react';
 import type { QuotationLineFormState, QuotationExchangeRateFormState, PricingRuleLineGetDto, UserDiscountLimitDto } from '../types/quotation-types';
+import { cn } from '@/lib/utils';
 
 interface QuotationLineTableProps {
   lines: QuotationLineFormState[];
@@ -68,39 +68,35 @@ export function QuotationLineTable({
     exchangeRates,
   });
 
+  // --- 🎨 TASARIM SİSTEMİ (Table Edition - Enhanced Visibility) ---
+  const styles = {
+    // Cam Etkisi (Daha opak ve belirgin kenarlıklı)
+    glassCard: "relative overflow-hidden rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white/95 dark:bg-zinc-900/50 backdrop-blur-xl shadow-lg shadow-zinc-200/50 dark:shadow-none",
+    
+    // Tablo Başlığı (Hafif gri arka plan ile ayrışır)
+    tableHeadRow: "bg-zinc-50/80 dark:bg-zinc-900/50 border-b border-zinc-200 dark:border-zinc-800",
+    tableHead: "h-11 px-4 text-xs font-bold text-zinc-600 dark:text-zinc-400 uppercase tracking-wider",
+    
+    // Tablo Hücresi (Kenarlıklar netleştirildi)
+    tableCell: "p-4 text-sm font-medium text-zinc-700 dark:text-zinc-200 border-b border-zinc-100 dark:border-zinc-800",
+    
+    // Satır Hover Efekti
+    tableRow: "group transition-all duration-200 hover:bg-zinc-50 dark:hover:bg-zinc-800/40",
+    
+    // Action Butonları (Düzenle/Sil)
+    actionButton: "h-8 w-8 p-0 rounded-lg hover:bg-white dark:hover:bg-zinc-700 hover:shadow-sm hover:scale-105 transition-all duration-200",
+  };
+
   const currencyCode = useMemo(() => {
     const found = currencyOptions.find((opt) => opt.dovizTipi === currency);
     return found?.code || 'TRY';
   }, [currency, currencyOptions]);
 
   const handleAddLine = (): void => {
-    if (!customerId && !erpCustomerCode) {
-      toast.error(
-        t('quotation.lines.customerRequired', 'Müşteri Seçilmedi'),
-        {
-          description: t('quotation.lines.customerRequiredMessage', 'Satır eklemek için önce müşteri seçilmelidir'),
-        }
-      );
-      return;
-    }
-
-    if (!representativeId) {
-      toast.error(
-        t('quotation.lines.representativeRequired', 'Temsilci Seçilmedi'),
-        {
-          description: t('quotation.lines.representativeRequiredMessage', 'Satır eklemek için önce temsilci seçilmelidir'),
-        }
-      );
-      return;
-    }
-
-    if (!currency || currency === 0) {
-      toast.error(
-        t('quotation.lines.currencyRequired', 'Para Birimi Seçilmedi'),
-        {
-          description: t('quotation.lines.currencyRequiredMessage', 'Satır eklemek için önce para birimi seçilmelidir'),
-        }
-      );
+    if ((!customerId && !erpCustomerCode) || !representativeId || !currency) {
+      toast.error(t('common.error', 'Hata'), {
+        description: t('quotation.lines.requiredFieldsMissing', 'Lütfen müşteri, temsilci ve para birimi seçimlerini yapınız.'),
+      });
       return;
     }
 
@@ -148,33 +144,10 @@ export function QuotationLineTable({
   };
 
   const handleProductSelect = async (product: ProductSelectionResult): Promise<void> => {
-    if (!customerId && !erpCustomerCode) {
-      toast.error(
-        t('quotation.lines.customerRequired', 'Müşteri Seçilmedi'),
-        {
-          description: t('quotation.lines.customerRequiredMessage', 'Satır eklemek için önce müşteri seçilmelidir'),
-        }
-      );
-      return;
-    }
-
-    if (!representativeId) {
-      toast.error(
-        t('quotation.lines.representativeRequired', 'Temsilci Seçilmedi'),
-        {
-          description: t('quotation.lines.representativeRequiredMessage', 'Satır eklemek için önce temsilci seçilmelidir'),
-        }
-      );
-      return;
-    }
-
-    if (!currency || currency === 0) {
-      toast.error(
-        t('quotation.lines.currencyRequired', 'Para Birimi Seçilmedi'),
-        {
-          description: t('quotation.lines.currencyRequiredMessage', 'Satır eklemek için önce para birimi seçilmelidir'),
-        }
-      );
+     if ((!customerId && !erpCustomerCode) || !representativeId || !currency) {
+      toast.error(t('common.error', 'Hata'), {
+        description: t('quotation.lines.requiredFieldsMissing', 'Lütfen müşteri, temsilci ve para birimi seçimlerini yapınız.'),
+      });
       return;
     }
 
@@ -182,7 +155,6 @@ export function QuotationLineTable({
 
     if (hasRelatedStocks && handleProductSelectWithRelatedStocks && product.relatedStockIds) {
       const newLines = await handleProductSelectWithRelatedStocks(product, product.relatedStockIds);
-
       const firstLine = newLines[0];
       if (firstLine) {
         setNewLine(firstLine);
@@ -197,32 +169,25 @@ export function QuotationLineTable({
 
   const handleEditLine = (id: string): void => {
     const line = lines.find((l) => l.id === id);
-    if (!line) {
-      return;
-    }
+    if (!line) return;
 
     const isRelatedProduct = line.relatedProductKey !== null && line.relatedProductKey !== undefined;
     if (isRelatedProduct) {
       const sameGroupLines = lines.filter((l) => l.relatedProductKey === line.relatedProductKey);
       const mainLine = sameGroupLines.find((l) => l.isMainRelatedProduct === true) || sameGroupLines[0];
-      const isMainLine = mainLine.id === line.id;
       
-      if (!isMainLine) {
-        return;
-      }
+      if (mainLine.id !== line.id) return; 
       
       const relatedLines = sameGroupLines.filter((l) => l.id !== line.id);
       setLineToEdit({ ...line, relatedLines: relatedLines.length > 0 ? relatedLines : undefined });
     } else {
       setLineToEdit({ ...line, relatedLines: undefined });
     }
-    
     setEditLineDialogOpen(true);
   };
 
   const handleSaveLine = (updatedLine: QuotationLineFormState, relatedLinesToUpdate?: QuotationLineFormState[]): void => {
     const originalLine = lines.find((l) => l.id === updatedLine.id);
-    
     if (!originalLine) {
       setEditLineDialogOpen(false);
       setLineToEdit(null);
@@ -234,47 +199,27 @@ export function QuotationLineTable({
 
     if (relatedLinesToUpdate && relatedLinesToUpdate.length > 0) {
       const allUpdatedLines = [updatedLine, ...relatedLinesToUpdate].map((line) => ({ ...line, isEditing: false }));
-      setLines(
-        lines.map((line) => {
-          const updated = allUpdatedLines.find((ul) => ul.id === line.id);
-          if (updated) {
-            return updated;
-          }
-          if (isQuantityChanged && isMainLine && updatedLine.relatedProductKey && line.relatedProductKey === updatedLine.relatedProductKey) {
-            const quantityRatio = updatedLine.quantity / originalLine.quantity;
-            const newQuantity = line.quantity * quantityRatio;
-            const updatedRelatedLine = { ...line, quantity: newQuantity };
-            return calculateLineTotals(updatedRelatedLine);
-          }
-          return line;
-        })
-      );
+      setLines(lines.map((line) => {
+        const updated = allUpdatedLines.find((ul) => ul.id === line.id);
+        if (updated) return updated;
+        if (isQuantityChanged && isMainLine && updatedLine.relatedProductKey && line.relatedProductKey === updatedLine.relatedProductKey) {
+          const quantityRatio = updatedLine.quantity / originalLine.quantity;
+          return calculateLineTotals({ ...line, quantity: line.quantity * quantityRatio });
+        }
+        return line;
+      }));
     } else if (isQuantityChanged && isMainLine && updatedLine.relatedProductKey) {
       const quantityRatio = updatedLine.quantity / originalLine.quantity;
-      
-      const updatedLines = lines.map((line) => {
-        if (line.id === updatedLine.id) {
-          return { ...updatedLine, isEditing: false };
+      setLines(lines.map((line) => {
+        if (line.id === updatedLine.id) return { ...updatedLine, isEditing: false };
+        if (line.relatedProductKey === updatedLine.relatedProductKey) {
+          return calculateLineTotals({ ...line, quantity: line.quantity * quantityRatio });
         }
-        
-        if (line.relatedProductKey === updatedLine.relatedProductKey && line.id !== updatedLine.id) {
-          const newQuantity = line.quantity * quantityRatio;
-          const updatedRelatedLine = { ...line, quantity: newQuantity };
-          return calculateLineTotals(updatedRelatedLine);
-        }
-        
         return line;
-      });
-      
-      setLines(updatedLines);
+      }));
     } else {
-      setLines(
-        lines.map((line) =>
-          line.id === updatedLine.id ? { ...updatedLine, isEditing: false } : line
-        )
-      );
+      setLines(lines.map((line) => line.id === updatedLine.id ? { ...updatedLine, isEditing: false } : line));
     }
-    
     setEditLineDialogOpen(false);
     setLineToEdit(null);
   };
@@ -287,33 +232,24 @@ export function QuotationLineTable({
   const handleDeleteClick = (id: string): void => {
     const line = lines.find((l) => l.id === id);
     setLineToDelete(id);
-    
     if (line?.relatedProductKey) {
-      const count = lines.filter((l) => l.relatedProductKey === line.relatedProductKey).length;
-      setRelatedLinesCount(count);
+      setRelatedLinesCount(lines.filter((l) => l.relatedProductKey === line.relatedProductKey).length);
     } else {
       setRelatedLinesCount(0);
     }
-    
     setDeleteDialogOpen(true);
   };
 
   const handleDeleteConfirm = (): void => {
     if (lineToDelete) {
       const lineToDeleteObj = lines.find((line) => line.id === lineToDelete);
-      
       if (lineToDeleteObj?.relatedProductKey) {
-        const relatedProductKey = lineToDeleteObj.relatedProductKey;
-        
-        setLines(lines.filter((line) => line.relatedProductKey !== relatedProductKey));
-        setLineToDelete(null);
-        setDeleteDialogOpen(false);
-        
+        setLines(lines.filter((line) => line.relatedProductKey !== lineToDeleteObj.relatedProductKey));
       } else {
         setLines(lines.filter((line) => line.id !== lineToDelete));
-        setLineToDelete(null);
-        setDeleteDialogOpen(false);
       }
+      setLineToDelete(null);
+      setDeleteDialogOpen(false);
     }
   };
 
@@ -323,252 +259,194 @@ export function QuotationLineTable({
     setDeleteDialogOpen(false);
   };
 
-
   return (
-    <div className="space-y-6">
-      <Card>
-        <CardHeader className="pb-4">
-          <div className="flex justify-between items-center">
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-primary/10">
-                <ShoppingCart className="h-5 w-5 text-primary" />
-              </div>
-              <div>
-                <CardTitle className="text-xl">
-                  {t('quotation.lines.title', 'Teklif Satırları')}
-                </CardTitle>
-                <p className="text-sm text-muted-foreground mt-1">
-                  {lines.length} {t('quotation.lines.itemCount', 'satır')}
-                </p>
-              </div>
+    <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-700">
+      
+      {/* TABLE CONTAINER CARD */}
+      <div className={styles.glassCard}>
+        {/* HEADER */}
+        <div className="p-5 border-b border-zinc-200 dark:border-zinc-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className="p-2.5 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 shadow-lg shadow-indigo-500/20 text-white">
+              <ShoppingCart className="h-5 w-5" />
             </div>
-            <div className="flex gap-2">
-              <Button 
-                type="button" 
-                onClick={handleAddLine} 
-                size="default" 
-                variant="outline"
-                className="gap-2"
-              >
-                <Plus className="h-4 w-4" />
-                {t('quotation.lines.add', 'Satır Ekle')}
-              </Button>
+            <div>
+              <h3 className="text-base font-bold text-zinc-900 dark:text-white">
+                {t('quotation.lines.title', 'Teklif Kalemleri')}
+              </h3>
+              <p className="text-xs text-zinc-500 font-medium">
+                {lines.length > 0 
+                  ? t('quotation.lines.itemCount', '{count} kalem ürün listeleniyor', { count: lines.length })
+                  : t('quotation.lines.noItems', 'Henüz ürün eklenmedi')
+                }
+              </p>
             </div>
           </div>
-        </CardHeader>
-        <CardContent className="p-0">
+          
+          {/* ✨ YENİLENMİŞ SATIR EKLE BUTONU */}
+          <Button 
+            onClick={handleAddLine} 
+            size="sm"
+            className="h-10 px-6 rounded-xl bg-gradient-to-r from-pink-600 to-orange-600 text-white font-bold shadow-lg shadow-pink-500/20 hover:scale-105 active:scale-95 transition-all duration-300 border-0 hover:text-white"
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            {t('quotation.lines.add', 'Satır Ekle')}
+          </Button>
+        </div>
+
+        {/* CONTENT */}
+        <div className="p-0">
           {lines.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-16 px-4">
-              <div className="p-4 rounded-full bg-muted mb-4">
-                <ShoppingCart className="h-8 w-8 text-muted-foreground" />
+            <div className="flex flex-col items-center justify-center py-20 px-4 text-center">
+              <div className="w-20 h-20 rounded-full bg-zinc-50 dark:bg-zinc-900 flex items-center justify-center mb-4 ring-1 ring-zinc-100 dark:ring-zinc-800">
+                <Box className="h-8 w-8 text-zinc-300 dark:text-zinc-600" />
               </div>
-              <p className="text-lg font-medium text-muted-foreground mb-2">
-                {t('quotation.lines.empty', 'Henüz satır eklenmedi')}
-              </p>
-              <p className="text-sm text-muted-foreground text-center max-w-sm">
-                {t('quotation.lines.emptyDescription', 'Teklif satırları eklemek için "Stok Seç" veya "Satır Ekle" butonunu kullanın')}
+              <h4 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100 mb-2">
+                {t('quotation.lines.empty', 'Sepetiniz Boş')}
+              </h4>
+              <p className="text-sm text-zinc-500 max-w-xs mx-auto">
+                {t('quotation.lines.emptyDescription', 'Teklif oluşturmak için "Satır Ekle" butonunu kullanarak ürün eklemeye başlayın.')}
               </p>
             </div>
           ) : (
             <div className="overflow-x-auto">
               <Table>
                 <TableHeader>
-                  <TableRow className="bg-muted/50">
-                    <TableHead className="font-semibold min-w-[200px]">
-                      {t('quotation.lines.stock', 'Stok')}
-                    </TableHead>
-                    <TableHead className="text-right font-semibold min-w-[120px]">
-                      {t('quotation.lines.unitPrice', 'Birim Fiyat')}
-                    </TableHead>
-                    <TableHead className="text-right font-semibold min-w-[100px]">
-                      {t('quotation.lines.quantity', 'Miktar')}
-                    </TableHead>
-                    <TableHead className="text-right font-semibold min-w-[100px]">
-                      {t('quotation.lines.discount1', 'İnd. 1 %')}
-                    </TableHead>
-                    <TableHead className="text-right font-semibold min-w-[100px]">
-                      {t('quotation.lines.discount2', 'İnd. 2 %')}
-                    </TableHead>
-                    <TableHead className="text-right font-semibold min-w-[100px]">
-                      {t('quotation.lines.discount3', 'İnd. 3 %')}
-                    </TableHead>
-                    <TableHead className="text-right font-semibold min-w-[130px]">
-                      {t('quotation.lines.discountAmount', 'İndirim')}
-                    </TableHead>
-                    <TableHead className="text-right font-semibold min-w-[130px]">
-                      {t('quotation.lines.netPrice', 'Net Fiyat')}
-                    </TableHead>
-                    <TableHead className="text-center font-semibold min-w-[100px]">
-                      {t('common.actions', 'İşlemler')}
-                    </TableHead>
+                  <TableRow className={styles.tableHeadRow}>
+                    <TableHead className={cn(styles.tableHead, "pl-6 min-w-[240px]")}>{t('quotation.lines.stock', 'Stok Bilgisi')}</TableHead>
+                    <TableHead className={cn(styles.tableHead, "text-right min-w-[140px]")}>{t('quotation.lines.unitPrice', 'Birim Fiyat')}</TableHead>
+                    <TableHead className={cn(styles.tableHead, "text-center min-w-[100px]")}>{t('quotation.lines.quantity', 'Miktar')}</TableHead>
+                    <TableHead className={cn(styles.tableHead, "text-center min-w-[80px]")}>{t('quotation.lines.discount1', 'İnd.1')}</TableHead>
+                    <TableHead className={cn(styles.tableHead, "text-center min-w-[80px]")}>{t('quotation.lines.discount2', 'İnd.2')}</TableHead>
+                    <TableHead className={cn(styles.tableHead, "text-center min-w-[80px]")}>{t('quotation.lines.discount3', 'İnd.3')}</TableHead>
+                    <TableHead className={cn(styles.tableHead, "text-right min-w-[120px]")}>{t('quotation.lines.netPrice', 'Tutar')}</TableHead>
+                    <TableHead className={cn(styles.tableHead, "text-center w-[100px]")}>{t('common.actions', 'İşlem')}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {lines.map((line, index) => {
-                    const totalDiscountAmount = (line.discountAmount1 || 0) + (line.discountAmount2 || 0) + (line.discountAmount3 || 0);
-                    const stockDisplay = line.productCode && line.productName 
-                      ? `${line.productCode} - ${line.productName}`
-                      : line.productCode || line.productName || '-';
-                    const hasDiscount = totalDiscountAmount > 0;
-                    
+                  {lines.map((line) => {
                     const isRelatedProduct = line.relatedProductKey !== null && line.relatedProductKey !== undefined;
-                    let mainStock: QuotationLineFormState | null = null;
-                    let isMainStock = line.isMainRelatedProduct === true;
-                    if (isRelatedProduct) {
-                      const sameGroupLines = lines.filter((l) => l.relatedProductKey === line.relatedProductKey);
-                      if (sameGroupLines.length > 1) {
-                        mainStock = sameGroupLines.find((l) => l.isMainRelatedProduct === true) || sameGroupLines[0];
-                        isMainStock = line.isMainRelatedProduct === true;
-                      }
-                    }
-
+                    const isMainStock = line.isMainRelatedProduct === true;
                     const hasApprovalWarning = line.approvalStatus === 1;
 
                     return (
-                      <TableRow key={line.id || `line-${index}`} className={`hover:bg-muted/50 transition-colors ${hasApprovalWarning ? 'bg-red-50/50 dark:bg-red-950/20 border-l-4 border-l-red-500' : ''}`}>
-                            <TableCell className="min-w-[200px]">
-                              <div className="space-y-1">
-                                <div className="flex items-center gap-2">
-                                  <div className="font-medium text-sm truncate flex-1" title={stockDisplay}>
-                                    {line.productCode || '-'}
-                                  </div>
-                                  {line.groupCode && (
-                                    <div className="text-xs text-muted-foreground font-mono">
-                                      [{line.groupCode}]
-                                    </div>
-                                  )}
-                                  {hasApprovalWarning && (
-                                    <Badge variant="outline" className="text-xs text-red-600 border-red-600 bg-red-50 dark:bg-red-950/30">
-                                      {t('quotation.lines.approvalRequired', 'Onay Gerekli')}
-                                    </Badge>
-                                  )}
-                                  {isRelatedProduct && (
-                                    <Badge variant="outline" className={`text-xs ${
-                                      isMainStock 
-                                        ? 'bg-green-50 text-green-700 dark:bg-green-900/30 dark:text-green-300 border-green-200 dark:border-green-800'
-                                        : 'bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 border-blue-200 dark:border-blue-800'
-                                    }`}>
-                                      {isMainStock 
-                                        ? t('quotation.lines.mainStock', 'Ana Stok')
-                                        : t('quotation.lines.relatedStock', 'Bağlı Stok')}
-                                    </Badge>
-                                  )}
-                                </div>
-                                {line.productName && (
-                                  <div className="text-xs text-muted-foreground truncate" title={line.productName}>
-                                    {line.productName}
-                                  </div>
-                                )}
-                                {isRelatedProduct && !isMainStock && mainStock && (
-                                  <div className="text-xs text-muted-foreground">
-                                    {t('quotation.lines.relatedTo', 'Bağlı')}: {mainStock.productCode || mainStock.productName || '-'}
-                                  </div>
-                                )}
-                                {isRelatedProduct && isMainStock && (
-                                  <div className="text-xs text-muted-foreground">
-                                    {t('quotation.lines.hasRelatedStocks', '{count} bağlı stok', { count: lines.filter((l) => l.relatedProductKey === line.relatedProductKey && l.id !== line.id).length })}
-                                  </div>
-                                )}
+                      <TableRow 
+                        key={line.id} 
+                        className={cn(
+                          styles.tableRow,
+                          hasApprovalWarning && "bg-amber-50/60 dark:bg-amber-950/20 border-l-4 border-l-amber-500"
+                        )}
+                      >
+                        {/* STOK BİLGİSİ */}
+                        <TableCell className={cn(styles.tableCell, "pl-6")}>
+                          <div className="flex flex-col gap-1.5">
+                            <div className="font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
+                              {line.productCode || '-'}
+                            </div>
+                            {line.productName && (
+                              <div className="text-xs font-medium text-zinc-500 line-clamp-1" title={line.productName}>
+                                {line.productName}
                               </div>
-                            </TableCell>
-                            <TableCell className="text-right">
-                              <span className="font-medium">
-                                {formatCurrency(line.unitPrice, currencyCode)}
+                            )}
+                            
+                            <div className="flex flex-wrap gap-2 mt-1">
+                              {hasApprovalWarning && (
+                                <Badge variant="outline" className="h-5 bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-900/30 dark:text-amber-400 dark:border-amber-800 gap-1 px-1.5 shadow-sm">
+                                  <AlertTriangle className="w-3 h-3" />
+                                  <span className="text-[10px] font-bold">Onay Gerekli</span>
+                                </Badge>
+                              )}
+                              
+                              {isRelatedProduct && (
+                                <Badge variant="outline" className={cn(
+                                  "h-5 gap-1 px-1.5 shadow-sm",
+                                  isMainStock 
+                                    ? "bg-indigo-50 text-indigo-700 border-indigo-200 dark:bg-indigo-900/30 dark:text-indigo-300 dark:border-indigo-800"
+                                    : "bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-900/30 dark:text-purple-300 dark:border-purple-800"
+                                )}>
+                                  <Layers className="w-3 h-3" />
+                                  <span className="text-[10px] font-bold">
+                                    {isMainStock ? 'Ana Stok' : 'Bağlı Stok'}
+                                  </span>
+                                </Badge>
+                              )}
+                            </div>
+                          </div>
+                        </TableCell>
+
+                        {/* BİRİM FİYAT */}
+                        <TableCell className={cn(styles.tableCell, "text-right")}>
+                          <div className="font-mono font-semibold text-zinc-700 dark:text-zinc-300 bg-zinc-100/50 dark:bg-zinc-800/50 px-2 py-1 rounded inline-block">
+                            {formatCurrency(line.unitPrice, currencyCode)}
+                          </div>
+                        </TableCell>
+
+                        {/* MİKTAR */}
+                        <TableCell className={cn(styles.tableCell, "text-center")}>
+                          <span className="inline-flex items-center justify-center min-w-[2.5rem] h-7 px-2 rounded-lg bg-white border border-zinc-200 dark:bg-zinc-800 dark:border-zinc-700 text-sm font-bold text-zinc-900 dark:text-zinc-100 shadow-sm">
+                            {line.quantity}
+                          </span>
+                        </TableCell>
+
+                        {/* İNDİRİMLER */}
+                        {[line.discountRate1, line.discountRate2, line.discountRate3].map((rate, i) => (
+                          <TableCell key={i} className={cn(styles.tableCell, "text-center")}>
+                            {rate > 0 ? (
+                              <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 border border-emerald-100 dark:bg-emerald-950/30 dark:border-emerald-900/30 px-1.5 py-0.5 rounded shadow-sm">
+                                %{rate}
                               </span>
-                            </TableCell>
-                            <TableCell className="text-right">
-                              <Badge variant="outline" className="font-medium">
-                                {line.quantity}
-                              </Badge>
-                            </TableCell>
-                            <TableCell className="text-right">
-                              {line.discountRate1 > 0 ? (
-                                <Badge variant="secondary" className="bg-orange-100 text-orange-700 dark:bg-orange-900 dark:text-orange-300">
-                                  {line.discountRate1}%
-                                </Badge>
-                              ) : (
-                                <span className="text-muted-foreground">-</span>
-                              )}
-                            </TableCell>
-                            <TableCell className="text-right">
-                              {line.discountRate2 > 0 ? (
-                                <Badge variant="secondary" className="bg-orange-100 text-orange-700 dark:bg-orange-900 dark:text-orange-300">
-                                  {line.discountRate2}%
-                                </Badge>
-                              ) : (
-                                <span className="text-muted-foreground">-</span>
-                              )}
-                            </TableCell>
-                            <TableCell className="text-right">
-                              {line.discountRate3 > 0 ? (
-                                <Badge variant="secondary" className="bg-orange-100 text-orange-700 dark:bg-orange-900 dark:text-orange-300">
-                                  {line.discountRate3}%
-                                </Badge>
-                              ) : (
-                                <span className="text-muted-foreground">-</span>
-                              )}
-                            </TableCell>
-                            <TableCell className="text-right">
-                              {hasDiscount ? (
-                                <span className="font-medium text-red-600 dark:text-red-400">
-                                  -{formatCurrency(totalDiscountAmount, currencyCode)}
-                                </span>
-                              ) : (
-                                <span className="text-muted-foreground">-</span>
-                              )}
-                            </TableCell>
-                            <TableCell className="text-right">
-                              <span className="font-semibold text-green-600 dark:text-green-400 text-base">
-                                {formatCurrency(line.lineTotal, currencyCode)}
-                              </span>
-                            </TableCell>
-                            <TableCell>
-                              <div className="flex gap-1 justify-center">
-                                {isMainStock || !isRelatedProduct ? (
-                                  <Button
-                                    type="button"
-                                    variant="ghost"
-                                    size="sm"
-                                    onClick={() => handleEditLine(line.id)}
-                                    className="h-8 w-8 p-0"
-                                    title={t('common.edit', 'Düzenle')}
-                                  >
-                                    <Edit className="h-4 w-4" />
-                                  </Button>
-                                ) : (
-                                  <Button
-                                    type="button"
-                                    variant="ghost"
-                                    size="sm"
-                                    disabled
-                                    className="h-8 w-8 p-0 opacity-50 cursor-not-allowed"
-                                    title={t('quotation.lines.cannotEditRelatedStock', 'Bağlı stok düzenlenemez')}
-                                  >
-                                    <Edit className="h-4 w-4" />
-                                  </Button>
-                                )}
-                                <Button
-                                  type="button"
-                                  variant="ghost"
-                                  size="sm"
-                                  onClick={() => handleDeleteClick(line.id)}
-                                  className="h-8 w-8 p-0 text-destructive hover:text-destructive"
-                                  title={t('common.delete', 'Sil')}
-                                >
-                                  <Trash2 className="h-4 w-4" />
-                                </Button>
-                              </div>
-                            </TableCell>
-                          </TableRow>
+                            ) : (
+                              <span className="text-zinc-300 dark:text-zinc-700 text-xs font-medium">-</span>
+                            )}
+                          </TableCell>
+                        ))}
+
+                        {/* TUTAR */}
+                        <TableCell className={cn(styles.tableCell, "text-right")}>
+                          <div className="font-bold text-zinc-900 dark:text-white text-base">
+                            {formatCurrency(line.lineTotal, currencyCode)}
+                          </div>
+                        </TableCell>
+
+                        {/* İŞLEMLER */}
+                        <TableCell className={cn(styles.tableCell, "text-center pr-4")}>
+                          <div className="flex items-center justify-center gap-2">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className={styles.actionButton}
+                              onClick={() => handleEditLine(line.id)}
+                              disabled={!isMainStock && isRelatedProduct}
+                              title={!isMainStock && isRelatedProduct ? "Bağlı stok düzenlenemez" : "Düzenle"}
+                            >
+                              <Edit className={cn(
+                                "h-4 w-4",
+                                !isMainStock && isRelatedProduct ? "text-zinc-300" : "text-blue-600"
+                              )} />
+                            </Button>
+                            
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className={cn(styles.actionButton, "text-rose-600 hover:text-rose-700 hover:bg-rose-50 dark:hover:bg-rose-950/30")}
+                              onClick={() => handleDeleteClick(line.id)}
+                              title="Sil"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
                     );
                   })}
                 </TableBody>
               </Table>
             </div>
           )}
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
+      {/* DİALOGLAR (Mantık ve yapı aynı) */}
       <ProductSelectDialog
         open={productDialogOpen}
         onOpenChange={setProductDialogOpen}
@@ -578,12 +456,8 @@ export function QuotationLineTable({
       <Dialog open={addLineDialogOpen} onOpenChange={setAddLineDialogOpen}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>
-              {t('quotation.lines.addLine', 'Yeni Satır Ekle')}
-            </DialogTitle>
-            <DialogDescription>
-              {t('quotation.lines.addLineDescription', 'Teklif satırı bilgilerini giriniz')}
-            </DialogDescription>
+            <DialogTitle>{t('quotation.lines.addLine', 'Yeni Satır Ekle')}</DialogTitle>
+            <DialogDescription>{t('quotation.lines.addLineDescription', 'Teklif satırı bilgilerini giriniz')}</DialogDescription>
           </DialogHeader>
           {newLine && (
             <QuotationLineForm
@@ -600,59 +474,11 @@ export function QuotationLineTable({
         </DialogContent>
       </Dialog>
 
-      <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>
-              {relatedLinesCount > 1
-                ? t('quotation.lines.delete.confirmTitleMultiple', 'Bağlı Stokları Sil')
-                : t('quotation.lines.delete.confirmTitle', 'Satırı Sil')}
-            </DialogTitle>
-            {relatedLinesCount > 1 ? (
-              <div className="space-y-2 mt-2">
-                <DialogDescription>
-                  {t('quotation.lines.delete.confirmMessageMultiple', 'Bu satır bir bağlı stok satırıdır. Silindiğinde aynı bağlı stok grubuna ait tüm satırlar ({count} adet) silinecektir.', {
-                    count: relatedLinesCount,
-                  })}
-                </DialogDescription>
-                <p className="text-sm font-medium text-orange-600 dark:text-orange-400">
-                  {t('quotation.lines.delete.confirmWarning', 'Devam etmek istediğinizden emin misiniz?')}
-                </p>
-              </div>
-            ) : (
-              <DialogDescription>
-                {t('quotation.lines.delete.confirmMessage', 'Bu satırı silmek istediğinizden emin misiniz?')}
-              </DialogDescription>
-            )}
-          </DialogHeader>
-          <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={handleDeleteCancel}
-            >
-              {t('common.cancel', 'İptal')}
-            </Button>
-            <Button
-              variant="destructive"
-              onClick={handleDeleteConfirm}
-            >
-              {relatedLinesCount > 1
-                ? t('common.deleteAll', 'Tümünü Sil')
-                : t('common.delete', 'Sil')}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
       <Dialog open={editLineDialogOpen} onOpenChange={setEditLineDialogOpen}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>
-              {t('quotation.lines.editLine', 'Satırı Düzenle')}
-            </DialogTitle>
-            <DialogDescription>
-              {t('quotation.lines.editLineDescription', 'Teklif satırı bilgilerini düzenleyiniz')}
-            </DialogDescription>
+            <DialogTitle>{t('quotation.lines.editLine', 'Satırı Düzenle')}</DialogTitle>
+            <DialogDescription>{t('quotation.lines.editLineDescription', 'Teklif satırı bilgilerini düzenleyiniz')}</DialogDescription>
           </DialogHeader>
           {lineToEdit && (
             <QuotationLineForm
@@ -670,6 +496,29 @@ export function QuotationLineTable({
               userDiscountLimits={userDiscountLimits}
             />
           )}
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-rose-600">
+              <Trash2 className="h-5 w-5" />
+              {relatedLinesCount > 1
+                ? t('quotation.lines.delete.confirmTitleMultiple', 'Bağlı Stokları Sil')
+                : t('quotation.lines.delete.confirmTitle', 'Satırı Sil')}
+            </DialogTitle>
+            <DialogDescription className="pt-2">
+              {relatedLinesCount > 1 
+                ? t('quotation.lines.delete.confirmMessageMultiple', 'Bu satır silindiğinde bağlı olan diğer {count} stok da silinecektir.', { count: relatedLinesCount })
+                : t('quotation.lines.delete.confirmMessage', 'Bu satırı silmek istediğinizden emin misiniz?')
+              }
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="gap-2 sm:gap-0">
+            <Button variant="outline" onClick={handleDeleteCancel}>{t('common.cancel', 'Vazgeç')}</Button>
+            <Button variant="destructive" onClick={handleDeleteConfirm}>{t('common.delete', 'Sil')}</Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>

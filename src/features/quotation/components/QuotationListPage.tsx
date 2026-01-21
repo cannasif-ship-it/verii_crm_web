@@ -51,58 +51,85 @@ export function QuotationListPage(): ReactElement {
   };
 
   return (
-    <div className="relative min-h-screen space-y-6 p-4 md:p-8 overflow-hidden">
-      <div className="relative z-10 space-y-6">
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-          <div>
-            <h1 className="text-3xl font-bold text-foreground">
+    <div className="relative min-h-screen space-y-8 p-4 md:p-8 overflow-hidden animate-in fade-in slide-in-from-bottom-2 duration-700">
+      
+      {/* Background Ambience */}
+      <div className="absolute top-0 left-1/4 w-96 h-96 bg-pink-500/10 blur-[120px] pointer-events-none dark:block hidden" />
+      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-orange-500/10 blur-[120px] pointer-events-none dark:block hidden" />
+
+      <div className="relative z-10 space-y-8 max-w-[1600px] mx-auto">
+        
+        {/* HEADER AREA */}
+        <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-6 pb-2">
+          <div className="space-y-1">
+            <h1 className="text-3xl font-extrabold tracking-tight text-zinc-900 dark:text-white">
               {t('quotation.list.title', 'Teklif Listesi')}
             </h1>
-            <p className="text-muted-foreground mt-1">
-              {t('quotation.list.description', 'Tüm teklifleri görüntüleyin ve yönetin')}
-            </p>
+            <div className="flex flex-col gap-1">
+              <p className="text-zinc-500 dark:text-zinc-400 text-sm font-medium flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-pink-500 animate-pulse shadow-[0_0_8px_rgba(236,72,153,0.6)]" />
+                {t('quotation.list.description', 'Tüm teklifleri görüntüleyin ve yönetin')}
+              </p>
+            </div>
           </div>
-          <Button onClick={() => navigate('/quotations/create')} className="gap-2">
-            <Plus className="h-4 w-4" />
+          
+          <Button 
+            onClick={() => navigate('/quotations/create')} 
+            className="h-11 px-6 rounded-xl bg-gradient-to-r from-pink-600 to-orange-600 text-white font-bold shadow-lg shadow-pink-500/20 hover:scale-105 active:scale-95 transition-all duration-300 border-0 hover:text-white group"
+          >
+            <Plus className="h-5 w-5 mr-2 group-hover:rotate-90 transition-transform duration-300" />
             {t('quotation.list.createNew', 'Yeni Teklif Oluştur')}
           </Button>
         </div>
 
-        <div className="flex flex-col md:flex-row gap-4">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        {/* SEARCH & FILTER AREA */}
+        <div className="flex flex-col md:flex-row gap-4 items-center bg-white/40 dark:bg-zinc-900/40 p-1.5 rounded-2xl border border-white/20 dark:border-white/5 backdrop-blur-sm shadow-sm">
+          <div className="relative flex-1 w-full group">
+            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-pink-600 dark:group-focus-within:text-pink-500 transition-colors pointer-events-none z-10">
+              <Search className="h-5 w-5" />
+            </div>
             <Input
               type="text"
               placeholder={t('quotation.list.searchPlaceholder', 'Teklif no veya müşteri adı ile ara...')}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 pr-10"
+              className="
+                pl-12 pr-12 h-12 
+                bg-white dark:bg-zinc-950/50 
+                border-transparent dark:border-zinc-800 
+                rounded-xl shadow-sm 
+                focus-visible:border-pink-500 focus-visible:ring-4 focus-visible:ring-pink-500/20
+                transition-all duration-300 ease-out
+                text-base
+              "
             />
             {searchTerm && (
               <Button
                 variant="ghost"
-                size="sm"
+                size="icon"
                 onClick={clearSearch}
-                className="absolute right-1 top-1/2 transform -translate-y-1/2 h-7 w-7 p-0"
+                className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-500 hover:text-pink-600 transition-colors"
               >
                 <X className="h-4 w-4" />
               </Button>
             )}
           </div>
+          
           <Button
             variant="outline"
             onClick={() => {
               setSearchTerm('');
               setPageNumber(1);
             }}
-            className="gap-2"
+            className="h-12 px-6 rounded-xl border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950/50 hover:bg-zinc-50 dark:hover:bg-zinc-900 text-zinc-600 dark:text-zinc-400 gap-2 font-medium w-full md:w-auto shadow-sm"
           >
-            <RefreshCw size={16} className="opacity-70" />
+            <RefreshCw size={18} className="opacity-70" />
             {t('common.refresh', 'Yenile')}
           </Button>
         </div>
 
-        <div className="relative z-10 bg-white/50 dark:bg-card/30 backdrop-blur-xl border border-white/20 dark:border-border/50 rounded-2xl shadow-sm dark:shadow-2xl overflow-hidden">
+        {/* TABLE AREA */}
+        <div className="relative z-10 bg-white/80 dark:bg-zinc-900/40 backdrop-blur-xl border border-zinc-200/50 dark:border-zinc-800/50 rounded-2xl shadow-xl shadow-zinc-200/50 dark:shadow-none overflow-hidden">
           <QuotationTable
             pageNumber={pageNumber}
             pageSize={pageSize}
