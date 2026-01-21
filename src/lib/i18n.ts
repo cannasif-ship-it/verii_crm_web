@@ -39,6 +39,8 @@ import trWizard from '../locales/tr/wizard.json';
 import enWizard from '../locales/en/wizard.json';
 import trPricingRule from '../locales/tr/pricing-rule.json';
 import enPricingRule from '../locales/en/pricing-rule.json';
+import trDocumentSerialType from '../locales/tr/document-serial-type.json';
+import enDocumentSerialType from '../locales/en/document-serial-type.json';
 
 const savedLanguage = localStorage.getItem('i18nextLng') || 'tr';
 
@@ -66,7 +68,8 @@ i18n
           quotation: trQuotation,
           wizard: trWizard,
           pricingRule: trPricingRule,
-        } as typeof trCommon & { customerTypeManagement: typeof trCustomerTypeManagement; customerManagement: typeof trCustomerManagement; contactManagement: typeof trContactManagement; paymentTypeManagement: typeof trPaymentTypeManagement; userDiscountLimitManagement: typeof trUserDiscountLimitManagement; productPricingGroupByManagement: typeof trProductPricingGroupByManagement; productPricingManagement: typeof trProductPricingManagement; activityManagement: typeof trActivityManagement; shippingAddressManagement: typeof trShippingAddressManagement; dailyTasks: typeof trDailyTasks; erpCustomerManagement: typeof trErpCustomerManagement; customerSelectDialog: typeof trCustomerSelectDialog; productSelectDialog: typeof trProductSelectDialog; approval: typeof trApproval; quotation: typeof trQuotation; wizard: typeof trWizard; pricingRule: typeof trPricingRule },
+          documentSerialType: trDocumentSerialType,
+        } as typeof trCommon & { customerTypeManagement: typeof trCustomerTypeManagement; customerManagement: typeof trCustomerManagement; contactManagement: typeof trContactManagement; paymentTypeManagement: typeof trPaymentTypeManagement; userDiscountLimitManagement: typeof trUserDiscountLimitManagement; productPricingGroupByManagement: typeof trProductPricingGroupByManagement; productPricingManagement: typeof trProductPricingManagement; activityManagement: typeof trActivityManagement; shippingAddressManagement: typeof trShippingAddressManagement; dailyTasks: typeof trDailyTasks; erpCustomerManagement: typeof trErpCustomerManagement; customerSelectDialog: typeof trCustomerSelectDialog; productSelectDialog: typeof trProductSelectDialog; approval: typeof trApproval; quotation: typeof trQuotation; wizard: typeof trWizard; pricingRule: typeof trPricingRule; documentSerialType: typeof trDocumentSerialType },
       },
       en: {
         translation: {
@@ -88,7 +91,8 @@ i18n
           quotation: enQuotation,
           wizard: enWizard,
           pricingRule: enPricingRule,
-        } as typeof enCommon & { customerTypeManagement: typeof enCustomerTypeManagement; customerManagement: typeof enCustomerManagement; contactManagement: typeof enContactManagement; paymentTypeManagement: typeof enPaymentTypeManagement; userDiscountLimitManagement: typeof enUserDiscountLimitManagement; productPricingGroupByManagement: typeof enProductPricingGroupByManagement; productPricingManagement: typeof enProductPricingManagement; activityManagement: typeof enActivityManagement; shippingAddressManagement: typeof enShippingAddressManagement; dailyTasks: typeof enDailyTasks; erpCustomerManagement: typeof enErpCustomerManagement; customerSelectDialog: typeof enCustomerSelectDialog; productSelectDialog: typeof enProductSelectDialog; approval: typeof enApproval; quotation: typeof enQuotation; wizard: typeof enWizard; pricingRule: typeof enPricingRule },
+          documentSerialType: enDocumentSerialType,
+        } as typeof enCommon & { customerTypeManagement: typeof enCustomerTypeManagement; customerManagement: typeof enCustomerManagement; contactManagement: typeof enContactManagement; paymentTypeManagement: typeof enPaymentTypeManagement; userDiscountLimitManagement: typeof enUserDiscountLimitManagement; productPricingGroupByManagement: typeof enProductPricingGroupByManagement; productPricingManagement: typeof enProductPricingManagement; activityManagement: typeof enActivityManagement; shippingAddressManagement: typeof enShippingAddressManagement; dailyTasks: typeof enDailyTasks; erpCustomerManagement: typeof enErpCustomerManagement; customerSelectDialog: typeof enCustomerSelectDialog; productSelectDialog: typeof enProductSelectDialog; approval: typeof enApproval; quotation: typeof enQuotation; wizard: typeof enWizard; pricingRule: typeof enPricingRule; documentSerialType: typeof enDocumentSerialType },
       },
       de: {
         translation: deCommon,

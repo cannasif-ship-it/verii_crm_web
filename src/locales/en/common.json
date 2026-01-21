@@ -99,6 +99,7 @@
     "activityManagement": "Activity Management",
     "activityTypeManagement": "Activity Type Management",
     "pricingRuleManagement": "Pricing Rule Management",
+    "documentSerialTypeManagement": "Document Serial Type Management",
     "stockManagement": "Stock Management",
     "settings": "Settings",
     "logout": "Log Out"
