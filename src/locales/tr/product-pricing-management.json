@@ -7,6 +7,17 @@
   "editDescription": "Fiyatlandırma bilgilerini düzenleyin",
   "delete": "Sil",
   "deleteTitle": "Fiyatlandırmayı Sil",
+  "productInfo": "ÜRÜN BİLGİSİ",
+  "category": "KATEGORİ",
+  "stockStatus": "STOK DURUMU",
+  "priceAndDiscount": "FİYAT & İSKONTO",
+  "searchPlaceholder": "Ürün adı, SKU veya Kategori ara...",
+  "filter": {
+    "all": "Tümü",
+    "active": "Aktif",
+    "critical": "Kritik Stok",
+    "archive": "Arşiv"
+  },
   "erpProductCode": "ERP Ürün Kodu",
   "erpGroupCode": "ERP Ürün Grubu Kodu",
   "currency": "Para Birimi",

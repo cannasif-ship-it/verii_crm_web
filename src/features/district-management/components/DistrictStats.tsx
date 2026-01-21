@@ -1,127 +1,70 @@
 import { type ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useDistrictStats } from '../hooks/useDistrictStats';
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
+import { MapPin, Activity, Calendar } from 'lucide-react';
 
 export function DistrictStats(): ReactElement {
   const { t } = useTranslation();
-  const { data: stats, isLoading } = useDistrictStats();
 
-  if (isLoading) {
-    return (
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {[1, 2, 3].map((i) => (
-          <Card key={i}>
-            <CardHeader>
-              <CardTitle className="text-sm font-medium text-muted-foreground">
-                {t('common.loading', 'Yükleniyor...')}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="h-8 w-20 animate-pulse rounded bg-muted" />
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-    );
-  }
+  const cardStyle = `
+    bg-white/60 dark:bg-[#1a1025]/40 
+    hover:bg-white/90 dark:hover:bg-[#1a1025]/80
+    border border-white/60 dark:border-white/5 
+    shadow-sm hover:shadow-md 
+    backdrop-blur-md 
+    transition-all duration-300 
+    hover:border-pink-500/30 
+    group relative overflow-hidden
+  `;
+  
+  const glowStyle = "absolute inset-0 bg-gradient-to-r from-pink-50/0 to-orange-50/0 dark:from-pink-500/0 dark:to-orange-500/0 group-hover:from-pink-50/50 group-hover:to-orange-50/50 dark:group-hover:from-pink-500/5 dark:group-hover:to-orange-500/5 transition-all duration-500 pointer-events-none";
 
-  if (!stats) {
-    return <></>;
-  }
+  const stats = [
+    {
+      title: t('districtManagement.stats.totalDistricts', 'TOPLAM İLÇE'),
+      value: '-',
+      icon: MapPin,
+      iconContainerClass: 'bg-pink-50 text-pink-600 dark:bg-pink-500/10 dark:text-pink-400 border-pink-100 dark:border-pink-500/20',
+    },
+    {
+      title: t('districtManagement.stats.activeDistricts', 'AKTİF İLÇE'),
+      value: '-',
+      icon: Activity,
+      iconContainerClass: 'bg-orange-50 text-orange-600 dark:bg-orange-500/10 dark:text-orange-400 border-orange-100 dark:border-orange-500/20',
+    },
+    {
+      title: t('districtManagement.stats.newThisMonth', 'BU AY YENİ'),
+      value: '-',
+      icon: Calendar,
+      iconContainerClass: 'bg-blue-50 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400 border-blue-100 dark:border-blue-500/20',
+    },
+  ];
 
   return (
-    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium text-muted-foreground">
-            {t('districtManagement.stats.totalDistricts', 'Toplam İlçe')}
-          </CardTitle>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="text-rose-500"
-          >
-            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
-            <circle cx="12" cy="10" r="3" />
-          </svg>
-        </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold">{stats.totalDistricts}</div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium text-muted-foreground">
-            {t('districtManagement.stats.activeDistricts', 'Aktif İlçe')}
-          </CardTitle>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="text-green-500"
-          >
-            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-            <polyline points="22 4 12 14.01 9 11.01" />
-          </svg>
-        </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold">{stats.activeDistricts}</div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium text-muted-foreground">
-            {t('districtManagement.stats.newThisMonth', 'Bu Ay Yeni')}
-          </CardTitle>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="text-orange-500"
-          >
-            <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-            <line x1="16" y1="2" x2="16" y2="6" />
-            <line x1="8" y1="2" x2="8" y2="6" />
-            <line x1="3" y1="10" x2="21" y2="10" />
-            <path d="M8 14h.01" />
-            <path d="M12 14h.01" />
-            <path d="M16 14h.01" />
-            <path d="M8 18h.01" />
-            <path d="M12 18h.01" />
-            <path d="M16 18h.01" />
-          </svg>
-        </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold">{stats.newThisMonth}</div>
-        </CardContent>
-      </Card>
+    <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+      {stats.map((stat, index) => (
+        <Card key={index} className={cardStyle}>
+          <div className={glowStyle} />
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative z-10">
+            <CardTitle className="text-sm font-bold tracking-wider text-muted-foreground uppercase">
+              {stat.title}
+            </CardTitle>
+            <div className={`p-2 rounded-lg border ${stat.iconContainerClass}`}>
+              <stat.icon className="h-4 w-4" />
+            </div>
+          </CardHeader>
+          <CardContent className="relative z-10">
+            <div className="text-2xl font-extrabold text-zinc-900 dark:text-white">
+              {stat.value}
+            </div>
+          </CardContent>
+        </Card>
+      ))}
     </div>
   );
 }

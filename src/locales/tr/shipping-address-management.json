@@ -52,5 +52,10 @@
   "selectCountryFirst": "Önce ülke seçin",
   "selectCityFirst": "Önce şehir seçin",
   "createDescription": "Yeni sevk adresi bilgilerini girin",
-  "editDescription": "Sevk adresi bilgilerini düzenleyin"
+  "editDescription": "Sevk adresi bilgilerini düzenleyin",
+  "table": {
+    "id": "ID",
+    "showing": "{{from}}-{{to}} / {{total}} gösteriliyor",
+    "page": "Sayfa {{current}} / {{total}}"
+  }
 }

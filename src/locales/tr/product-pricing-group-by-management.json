@@ -31,6 +31,11 @@
   "deleteSuccess": "Fiyatlandırma grubu başarıyla silindi",
   "createError": "Fiyatlandırma grubu oluşturulurken bir hata oluştu",
   "updateError": "Fiyatlandırma grubu güncellenirken bir hata oluştu",
+  "stats": {
+    "totalProducts": "TOPLAM ÜRÜN",
+    "criticalStock": "KRİTİK STOK",
+    "categories": "KATEGORİLER"
+  },
   "deleteError": "Fiyatlandırma grubu silinirken bir hata oluştu",
   "erpGroupCodeRequired": "ERP ürün grubu kodu gereklidir",
   "erpGroupCodeMaxLength": "ERP ürün grubu kodu en fazla 50 karakter olabilir",

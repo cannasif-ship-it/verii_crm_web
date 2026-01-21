@@ -10,7 +10,7 @@ export const useStockImageSetPrimary = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ id, stockId }: { id: number; stockId: number }): Promise<StockImageDto> => {
+    mutationFn: async ({ id }: { id: number; stockId: number }): Promise<StockImageDto> => {
       return await stockApi.setPrimaryImage(id);
     },
     onSuccess: (data: StockImageDto, variables: { id: number; stockId: number }) => {

@@ -21,6 +21,7 @@ import { useApprovalRoleList } from '../hooks/useApprovalRoleList';
 import { useDeleteApprovalRole } from '../hooks/useDeleteApprovalRole';
 import type { ApprovalRoleDto } from '../types/approval-role-types';
 import type { PagedFilter } from '@/types/api';
+import { ChevronUp, ChevronDown, ChevronsUpDown, Edit2, Trash2, ShieldCheck } from 'lucide-react';
 
 interface ApprovalRoleTableProps {
   onEdit: (role: ApprovalRoleDto) => void;
@@ -47,7 +48,7 @@ export function ApprovalRoleTable({
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedRole, setSelectedRole] = useState<ApprovalRoleDto | null>(null);
 
-  const { data, isLoading } = useApprovalRoleList({
+  const { data, isLoading, isFetching } = useApprovalRoleList({
     pageNumber,
     pageSize,
     sortBy,
@@ -76,65 +77,20 @@ export function ApprovalRoleTable({
     onSortChange(column, newDirection);
   };
 
-  const SortIcon = ({ column }: { column: string }): ReactElement => {
-    if (sortBy !== column) {
-      return (
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="16"
-          height="16"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className="ml-1 inline-block text-muted-foreground"
-        >
-          <path d="M8 9l4-4 4 4" />
-          <path d="M16 15l-4 4-4-4" />
-        </svg>
-      );
-    }
-    return sortDirection === 'asc' ? (
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="16"
-        height="16"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        className="ml-1 inline-block"
-      >
-        <path d="M8 9l4-4 4 4" />
-      </svg>
-    ) : (
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="16"
-        height="16"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        className="ml-1 inline-block"
-      >
-        <path d="M16 15l-4 4-4-4" />
-      </svg>
-    );
+  const SortIcon = ({ column }: { column: string }) => {
+    if (sortBy !== column) return <ChevronsUpDown className="ml-2 w-3 h-3 opacity-30" />;
+    return sortDirection === 'asc' ? 
+      <ChevronUp className="ml-2 w-3 h-3 text-pink-600 dark:text-pink-500" /> : 
+      <ChevronDown className="ml-2 w-3 h-3 text-pink-600 dark:text-pink-500" />;
   };
 
-  if (isLoading) {
+  const borderClass = "border-zinc-300 dark:border-zinc-700/80"; 
+
+  if (isLoading || isFetching) {
     return (
-      <div className="flex items-center justify-center py-8">
-        <div className="text-muted-foreground">
-          {t('common.loading', 'Yükleniyor...')}
-        </div>
+      <div className={`flex flex-col items-center justify-center py-24 gap-4 border ${borderClass} rounded-xl bg-white/50 dark:bg-card/50`}>
+        <div className="w-10 h-10 border-4 border-muted border-t-pink-500 rounded-full animate-spin" />
+        <span className="text-muted-foreground animate-pulse text-sm font-medium">{t('common.loading', 'Yükleniyor...')}</span>
       </div>
     );
   }
@@ -143,10 +99,9 @@ export function ApprovalRoleTable({
   
   if (!data || roles.length === 0) {
     return (
-      <div className="flex items-center justify-center py-8">
-        <div className="text-muted-foreground">
-          {t('common.noData', 'Veri yok')}
-        </div>
+      <div className={`flex flex-col items-center justify-center py-24 text-muted-foreground border ${borderClass} border-dashed rounded-xl bg-white/50 dark:bg-card/50`}>
+        <ShieldCheck size={40} className="opacity-40 mb-2" />
+        <p className="text-sm font-medium">{t('common.noData', 'Veri yok')}</p>
       </div>
     );
   }
@@ -154,111 +109,115 @@ export function ApprovalRoleTable({
   const totalPages = Math.ceil((data.totalCount || 0) / pageSize);
 
   return (
-    <>
-      <div className="rounded-md border">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead
-                className="cursor-pointer select-none"
-                onClick={() => handleSort('Id')}
-              >
-                <div className="flex items-center">
-                  {t('approvalRole.table.id', 'ID')}
-                  <SortIcon column="Id" />
+    <div className="w-full">
+      <Table className="border-collapse w-full">
+        <TableHeader className="bg-zinc-200 dark:bg-muted/20">
+          <TableRow className="hover:bg-transparent border-none">
+            <TableHead 
+              className={`cursor-pointer select-none py-4 px-4 text-xs font-bold uppercase tracking-wider text-zinc-900 dark:text-foreground/90 hover:text-pink-600 dark:hover:text-pink-500 transition-colors border-b border-r border-zinc-300 dark:border-zinc-700 last:border-r-0`}
+              onClick={() => handleSort('Id')}
+            >
+              <div className="flex items-center gap-1">
+                {t('approvalRole.table.id', 'ID')} <SortIcon column="Id" />
+              </div>
+            </TableHead>
+            <TableHead 
+              className={`cursor-pointer select-none py-4 px-4 text-xs font-bold uppercase tracking-wider text-zinc-900 dark:text-foreground/90 hover:text-pink-600 dark:hover:text-pink-500 transition-colors border-b border-r border-zinc-300 dark:border-zinc-700 last:border-r-0`}
+              onClick={() => handleSort('ApprovalRoleGroupName')}
+            >
+              <div className="flex items-center gap-1">
+                {t('approvalRole.table.approvalRoleGroupName', 'Rol Grubu')} <SortIcon column="ApprovalRoleGroupName" />
+              </div>
+            </TableHead>
+            <TableHead 
+              className={`cursor-pointer select-none py-4 px-4 text-xs font-bold uppercase tracking-wider text-zinc-900 dark:text-foreground/90 hover:text-pink-600 dark:hover:text-pink-500 transition-colors border-b border-r border-zinc-300 dark:border-zinc-700 last:border-r-0`}
+              onClick={() => handleSort('Name')}
+            >
+              <div className="flex items-center gap-1">
+                {t('approvalRole.table.name', 'Rol Adı')} <SortIcon column="Name" />
+              </div>
+            </TableHead>
+            <TableHead className={`py-4 px-4 text-xs font-bold uppercase tracking-wider text-zinc-900 dark:text-foreground/90 border-b border-r border-zinc-300 dark:border-zinc-700`}>
+              {t('approvalRole.table.createdDate', 'Oluşturulma Tarihi')}
+            </TableHead>
+            <TableHead className={`py-4 px-4 text-xs font-bold uppercase tracking-wider text-zinc-900 dark:text-foreground/90 border-b border-r border-zinc-300 dark:border-zinc-700`}>
+              {t('approvalRole.table.createdBy', 'Oluşturan Kullanıcı')}
+            </TableHead>
+            <TableHead className={`text-right py-4 px-4 text-xs font-bold uppercase tracking-wider text-zinc-900 dark:text-foreground/90 border-b border-zinc-300 dark:border-zinc-700`}>
+              {t('common.actions', 'İşlemler')}
+            </TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {roles.map((role: ApprovalRoleDto, index: number) => (
+            <TableRow 
+              key={role.id || `role-${index}`}
+              className={`group cursor-pointer hover:bg-pink-50 dark:hover:bg-pink-500/10 transition-colors duration-200 bg-white dark:bg-transparent`}
+            >
+              <TableCell className={`font-mono text-xs text-muted-foreground border-b border-r ${borderClass} px-4 py-3`}>
+                {role.id}
+              </TableCell>
+              <TableCell className={`font-semibold text-sm text-foreground/90 border-b border-r ${borderClass} px-4 py-3 group-hover:text-pink-600 dark:group-hover:text-pink-400 transition-colors`}>
+                {role.approvalRoleGroupName || '-'}
+              </TableCell>
+              <TableCell className={`text-sm text-foreground/80 border-b border-r ${borderClass} px-4 py-3`}>
+                {role.name || '-'}
+              </TableCell>
+              <TableCell className={`text-sm text-muted-foreground border-b border-r ${borderClass} px-4 py-3`}>
+                 {role.createdDate ? new Date(role.createdDate).toLocaleDateString('tr-TR') : '-'}
+              </TableCell>
+              <TableCell className={`text-sm text-muted-foreground border-b border-r ${borderClass} px-4 py-3`}>
+                {role.createdByFullUser || role.createdByFullName || role.createdBy || '-'}
+              </TableCell>
+              <TableCell className={`text-right border-b ${borderClass} px-4 py-3`}>
+                <div className="flex justify-end gap-2">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => onEdit(role)}
+                    className="h-8 w-8 text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50 dark:text-indigo-400 dark:hover:bg-indigo-900/20"
+                  >
+                    <Edit2 className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => handleDeleteClick(role)}
+                    className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
                 </div>
-              </TableHead>
-              <TableHead
-                className="cursor-pointer select-none"
-                onClick={() => handleSort('ApprovalRoleGroupName')}
-              >
-                <div className="flex items-center">
-                  {t('approvalRole.table.approvalRoleGroupName', 'Rol Grubu')}
-                  <SortIcon column="ApprovalRoleGroupName" />
-                </div>
-              </TableHead>
-              <TableHead
-                className="cursor-pointer select-none"
-                onClick={() => handleSort('Name')}
-              >
-                <div className="flex items-center">
-                  {t('approvalRole.table.name', 'Rol Adı')}
-                  <SortIcon column="Name" />
-                </div>
-              </TableHead>
-              <TableHead>
-                {t('approvalRole.table.createdDate', 'Oluşturulma Tarihi')}
-              </TableHead>
-              <TableHead>
-                {t('approvalRole.table.createdBy', 'Oluşturan Kullanıcı')}
-              </TableHead>
-              <TableHead className="text-right">
-                {t('common.actions', 'İşlemler')}
-              </TableHead>
+              </TableCell>
             </TableRow>
-          </TableHeader>
-          <TableBody>
-            {roles.map((role: ApprovalRoleDto) => (
-              <TableRow key={role.id}>
-                <TableCell>{role.id}</TableCell>
-                <TableCell>{role.approvalRoleGroupName || '-'}</TableCell>
-                <TableCell className="font-medium">{role.name}</TableCell>
-                <TableCell>
-                  {new Date(role.createdDate).toLocaleDateString('tr-TR')}
-                </TableCell>
-                <TableCell>
-                  {role.createdByFullUser || role.createdByFullName || role.createdBy || '-'}
-                </TableCell>
-                <TableCell className="text-right">
-                  <div className="flex justify-end gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => onEdit(role)}
-                    >
-                      {t('common.edit', 'Düzenle')}
-                    </Button>
-                    <Button
-                      variant="destructive"
-                      size="sm"
-                      onClick={() => handleDeleteClick(role)}
-                    >
-                      {t('common.delete', 'Sil')}
-                    </Button>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </div>
+          ))}
+        </TableBody>
+      </Table>
 
-      <div className="flex items-center justify-between py-4">
-        <div className="text-sm text-muted-foreground">
-          {t('approvalRole.table.showing', '{{from}}-{{to}} / {{total}} gösteriliyor', {
-            from: (pageNumber - 1) * pageSize + 1,
-            to: Math.min(pageNumber * pageSize, data.totalCount || 0),
-            total: data.totalCount || 0,
-          })}
+      <div className={`flex flex-col md:flex-row items-center justify-between px-6 py-4 bg-zinc-50/50 dark:bg-muted/20 border-t-0 rounded-b-xl gap-4 border-x border-b ${borderClass}`}>
+        <div className="text-xs text-muted-foreground font-medium">
+            Toplam <span className="font-bold text-foreground">{data?.totalCount || 0}</span> kayıt.
         </div>
-        <div className="flex gap-2">
+        
+        <div className="flex items-center gap-3">
           <Button
             variant="outline"
             size="sm"
+            className={`h-8 px-3 rounded-lg text-xs font-medium bg-white dark:bg-background hover:bg-pink-50 hover:border-pink-500 hover:text-pink-600 transition-all ${borderClass}`}
             onClick={() => onPageChange(pageNumber - 1)}
             disabled={pageNumber <= 1}
           >
             {t('common.previous', 'Önceki')}
           </Button>
-          <div className="flex items-center px-4 text-sm">
-            {t('approvalRole.table.page', 'Sayfa {{current}} / {{total}}', {
-              current: pageNumber,
-              total: totalPages,
-            })}
+          
+          <div className={`text-xs font-bold bg-white dark:bg-background px-3 py-1.5 rounded-md min-w-[3rem] text-center border ${borderClass}`}>
+            {pageNumber} / {totalPages}
           </div>
+
           <Button
             variant="outline"
             size="sm"
+            className={`h-8 px-3 rounded-lg text-xs font-medium bg-white dark:bg-background hover:bg-pink-50 hover:border-pink-500 hover:text-pink-600 transition-all ${borderClass}`}
             onClick={() => onPageChange(pageNumber + 1)}
             disabled={pageNumber >= totalPages}
           >
@@ -268,37 +227,37 @@ export function ApprovalRoleTable({
       </div>
 
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>
-              {t('approvalRole.delete.confirmTitle', 'Onay Rolünü Sil')}
-            </DialogTitle>
-            <DialogDescription>
-              {t('approvalRole.delete.confirmMessage', '{{name}} onay rolünü silmek istediğinizden emin misiniz?', {
-                name: selectedRole?.name || '',
-              })}
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setDeleteDialogOpen(false)}
-              disabled={deleteRole.isPending}
-            >
-              {t('common.cancel', 'İptal')}
-            </Button>
-            <Button
-              variant="destructive"
-              onClick={handleDeleteConfirm}
-              disabled={deleteRole.isPending}
-            >
-              {deleteRole.isPending
-                ? t('common.loading', 'Yükleniyor...')
-                : t('common.delete', 'Sil')}
-            </Button>
-          </DialogFooter>
+        <DialogContent className="sm:max-w-[425px] border-none shadow-2xl bg-white/95 dark:bg-zinc-900/95 backdrop-blur-xl">
+           <DialogHeader className="space-y-4">
+             <div className="mx-auto w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/20 flex items-center justify-center mb-2">
+               <Trash2 className="w-6 h-6 text-red-600 dark:text-red-500" />
+             </div>
+             <DialogTitle className="text-center text-xl font-bold text-zinc-900 dark:text-zinc-100">
+               {t('common.deleteConfirmTitle', 'Silme İşlemi')}
+             </DialogTitle>
+             <DialogDescription className="text-center text-zinc-500 dark:text-zinc-400">
+               {t('common.deleteConfirmDescription', 'Bu kaydı silmek istediğinize emin misiniz? Bu işlem geri alınamaz.')}
+             </DialogDescription>
+           </DialogHeader>
+           <DialogFooter className="flex flex-col-reverse sm:flex-row gap-2 mt-6">
+             <Button
+               variant="outline"
+               onClick={() => setDeleteDialogOpen(false)}
+               className="flex-1 bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300"
+             >
+               {t('common.cancel', 'İptal')}
+             </Button>
+             <Button
+               variant="destructive"
+               onClick={handleDeleteConfirm}
+               disabled={deleteRole.isPending}
+               className="flex-1 bg-red-600 hover:bg-red-700 text-white shadow-lg shadow-red-500/20"
+             >
+               {deleteRole.isPending ? t('common.deleting', 'Siliniyor...') : t('common.delete', 'Sil')}
+             </Button>
+           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </>
+    </div>
   );
 }

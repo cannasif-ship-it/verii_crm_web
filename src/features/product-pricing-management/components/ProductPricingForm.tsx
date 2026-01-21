@@ -31,21 +31,48 @@ import { productPricingFormSchema, type ProductPricingFormSchema, calculateFinal
 import { useExchangeRate } from '@/services/hooks/useExchangeRate';
 import type { KurDto } from '@/services/erp-types';
 import { ProductSelectDialog } from '@/components/shared/ProductSelectDialog';
-import { Search, X } from 'lucide-react';
+import { Search, X, Package, Trash2 } from 'lucide-react';
 import type { ProductPricingGetDto } from '../types/product-pricing-types';
 
 interface ProductPricingFormProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSubmit: (data: ProductPricingFormSchema) => void | Promise<void>;
+  onDelete?: (id: number) => void | Promise<void>;
   productPricing?: ProductPricingGetDto | null;
   isLoading?: boolean;
 }
+
+// --- MODERN TASARIM SABİTLERİ ---
+const INPUT_STYLE = `
+  h-11 rounded-lg
+  bg-slate-50 dark:bg-[#0c0516] 
+  border border-slate-200 dark:border-white/10 
+  text-slate-900 dark:text-white text-sm
+  placeholder:text-slate-400 dark:placeholder:text-slate-600 
+  
+  focus-visible:ring-0 focus-visible:ring-offset-0 
+  
+  /* LIGHT MODE FOCUS */
+  focus:bg-white 
+  focus:border-pink-500 
+  focus:shadow-[0_0_0_3px_rgba(236,72,153,0.15)] 
+
+  /* DARK MODE FOCUS */
+  dark:focus:bg-[#0c0516] 
+  dark:focus:border-pink-500/60 
+  dark:focus:shadow-[0_0_0_3px_rgba(236,72,153,0.1)]
+
+  transition-all duration-200
+`;
+
+const LABEL_STYLE = "text-[11px] text-slate-500 dark:text-slate-400 uppercase tracking-wider font-bold ml-1 mb-1.5 block";
 
 export function ProductPricingForm({
   open,
   onOpenChange,
   onSubmit,
+  onDelete,
   productPricing,
   isLoading = false,
 }: ProductPricingFormProps): ReactElement {
@@ -126,319 +153,361 @@ export function ProductPricingForm({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[90vh] overflow-y-auto max-w-4xl">
-        <DialogHeader>
-          <DialogTitle>
-            {productPricing
-              ? t('productPricingManagement.edit', 'Fiyatlandırma Düzenle')
-              : t('productPricingManagement.create', 'Yeni Fiyatlandırma')}
-          </DialogTitle>
-          <DialogDescription>
-            {productPricing
-              ? t('productPricingManagement.editDescription', 'Fiyatlandırma bilgilerini düzenleyin')
-              : t('productPricingManagement.createDescription', 'Yeni fiyatlandırma bilgilerini girin')}
-          </DialogDescription>
+      <DialogContent className="bg-white dark:bg-[#130822] border border-slate-100 dark:border-white/10 text-slate-900 dark:text-white max-w-4xl shadow-2xl shadow-slate-200/50 dark:shadow-black/50 sm:rounded-2xl max-h-[90vh] h-auto flex flex-col gap-0 p-0 overflow-hidden transition-colors duration-300">
+        
+        <DialogHeader className="border-b border-slate-100 dark:border-white/5 px-6 py-5 bg-white/80 dark:bg-[#130822]/90 backdrop-blur-md shrink-0 flex-row items-center justify-between space-y-0">
+          <div className="flex items-center gap-3">
+             <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-pink-500/20 to-orange-500/20 border border-pink-500/10 flex items-center justify-center text-pink-500 shrink-0">
+               <Package size={20} />
+             </div>
+             <div>
+                <DialogTitle className="text-lg font-bold text-slate-900 dark:text-white">
+                  {productPricing
+                    ? t('productPricingManagement.edit', 'Fiyatlandırma Düzenle')
+                    : t('productPricingManagement.create', 'Yeni Fiyatlandırma')}
+                </DialogTitle>
+                <DialogDescription className="text-slate-500 dark:text-slate-400 text-xs mt-0.5">
+                  {productPricing
+                    ? t('productPricingManagement.editDescription', 'Fiyatlandırma bilgilerini düzenleyin')
+                    : t('productPricingManagement.createDescription', 'Yeni fiyatlandırma bilgilerini girin')}
+                </DialogDescription>
+             </div>
+          </div>
         </DialogHeader>
 
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-              <FormField
-                control={form.control}
-                name="erpProductCode"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      {t('productPricingManagement.erpProductCode', 'Stok Kodu')} *
-                    </FormLabel>
-                    <div className="flex gap-2">
+        <div className="flex-1 overflow-y-auto p-6 custom-scrollbar">
+          <Form {...form}>
+            <form id="product-pricing-form" onSubmit={form.handleSubmit(handleSubmit)} className="space-y-5">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                <FormField
+                  control={form.control}
+                  name="erpProductCode"
+                  render={({ field }) => (
+                    <FormItem className="space-y-0">
+                      <FormLabel className={LABEL_STYLE}>
+                        {t('productPricingManagement.erpProductCode', 'Stok Kodu')} *
+                      </FormLabel>
+                      <div className="flex gap-2">
+                        <FormControl>
+                          <Input
+                            {...field}
+                            readOnly
+                            placeholder={t('productPricingManagement.selectStokCode', 'Stok seçin')}
+                            maxLength={50}
+                            className={INPUT_STYLE}
+                          />
+                        </FormControl>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="icon"
+                          onClick={() => setProductDialogOpen(true)}
+                          title={t('productPricingManagement.selectStok', 'Stok Seç')}
+                          className="h-11 w-11 shrink-0 bg-white dark:bg-transparent border-slate-200 dark:border-white/10 hover:bg-slate-50 dark:hover:bg-white/5 text-slate-500 dark:text-slate-400"
+                        >
+                          <Search className="h-4 w-4" />
+                        </Button>
+                        {field.value && (
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => {
+                              field.onChange('');
+                              form.setValue('erpGroupCode', '');
+                            }}
+                            className="h-11 w-11 shrink-0 text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-500/10"
+                          >
+                            <X className="h-4 w-4" />
+                          </Button>
+                        )}
+                      </div>
+                      <FormMessage className="text-red-500 text-[10px] mt-1" />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="erpGroupCode"
+                  render={({ field }) => (
+                    <FormItem className="space-y-0">
+                      <FormLabel className={LABEL_STYLE}>
+                        {t('productPricingManagement.erpGroupCode', 'Grup Kodu')} *
+                      </FormLabel>
                       <FormControl>
                         <Input
                           {...field}
                           readOnly
-                          placeholder={t('productPricingManagement.selectStokCode', 'Stok seçin')}
+                          placeholder={t('productPricingManagement.erpGroupCodePlaceholder', 'Stok seçildiğinde otomatik doldurulur')}
                           maxLength={50}
+                          className={INPUT_STYLE}
                         />
                       </FormControl>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="icon"
-                        onClick={() => setProductDialogOpen(true)}
-                        title={t('productPricingManagement.selectStok', 'Stok Seç')}
-                      >
-                        <Search className="h-4 w-4" />
-                      </Button>
-                      {field.value && (
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => {
-                            field.onChange('');
-                          }}
-                        >
-                          <X className="h-4 w-4" />
-                        </Button>
-                      )}
-                    </div>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                      <FormMessage className="text-red-500 text-[10px] mt-1" />
+                    </FormItem>
+                  )}
+                />
+              </div>
 
               <FormField
                 control={form.control}
-                name="erpGroupCode"
+                name="currency"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      {t('productPricingManagement.erpGroupCode', 'Grup Kodu')} *
+                  <FormItem className="space-y-0">
+                    <FormLabel className={LABEL_STYLE}>
+                      {t('productPricingManagement.currency', 'Para Birimi')} *
                     </FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        readOnly
-                        placeholder={t('productPricingManagement.erpGroupCodePlaceholder', 'Stok seçildiğinde otomatik doldurulur')}
-                        maxLength={50}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-
-            <FormField
-              control={form.control}
-              name="currency"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>
-                    {t('productPricingManagement.currency', 'Para Birimi')} *
-                  </FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    value={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder={t('productPricingManagement.selectCurrency', 'Lütfen para birimi seçin')} />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {isLoadingCurrencies ? (
-                        <SelectItem value="0" disabled>Yükleniyor...</SelectItem>
-                      ) : (
-                        exchangeRates.map((currency: KurDto) => (
-                          <SelectItem key={currency.dovizTipi} value={String(currency.dovizTipi)}>
-                            {currency.dovizIsmi || `Döviz ${currency.dovizTipi}`}
-                          </SelectItem>
-                        ))
-                      )}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-              <FormField
-                control={form.control}
-                name="listPrice"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      {t('productPricingManagement.listPrice', 'Liste Fiyatı')} *
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        type="number"
-                        step="0.01"
-                        min="0"
-                        {...field}
-                        onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
-                        value={field.value || ''}
-                        placeholder={t('productPricingManagement.enterListPrice', 'Liste Fiyatı Girin')}
-                      />
-                    </FormControl>
-                    <FormMessage />
+                    <Select
+                      onValueChange={field.onChange}
+                      value={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger className={INPUT_STYLE}>
+                          <SelectValue placeholder={t('productPricingManagement.selectCurrency', 'Lütfen para birimi seçin')} />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {isLoadingCurrencies ? (
+                          <SelectItem value="0" disabled>Yükleniyor...</SelectItem>
+                        ) : (
+                          exchangeRates.map((currency: KurDto) => (
+                            <SelectItem key={currency.dovizTipi} value={String(currency.dovizTipi)}>
+                              {currency.dovizIsmi || `Döviz ${currency.dovizTipi}`}
+                            </SelectItem>
+                          ))
+                        )}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage className="text-red-500 text-[10px] mt-1" />
                   </FormItem>
                 )}
               />
 
-              <FormField
-                control={form.control}
-                name="costPrice"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      {t('productPricingManagement.costPrice', 'Maliyet Fiyatı')} *
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        type="number"
-                        step="0.01"
-                        min="0"
-                        {...field}
-                        onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
-                        value={field.value || ''}
-                        placeholder={t('productPricingManagement.enterCostPrice', 'Maliyet Fiyatı Girin')}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                <FormField
+                  control={form.control}
+                  name="listPrice"
+                  render={({ field }) => (
+                    <FormItem className="space-y-0">
+                      <FormLabel className={LABEL_STYLE}>
+                        {t('productPricingManagement.listPrice', 'Liste Fiyatı')} *
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          step="0.01"
+                          min="0"
+                          {...field}
+                          onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
+                          value={field.value || ''}
+                          placeholder={t('productPricingManagement.enterListPrice', 'Liste Fiyatı Girin')}
+                          className={INPUT_STYLE}
+                        />
+                      </FormControl>
+                      <FormMessage className="text-red-500 text-[10px] mt-1" />
+                    </FormItem>
+                  )}
+                />
 
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-              <FormField
-                control={form.control}
-                name="discount1"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      {t('productPricingManagement.discount1', 'İskonto 1')}
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        type="number"
-                        step="0.01"
-                        min="0"
-                        max="100"
-                        {...field}
-                        onChange={(e) => field.onChange(e.target.value ? parseFloat(e.target.value) : undefined)}
-                        value={field.value || ''}
-                        placeholder={t('productPricingManagement.enterDiscount1', 'İskonto 1 Girin (0-100, Opsiyonel)')}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                <FormField
+                  control={form.control}
+                  name="costPrice"
+                  render={({ field }) => (
+                    <FormItem className="space-y-0">
+                      <FormLabel className={LABEL_STYLE}>
+                        {t('productPricingManagement.costPrice', 'Maliyet Fiyatı')} *
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          step="0.01"
+                          min="0"
+                          {...field}
+                          onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
+                          value={field.value || ''}
+                          placeholder={t('productPricingManagement.enterCostPrice', 'Maliyet Fiyatı Girin')}
+                          className={INPUT_STYLE}
+                        />
+                      </FormControl>
+                      <FormMessage className="text-red-500 text-[10px] mt-1" />
+                    </FormItem>
+                  )}
+                />
+              </div>
 
-              <FormField
-                control={form.control}
-                name="discount2"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      {t('productPricingManagement.discount2', 'İskonto 2')}
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        type="number"
-                        step="0.01"
-                        min="0"
-                        max="100"
-                        {...field}
-                        onChange={(e) => field.onChange(e.target.value ? parseFloat(e.target.value) : undefined)}
-                        value={field.value || ''}
-                        placeholder={t('productPricingManagement.enterDiscount2', 'İskonto 2 Girin (0-100, Opsiyonel)')}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+                <FormField
+                  control={form.control}
+                  name="discount1"
+                  render={({ field }) => (
+                    <FormItem className="space-y-0">
+                      <FormLabel className={LABEL_STYLE}>
+                        {t('productPricingManagement.discount1', 'İskonto 1')}
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          step="0.01"
+                          min="0"
+                          max="100"
+                          {...field}
+                          onChange={(e) => field.onChange(e.target.value ? parseFloat(e.target.value) : undefined)}
+                          value={field.value || ''}
+                          placeholder={t('productPricingManagement.enterDiscount1', 'İskonto 1 (Ops.)')}
+                          className={INPUT_STYLE}
+                        />
+                      </FormControl>
+                      <FormMessage className="text-red-500 text-[10px] mt-1" />
+                    </FormItem>
+                  )}
+                />
 
-              <FormField
-                control={form.control}
-                name="discount3"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      {t('productPricingManagement.discount3', 'İskonto 3')}
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        type="number"
-                        step="0.01"
-                        min="0"
-                        max="100"
-                        {...field}
-                        onChange={(e) => field.onChange(e.target.value ? parseFloat(e.target.value) : undefined)}
-                        value={field.value || ''}
-                        placeholder={t('productPricingManagement.enterDiscount3', 'İskonto 3 Girin (0-100, Opsiyonel)')}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
+                <FormField
+                  control={form.control}
+                  name="discount2"
+                  render={({ field }) => (
+                    <FormItem className="space-y-0">
+                      <FormLabel className={LABEL_STYLE}>
+                        {t('productPricingManagement.discount2', 'İskonto 2')}
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          step="0.01"
+                          min="0"
+                          max="100"
+                          {...field}
+                          onChange={(e) => field.onChange(e.target.value ? parseFloat(e.target.value) : undefined)}
+                          value={field.value || ''}
+                          placeholder={t('productPricingManagement.enterDiscount2', 'İskonto 2 (Ops.)')}
+                          className={INPUT_STYLE}
+                        />
+                      </FormControl>
+                      <FormMessage className="text-red-500 text-[10px] mt-1" />
+                    </FormItem>
+                  )}
+                />
 
-            {(watchedValues[0] > 0 || watchedValues[1] > 0) && (
-              <div className="rounded-lg border bg-muted p-4 space-y-2">
-                <div className="text-sm font-medium mb-2">
-                  {t('productPricingManagement.priceCalculation', 'Fiyat Hesaplama')}
-                </div>
-                <div className="grid grid-cols-1 gap-2 text-sm">
-                  <div className="flex justify-between">
-                    <span>{t('productPricingManagement.listPrice', 'Liste Fiyatı')}:</span>
-                    <span className="font-medium">
-                      {formatPrice(watchedValues[0] || 0, calculations.currency, exchangeRates)}
-                    </span>
+                <FormField
+                  control={form.control}
+                  name="discount3"
+                  render={({ field }) => (
+                    <FormItem className="space-y-0">
+                      <FormLabel className={LABEL_STYLE}>
+                        {t('productPricingManagement.discount3', 'İskonto 3')}
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          step="0.01"
+                          min="0"
+                          max="100"
+                          {...field}
+                          onChange={(e) => field.onChange(e.target.value ? parseFloat(e.target.value) : undefined)}
+                          value={field.value || ''}
+                          placeholder={t('productPricingManagement.enterDiscount3', 'İskonto 3 (Ops.)')}
+                          className={INPUT_STYLE}
+                        />
+                      </FormControl>
+                      <FormMessage className="text-red-500 text-[10px] mt-1" />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              {(watchedValues[0] > 0 || watchedValues[1] > 0) && (
+                <div className="rounded-xl border border-pink-100 dark:border-pink-500/10 bg-pink-50/50 dark:bg-pink-500/5 p-4 space-y-3">
+                  <div className="text-xs font-bold text-pink-600 dark:text-pink-400 uppercase tracking-wider mb-1">
+                    {t('productPricingManagement.priceCalculation', 'Fiyat Hesaplama')}
                   </div>
-                  <div className="flex justify-between">
-                    <span>{t('productPricingManagement.finalPriceAfterDiscounts', 'İndirimler Sonrası Son Fiyat')}:</span>
-                    <span className="font-medium">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+                    <div className="flex justify-between items-center p-2 rounded-lg bg-white/50 dark:bg-white/5 border border-pink-100/50 dark:border-pink-500/5">
+                      <span className="text-slate-500 dark:text-slate-400">{t('productPricingManagement.listPrice', 'Liste Fiyatı')}:</span>
+                      <span className="font-bold text-slate-700 dark:text-slate-200">
+                        {formatPrice(watchedValues[0] || 0, calculations.currency, exchangeRates)}
+                      </span>
+                    </div>
+                    <div className="flex justify-between items-center p-2 rounded-lg bg-white/50 dark:bg-white/5 border border-pink-100/50 dark:border-pink-500/5">
+                      <span className="text-slate-500 dark:text-slate-400">{t('productPricingManagement.costPrice', 'Maliyet Fiyatı')}:</span>
+                      <span className="font-bold text-slate-700 dark:text-slate-200">
+                        {formatPrice(watchedValues[1] || 0, calculations.currency, exchangeRates)}
+                      </span>
+                    </div>
+                    <div className="flex justify-between items-center p-2 rounded-lg bg-white/50 dark:bg-white/5 border border-pink-100/50 dark:border-pink-500/5">
+                      <span className="text-slate-500 dark:text-slate-400">{t('productPricingManagement.profitAmount', 'Kar Tutarı')}:</span>
+                      <span className={`font-bold ${getProfitMarginColor(calculations.profitMargin.percentage)}`}>
+                        {formatPrice(calculations.profitMargin.amount, calculations.currency, exchangeRates)}
+                      </span>
+                    </div>
+                    <div className="flex justify-between items-center p-2 rounded-lg bg-white/50 dark:bg-white/5 border border-pink-100/50 dark:border-pink-500/5">
+                      <span className="text-slate-500 dark:text-slate-400">{t('productPricingManagement.profitPercentage', 'Kar Yüzdesi')}:</span>
+                      <span className={`font-bold ${getProfitMarginColor(calculations.profitMargin.percentage)}`}>
+                        {calculations.profitMargin.percentage.toFixed(2)}%
+                      </span>
+                    </div>
+                  </div>
+                  <div className="flex justify-between items-center pt-2 border-t border-pink-200 dark:border-pink-500/20">
+                    <span className="font-bold text-slate-900 dark:text-white">{t('productPricingManagement.finalPriceAfterDiscounts', 'İndirimler Sonrası Son Fiyat')}:</span>
+                    <span className="text-lg font-bold text-pink-600 dark:text-pink-400">
                       {formatPrice(calculations.finalPrice, calculations.currency, exchangeRates)}
                     </span>
                   </div>
-                  <div className="flex justify-between">
-                    <span>{t('productPricingManagement.costPrice', 'Maliyet Fiyatı')}:</span>
-                    <span className="font-medium">
-                      {formatPrice(watchedValues[1] || 0, calculations.currency, exchangeRates)}
-                    </span>
-                  </div>
-                  <div className="flex justify-between border-t pt-2">
-                    <span>{t('productPricingManagement.profitAmount', 'Kar Tutarı')}:</span>
-                    <span className={`font-semibold ${getProfitMarginColor(calculations.profitMargin.percentage)}`}>
-                      {formatPrice(calculations.profitMargin.amount, calculations.currency, exchangeRates)}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>{t('productPricingManagement.profitPercentage', 'Kar Yüzdesi')}:</span>
-                    <span className={`font-semibold ${getProfitMarginColor(calculations.profitMargin.percentage)}`}>
-                      {calculations.profitMargin.percentage.toFixed(2)}%
-                    </span>
-                  </div>
                 </div>
-              </div>
-            )}
+              )}
+            </form>
+          </Form>
 
-            <DialogFooter>
+          <ProductSelectDialog
+            open={productDialogOpen}
+            onOpenChange={setProductDialogOpen}
+            onSelect={(product) => {
+              form.setValue('erpProductCode', product.code);
+              if (product.groupCode) {
+                form.setValue('erpGroupCode', product.groupCode);
+              }
+              setProductDialogOpen(false);
+            }}
+          />
+        </div>
+
+        <DialogFooter className="border-t border-slate-100 dark:border-white/5 px-6 py-4 bg-white/80 dark:bg-[#130822]/90 backdrop-blur-md shrink-0 gap-3 justify-between sm:justify-between">
+          <div className="flex gap-2">
+            {productPricing && onDelete && (
               <Button
                 type="button"
-                variant="outline"
-                onClick={() => onOpenChange(false)}
+                variant="ghost"
+                onClick={() => onDelete(productPricing.id)}
                 disabled={isLoading}
+                className="text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-500/10"
               >
-                {t('common.cancel', 'İptal')}
+                <Trash2 size={18} className="mr-2" />
+                {t('common.delete', 'Sil')}
               </Button>
-              <Button type="submit" disabled={isLoading}>
-                {isLoading
-                  ? t('common.saving', 'Kaydediliyor...')
-                  : t('common.save', 'Kaydet')}
-              </Button>
-            </DialogFooter>
-          </form>
-        </Form>
-
-        <ProductSelectDialog
-          open={productDialogOpen}
-          onOpenChange={setProductDialogOpen}
-          onSelect={(product) => {
-            form.setValue('erpProductCode', product.code);
-            if (product.groupCode) {
-              form.setValue('erpGroupCode', product.groupCode);
-            }
-            setProductDialogOpen(false);
-          }}
-        />
+            )}
+          </div>
+          <div className="flex gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => onOpenChange(false)}
+              disabled={isLoading}
+              className="bg-white dark:bg-transparent border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white"
+            >
+              {t('common.cancel', 'İptal')}
+            </Button>
+            <Button 
+              type="submit" 
+              form="product-pricing-form"
+              disabled={isLoading}
+              className="bg-gradient-to-r from-pink-600 to-orange-600 text-white font-bold border-0 hover:shadow-lg hover:shadow-pink-500/20 transition-all transform active:scale-95 px-8"
+            >
+              {isLoading
+                ? t('common.saving', 'Kaydediliyor...')
+                : t('common.save', 'Kaydet')}
+            </Button>
+          </div>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

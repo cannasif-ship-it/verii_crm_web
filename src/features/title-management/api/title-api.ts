@@ -20,10 +20,11 @@ export const titleApi = {
     if (response.success && response.data) {
       const pagedData = response.data;
       
-      if ((pagedData as any).items && !pagedData.data) {
+      const rawData = pagedData as unknown as { items?: TitleDto[], data?: TitleDto[] };
+      if (rawData.items && !rawData.data) {
         return {
           ...pagedData,
-          data: (pagedData as any).items,
+          data: rawData.items,
         };
       }
       

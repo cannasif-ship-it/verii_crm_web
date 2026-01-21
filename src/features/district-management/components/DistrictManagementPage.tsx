@@ -2,6 +2,7 @@ import { type ReactElement, useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useUIStore } from '@/stores/ui-store';
 import { Button } from '@/components/ui/button';
+import { Plus } from 'lucide-react';
 import { DistrictStats } from './DistrictStats';
 import { DistrictTable } from './DistrictTable';
 import { DistrictForm } from './DistrictForm';
@@ -79,14 +80,26 @@ export function DistrictManagementPage(): ReactElement {
             {t('districtManagement.description', 'İlçeleri yönetin ve düzenleyin')}
           </p>
         </div>
-        <Button onClick={handleAddClick}>
+        <Button 
+          onClick={handleAddClick}
+          className="px-6 py-2 bg-gradient-to-r from-pink-600 to-orange-600 rounded-lg text-white text-sm font-bold shadow-lg shadow-pink-500/20 hover:scale-105 transition-transform border-0 hover:text-white"
+        >
+          <Plus size={18} className="mr-2" />
           {t('districtManagement.addButton', 'Yeni İlçe Ekle')}
         </Button>
       </div>
 
       <DistrictStats />
 
-      <div className="space-y-4">
+      <div className="bg-white/70 dark:bg-[#1a1025]/60 backdrop-blur-xl border border-white/60 dark:border-white/5 shadow-sm rounded-2xl p-6 transition-all duration-300">
+        <div className="mb-6 px-2">
+          <h2 className="text-lg font-bold text-slate-800 dark:text-white tracking-tight">
+            {t('districtManagement.listTitle', 'İlçe Listesi')}
+          </h2>
+          <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+            {t('districtManagement.listDescription', 'Sistemdeki kayıtlı tüm ilçeleri buradan yönetebilirsiniz.')}
+          </p>
+        </div>
         <DistrictTable
           onEdit={handleEdit}
           pageNumber={pageNumber}

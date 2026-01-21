@@ -1,7 +1,6 @@
 import { type ReactElement, useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { GripVertical, Plus, Trash2, Edit2 } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { GripVertical, Plus, Trash2, Edit2, Layers } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -45,6 +44,31 @@ const stepFormSchema = z.object({
 });
 
 type StepFormSchema = z.infer<typeof stepFormSchema>;
+
+// --- MODERN TASARIM SABİTLERİ ---
+const INPUT_STYLE = `
+  h-11 rounded-lg
+  bg-slate-50 dark:bg-[#0c0516] 
+  border border-slate-200 dark:border-white/10 
+  text-slate-900 dark:text-white text-sm
+  placeholder:text-slate-400 dark:placeholder:text-slate-600 
+  
+  focus-visible:ring-0 focus-visible:ring-offset-0 
+  
+  /* LIGHT MODE FOCUS */
+  focus:bg-white 
+  focus:border-pink-500 
+  focus:shadow-[0_0_0_3px_rgba(236,72,153,0.15)] 
+
+  /* DARK MODE FOCUS */
+  dark:focus:bg-[#0c0516] 
+  dark:focus:border-pink-500/60 
+  dark:focus:shadow-[0_0_0_3px_rgba(236,72,153,0.1)]
+
+  transition-all duration-200
+`;
+
+const LABEL_STYLE = "text-[11px] text-slate-500 dark:text-slate-400 uppercase tracking-wider font-bold ml-1 mb-1.5 block";
 
 export function ApprovalFlowStepList({ approvalFlowId }: ApprovalFlowStepListProps): ReactElement {
   const { t } = useTranslation();
@@ -171,29 +195,37 @@ export function ApprovalFlowStepList({ approvalFlowId }: ApprovalFlowStepListPro
 
   return (
     <div className="space-y-4">
-      <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle>
+      <div className="bg-slate-50/50 dark:bg-white/5 border border-slate-200 dark:border-white/5 rounded-xl p-6 transition-all duration-300">
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-2">
+            <div className="h-8 w-8 rounded-lg bg-pink-500/10 flex items-center justify-center text-pink-500">
+              <Layers size={18} />
+            </div>
+            <h3 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider">
               {t('approvalFlowStep.title', 'Akış Adımları')}
-            </CardTitle>
-            <Button onClick={handleAddClick} size="sm">
-              <Plus className="h-4 w-4 mr-2" />
-              {t('approvalFlowStep.addButton', 'Adım Ekle')}
-            </Button>
+            </h3>
           </div>
-        </CardHeader>
-        <CardContent>
+          <Button 
+            onClick={handleAddClick} 
+            size="sm"
+            className="px-4 py-2 bg-gradient-to-r from-pink-600 to-orange-600 rounded-lg text-white text-xs font-bold shadow-lg shadow-pink-500/20 hover:scale-105 transition-transform border-0 hover:text-white"
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            {t('approvalFlowStep.addButton', 'Adım Ekle')}
+          </Button>
+        </div>
+
+        <div>
           {isLoading ? (
-            <div className="text-sm text-muted-foreground">
+            <div className="text-sm text-slate-500 dark:text-slate-400 text-center py-4">
               {t('common.loading', 'Yükleniyor...')}
             </div>
           ) : sortedSteps.length === 0 ? (
-            <div className="text-sm text-muted-foreground text-center py-8">
+            <div className="text-sm text-slate-500 dark:text-slate-400 text-center py-8 border-2 border-dashed border-slate-200 dark:border-white/10 rounded-xl bg-slate-50/50 dark:bg-white/5">
               {t('approvalFlowStep.empty', 'Henüz adım eklenmemiş')}
             </div>
           ) : (
-            <div className="space-y-2">
+            <div className="space-y-3">
               {sortedSteps.map((step, index) => (
                 <div
                   key={step.id}
@@ -202,29 +234,36 @@ export function ApprovalFlowStepList({ approvalFlowId }: ApprovalFlowStepListPro
                   onDragOver={(e) => handleDragOver(e, index)}
                   onDragEnd={handleDragEnd}
                   className={`
-                    flex items-center gap-3 p-3 border rounded-lg cursor-move
-                    transition-all hover:bg-accent
-                    ${draggedIndex === index ? 'opacity-50' : ''}
-                    ${dragOverIndex === index && draggedIndex !== index ? 'border-primary bg-accent' : ''}
+                    flex items-center gap-4 p-4 rounded-xl border cursor-move transition-all duration-200 group
+                    ${draggedIndex === index 
+                      ? 'opacity-50 border-pink-500/50 bg-pink-50 dark:bg-pink-900/20' 
+                      : dragOverIndex === index && draggedIndex !== index 
+                        ? 'border-pink-500 bg-pink-50 dark:bg-pink-900/20 scale-[1.02]' 
+                        : 'border-slate-200 dark:border-white/5 bg-white dark:bg-[#0c0516] hover:border-pink-500/30 hover:shadow-md hover:shadow-pink-500/5'}
                   `}
                 >
-                  <GripVertical className="h-5 w-5 text-muted-foreground flex-shrink-0" />
+                  <GripVertical className="h-5 w-5 text-slate-400 group-hover:text-pink-500 transition-colors flex-shrink-0" />
+                  
                   <div className="flex-1 flex items-center gap-4">
-                    <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10 text-primary font-semibold text-sm">
+                    <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-pink-500/10 text-pink-600 dark:text-pink-400 font-bold text-sm border border-pink-500/20">
                       {step.stepOrder}
                     </div>
                     <div className="flex-1">
-                      <div className="font-medium">
+                      <div className="font-medium text-slate-900 dark:text-white text-sm">
                         {step.approvalRoleGroupName || t('approvalFlowStep.unknownRoleGroup', 'Rol Grubu Yok')}
+                      </div>
+                      <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                        {t('approvalFlowStep.stepDescription', 'Onay Sırası: {order}', { order: step.stepOrder })}
                       </div>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2">
+
+                  <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                     <Button
                       variant="ghost"
                       size="icon"
                       onClick={() => handleEditClick(step)}
-                      className="h-8 w-8"
+                      className="h-8 w-8 text-slate-500 hover:text-pink-600 hover:bg-pink-50 dark:hover:bg-pink-500/10 rounded-lg"
                     >
                       <Edit2 className="h-4 w-4" />
                     </Button>
@@ -232,7 +271,7 @@ export function ApprovalFlowStepList({ approvalFlowId }: ApprovalFlowStepListPro
                       variant="ghost"
                       size="icon"
                       onClick={() => handleDeleteClick(step)}
-                      className="h-8 w-8 text-destructive hover:text-destructive"
+                      className="h-8 w-8 text-slate-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-lg"
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>
@@ -241,81 +280,92 @@ export function ApprovalFlowStepList({ approvalFlowId }: ApprovalFlowStepListPro
               ))}
             </div>
           )}
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
       <Dialog open={formOpen} onOpenChange={setFormOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>
-              {editingStep
-                ? t('approvalFlowStep.form.editTitle', 'Adım Düzenle')
-                : t('approvalFlowStep.form.addTitle', 'Yeni Adım Ekle')}
-            </DialogTitle>
-            <DialogDescription>
-              {editingStep
-                ? t('approvalFlowStep.form.editDescription', 'Akış adımı bilgilerini düzenleyin')
-                : t('approvalFlowStep.form.addDescription', 'Yeni akış adımı ekleyin')}
-            </DialogDescription>
+        <DialogContent className="bg-white dark:bg-[#130822] border border-slate-100 dark:border-white/10 text-slate-900 dark:text-white max-w-lg shadow-2xl shadow-slate-200/50 dark:shadow-black/50 sm:rounded-2xl p-0 overflow-hidden">
+          <DialogHeader className="border-b border-slate-100 dark:border-white/5 px-6 py-5 bg-white/80 dark:bg-[#130822]/90 backdrop-blur-md shrink-0 flex-row items-center justify-between space-y-0">
+            <div className="flex items-center gap-3">
+               <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-pink-500/20 to-orange-500/20 border border-pink-500/10 flex items-center justify-center text-pink-500 shrink-0">
+                 <Layers size={20} />
+               </div>
+               <div>
+                  <DialogTitle className="text-lg font-bold text-slate-900 dark:text-white">
+                    {editingStep
+                      ? t('approvalFlowStep.form.editTitle', 'Adım Düzenle')
+                      : t('approvalFlowStep.form.addTitle', 'Yeni Adım Ekle')}
+                  </DialogTitle>
+                  <DialogDescription className="text-slate-500 dark:text-slate-400 text-xs mt-0.5">
+                    {editingStep
+                      ? t('approvalFlowStep.form.editDescription', 'Akış adımı bilgilerini düzenleyin')
+                      : t('approvalFlowStep.form.addDescription', 'Yeni akış adımı ekleyin')}
+                  </DialogDescription>
+               </div>
+            </div>
           </DialogHeader>
 
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-4">
-              <FormField
-                control={form.control}
-                name="approvalRoleGroupId"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      {t('approvalFlowStep.form.approvalRoleGroup', 'Rol Grubu')} *
-                    </FormLabel>
-                    <Select
-                      onValueChange={(value) => field.onChange(Number(value))}
-                      value={field.value && field.value !== 0 ? field.value.toString() : '0'}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue
-                            placeholder={t('approvalFlowStep.form.selectRoleGroup', 'Rol grubu seçin')}
-                          />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="0">
-                          {t('approvalFlowStep.form.noRoleGroupSelected', 'Rol grubu seçilmedi')}
-                        </SelectItem>
-                        {roleGroupOptions.map((group) => (
-                          <SelectItem key={group.id} value={group.id.toString()}>
-                            {group.name}
+          <div className="p-6">
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-5">
+                <FormField
+                  control={form.control}
+                  name="approvalRoleGroupId"
+                  render={({ field }) => (
+                    <FormItem className="space-y-0">
+                      <FormLabel className={LABEL_STYLE}>
+                        {t('approvalFlowStep.form.approvalRoleGroup', 'Rol Grubu')} *
+                      </FormLabel>
+                      <Select
+                        onValueChange={(value) => field.onChange(Number(value))}
+                        value={field.value && field.value !== 0 ? field.value.toString() : '0'}
+                      >
+                        <FormControl>
+                          <SelectTrigger className={INPUT_STYLE}>
+                            <SelectValue
+                              placeholder={t('approvalFlowStep.form.selectRoleGroup', 'Rol grubu seçin')}
+                            />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="0">
+                            {t('approvalFlowStep.form.noRoleGroupSelected', 'Rol grubu seçilmedi')}
                           </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                          {roleGroupOptions.map((group) => (
+                            <SelectItem key={group.id} value={group.id.toString()}>
+                              {group.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage className="text-red-500 text-[10px] mt-1" />
+                    </FormItem>
+                  )}
+                />
 
-              <DialogFooter>
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => setFormOpen(false)}
-                  disabled={createStep.isPending || updateStep.isPending}
-                >
-                  {t('common.cancel', 'İptal')}
-                </Button>
-                <Button
-                  type="submit"
-                  disabled={createStep.isPending || updateStep.isPending}
-                >
-                  {createStep.isPending || updateStep.isPending
-                    ? t('common.saving', 'Kaydediliyor...')
-                    : t('common.save', 'Kaydet')}
-                </Button>
-              </DialogFooter>
-            </form>
-          </Form>
+                <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100 dark:border-white/5">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => setFormOpen(false)}
+                    disabled={createStep.isPending || updateStep.isPending}
+                    className="h-10 px-4 rounded-lg border-slate-200 dark:border-white/10 hover:bg-slate-50 dark:hover:bg-white/5 text-slate-700 dark:text-slate-300"
+                  >
+                    {t('common.cancel', 'İptal')}
+                  </Button>
+                  <Button
+                    type="submit"
+                    disabled={createStep.isPending || updateStep.isPending}
+                    className="h-10 px-6 rounded-lg bg-gradient-to-r from-pink-600 to-orange-600 hover:from-pink-700 hover:to-orange-700 text-white font-medium shadow-lg shadow-pink-500/20 border-0"
+                  >
+                    {createStep.isPending || updateStep.isPending
+                      ? t('common.saving', 'Kaydediliyor...')
+                      : t('common.save', 'Kaydet')}
+                  </Button>
+                </div>
+              </form>
+            </Form>
+          </div>
         </DialogContent>
       </Dialog>
     </div>

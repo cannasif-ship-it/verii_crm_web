@@ -79,16 +79,18 @@ export function ApprovalRoleForm({
     }
   };
 
+  const inputClass = "h-11 bg-white dark:bg-zinc-900/50 border-zinc-200 dark:border-zinc-800 rounded-xl shadow-sm focus-visible:border-pink-500 focus-visible:ring-4 focus-visible:ring-pink-500/20 transition-all duration-300";
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>
+      <DialogContent className="sm:max-w-[500px] p-0 overflow-hidden border-0 shadow-2xl bg-white/95 dark:bg-zinc-900/95 backdrop-blur-xl ring-1 ring-zinc-200 dark:ring-zinc-800">
+        <DialogHeader className="p-6 pb-2 space-y-1">
+          <DialogTitle className="text-2xl font-bold tracking-tight text-zinc-900 dark:text-foreground">
             {role
               ? t('approvalRole.form.editTitle', 'Onay Rolü Düzenle')
               : t('approvalRole.form.addTitle', 'Yeni Onay Rolü Ekle')}
           </DialogTitle>
-          <DialogDescription>
+          <DialogDescription className="text-zinc-500 dark:text-muted-foreground text-base">
             {role
               ? t('approvalRole.form.editDescription', 'Onay rolü bilgilerini düzenleyin')
               : t('approvalRole.form.addDescription', 'Yeni onay rolü bilgilerini girin')}
@@ -96,13 +98,13 @@ export function ApprovalRoleForm({
         </DialogHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6 p-6 pt-2">
             <FormField
               control={form.control}
               name="approvalRoleGroupId"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel>
+                <FormItem className="space-y-2">
+                  <FormLabel className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">
                     {t('approvalRole.form.approvalRoleGroupId', 'Onay Rol Grubu')}
                   </FormLabel>
                   <Select
@@ -110,7 +112,7 @@ export function ApprovalRoleForm({
                     value={field.value && field.value !== 0 ? field.value.toString() : '0'}
                   >
                     <FormControl>
-                      <SelectTrigger>
+                      <SelectTrigger className={inputClass}>
                         <SelectValue placeholder={t('approvalRole.form.selectApprovalRoleGroup', 'Onay Rol Grubu Seçin')} />
                       </SelectTrigger>
                     </FormControl>
@@ -134,13 +136,14 @@ export function ApprovalRoleForm({
               control={form.control}
               name="name"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel>
+                <FormItem className="space-y-2">
+                  <FormLabel className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">
                     {t('approvalRole.form.name', 'Rol Adı')}
                   </FormLabel>
                   <FormControl>
                     <Input
                       {...field}
+                      className={inputClass}
                       placeholder={t('approvalRole.form.namePlaceholder', 'Rol adını girin')}
                       maxLength={100}
                     />
@@ -150,16 +153,21 @@ export function ApprovalRoleForm({
               )}
             />
 
-            <DialogFooter>
+            <DialogFooter className="gap-2 sm:gap-0 pt-2">
               <Button
                 type="button"
                 variant="outline"
                 onClick={() => onOpenChange(false)}
                 disabled={isLoading}
+                className="h-11 px-6 border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300"
               >
                 {t('common.cancel', 'İptal')}
               </Button>
-              <Button type="submit" disabled={isLoading}>
+              <Button 
+                type="submit" 
+                disabled={isLoading}
+                className="h-11 px-8 bg-gradient-to-r from-pink-600 to-orange-600 text-white font-semibold shadow-lg shadow-pink-500/20 hover:scale-[1.02] transition-transform"
+              >
                 {isLoading
                   ? t('common.saving', 'Kaydediliyor...')
                   : t('common.save', 'Kaydet')}

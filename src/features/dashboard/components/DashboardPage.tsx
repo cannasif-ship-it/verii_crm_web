@@ -103,66 +103,35 @@ export function DashboardPage(): ReactElement {
   const stats = [
     {
       l: t('dashboard.stats.totalRevenue'),
-      v: kpis ? formatCurrency(kpis.monthlyRevenue) : '₺845,200',
-      c: `${kpis?.monthlyRevenueChange ?? 12.5}%`,
-      p: (kpis?.monthlyRevenueChange ?? 12.5) >= 0 ? 1 : 0,
+      v: kpis ? formatCurrency(kpis.monthlyRevenue) : '-',
+      c: kpis ? `${kpis.monthlyRevenueChange}%` : '-',
+      p: (kpis?.monthlyRevenueChange ?? 0) >= 0 ? 1 : 0,
       i: Wallet,
     },
     {
       l: t('dashboard.stats.activeOpportunities'),
-      v: kpis ? String(kpis.activeAgreements ?? 142) : '142',
-      c: `${kpis?.activeAgreementsChange ?? 8.2}%`,
-      p: (kpis?.activeAgreementsChange ?? 8.2) >= 0 ? 1 : 0,
+      v: kpis ? String(kpis.activeAgreements) : '-',
+      c: kpis ? `${kpis.activeAgreementsChange}%` : '-',
+      p: (kpis?.activeAgreementsChange ?? 0) >= 0 ? 1 : 0,
       i: Users,
     },
     {
       l: t('dashboard.stats.newLeads'),
-      v: '38',
-      c: '-2.4%',
+      v: '-',
+      c: '-',
       p: 0,
       i: Users,
     },
     {
       l: t('dashboard.stats.pendingOrders'),
-      v: '12',
-      c: '+5.0%',
+      v: '-',
+      c: '-',
       p: 1,
       i: ShoppingCart,
     },
   ];
 
-  const defaultDeals = [
-    {
-      c: 'TechSolutions A.Ş.',
-      a: '₺125,000',
-      s: t('dashboard.deals.status.orderReceived'),
-      d: t('dashboard.deals.time.twoHoursAgo'),
-    },
-    {
-      c: 'Global Lojistik',
-      a: '₺45,000',
-      s: t('dashboard.deals.status.quotationSent'),
-      d: t('dashboard.deals.time.fiveHoursAgo'),
-    },
-    {
-      c: 'Mega Yapı Market',
-      a: '₺280,000',
-      s: t('dashboard.deals.status.negotiating'),
-      d: t('dashboard.deals.time.oneDayAgo'),
-    },
-    {
-      c: 'StartUp Studio',
-      a: '₺15,000',
-      s: t('dashboard.deals.status.cancelled'),
-      d: t('dashboard.deals.time.twoDaysAgo'),
-    },
-    {
-      c: 'Atlas Enerji',
-      a: '₺950,000',
-      s: t('dashboard.deals.status.invoiced'),
-      d: t('dashboard.deals.time.threeDaysAgo'),
-    },
-  ];
+  const defaultDeals: { c: string; a: string; s: string; d: string }[] = [];
 
   const monthKeys = [
     'jan',
@@ -230,16 +199,18 @@ export function DashboardPage(): ReactElement {
               <div className="p-3 rounded-xl bg-muted/60 dark:bg-white/5">
                 <s.i className="text-muted-foreground" size={24} />
               </div>
-              <span
-                className={`flex items-center gap-1 text-xs font-medium px-2 py-1 rounded-full ${
-                  s.p
-                    ? 'bg-green-500/10 text-green-400'
-                    : 'bg-red-500/10 text-red-400'
-                }`}
-              >
-                {s.p ? <ArrowUpRight size={12} /> : <ArrowDownRight size={12} />}
-                {s.c}
-              </span>
+              {s.c !== '-' && (
+                <span
+                  className={`flex items-center gap-1 text-xs font-medium px-2 py-1 rounded-full ${
+                    s.p
+                      ? 'bg-green-500/10 text-green-400'
+                      : 'bg-red-500/10 text-red-400'
+                  }`}
+                >
+                  {s.p ? <ArrowUpRight size={12} /> : <ArrowDownRight size={12} />}
+                  {s.c}
+                </span>
+              )}
             </div>
             <h3 className="text-muted-foreground text-sm font-medium mb-1">{s.l}</h3>
             <p className="text-2xl font-bold text-foreground">{s.v}</p>
@@ -259,19 +230,19 @@ export function DashboardPage(): ReactElement {
             </div>
           </div>
           <div className="flex-1 flex items-end justify-between gap-4 px-2 pb-2">
-            {[40, 65, 45, 80, 55, 90, 70, 85, 60, 75, 95, 60].map((h, i) => (
+            {monthKeys.map((key, i) => (
               <div
                 key={i}
                 className="flex-1 flex flex-col items-center gap-2 group h-full justify-end"
               >
                 <div className="w-full relative flex items-end justify-center">
                   <div
-                    style={{ height: `${h}%` }}
+                    style={{ height: '0%' }}
                     className="w-full bg-gradient-to-t from-pink-600 via-orange-500 to-yellow-500 opacity-80 rounded-t-sm relative shadow-[0_0_10px_rgba(236,72,153,0.2)]"
                   />
                 </div>
                 <span className="text-[10px] text-muted-foreground group-hover:text-foreground">
-                  {t(`dashboard.monthsShort.${monthKeys[i]}`)}
+                  {t(`dashboard.monthsShort.${key}`)}
                 </span>
               </div>
             ))}

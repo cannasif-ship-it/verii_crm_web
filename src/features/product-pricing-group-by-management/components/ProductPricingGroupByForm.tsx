@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Package } from 'lucide-react';
 import {
   Form,
   FormControl,
@@ -40,6 +41,31 @@ interface ProductPricingGroupByFormProps {
   productPricingGroupBy?: ProductPricingGroupByDto | null;
   isLoading?: boolean;
 }
+
+// --- MODERN TASARIM SABİTLERİ (CustomerForm ile aynı tutarlılıkta) ---
+const INPUT_STYLE = `
+  h-11 rounded-lg
+  bg-slate-50 dark:bg-[#0c0516] 
+  border border-slate-200 dark:border-white/10 
+  text-slate-900 dark:text-white text-sm
+  placeholder:text-slate-400 dark:placeholder:text-slate-600 
+  
+  focus-visible:ring-0 focus-visible:ring-offset-0 
+  
+  /* LIGHT MODE FOCUS */
+  focus:bg-white 
+  focus:border-pink-500 
+  focus:shadow-[0_0_0_3px_rgba(236,72,153,0.15)] 
+
+  /* DARK MODE FOCUS */
+  dark:focus:bg-[#0c0516] 
+  dark:focus:border-pink-500/60 
+  dark:focus:shadow-[0_0_0_3px_rgba(236,72,153,0.1)]
+
+  transition-all duration-200
+`;
+
+const LABEL_STYLE = "text-[11px] text-slate-500 dark:text-slate-400 uppercase tracking-wider font-bold ml-1 mb-1.5 block";
 
 export function ProductPricingGroupByForm({
   open,
@@ -110,39 +136,48 @@ export function ProductPricingGroupByForm({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle>
-            {productPricingGroupBy
-              ? t('productPricingGroupByManagement.edit', 'Fiyatlandırma Grubu Düzenle')
-              : t('productPricingGroupByManagement.create', 'Yeni Fiyatlandırma Grubu')}
-          </DialogTitle>
-          <DialogDescription>
-            {productPricingGroupBy
-              ? t('productPricingGroupByManagement.editDescription', 'Fiyatlandırma grubu bilgilerini düzenleyin')
-              : t('productPricingGroupByManagement.createDescription', 'Yeni fiyatlandırma grubu bilgilerini girin')}
-          </DialogDescription>
+      <DialogContent className="bg-white dark:bg-[#130822] border border-slate-100 dark:border-white/10 text-slate-900 dark:text-white max-w-2xl shadow-2xl shadow-slate-200/50 dark:shadow-black/50 sm:rounded-2xl max-h-[90vh] h-auto flex flex-col gap-0 p-0 overflow-hidden transition-colors duration-300">
+        
+        <DialogHeader className="border-b border-slate-100 dark:border-white/5 px-6 py-5 bg-white/80 dark:bg-[#130822]/90 backdrop-blur-md shrink-0 flex-row items-center justify-between space-y-0">
+          <div className="flex items-center gap-3">
+             <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-pink-500/20 to-orange-500/20 border border-pink-500/10 flex items-center justify-center text-pink-500 shrink-0">
+               <Package size={20} />
+             </div>
+             <div>
+                <DialogTitle className="text-lg font-bold text-slate-900 dark:text-white">
+                  {productPricingGroupBy
+                    ? t('productPricingGroupByManagement.edit', 'Fiyatlandırma Grubu Düzenle')
+                    : t('productPricingGroupByManagement.create', 'Yeni Fiyatlandırma Grubu')}
+                </DialogTitle>
+                <DialogDescription className="text-slate-500 dark:text-slate-400 text-xs mt-0.5">
+                  {productPricingGroupBy
+                    ? t('productPricingGroupByManagement.editDescription', 'Fiyatlandırma grubu bilgilerini düzenleyin')
+                    : t('productPricingGroupByManagement.createDescription', 'Yeni fiyatlandırma grubu bilgilerini girin')}
+                </DialogDescription>
+             </div>
+          </div>
         </DialogHeader>
 
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
-            <FormField
-              control={form.control}
-              name="erpGroupCode"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>
-                    {t('productPricingGroupByManagement.erpGroupCode', 'ERP Ürün Grubu Kodu')} *
-                  </FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    value={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder={t('productPricingGroupByManagement.selectErpGroupCode', 'Grup Seçin')} />
-                      </SelectTrigger>
-                    </FormControl>
+        <div className="flex-1 overflow-y-auto p-6 custom-scrollbar">
+          <Form {...form}>
+            <form id="product-pricing-group-form" onSubmit={form.handleSubmit(handleSubmit)} className="space-y-5">
+              <FormField
+                control={form.control}
+                name="erpGroupCode"
+                render={({ field }) => (
+                  <FormItem className="space-y-0">
+                    <FormLabel className={LABEL_STYLE}>
+                      {t('productPricingGroupByManagement.erpGroupCode', 'ERP Ürün Grubu Kodu')} *
+                    </FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      value={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger className={INPUT_STYLE}>
+                          <SelectValue placeholder={t('productPricingGroupByManagement.selectErpGroupCode', 'Grup Seçin')} />
+                        </SelectTrigger>
+                      </FormControl>
                       <SelectContent>
                         {isLoadingGroups ? (
                           <SelectItem value="__loading__" disabled>Yükleniyor...</SelectItem>
@@ -160,202 +195,216 @@ export function ProductPricingGroupByForm({
                           })
                         )}
                       </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="currency"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>
-                    {t('productPricingGroupByManagement.currency', 'Para Birimi')} *
-                  </FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    value={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder={t('productPricingGroupByManagement.selectCurrency', 'Lütfen para birimi seçin')} />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {isLoadingCurrencies ? (
-                        <SelectItem value="0" disabled>Yükleniyor...</SelectItem>
-                      ) : (
-                        exchangeRates.map((currency: KurDto) => (
-                          <SelectItem key={currency.dovizTipi} value={String(currency.dovizTipi)}>
-                            {currency.dovizIsmi || `Döviz ${currency.dovizTipi}`}
-                          </SelectItem>
-                        ))
-                      )}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-              <FormField
-                control={form.control}
-                name="listPrice"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      {t('productPricingGroupByManagement.listPrice', 'Liste Fiyatı')} *
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        type="number"
-                        step="0.01"
-                        min="0"
-                        {...field}
-                        onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
-                        value={field.value || ''}
-                        placeholder={t('productPricingGroupByManagement.enterListPrice', 'Liste Fiyatı Girin')}
-                      />
-                    </FormControl>
-                    <FormMessage />
+                    </Select>
+                    <FormMessage className="text-red-500 text-[10px] mt-1" />
                   </FormItem>
                 )}
               />
 
               <FormField
                 control={form.control}
-                name="costPrice"
+                name="currency"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      {t('productPricingGroupByManagement.costPrice', 'Maliyet Fiyatı')} *
+                  <FormItem className="space-y-0">
+                    <FormLabel className={LABEL_STYLE}>
+                      {t('productPricingGroupByManagement.currency', 'Para Birimi')} *
                     </FormLabel>
-                    <FormControl>
-                      <Input
-                        type="number"
-                        step="0.01"
-                        min="0"
-                        {...field}
-                        onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
-                        value={field.value || ''}
-                        placeholder={t('productPricingGroupByManagement.enterCostPrice', 'Maliyet Fiyatı Girin')}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-              <FormField
-                control={form.control}
-                name="discount1"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      {t('productPricingGroupByManagement.discount1', 'İskonto 1')}
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        type="number"
-                        step="0.01"
-                        min="0"
-                        max="100"
-                        {...field}
-                        onChange={(e) => field.onChange(e.target.value ? parseFloat(e.target.value) : undefined)}
-                        value={field.value || ''}
-                        placeholder={t('productPricingGroupByManagement.enterDiscount1', 'İskonto 1 Girin (0-100, Opsiyonel)')}
-                      />
-                    </FormControl>
-                    <FormMessage />
+                    <Select
+                      onValueChange={field.onChange}
+                      value={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger className={INPUT_STYLE}>
+                          <SelectValue placeholder={t('productPricingGroupByManagement.selectCurrency', 'Lütfen para birimi seçin')} />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {isLoadingCurrencies ? (
+                          <SelectItem value="0" disabled>Yükleniyor...</SelectItem>
+                        ) : (
+                          exchangeRates.map((currency: KurDto) => (
+                            <SelectItem key={currency.dovizTipi} value={String(currency.dovizTipi)}>
+                              {currency.dovizIsmi || `Döviz ${currency.dovizTipi}`}
+                            </SelectItem>
+                          ))
+                        )}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage className="text-red-500 text-[10px] mt-1" />
                   </FormItem>
                 )}
               />
 
-              <FormField
-                control={form.control}
-                name="discount2"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      {t('productPricingGroupByManagement.discount2', 'İskonto 2')}
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        type="number"
-                        step="0.01"
-                        min="0"
-                        max="100"
-                        {...field}
-                        onChange={(e) => field.onChange(e.target.value ? parseFloat(e.target.value) : undefined)}
-                        value={field.value || ''}
-                        placeholder={t('productPricingGroupByManagement.enterDiscount2', 'İskonto 2 Girin (0-100, Opsiyonel)')}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                <FormField
+                  control={form.control}
+                  name="listPrice"
+                  render={({ field }) => (
+                    <FormItem className="space-y-0">
+                      <FormLabel className={LABEL_STYLE}>
+                        {t('productPricingGroupByManagement.listPrice', 'Liste Fiyatı')} *
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          step="0.01"
+                          min="0"
+                          {...field}
+                          onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
+                          value={field.value || ''}
+                          className={INPUT_STYLE}
+                          placeholder={t('productPricingGroupByManagement.enterListPrice', 'Liste Fiyatı Girin')}
+                        />
+                      </FormControl>
+                      <FormMessage className="text-red-500 text-[10px] mt-1" />
+                    </FormItem>
+                  )}
+                />
 
-              <FormField
-                control={form.control}
-                name="discount3"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      {t('productPricingGroupByManagement.discount3', 'İskonto 3')}
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        type="number"
-                        step="0.01"
-                        min="0"
-                        max="100"
-                        {...field}
-                        onChange={(e) => field.onChange(e.target.value ? parseFloat(e.target.value) : undefined)}
-                        value={field.value || ''}
-                        placeholder={t('productPricingGroupByManagement.enterDiscount3', 'İskonto 3 Girin (0-100, Opsiyonel)')}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-
-            {watchedValues[0] > 0 && (
-              <div className="rounded-lg border bg-muted p-4">
-                <div className="text-sm font-medium mb-2">
-                  {t('productPricingGroupByManagement.priceCalculation', 'Fiyat Hesaplama')}
-                </div>
-                <div className="text-lg font-semibold">
-                  {t('productPricingGroupByManagement.finalPriceAfterDiscounts', 'İndirimler Sonrası Son Fiyat')}:{' '}
-                  {formatPrice(finalPrice, watchedValues[4] || '1', exchangeRates)}
-                </div>
+                <FormField
+                  control={form.control}
+                  name="costPrice"
+                  render={({ field }) => (
+                    <FormItem className="space-y-0">
+                      <FormLabel className={LABEL_STYLE}>
+                        {t('productPricingGroupByManagement.costPrice', 'Maliyet Fiyatı')} *
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          step="0.01"
+                          min="0"
+                          {...field}
+                          onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
+                          value={field.value || ''}
+                          className={INPUT_STYLE}
+                          placeholder={t('productPricingGroupByManagement.enterCostPrice', 'Maliyet Fiyatı Girin')}
+                        />
+                      </FormControl>
+                      <FormMessage className="text-red-500 text-[10px] mt-1" />
+                    </FormItem>
+                  )}
+                />
               </div>
-            )}
 
-            <DialogFooter>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => onOpenChange(false)}
-                disabled={isLoading}
-              >
-                {t('common.cancel', 'İptal')}
-              </Button>
-              <Button type="submit" disabled={isLoading}>
-                {isLoading
-                  ? t('common.saving', 'Kaydediliyor...')
-                  : t('common.save', 'Kaydet')}
-              </Button>
-            </DialogFooter>
-          </form>
-        </Form>
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+                <FormField
+                  control={form.control}
+                  name="discount1"
+                  render={({ field }) => (
+                    <FormItem className="space-y-0">
+                      <FormLabel className={LABEL_STYLE}>
+                        {t('productPricingGroupByManagement.discount1', 'İskonto 1')}
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          step="0.01"
+                          min="0"
+                          max="100"
+                          {...field}
+                          onChange={(e) => field.onChange(e.target.value ? parseFloat(e.target.value) : undefined)}
+                          value={field.value || ''}
+                          className={INPUT_STYLE}
+                          placeholder={t('productPricingGroupByManagement.enterDiscount1', 'İskonto 1 (Ops.)')}
+                        />
+                      </FormControl>
+                      <FormMessage className="text-red-500 text-[10px] mt-1" />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="discount2"
+                  render={({ field }) => (
+                    <FormItem className="space-y-0">
+                      <FormLabel className={LABEL_STYLE}>
+                        {t('productPricingGroupByManagement.discount2', 'İskonto 2')}
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          step="0.01"
+                          min="0"
+                          max="100"
+                          {...field}
+                          onChange={(e) => field.onChange(e.target.value ? parseFloat(e.target.value) : undefined)}
+                          value={field.value || ''}
+                          className={INPUT_STYLE}
+                          placeholder={t('productPricingGroupByManagement.enterDiscount2', 'İskonto 2 (Ops.)')}
+                        />
+                      </FormControl>
+                      <FormMessage className="text-red-500 text-[10px] mt-1" />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="discount3"
+                  render={({ field }) => (
+                    <FormItem className="space-y-0">
+                      <FormLabel className={LABEL_STYLE}>
+                        {t('productPricingGroupByManagement.discount3', 'İskonto 3')}
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          step="0.01"
+                          min="0"
+                          max="100"
+                          {...field}
+                          onChange={(e) => field.onChange(e.target.value ? parseFloat(e.target.value) : undefined)}
+                          value={field.value || ''}
+                          className={INPUT_STYLE}
+                          placeholder={t('productPricingGroupByManagement.enterDiscount3', 'İskonto 3 (Ops.)')}
+                        />
+                      </FormControl>
+                      <FormMessage className="text-red-500 text-[10px] mt-1" />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              {watchedValues[0] > 0 && (
+                <div className="rounded-xl border border-pink-100 dark:border-pink-500/10 bg-pink-50/50 dark:bg-pink-500/5 p-4">
+                  <div className="text-xs font-bold text-pink-600 dark:text-pink-400 uppercase tracking-wider mb-1">
+                    {t('productPricingGroupByManagement.priceCalculation', 'Fiyat Hesaplama')}
+                  </div>
+                  <div className="text-lg font-bold text-slate-900 dark:text-white">
+                    {t('productPricingGroupByManagement.finalPriceAfterDiscounts', 'İndirimler Sonrası Son Fiyat')}:{' '}
+                    <span className="text-pink-600 dark:text-pink-400">
+                      {formatPrice(finalPrice, watchedValues[4] || '1', exchangeRates)}
+                    </span>
+                  </div>
+                </div>
+              )}
+            </form>
+          </Form>
+        </div>
+
+        <DialogFooter className="border-t border-slate-100 dark:border-white/5 px-6 py-4 bg-white/80 dark:bg-[#130822]/90 backdrop-blur-md shrink-0 gap-3">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => onOpenChange(false)}
+            disabled={isLoading}
+            className="bg-white dark:bg-transparent border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white"
+          >
+            {t('common.cancel', 'İptal')}
+          </Button>
+          <Button 
+            type="submit" 
+            form="product-pricing-group-form"
+            disabled={isLoading}
+            className="bg-gradient-to-r from-pink-600 to-orange-600 text-white font-bold border-0 hover:shadow-lg hover:shadow-pink-500/20 transition-all transform active:scale-95 px-8"
+          >
+            {isLoading
+              ? t('common.saving', 'Kaydediliyor...')
+              : t('common.save', 'Kaydet')}
+          </Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

@@ -31,6 +31,11 @@
   "deleteSuccess": "Pricing group deleted successfully",
   "createError": "An error occurred while creating pricing group",
   "updateError": "An error occurred while updating pricing group",
+  "stats": {
+    "totalProducts": "Total Products",
+    "criticalStock": "Critical Stock",
+    "categories": "Categories"
+  },
   "deleteError": "An error occurred while deleting pricing group",
   "erpGroupCodeRequired": "ERP product group code is required",
   "erpGroupCodeMaxLength": "ERP product group code must be at most 50 characters",
