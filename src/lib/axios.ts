@@ -1,7 +1,7 @@
 import axios from 'axios';
 import i18n from './i18n';
 
-const DEFAULT_API_URL = 'http://localhost:5000';
+const DEFAULT_API_URL = 'https://crmapi.v3rii.com';
 
 let apiUrl = DEFAULT_API_URL;
 

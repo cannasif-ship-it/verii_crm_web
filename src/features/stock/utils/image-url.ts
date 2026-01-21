@@ -1,6 +1,6 @@
 import { api } from '@/lib/axios';
 
-const DEFAULT_API_URL = 'http://localhost:5000';
+const DEFAULT_API_URL = 'https://crmapi.v3rii.com';
 
 export const getImageUrl = (relativePath: string | null | undefined): string | null => {
   if (!relativePath) return null;
