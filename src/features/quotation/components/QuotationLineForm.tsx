@@ -89,10 +89,6 @@ export function QuotationLineForm({
 
 
   useEffect(() => {
-    console.log('🔄 [QuotationLineForm] useEffect - line prop değişti:', {
-      ...line,
-      groupCode: line.groupCode,
-    });
     setFormData(line);
     setQuantityInputValue(String(line.quantity || ''));
     setVatRateInputValue(String(line.vatRate || ''));
@@ -124,15 +120,6 @@ export function QuotationLineForm({
             const existingRelatedData = temporaryStockData.find((data) => data.productCode === relatedLine.productCode);
             return !existingRelatedData || !existingRelatedData.groupCode;
           }));
-
-        console.log('🔍 [QuotationLineForm] loadTemporaryStockData - shouldLoadFromApi kontrolü:', {
-          temporaryStockDataLength: temporaryStockData.length,
-          existingMainStockData: existingMainStockData ? { productCode: existingMainStockData.productCode, groupCode: existingMainStockData.groupCode } : null,
-          hasAllRelatedStocks,
-          lastLoadedProductCode,
-          currentProductCode: line.productCode,
-          shouldLoadFromApi,
-        });
 
         if (shouldLoadFromApi) {
           try {
@@ -208,26 +195,10 @@ export function QuotationLineForm({
               currencyCode: targetCurrencyCode,
             };
             
-            console.log('🟢 [QuotationLineForm] loadTemporaryStockData - API\'den gelen mainPrice:', {
-              productCode: mainPrice?.productCode,
-              groupCode: mainPrice?.groupCode,
-            });
-            console.log('🟡 [QuotationLineForm] loadTemporaryStockData - mainStockData oluşturuldu:', {
-              ...mainStockData,
-              groupCode: mainStockData.groupCode,
-            });
-            
-            setFormData((prev) => {
-              const updated = {
-                ...prev,
-                groupCode: mainStockData.groupCode || null,
-              };
-              console.log('🟢 [QuotationLineForm] loadTemporaryStockData - formData güncellendi:', {
-                ...updated,
-                groupCode: updated.groupCode,
-              });
-              return updated;
-            });
+            setFormData((prev) => ({
+              ...prev,
+              groupCode: mainStockData.groupCode || null,
+            }));
 
             const relatedStocksData: TemporaryStockData[] = await Promise.all(
               lineRelatedLines.map(async (relatedLine) => {
@@ -300,11 +271,6 @@ export function QuotationLineForm({
               })
             );
             
-            console.log('🟢 [QuotationLineForm] loadTemporaryStockData - relatedStocksData oluşturuldu:', relatedStocksData.map(data => ({
-              productCode: data.productCode,
-              groupCode: data.groupCode,
-            })));
-
             setTemporaryStockData([mainStockData, ...relatedStocksData]);
             setLastLoadedProductCode(line.productCode);
           } catch (error) {
@@ -321,11 +287,6 @@ export function QuotationLineForm({
 
             const relatedStocksData: TemporaryStockData[] = lineRelatedLines.map((relatedLine) => {
               const groupCode = relatedLine.groupCode || undefined;
-              console.log('🟡 [QuotationLineForm] loadTemporaryStockData - Catch bloğu related stock için groupCode:', {
-                productCode: relatedLine.productCode,
-                groupCodeFromLine: relatedLine.groupCode,
-                finalGroupCode: groupCode,
-              });
               return {
                 productCode: relatedLine.productCode || '',
                 groupCode: groupCode,
@@ -364,12 +325,6 @@ export function QuotationLineForm({
           const relatedStocksData: TemporaryStockData[] = lineRelatedLines.map((relatedLine) => {
             const existingRelatedStockData = temporaryStockData.find((data) => data.productCode === relatedLine.productCode);
             const groupCode = existingRelatedStockData?.groupCode || relatedLine.groupCode || undefined;
-            console.log('🟡 [QuotationLineForm] loadTemporaryStockData - Else bloğu related stock için groupCode:', {
-              productCode: relatedLine.productCode,
-              groupCodeFromExisting: existingRelatedStockData?.groupCode,
-              groupCodeFromLine: relatedLine.groupCode,
-              finalGroupCode: groupCode,
-            });
             return {
               productCode: relatedLine.productCode || '',
               groupCode: groupCode,
@@ -445,18 +400,10 @@ export function QuotationLineForm({
   };
 
   const handleProductSelect = async (product: ProductSelectionResult): Promise<void> => {
-    console.log('🔵 [QuotationLineForm] handleProductSelect - Product seçildi:', {
-      productCode: product.code,
-      productName: product.name,
-      groupCode: product.groupCode,
-      hasRelatedStocks: product.relatedStockIds && product.relatedStockIds.length > 0,
-    });
-
     const hasRelatedStocks = product.relatedStockIds && product.relatedStockIds.length > 0;
 
     if (hasRelatedStocks && handleProductSelectWithRelatedStocks && product.relatedStockIds) {
       const allLines = await handleProductSelectWithRelatedStocks(product, product.relatedStockIds);
-      console.log('🟢 [QuotationLineForm] handleProductSelect - Related stocks ile gelen lines:', allLines);
 
       if (allLines.length > 0) {
         const mainLine = {
@@ -464,10 +411,6 @@ export function QuotationLineForm({
           id: formData.id,
           groupCode: product.groupCode || null,
         };
-        console.log('🟡 [QuotationLineForm] handleProductSelect - MainLine oluşturuldu:', {
-          ...mainLine,
-          groupCode: mainLine.groupCode,
-        });
         setFormData(mainLine);
         const relatedLinesData = allLines.slice(1).map((relatedLine, index) => {
           const relatedStockIdFromArray = product.relatedStockIds?.[index];
@@ -479,10 +422,6 @@ export function QuotationLineForm({
           }
           return relatedLine;
         });
-        console.log('🟢 [QuotationLineForm] handleProductSelect - relatedLinesData oluşturuldu:', relatedLinesData.map(line => ({
-          ...line,
-          groupCode: line.groupCode,
-        })));
         setRelatedLines(relatedLinesData);
 
         const targetCurrencyCode = currencyOptions.find((opt) => opt.dovizTipi === currency)?.code || 'TRY';
@@ -512,17 +451,12 @@ export function QuotationLineForm({
       }
     } else {
       const newLine = await handleProductSelectHook(product);
-      console.log('🟢 [QuotationLineForm] handleProductSelect - Hook\'tan gelen newLine:', newLine);
 
       const updatedFormData = {
         ...newLine,
         id: formData.id,
         groupCode: product.groupCode || null,
       };
-      console.log('🟡 [QuotationLineForm] handleProductSelect - updatedFormData oluşturuldu:', {
-        ...updatedFormData,
-        groupCode: updatedFormData.groupCode,
-      });
 
       setFormData(updatedFormData);
       setRelatedLines([]);
@@ -648,7 +582,7 @@ export function QuotationLineForm({
       setDiscountRate3InputValue(String(calculated.discountRate3 || ''));
     }
 
-    if (field === 'quantity' && formData.relatedStockId && relatedLines.length > 0) {
+    if (field === 'quantity' && formData.relatedProductKey && relatedLines.length > 0) {
       const newQuantity = value as number;
       const updatedRelatedLines = relatedLines.map((relatedLine) => {
         const relatedStockData = temporaryStockData.find(
@@ -662,11 +596,6 @@ export function QuotationLineForm({
             quantity: newRelatedQuantity,
             groupCode: relatedLine.groupCode || relatedStockData.groupCode || null,
           };
-          console.log('🟡 [QuotationLineForm] handleFieldChange - Related line güncellendi (quantity):', {
-            productCode: updatedRelatedLine.productCode,
-            groupCode: updatedRelatedLine.groupCode,
-            quantity: updatedRelatedLine.quantity,
-          });
           return calculateLineTotals(updatedRelatedLine);
         }
 
@@ -677,28 +606,10 @@ export function QuotationLineForm({
   };
 
   const handleSave = (): void => {
-    console.log('💾 [QuotationLineForm] handleSave - Kaydet butonuna tıklandı');
-    console.log('📦 [QuotationLineForm] handleSave - formData:', {
-      ...formData,
-      groupCode: formData.groupCode,
-    });
-    console.log('📦 [QuotationLineForm] handleSave - relatedLines:', relatedLines.map(line => ({
-      ...line,
-      groupCode: line.groupCode,
-    })));
-
     if (onSaveMultiple && relatedLines.length > 0) {
       const linesToSave = [formData, ...relatedLines];
-      console.log('📤 [QuotationLineForm] handleSave - onSaveMultiple çağrılıyor:', linesToSave.map(line => ({
-        ...line,
-        groupCode: line.groupCode,
-      })));
       onSaveMultiple(linesToSave);
     } else {
-      console.log('📤 [QuotationLineForm] handleSave - onSave çağrılıyor:', {
-        ...formData,
-        groupCode: formData.groupCode,
-      });
       onSave(formData);
     }
   };

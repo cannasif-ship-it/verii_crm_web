@@ -9,7 +9,7 @@ export const useDeleteApprovalFlowStep = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, approvalFlowId }: { id: number; approvalFlowId: number }) =>
+    mutationFn: ({ id }: { id: number; approvalFlowId: number }) =>
       approvalFlowStepApi.delete(id),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({

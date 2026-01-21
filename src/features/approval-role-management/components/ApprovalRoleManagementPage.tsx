@@ -64,10 +64,18 @@ export function ApprovalRoleManagementPage(): ReactElement {
     if (editingRole) {
       await updateRole.mutateAsync({
         id: editingRole.id,
-        data: { approvalRoleGroupId: data.approvalRoleGroupId, name: data.name },
+        data: { 
+          approvalRoleGroupId: data.approvalRoleGroupId, 
+          name: data.name,
+          maxAmount: data.maxAmount,
+        },
       });
     } else {
-      await createRole.mutateAsync({ approvalRoleGroupId: data.approvalRoleGroupId, name: data.name });
+      await createRole.mutateAsync({ 
+        approvalRoleGroupId: data.approvalRoleGroupId, 
+        name: data.name,
+        maxAmount: data.maxAmount,
+      });
     }
     setFormOpen(false);
     setEditingRole(null);

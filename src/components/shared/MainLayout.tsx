@@ -5,7 +5,6 @@ import { Navbar } from './Navbar';
 import { Sidebar } from './Sidebar';
 import { Footer } from './Footer';
 
-// --- HUGEICONS IMPORTLARI ---
 import { 
   DashboardSquare02Icon, 
   UserGroupIcon, 
@@ -109,8 +108,16 @@ export function MainLayout({ navItems }: MainLayoutProps): ReactElement {
             // href YOK, çünkü açılır menü (Grup)
             children: [
               {
+                title: t('sidebar.quotationList', 'Teklif Listesi'),
+                href: '/quotations',
+              },
+              {
                 title: t('sidebar.quotationCreateWizard', 'Yeni Teklif Oluştur'),
                 href: '/quotations/create',
+              },
+              {
+                title: t('sidebar.waitingApprovals', 'Onay Bekleyen Teklifler'),
+                href: '/quotations/waiting-approvals',
               },
             ]
           }

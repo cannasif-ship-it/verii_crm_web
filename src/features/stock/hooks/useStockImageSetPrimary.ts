@@ -13,7 +13,7 @@ export const useStockImageSetPrimary = () => {
     mutationFn: async ({ id }: { id: number; stockId: number }): Promise<StockImageDto> => {
       return await stockApi.setPrimaryImage(id);
     },
-    onSuccess: (data: StockImageDto, variables: { id: number; stockId: number }) => {
+    onSuccess: (_, variables: { id: number; stockId: number }) => {
       queryClient.invalidateQueries({ queryKey: queryKeys.images(variables.stockId) });
       queryClient.invalidateQueries({ queryKey: queryKeys.detail(variables.stockId) });
       toast.success(t('stock.messages.setPrimarySuccess', 'Ana görsel başarıyla ayarlandı'));

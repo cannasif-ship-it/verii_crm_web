@@ -49,11 +49,15 @@ export const pricingRuleLineSchema = z
     maxQuantity: z
       .number({ message: 'pricingRule.lines.maxQuantityRequired' })
       .min(0.01, 'pricingRule.lines.maxQuantityRequired')
-      .max(999999999),
+      .max(999999999)
+      .nullable()
+      .optional(),
     fixedUnitPrice: z
       .number({ message: 'pricingRule.lines.fixedUnitPriceRequired' })
       .min(0.01, 'pricingRule.lines.fixedUnitPriceRequired')
-      .max(999999999),
+      .max(999999999)
+      .nullable()
+      .optional(),
     currencyCode: z
       .union([z.string(), z.number()])
       .refine((val) => {

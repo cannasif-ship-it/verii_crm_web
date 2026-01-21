@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { approvalFlowApi } from '../api/approval-flow-api';
-import { APPROVAL_FLOW_QUERY_KEYS, queryKeys } from '../utils/query-keys';
+import { APPROVAL_FLOW_QUERY_KEYS } from '../utils/query-keys';
 import type { CreateApprovalFlowDto } from '../types/approval-flow-types';
 
 export const useCreateApprovalFlow = () => {

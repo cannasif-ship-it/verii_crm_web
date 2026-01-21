@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
+import { Skeleton } from '@/components/ui/skeleton'; // Skeleton eklendi
 import {
   Dialog,
   DialogContent,
@@ -11,7 +12,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { Star, Trash2, Image as ImageIcon } from 'lucide-react';
+import { Star, Trash2, Image as ImageIcon, Loader2, CheckCircle2 } from 'lucide-react';
 import { useStockImages } from '../hooks/useStockImages';
 import { useStockImageDelete } from '../hooks/useStockImageDelete';
 import { useStockImageSetPrimary } from '../hooks/useStockImageSetPrimary';
@@ -53,21 +54,39 @@ export function StockImageList({ stockId }: StockImageListProps): ReactElement {
     });
   };
 
+  // Loading Skeleton - Modern Grid
   if (isLoading || isFetching) {
     return (
-      <div className="flex items-center justify-center py-8">
-        <div className="text-muted-foreground">
-          {t('common.loading', 'Yükleniyor...')}
-        </div>
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {[1, 2, 3, 4].map((i) => (
+          <div key={i} className="space-y-3">
+             <Skeleton className="h-48 w-full rounded-xl" />
+             <div className="space-y-2">
+                <Skeleton className="h-8 w-full rounded-lg" />
+                <div className="flex gap-2">
+                    <Skeleton className="h-8 w-1/2 rounded-lg" />
+                    <Skeleton className="h-8 w-1/2 rounded-lg" />
+                </div>
+             </div>
+          </div>
+        ))}
       </div>
     );
   }
 
+  // Empty State - Şık Tasarım
   if (!images || images.length === 0) {
     return (
-      <div className="text-center py-8 text-muted-foreground">
-        <ImageIcon className="h-12 w-12 mx-auto mb-2 opacity-50" />
-        <p>{t('stock.images.noImages', 'Henüz görsel yüklenmemiş')}</p>
+      <div className="flex flex-col items-center justify-center py-16 px-4 border-2 border-dashed border-zinc-200 dark:border-white/10 rounded-2xl bg-zinc-50/50 dark:bg-white/5 transition-all hover:bg-zinc-50 dark:hover:bg-white/10">
+        <div className="p-4 bg-white dark:bg-zinc-800 rounded-full shadow-sm mb-4">
+            <ImageIcon className="h-8 w-8 text-zinc-400" />
+        </div>
+        <h3 className="text-lg font-semibold text-zinc-900 dark:text-white mb-1">
+            {t('stock.images.noImages', 'Henüz görsel yüklenmemiş')}
+        </h3>
+        <p className="text-sm text-zinc-500 text-center max-w-xs">
+            {t('stock.images.noImagesDesc', 'Yukarıdaki alanı kullanarak yeni görseller ekleyebilirsiniz.')}
+        </p>
       </div>
     );
   }
@@ -80,60 +99,89 @@ export function StockImageList({ stockId }: StockImageListProps): ReactElement {
 
   return (
     <>
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
         {sortedImages.map((image) => (
           <div
             key={image.id}
-            className="relative group border rounded-lg overflow-hidden"
+            className="group relative bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/10 rounded-xl shadow-sm hover:shadow-xl hover:border-pink-200 dark:hover:border-pink-900/30 transition-all duration-300 overflow-hidden flex flex-col"
           >
-            {image.isPrimary && (
-              <Badge
-                className="absolute top-2 left-2 z-10"
-                variant="default"
-              >
-                <Star className="h-3 w-3 mr-1" />
-                {t('stock.images.primary', 'Ana')}
-              </Badge>
-            )}
-            <div className="aspect-square bg-muted flex items-center justify-center overflow-hidden">
-              <img
-                src={getImageUrl(image.filePath) || ''}
-                alt={image.altText || image.stockName || 'Stock image'}
-                className="w-full h-full object-cover"
-                loading="lazy"
-                onError={(e) => {
-                  (e.target as HTMLImageElement).src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100" height="100"%3E%3Crect width="100" height="100" fill="%23ddd"/%3E%3Ctext x="50" y="50" text-anchor="middle" dy=".3em" fill="%23999"%3EImage%3C/text%3E%3C/svg%3E';
-                }}
-              />
+            {/* Image Container */}
+            <div className="relative aspect-square overflow-hidden bg-zinc-100 dark:bg-zinc-800">
+                {/* Primary Badge */}
+                {image.isPrimary && (
+                  <Badge
+                    className="absolute top-3 left-3 z-10 bg-gradient-to-r from-pink-600 to-orange-600 border-0 shadow-lg shadow-pink-500/30 text-white px-2 py-1"
+                  >
+                    <Star className="h-3 w-3 mr-1 fill-white" />
+                    {t('stock.images.primary', 'Ana Görsel')}
+                  </Badge>
+                )}
+                
+                <img
+                  src={getImageUrl(image.filePath) || ''}
+                  alt={image.altText || image.stockName || 'Stock image'}
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  loading="lazy"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100" height="100"%3E%3Crect width="100" height="100" fill="%23f4f4f5"/%3E%3Ctext x="50" y="50" text-anchor="middle" dy=".3em" fill="%23a1a1aa" font-family="sans-serif" font-size="12"%3EGörsel Yok%3C/text%3E%3C/svg%3E';
+                  }}
+                />
+                
+                {/* Hover Overlay (Optional aesthetic) */}
+                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-300" />
             </div>
-            <div className="p-2 space-y-2">
-              <Input
-                type="text"
-                value={image.altText || ''}
-                readOnly
-                className="text-xs"
-                placeholder={t('stock.images.altText', 'Alt text')}
-              />
-              <div className="flex gap-1">
-                {!image.isPrimary && (
+
+            {/* Content & Actions */}
+            <div className="p-3 space-y-3 flex flex-col flex-1 bg-white/50 dark:bg-zinc-900/50 backdrop-blur-sm">
+              <div className="relative">
+                  <Input
+                    type="text"
+                    value={image.altText || ''}
+                    readOnly
+                    className="
+                        h-8 text-xs 
+                        bg-zinc-50/50 dark:bg-zinc-800/50 
+                        border-zinc-200 dark:border-white/10
+                        focus-visible:ring-0 focus-visible:border-zinc-300
+                        text-zinc-600 dark:text-zinc-300
+                    "
+                    placeholder={t('stock.images.altText', 'Alt metin yok')}
+                  />
+              </div>
+
+              <div className="flex gap-2 mt-auto">
+                {!image.isPrimary ? (
                   <Button
                     variant="outline"
                     size="sm"
-                    className="flex-1"
+                    className="flex-1 h-8 text-xs border-zinc-200 hover:border-pink-500 hover:text-pink-600 hover:bg-pink-50 dark:hover:bg-pink-950/20 transition-all"
                     onClick={() => handleSetPrimary(image)}
                     disabled={setPrimary.isPending}
                   >
-                    <Star className="h-3 w-3 mr-1" />
-                    {t('stock.images.setPrimary', 'Ana Yap')}
+                    {setPrimary.isPending ? (
+                        <Loader2 className="h-3 w-3 animate-spin" />
+                    ) : (
+                        <>
+                            <Star className="h-3 w-3 mr-1.5" />
+                            {t('stock.images.setPrimary', 'Ana Yap')}
+                        </>
+                    )}
                   </Button>
+                ) : (
+                    <div className="flex-1 flex items-center justify-center h-8 text-xs font-medium text-emerald-600 bg-emerald-50 dark:bg-emerald-900/10 rounded-md border border-emerald-100 dark:border-emerald-900/20">
+                        <CheckCircle2 className="h-3 w-3 mr-1.5" />
+                        {t('stock.images.isPrimary', 'Seçili')}
+                    </div>
                 )}
+
                 <Button
-                  variant="destructive"
+                  variant="ghost"
                   size="sm"
+                  className="h-8 w-8 p-0 text-zinc-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/20 rounded-md transition-colors"
                   onClick={() => handleDeleteClick(image)}
                   disabled={deleteImage.isPending}
                 >
-                  <Trash2 className="h-3 w-3" />
+                  <Trash2 className="h-4 w-4" />
                 </Button>
               </div>
             </div>
@@ -141,32 +189,45 @@ export function StockImageList({ stockId }: StockImageListProps): ReactElement {
         ))}
       </div>
 
+      {/* Delete Confirmation Dialog */}
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <DialogContent>
+        <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>
-              {t('stock.images.deleteConfirm', 'Görseli Sil')}
-            </DialogTitle>
-            <DialogDescription>
-              {t('stock.images.deleteConfirmMessage', 'Bu görseli silmek istediğinizden emin misiniz?')}
+            <div className="flex items-center gap-2 text-red-600 mb-2">
+                <div className="p-2 bg-red-100 rounded-full">
+                    <Trash2 className="h-5 w-5" />
+                </div>
+                <DialogTitle className="text-xl">
+                    {t('stock.images.deleteConfirm', 'Görseli Sil')}
+                </DialogTitle>
+            </div>
+            <DialogDescription className="pt-2">
+              {t('stock.images.deleteConfirmMessage', 'Bu görseli silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.')}
             </DialogDescription>
           </DialogHeader>
-          <DialogFooter>
+          <DialogFooter className="gap-2 sm:gap-0 mt-4">
             <Button
               variant="outline"
               onClick={() => setDeleteDialogOpen(false)}
               disabled={deleteImage.isPending}
+              className="rounded-lg"
             >
-              {t('common.cancel', 'İptal')}
+              {t('common.cancel', 'Vazgeç')}
             </Button>
             <Button
               variant="destructive"
               onClick={handleDeleteConfirm}
               disabled={deleteImage.isPending}
+              className="rounded-lg bg-red-600 hover:bg-red-700 shadow-lg shadow-red-500/20"
             >
-              {deleteImage.isPending
-                ? t('common.loading', 'Yükleniyor...')
-                : t('common.delete', 'Sil')}
+              {deleteImage.isPending ? (
+                 <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    {t('common.deleting', 'Siliniyor...')}
+                 </>
+              ) : (
+                 t('common.delete', 'Evet, Sil')
+              )}
             </Button>
           </DialogFooter>
         </DialogContent>

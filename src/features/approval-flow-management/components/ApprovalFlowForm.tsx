@@ -110,7 +110,7 @@ export function ApprovalFlowForm({
     }
   };
 
-  const getDocumentTypeLabel = (type: DocumentTypeEnum): string => {
+  const getDocumentTypeLabel = (type: number): string => {
     switch (type) {
       case DocumentTypeEnum.Offer:
         return t('approvalFlow.documentType.offer', 'Teklif');
