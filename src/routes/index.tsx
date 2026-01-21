@@ -28,6 +28,7 @@ import { ApprovalFlowManagementPage } from '@/features/approval-flow-management'
 import { QuotationCreateForm, QuotationDetailPage, QuotationListPage, WaitingApprovalsPage } from '@/features/quotation';
 import { PricingRuleManagementPage } from '@/features/pricing-rule';
 import { StockListPage, StockDetailPage } from '@/features/stock';
+import { DocumentSerialTypeManagementPage } from '@/features/document-serial-type-management';
 
 export const router = createBrowserRouter([
   {
@@ -153,6 +154,10 @@ export const router = createBrowserRouter([
       {
         path: 'stocks/:id',
         element: <StockDetailPage />,
+      },
+      {
+        path: 'document-serial-type-management',
+        element: <DocumentSerialTypeManagementPage />,
       },
     ],
   },
