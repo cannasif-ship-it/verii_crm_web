@@ -7,6 +7,7 @@ import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { ChevronDown, ChevronRight, LogOut } from 'lucide-react';
 import Logo from '../../../public/v3logo.png';
+import VeriiLogo from '../../../public/veriicrmlogo.png';
 
 interface NavItem {
   title: string;
@@ -335,7 +336,7 @@ export function Sidebar({ items }: SidebarProps): ReactElement {
             {isSidebarOpen ? (
                  <div className="overflow-hidden w-full flex justify-center">
                     <img 
-                        src={Logo}
+                        src={VeriiLogo}
                         alt="Logo" 
                         className="h-28 object-contain" 
                     />
