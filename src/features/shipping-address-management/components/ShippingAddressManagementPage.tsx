@@ -52,13 +52,23 @@ export function ShippingAddressManagementPage(): ReactElement {
   };
 
   const handleFormSubmit = async (data: ShippingAddressFormSchema): Promise<void> => {
+    const processedData = {
+      ...data,
+      postalCode: data.postalCode ?? undefined,
+      contactPerson: data.contactPerson ?? undefined,
+      phone: data.phone ?? undefined,
+      notes: data.notes ?? undefined,
+      countryId: data.countryId ?? undefined,
+      cityId: data.cityId ?? undefined,
+      districtId: data.districtId ?? undefined,
+    };
     if (selectedShippingAddress) {
       await updateShippingAddress.mutateAsync({
         id: selectedShippingAddress.id,
-        data,
+        data: processedData,
       });
     } else {
-      await createShippingAddress.mutateAsync(data);
+      await createShippingAddress.mutateAsync(processedData);
     }
     setFormOpen(false);
     setSelectedShippingAddress(null);

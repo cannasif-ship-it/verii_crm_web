@@ -22,8 +22,8 @@ import { useProductPricings } from '../hooks/useProductPricings';
 import { useDeleteProductPricing } from '../hooks/useDeleteProductPricing';
 import type { ProductPricingGetDto } from '../types/product-pricing-types';
 import type { PagedFilter } from '@/types/api';
-import { calculateFinalPrice, formatPrice, formatPercentage } from '../types/product-pricing-types';
-import { Edit2, Trash2, ArrowUpDown, ArrowUp, ArrowDown, Package, Layers, Tag, Percent, AlertCircle } from 'lucide-react';
+import { calculateFinalPrice, formatPrice } from '../types/product-pricing-types';
+import { Edit2, Trash2, ArrowUpDown, ArrowUp, ArrowDown, Percent } from 'lucide-react';
 
 interface ProductPricingTableProps {
   onEdit: (productPricing: ProductPricingGetDto) => void;
