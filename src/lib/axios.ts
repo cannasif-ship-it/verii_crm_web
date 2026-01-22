@@ -4,20 +4,34 @@ import i18n from './i18n';
 const DEFAULT_API_URL = 'https://crmapi.v3rii.com';
 
 let apiUrl = DEFAULT_API_URL;
+let configPromise: Promise<string> | null = null;
 
-const loadConfig = async (): Promise<string> => {
-  try {
-    const response = await fetch('/config.json');
-    if (response.ok) {
-      const config = await response.json();
-      if (config.apiUrl) {
-        return config.apiUrl;
-      }
-    }
-  } catch (error) {
-    console.warn('Failed to load config.json, using default API URL:', error);
+export const loadConfig = async (): Promise<string> => {
+  if (configPromise) {
+    return configPromise;
   }
-  return DEFAULT_API_URL;
+
+  configPromise = (async (): Promise<string> => {
+    try {
+      const response = await fetch('/config.json');
+      if (response.ok) {
+        const config = await response.json();
+        if (config.apiUrl) {
+          return config.apiUrl;
+        }
+      }
+    } catch (error) {
+      console.warn('Failed to load config.json, using default API URL:', error);
+    }
+    return DEFAULT_API_URL;
+  })();
+
+  return configPromise;
+};
+
+export const getApiUrl = async (): Promise<string> => {
+  const url = await loadConfig();
+  return url.replace(/\/$/, '');
 };
 
 const initApi = async (): Promise<void> => {
@@ -35,7 +49,7 @@ export const api = axios.create({
 initApi();
 
 api.interceptors.request.use(async (config) => {
-  const token = localStorage.getItem('access_token');
+  const token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -60,6 +74,7 @@ api.interceptors.response.use(
   async (error) => {
     if (error.response?.status === 401) {
       localStorage.removeItem('access_token');
+      sessionStorage.removeItem('access_token');
       
       try {
         const { useAuthStore } = await import('@/stores/auth-store');
