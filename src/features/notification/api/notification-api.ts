@@ -2,19 +2,6 @@ import { api } from '@/lib/axios';
 import type { ApiResponse, PagedResponse } from '@/types/api';
 import type { NotificationDto, CreateNotificationRequest, GetPagedNotificationsRequest, PagedNotificationsResponse } from '../types/notification';
 
-const ensureApiUrl = async (): Promise<void> => {
-  try {
-    const response = await fetch('/config.json');
-    if (response.ok) {
-      const config = await response.json();
-      if (config.apiUrl && api.defaults.baseURL !== config.apiUrl) {
-        api.defaults.baseURL = config.apiUrl;
-     }
-    }
-  } catch (error) {
- }
-};
-
 const mapChannel = (channel: any): 'Terminal' | 'Web' => {
   if (typeof channel === 'string') {
     if (channel === 'Terminal' || channel === 'Web') {
@@ -58,7 +45,6 @@ const mapNotification = (item: any): NotificationDto => ({
 
 export const notificationApi = {
   getByUserId: async (userId?: number): Promise<NotificationDto[]> => {
-    await ensureApiUrl();
     const url = userId ? `/api/notification/user/${userId}` : '/api/notification/user';
     const response = await api.get(url) as ApiResponse<NotificationDto[]>;
     if (response.success && response.data) {
@@ -68,7 +54,6 @@ export const notificationApi = {
   },
 
   getByTerminalUserId: async (terminalUserId?: number): Promise<NotificationDto[]> => {
-    await ensureApiUrl();
     const url = terminalUserId 
       ? `/api/notification/terminal-user/${terminalUserId}` 
       : '/api/notification/terminal-user';
@@ -80,7 +65,6 @@ export const notificationApi = {
   },
 
   markAsRead: async (id: number): Promise<void> => {
-    await ensureApiUrl();
     const response = await api.put(`/api/notification/${id}/read`) as ApiResponse<void>;
     if (!response.success) {
       throw new Error(response.message || 'Bildirim okundu olarak işaretlenemedi');
@@ -88,7 +72,6 @@ export const notificationApi = {
   },
 
   create: async (request: CreateNotificationRequest): Promise<NotificationDto> => {
-    await ensureApiUrl();
     const response = await api.post('/api/notification', request) as ApiResponse<NotificationDto>;
     if (response.success && response.data) {
       return mapNotification(response.data);
@@ -99,7 +82,6 @@ export const notificationApi = {
   getPagedNotifications: async (
     params: GetPagedNotificationsRequest = {}
   ): Promise<PagedResponse<NotificationDto>> => {
-    await ensureApiUrl();
     const requestBody = {
       pageNumber: params.pageNumber ?? 1,
       pageSize: params.pageSize ?? 10,
@@ -118,7 +100,6 @@ export const notificationApi = {
   },
 
   markNotificationsAsReadBulk: async (ids: number[]): Promise<boolean> => {
-    await ensureApiUrl();
     const response = await api.put('/api/notification/read/bulk', ids) as ApiResponse<boolean>;
     if (response.success) {
       return response.data;
@@ -127,7 +108,6 @@ export const notificationApi = {
   },
 
   markAllAsRead: async (): Promise<boolean> => {
-    await ensureApiUrl();
     const response = await api.put('/api/notification/read/all') as ApiResponse<boolean>;
     if (response.success) {
       return response.data;

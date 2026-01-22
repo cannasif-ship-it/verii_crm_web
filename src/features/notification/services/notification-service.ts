@@ -2,37 +2,12 @@ import * as signalR from '@microsoft/signalr';
 import { notificationApi } from '../api/notification-api';
 import type { NotificationDto, SignalRNotificationPayload } from '../types/notification';
 import { useNotificationStore } from '../stores/notification-store';
+import { getApiUrl } from '@/lib/axios';
 
 class NotificationService {
   private hubConnection: signalR.HubConnection | null = null;
   private pollingInterval: NodeJS.Timeout | null = null;
   private isPolling = false;
-
-  private async getApiUrl(): Promise<string> {
-    try {
-      const response = await fetch('/config.json');
-      if (response.ok) {
-        const config = await response.json();
-        if (config.apiUrl) {
-          return config.apiUrl.replace(/\/$/, '');
-        }
-      }
-    } catch (error) {
-      console.warn('[NotificationService] Failed to load config.json:', error);
-    }
-    
-    try {
-      const { api } = await import('@/lib/axios');
-      const baseURL = api.defaults.baseURL;
-      if (baseURL) {
-        return baseURL.toString().replace(/\/$/, '');
-      }
-    } catch (error) {
-      console.warn('[NotificationService] Failed to get API URL from axios:', error);
-    }
-    
-    return 'https://crmapi.v3rii.com';
-  }
 
   private getToken(): string | null {
     return localStorage.getItem('access_token');
@@ -50,7 +25,7 @@ class NotificationService {
     }
 
     try {
-      const apiUrl = await this.getApiUrl();
+      const apiUrl = await getApiUrl();
       const hubUrl = `${apiUrl}/notificationHub?access_token=${encodeURIComponent(token)}`;
 
       this.hubConnection = new signalR.HubConnectionBuilder()
