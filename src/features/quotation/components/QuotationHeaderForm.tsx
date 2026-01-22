@@ -39,7 +39,7 @@ import { ExchangeRateDialog } from './ExchangeRateDialog';
 import { 
   DollarSign, Search, User, Truck, Briefcase, Globe, 
   Calendar, CreditCard, Hash, FileText, ArrowRightLeft, 
-  Sparkles, Layers, Quote
+  Layers, Quote
 } from 'lucide-react';
 import { useAuthStore } from '@/stores/auth-store';
 import type { CreateQuotationSchema } from '../schemas/quotation-schema';
@@ -549,13 +549,13 @@ export function QuotationHeaderForm({
               <div className="space-y-4 flex-1">
                  <FormField
                   control={form.control}
-                  name="quotation.offerNo"
+                  name="quotation.documentSerialTypeId"
                   render={({ field }) => (
                     <FormItem className="space-y-0 relative group">
                       <FormLabel className={styles.label}>Seri No</FormLabel>
                       <Select
-                        onValueChange={(value) => field.onChange(value || null)}
-                        value={field.value || ''}
+                        onValueChange={(value) => field.onChange(value ? Number(value) : null)}
+                        value={field.value?.toString() || ''}
                         disabled={customerTypeId === undefined || !watchedRepresentativeId}
                       >
                         <FormControl>

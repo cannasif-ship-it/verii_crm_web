@@ -38,6 +38,7 @@ export interface CreateQuotationDto {
   status?: number | null;
   description?: string | null;
   paymentTypeId?: number | null;
+  documentSerialTypeId?: number | null;
   offerType: string;
   offerDate?: string | null;
   offerNo?: string | null;
@@ -148,6 +149,7 @@ export interface QuotationGetDto {
   description?: string | null;
   paymentTypeId?: number | null;
   paymentTypeName?: string | null;
+  documentSerialTypeId?: number | null;
   offerType: string;
   offerDate?: string | null;
   offerNo?: string | null;

@@ -136,7 +136,7 @@ export function QuotationCreateForm(): ReactElement {
               isOfficial: rate.isOfficial ?? true,
             };
           })
-        : undefined;
+        : [];
 
       const currencyValue = typeof data.quotation.currency === 'string' 
         ? data.quotation.currency 
@@ -147,7 +147,7 @@ export function QuotationCreateForm(): ReactElement {
       }
 
       const quotationData: CreateQuotationDto = {
-        offerType: data.quotation.offerNo || data.quotation.offerType,
+        offerType: data.quotation.offerType,
         currency: currencyValue,
         potentialCustomerId: (data.quotation.potentialCustomerId && data.quotation.potentialCustomerId > 0) ? data.quotation.potentialCustomerId : null,
         erpCustomerCode: data.quotation.erpCustomerCode || null,
@@ -157,6 +157,7 @@ export function QuotationCreateForm(): ReactElement {
         status: (data.quotation.status && data.quotation.status > 0) ? data.quotation.status : null,
         description: data.quotation.description || null,
         paymentTypeId: (data.quotation.paymentTypeId && data.quotation.paymentTypeId > 0) ? data.quotation.paymentTypeId : null,
+        documentSerialTypeId: (data.quotation.documentSerialTypeId && data.quotation.documentSerialTypeId > 0) ? data.quotation.documentSerialTypeId : null,
         offerDate: data.quotation.offerDate || null,
         offerNo: data.quotation.offerNo || null,
         revisionNo: data.quotation.revisionNo || null,

@@ -90,6 +90,7 @@ export function QuotationDetailPage(): ReactElement {
           status: quotation.status || null,
           description: quotation.description || null,
           paymentTypeId: quotation.paymentTypeId || null,
+          documentSerialTypeId: quotation.documentSerialTypeId || null,
           offerNo: quotation.offerNo || null,
           revisionNo: quotation.revisionNo || null,
           revisionId: quotation.revisionId || null,
@@ -252,6 +253,7 @@ export function QuotationDetailPage(): ReactElement {
         status: (data.quotation.status && data.quotation.status > 0) ? data.quotation.status : null,
         description: data.quotation.description || null,
         paymentTypeId: (data.quotation.paymentTypeId && data.quotation.paymentTypeId > 0) ? data.quotation.paymentTypeId : null,
+        documentSerialTypeId: (data.quotation.documentSerialTypeId && data.quotation.documentSerialTypeId > 0) ? data.quotation.documentSerialTypeId : null,
         offerDate: data.quotation.offerDate || null,
         offerNo: data.quotation.offerNo || null,
         revisionNo: data.quotation.revisionNo || null,
@@ -456,16 +458,18 @@ export function QuotationDetailPage(): ReactElement {
                 <X className="mr-2 h-4 w-4" />
                 {t('common.cancel', 'İptal')}
               </Button>
-              <Button 
-                type="button"
-                variant="secondary"
-                onClick={handleStartApprovalFlow}
-                disabled={startApprovalFlow.isPending || !quotation}
-                className="h-10"
-              >
-                <Send className="h-4 w-4 mr-2" />
-                {t('quotation.approval.sendForApproval', 'Onaya Gönder')}
-              </Button>
+              {quotation?.status === 0 && (
+                <Button 
+                  type="button"
+                  variant="secondary"
+                  onClick={handleStartApprovalFlow}
+                  disabled={startApprovalFlow.isPending || !quotation}
+                  className="h-10"
+                >
+                  <Send className="h-4 w-4 mr-2" />
+                  {t('quotation.approval.sendForApproval', 'Onaya Gönder')}
+                </Button>
+              )}
               <Button
                 type="submit"
                 disabled={updateMutation.isPending}

@@ -4,7 +4,6 @@ import { useQuotationCalculations } from '../hooks/useQuotationCalculations';
 import { useCurrencyOptions } from '@/services/hooks/useCurrencyOptions';
 import { formatCurrency } from '../utils/format-currency';
 import type { QuotationLineFormState } from '../types/quotation-types';
-import { cn } from '@/lib/utils';
 import { Calculator, Wallet } from 'lucide-react';
 
 interface QuotationSummaryCardProps {
