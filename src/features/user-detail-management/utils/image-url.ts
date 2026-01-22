@@ -1,5 +1,6 @@
 import { api } from '@/lib/axios';
-import apiUrl from '../../../../public/config.json';
+
+const DEFAULT_API_URL = 'https://crmapi.v3rii.com';
 
 export const getImageUrl = (relativePath: string | null | undefined): string | null => {
   if (!relativePath) return null;
@@ -8,11 +9,11 @@ export const getImageUrl = (relativePath: string | null | undefined): string | n
     return relativePath;
   }
   
-  let baseURL: string = apiUrl.apiUrl;
+  let baseURL: string = DEFAULT_API_URL;
   try {
     const apiBaseURL = api.defaults.baseURL;
     if (apiBaseURL) {
-      baseURL = typeof apiBaseURL === 'string' ? apiBaseURL : (apiBaseURL as string).toString();
+      baseURL = typeof apiBaseURL === 'string' ? apiBaseURL : String(apiBaseURL);
     }
   } catch (error) {
     console.warn('Failed to get baseURL from axios, using default:', error);
