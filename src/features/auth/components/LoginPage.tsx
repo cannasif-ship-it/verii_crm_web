@@ -3,9 +3,10 @@ import * as THREE from 'three';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslation } from 'react-i18next';
-import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useSearchParams, useNavigate, Link } from 'react-router-dom';
 import { toast } from 'sonner';
-import { loginRequestSchema, type LoginRequest } from '../types/auth';
+import { loginRequestSchema } from '../types/auth';
+import type { z } from 'zod';
 import { useLogin } from '../hooks/useLogin';
 import { useBranches } from '../hooks/useBranches';
 import { useAuthStore } from '@/stores/auth-store';
@@ -50,22 +51,21 @@ export function LoginPage(): React.JSX.Element {
   const [searchParams, setSearchParams] = useSearchParams();
   const { data: branches } = useBranches();
   const { mutate: login, isPending } = useLogin(branches);
-  const { token, isAuthenticated, logout } = useAuthStore();
+  const { logout } = useAuthStore();
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   
   // Three.js Canvas Referansı
   const mountRef = useRef<HTMLDivElement>(null);
 
-  const form = useForm<LoginRequest>({
+  const form = useForm<z.input<typeof loginRequestSchema>>({
     resolver: zodResolver(loginRequestSchema),
     defaultValues: {
       email: '',
       password: '',
       branchId: '',
+      rememberMe: false,
     },
   });
-  
-  const [rememberMe, setRememberMe] = useState(false);
 
   // --- THREE.JS ANIMASYON KODU ---
   useEffect(() => {
@@ -281,12 +281,13 @@ export function LoginPage(): React.JSX.Element {
       return;
     }
 
-    if (token && isTokenValid(token) && isAuthenticated()) {
+    const storedToken = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
+    if (storedToken && isTokenValid(storedToken)) {
       navigate('/', { replace: true });
     }
-  }, [searchParams, setSearchParams, t, token, isAuthenticated, navigate, logout]);
+  }, [searchParams, setSearchParams, t, navigate, logout]);
 
-  const onSubmit = (data: LoginRequest): void => {
+  const onSubmit = (data: z.output<typeof loginRequestSchema>): void => {
     login({ ...data });
   };
 
@@ -428,10 +429,26 @@ export function LoginPage(): React.JSX.Element {
               />
             
               <div className="flex items-center justify-between text-xs text-slate-400 mt-2 px-1">
-                <label className="flex items-center gap-2 cursor-pointer hover:text-pink-400 transition">
-                  <input type="checkbox"  checked={rememberMe}  onChange={(e) => setRememberMe(e.target.checked)} className="accent-pink-500 rounded bg-slate-800 border-none w-3.5 h-3.5" /> Beni Hatırla
-                </label>
-                <a href="#" className="hover:text-orange-400 transition">Şifremi Unuttum?</a>
+                <FormField
+                  control={form.control}
+                  name="rememberMe"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <label className="flex items-center gap-2 cursor-pointer hover:text-pink-400 transition">
+                          <input
+                            type="checkbox"
+                            checked={field.value}
+                            onChange={field.onChange}
+                            className="accent-pink-500 rounded bg-slate-800 border-none w-3.5 h-3.5"
+                          />
+                          Beni Hatırla
+                        </label>
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+                <Link to="/auth/forgot-password" className="hover:text-orange-400 transition">Şifremi Unuttum?</Link>
               </div>
 
               {/* BUTTON */}

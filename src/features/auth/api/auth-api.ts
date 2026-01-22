@@ -1,4 +1,5 @@
 import { api } from '@/lib/axios';
+import type { ApiResponse } from '@/types/api';
 import type { LoginRequest, LoginResponse, ActiveUsersResponse } from '../types/auth';
 
 export const authApi = {
@@ -6,6 +7,7 @@ export const authApi = {
     const response = await api.post<LoginResponse>('/api/auth/login', {
       email: data.email,
       password: data.password,
+      rememberMe: data.rememberMe,
     });
     return response;
   },
@@ -18,6 +20,19 @@ export const authApi = {
   },
   getActiveUsers: async (): Promise<ActiveUsersResponse> => {
     const response = await api.get<ActiveUsersResponse>('/api/auth/users/active');
+    return response;
+  },
+  resetPassword: async (data: { token: string; newPassword: string }): Promise<ApiResponse<boolean>> => {
+    const response = await api.post<ApiResponse<boolean>>('/api/auth/reset-password', {
+      token: data.token,
+      newPassword: data.newPassword,
+    });
+    return response;
+  },
+  requestPasswordReset: async (email: string): Promise<ApiResponse<string>> => {
+    const response = await api.post<ApiResponse<string>>('/api/auth/request-password-reset', {
+      email,
+    });
     return response;
   },
 };
