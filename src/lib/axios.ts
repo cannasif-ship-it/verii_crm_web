@@ -1,9 +1,7 @@
 import axios from 'axios';
 import i18n from './i18n';
 
-const DEFAULT_API_URL = 'https://crmapi.v3rii.com';
-
-let apiUrl = DEFAULT_API_URL;
+let apiUrl = '';
 let configPromise: Promise<string> | null = null;
 
 export const loadConfig = async (): Promise<string> => {
@@ -12,6 +10,10 @@ export const loadConfig = async (): Promise<string> => {
   }
 
   configPromise = (async (): Promise<string> => {
+    if (import.meta.env.VITE_API_URL) {
+      return import.meta.env.VITE_API_URL;
+    }
+
     try {
       const response = await fetch('/config.json');
       if (response.ok) {
@@ -23,7 +25,7 @@ export const loadConfig = async (): Promise<string> => {
     } catch (error) {
       console.warn('Failed to load config.json, using default API URL:', error);
     }
-    return DEFAULT_API_URL;
+    return 'http://localhost:5000';
   })();
 
   return configPromise;
@@ -32,6 +34,13 @@ export const loadConfig = async (): Promise<string> => {
 export const getApiUrl = async (): Promise<string> => {
   const url = await loadConfig();
   return url.replace(/\/$/, '');
+};
+
+export const getApiBaseUrl = (): string => {
+  if (import.meta.env.VITE_API_URL) {
+    return import.meta.env.VITE_API_URL.replace(/\/$/, '');
+  }
+  return apiUrl.replace(/\/$/, '');
 };
 
 const initApi = async (): Promise<void> => {
