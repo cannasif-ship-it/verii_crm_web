@@ -13,15 +13,14 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
-  DialogHeader,
   DialogTitle,
+  DialogClose,
 } from '@/components/ui/dialog';
 import { useTitleList } from '../hooks/useTitleList';
 import { useDeleteTitle } from '../hooks/useDeleteTitle';
 import type { TitleDto } from '../types/title-types';
 import type { PagedFilter } from '@/types/api';
-import { Edit2, Trash2, Users } from 'lucide-react';
+import { Edit2, Trash2, Users, AlertCircle } from 'lucide-react';
 
 interface TitleTableProps {
   onEdit: (title: TitleDto) => void;
@@ -297,37 +296,51 @@ export function TitleTable({
       </div>
 
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <DialogContent className="bg-white dark:bg-[#130822] border border-slate-100 dark:border-white/10 text-slate-900 dark:text-white sm:rounded-2xl">
-          <DialogHeader>
-            <DialogTitle className="text-slate-900 dark:text-white">
-              {t('titleManagement.delete.confirmTitle', 'Ünvanı Sil')}
-            </DialogTitle>
-            <DialogDescription className="text-slate-500 dark:text-slate-400">
-              {t('titleManagement.delete.confirmMessage', '{{name}} ünvanını silmek istediğinizden emin misiniz?', {
-                name: selectedTitle?.titleName || '',
-              })}
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter className="gap-2 sm:gap-0">
-            <Button
-              variant="outline"
-              onClick={() => setDeleteDialogOpen(false)}
-              disabled={deleteTitle.isPending}
-              className="bg-white dark:bg-transparent border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/5"
-            >
-              {t('common.cancel', 'İptal')}
-            </Button>
-            <Button
-              variant="destructive"
-              onClick={handleDeleteConfirm}
-              disabled={deleteTitle.isPending}
-              className="bg-red-600 hover:bg-red-700 dark:bg-red-900/50 dark:hover:bg-red-900/70 border border-transparent dark:border-red-500/20 text-white"
-            >
-              {deleteTitle.isPending
-                ? t('common.loading', 'Yükleniyor...')
-                : t('common.delete', 'Sil')}
-            </Button>
-          </DialogFooter>
+        <DialogContent className="sm:max-w-[425px] border-0 bg-white dark:bg-[#130822] shadow-2xl p-0 overflow-hidden rounded-2xl">
+          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-pink-500 to-orange-500" />
+          
+          <div className="p-6 pb-0">
+            <div className="flex items-center gap-4">
+              <div className="flex-shrink-0 w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
+                <AlertCircle className="w-6 h-6 text-red-600 dark:text-red-500" />
+              </div>
+              <div>
+                <DialogTitle className="text-xl font-bold text-zinc-900 dark:text-zinc-100">
+                  {t('titleManagement.delete.confirmTitle', 'Ünvanı Sil')}
+                </DialogTitle>
+                <DialogDescription className="mt-1 text-zinc-500 dark:text-zinc-400">
+                  {t('titleManagement.delete.confirmMessage', '{{name}} ünvanını silmek istediğinizden emin misiniz?', {
+                    name: selectedTitle?.titleName || '',
+                  })}
+                </DialogDescription>
+              </div>
+            </div>
+          </div>
+
+          <div className="p-6 bg-zinc-50/50 dark:bg-zinc-900/50 mt-6 border-t border-zinc-100 dark:border-zinc-800">
+             <div className="flex justify-end gap-3">
+               <DialogClose asChild>
+                 <Button 
+                   variant="outline" 
+                   onClick={() => setDeleteDialogOpen(false)}
+                   disabled={deleteTitle.isPending}
+                   className="border-zinc-200 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300"
+                 >
+                   {t('common.cancel', 'İptal')}
+                 </Button>
+               </DialogClose>
+               <Button 
+                 variant="destructive" 
+                 onClick={handleDeleteConfirm}
+                 disabled={deleteTitle.isPending}
+                 className="bg-red-600 hover:bg-red-700 text-white shadow-lg shadow-red-500/20"
+               >
+                 {deleteTitle.isPending
+                   ? t('common.loading', 'Yükleniyor...')
+                   : t('common.delete', 'Sil')}
+               </Button>
+             </div>
+          </div>
         </DialogContent>
       </Dialog>
     </div>
