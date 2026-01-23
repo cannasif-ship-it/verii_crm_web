@@ -117,7 +117,7 @@ export function ApprovalFlowTable({
     );
   }
 
-  const approvalFlows = data?.data || (data as any)?.items || [];
+  const approvalFlows = data?.data || [];
   
   if (!data || approvalFlows.length === 0) {
     return (
