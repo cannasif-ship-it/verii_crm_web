@@ -243,8 +243,8 @@ export function PricingRuleLineForm({
                   {t('pricingRule.lines.currencyCode', 'Döviz Tipi')} *
                 </FormLabel>
                 <Select
-                  value={field.value ? String(field.value) : undefined}
-                  onValueChange={(value) => field.onChange(Number(value))}
+                  value={field.value !== undefined && field.value !== null ? String(field.value) : ''}
+                  onValueChange={(value) => field.onChange(value ? Number(value) : undefined)}
                   disabled={isLoadingRates}
                 >
                   <FormControl>

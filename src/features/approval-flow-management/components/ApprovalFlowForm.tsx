@@ -29,7 +29,7 @@ import {
 import { Switch } from '@/components/ui/switch';
 import { approvalFlowFormSchema, type ApprovalFlowFormSchema } from '../types/approval-flow-types';
 import type { ApprovalFlowDto } from '../types/approval-flow-types';
-import { DocumentTypeEnum } from '../types/approval-flow-types';
+import { PricingRuleType } from '@/features/pricing-rule/types/pricing-rule-types';
 import { ApprovalFlowStepList } from './ApprovalFlowStepList';
 import { Package } from 'lucide-react';
 
@@ -41,7 +41,6 @@ interface ApprovalFlowFormProps {
   isLoading?: boolean;
 }
 
-// --- MODERN TASARIM SABİTLERİ ---
 const INPUT_STYLE = `
   h-11 rounded-lg
   bg-slate-50 dark:bg-[#0c0516] 
@@ -51,12 +50,10 @@ const INPUT_STYLE = `
   
   focus-visible:ring-0 focus-visible:ring-offset-0 
   
-  /* LIGHT MODE FOCUS */
   focus:bg-white 
   focus:border-pink-500 
   focus:shadow-[0_0_0_3px_rgba(236,72,153,0.15)] 
 
-  /* DARK MODE FOCUS */
   dark:focus:bg-[#0c0516] 
   dark:focus:border-pink-500/60 
   dark:focus:shadow-[0_0_0_3px_rgba(236,72,153,0.1)]
@@ -110,11 +107,11 @@ export function ApprovalFlowForm({
 
   const getDocumentTypeLabel = (type: number): string => {
     switch (type) {
-      case DocumentTypeEnum.Offer:
-        return t('approvalFlow.documentType.offer', 'Teklif');
-      case DocumentTypeEnum.Request:
+      case PricingRuleType.Demand:
         return t('approvalFlow.documentType.request', 'Talep');
-      case DocumentTypeEnum.Order:
+      case PricingRuleType.Quotation:
+        return t('approvalFlow.documentType.offer', 'Teklif');
+      case PricingRuleType.Order:
         return t('approvalFlow.documentType.order', 'Sipariş');
       default:
         return '';
@@ -170,9 +167,9 @@ export function ApprovalFlowForm({
                           {t('approvalFlow.form.noDocumentTypeSelected', 'Belge tipi seçilmedi')}
                         </SelectItem>
                         {[
-                          DocumentTypeEnum.Offer,
-                          DocumentTypeEnum.Request,
-                          DocumentTypeEnum.Order,
+                          PricingRuleType.Demand,
+                          PricingRuleType.Quotation,
+                          PricingRuleType.Order,
                         ].map((type) => (
                           <SelectItem key={type} value={type.toString()}>
                             {getDocumentTypeLabel(type)}

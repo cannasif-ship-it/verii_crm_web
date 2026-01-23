@@ -11,7 +11,9 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { usePricingRuleHeader, useCreatePricingRuleHeader, useUpdatePricingRuleHeader } from '../api/pricing-rule-api';
+import { usePricingRuleHeader } from '../hooks/usePricingRuleHeader';
+import { useCreatePricingRuleHeader } from '../hooks/useCreatePricingRuleHeader';
+import { useUpdatePricingRuleHeader } from '../hooks/useUpdatePricingRuleHeader';
 import { PricingRuleHeaderForm } from './PricingRuleHeaderForm';
 import { PricingRuleLineTable } from './PricingRuleLineTable';
 import { PricingRuleSalesmanTable } from './PricingRuleSalesmanTable';
@@ -285,6 +287,7 @@ export function PricingRuleForm({ open, onOpenChange, header }: PricingRuleFormP
                 <PricingRuleLineTable
                   lines={lines}
                   setLines={setLines}
+                  header={header || existingHeader || null}
                 />
               </TabsContent>
 
@@ -292,6 +295,7 @@ export function PricingRuleForm({ open, onOpenChange, header }: PricingRuleFormP
                 <PricingRuleSalesmanTable
                   salesmen={salesmen}
                   setSalesmen={setSalesmen}
+                  header={header || existingHeader || null}
                 />
               </TabsContent>
             </div>

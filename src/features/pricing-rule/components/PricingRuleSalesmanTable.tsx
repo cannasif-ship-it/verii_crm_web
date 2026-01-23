@@ -1,5 +1,6 @@
-import { type ReactElement } from 'react';
+import { type ReactElement, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner';
 import {
   Table,
   TableBody,
@@ -16,43 +17,159 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Trash2 } from 'lucide-react';
-import { useUsersForPricingRule } from '../api/pricing-rule-api';
-import type { PricingRuleSalesmanFormState } from '../types/pricing-rule-types';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Trash2, Loader2 } from 'lucide-react';
+import { useUsersForPricingRule } from '../hooks/useUsersForPricingRule';
+import { useCreatePricingRuleSalesman } from '../hooks/useCreatePricingRuleSalesman';
+import { useDeletePricingRuleSalesman } from '../hooks/useDeletePricingRuleSalesman';
+import { usePricingRuleSalesmenByHeaderId } from '../hooks/usePricingRuleSalesmenByHeaderId';
+import type { PricingRuleSalesmanFormState, PricingRuleHeaderGetDto } from '../types/pricing-rule-types';
 
 interface PricingRuleSalesmanTableProps {
   salesmen: PricingRuleSalesmanFormState[];
   setSalesmen: (salesmen: PricingRuleSalesmanFormState[]) => void;
+  header?: PricingRuleHeaderGetDto | null;
 }
 
 export function PricingRuleSalesmanTable({
   salesmen,
   setSalesmen,
+  header,
 }: PricingRuleSalesmanTableProps): ReactElement {
   const { t } = useTranslation();
   const { data: users, isLoading } = useUsersForPricingRule();
+  const createMutation = useCreatePricingRuleSalesman();
+  const deleteMutation = useDeletePricingRuleSalesman();
+  const { data: existingSalesmen } = usePricingRuleSalesmenByHeaderId(header?.id || 0);
+
+  const [addConfirmOpen, setAddConfirmOpen] = useState(false);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [selectedSalesmanId, setSelectedSalesmanId] = useState<number | null>(null);
+  const [selectedSalesmanToDelete, setSelectedSalesmanToDelete] = useState<{ id: string; dbId?: number } | null>(null);
+  const [selectKey, setSelectKey] = useState(0);
+
+  const isExistingRecord = !!header?.id;
 
   const handleAddSalesman = (salesmanId: number): void => {
     if (salesmen.some((s) => s.salesmanId === salesmanId)) {
       return;
     }
 
-    const newSalesman: PricingRuleSalesmanFormState = {
-      id: `temp-${Date.now()}`,
-      salesmanId,
-    };
-    setSalesmen([...salesmen, newSalesman]);
+    if (isExistingRecord) {
+      setSelectedSalesmanId(salesmanId);
+      setAddConfirmOpen(true);
+    } else {
+      const newSalesman: PricingRuleSalesmanFormState = {
+        id: `temp-${Date.now()}`,
+        salesmanId,
+      };
+      setSalesmen([...salesmen, newSalesman]);
+    }
+  };
+
+  const handleAddConfirm = async (): Promise<void> => {
+    if (!selectedSalesmanId || !header?.id) {
+      return;
+    }
+
+    try {
+      const response = await createMutation.mutateAsync({
+        pricingRuleHeaderId: header.id,
+        salesmanId: selectedSalesmanId,
+      });
+
+      if (response) {
+        const newSalesman: PricingRuleSalesmanFormState = {
+          id: `existing-${response.id}`,
+          salesmanId: response.salesmanId,
+        };
+        setSalesmen([...salesmen, newSalesman]);
+        setAddConfirmOpen(false);
+        setSelectedSalesmanId(null);
+        toast.success(
+          t('pricingRule.salesmen.addSuccess', 'Satışçı Eklendi'),
+          {
+            description: t('pricingRule.salesmen.addSuccessMessage', 'Satışçı fiyat kuralına başarıyla eklendi'),
+          }
+        );
+      }
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : t('pricingRule.salesmen.addError', 'Satışçı eklenirken bir hata oluştu');
+      toast.error(
+        t('pricingRule.salesmen.addError', 'Hata'),
+        {
+          description: errorMessage,
+        }
+      );
+    }
   };
 
   const handleDeleteSalesman = (id: string): void => {
-    setSalesmen(salesmen.filter((salesman) => salesman.id !== id));
+    const salesman = salesmen.find((s) => s.id === id);
+    if (!salesman) {
+      return;
+    }
+
+    if (isExistingRecord) {
+      const existingSalesman = existingSalesmen?.find((s) => s.salesmanId === salesman.salesmanId);
+      if (existingSalesman) {
+        setSelectedSalesmanToDelete({ id, dbId: existingSalesman.id });
+        setDeleteConfirmOpen(true);
+      } else {
+        setSalesmen(salesmen.filter((salesman) => salesman.id !== id));
+      }
+    } else {
+      setSalesmen(salesmen.filter((salesman) => salesman.id !== id));
+    }
+  };
+
+  const handleDeleteConfirm = async (): Promise<void> => {
+    if (!selectedSalesmanToDelete?.dbId) {
+      if (selectedSalesmanToDelete) {
+        setSalesmen(salesmen.filter((salesman) => salesman.id !== selectedSalesmanToDelete.id));
+      }
+      setDeleteConfirmOpen(false);
+      setSelectedSalesmanToDelete(null);
+      return;
+    }
+
+    try {
+      await deleteMutation.mutateAsync(selectedSalesmanToDelete.dbId);
+      setSalesmen(salesmen.filter((salesman) => salesman.id !== selectedSalesmanToDelete.id));
+      setDeleteConfirmOpen(false);
+      setSelectedSalesmanToDelete(null);
+      toast.success(
+        t('pricingRule.salesmen.deleteSuccess', 'Satışçı Kaldırıldı'),
+        {
+          description: t('pricingRule.salesmen.deleteSuccessMessage', 'Satışçı fiyat kuralından başarıyla kaldırıldı'),
+        }
+      );
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : t('pricingRule.salesmen.deleteError', 'Satışçı kaldırılırken bir hata oluştu');
+      toast.error(
+        t('pricingRule.salesmen.deleteError', 'Hata'),
+        {
+          description: errorMessage,
+        }
+      );
+    }
   };
 
   const availableUsers = users?.filter(
     (user) => !salesmen.some((s) => s.salesmanId === user.id)
   ) || [];
 
-  if (isLoading) {
+  const isLoadingUsers = isLoading;
+  const isLoadingAction = createMutation.isPending || deleteMutation.isPending;
+
+  if (isLoadingUsers) {
     return (
       <div className="flex items-center justify-center py-12">
         <div className="text-muted-foreground">
@@ -62,6 +179,9 @@ export function PricingRuleSalesmanTable({
     );
   }
 
+  const selectedUser = selectedSalesmanId ? users?.find((u) => u.id === selectedSalesmanId) : null;
+  const userToDelete = selectedSalesmanToDelete ? users?.find((u) => u.id === salesmen.find((s) => s.id === selectedSalesmanToDelete.id)?.salesmanId) : null;
+
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
@@ -70,8 +190,12 @@ export function PricingRuleSalesmanTable({
         </h3>
         {availableUsers.length > 0 && (
           <Select
-            onValueChange={(value) => handleAddSalesman(parseInt(value))}
-            value=""
+            key={selectKey}
+            onValueChange={(value) => {
+              handleAddSalesman(parseInt(value));
+              setSelectKey((prev) => prev + 1);
+            }}
+            disabled={isLoadingAction}
           >
             <SelectTrigger className="w-[250px]">
               <SelectValue placeholder={t('pricingRule.salesmen.add', 'Satışçı Ekle')} />
@@ -119,8 +243,13 @@ export function PricingRuleSalesmanTable({
                         variant="ghost"
                         size="sm"
                         onClick={() => handleDeleteSalesman(salesman.id)}
+                        disabled={isLoadingAction}
                       >
-                        <Trash2 className="h-4 w-4" />
+                        {isLoadingAction && selectedSalesmanToDelete?.id === salesman.id ? (
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : (
+                          <Trash2 className="h-4 w-4" />
+                        )}
                       </Button>
                     </TableCell>
                   </TableRow>
@@ -130,6 +259,91 @@ export function PricingRuleSalesmanTable({
           </Table>
         </div>
       )}
+
+      <Dialog open={addConfirmOpen} onOpenChange={setAddConfirmOpen} modal={true}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>
+              {t('pricingRule.salesmen.addConfirmTitle', 'Satışçı Ekle')}
+            </DialogTitle>
+            <DialogDescription>
+              {t('pricingRule.salesmen.addConfirmMessage', '{{name}} satışçısı fiyat kuralına eklenecektir. Onaylıyor musunuz?', {
+                name: selectedUser?.fullName || '',
+              })}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => {
+                setAddConfirmOpen(false);
+                setSelectedSalesmanId(null);
+              }}
+              disabled={isLoadingAction}
+            >
+              {t('common.cancel', 'İptal')}
+            </Button>
+            <Button
+              type="button"
+              onClick={handleAddConfirm}
+              disabled={isLoadingAction}
+            >
+              {isLoadingAction ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  {t('common.loading', 'Yükleniyor...')}
+                </>
+              ) : (
+                t('common.confirm', 'Onayla')
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen} modal={true}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>
+              {t('pricingRule.salesmen.deleteConfirmTitle', 'Satışçı Kaldır')}
+            </DialogTitle>
+            <DialogDescription>
+              {t('pricingRule.salesmen.deleteConfirmMessage', '{{name}} satışçısı fiyat kuralından kaldırılacaktır. Onaylıyor musunuz?', {
+                name: userToDelete?.fullName || '',
+              })}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => {
+                setDeleteConfirmOpen(false);
+                setSelectedSalesmanToDelete(null);
+              }}
+              disabled={isLoadingAction}
+            >
+              {t('common.cancel', 'İptal')}
+            </Button>
+            <Button
+              type="button"
+              variant="destructive"
+              onClick={handleDeleteConfirm}
+              disabled={isLoadingAction}
+            >
+              {isLoadingAction ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  {t('common.loading', 'Yükleniyor...')}
+                </>
+              ) : (
+                t('common.confirm', 'Onayla')
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
