@@ -63,7 +63,7 @@ export function LoginPage(): React.JSX.Element {
       email: '',
       password: '',
       branchId: '',
-      rememberMe: false,
+      rememberMe: true,
     },
   });
 
