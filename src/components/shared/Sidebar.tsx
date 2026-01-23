@@ -5,7 +5,7 @@ import { useUIStore } from '@/stores/ui-store';
 import { useAuthStore } from '@/stores/auth-store';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
-import { ChevronDown, ChevronRight, LogOut } from 'lucide-react';
+import { ChevronDown, ChevronRight, LogOut, X } from 'lucide-react'; 
 import Logo from '../../../public/v3logo.png';
 import VeriiLogo from '../../../public/veriicrmlogo.png';
 
@@ -27,7 +27,7 @@ const normalizeText = (text: string): string => {
     .replace(/ü/g, 'u').replace(/ö/g, 'o').replace(/ç/g, 'c');
 };
 
-// --- 3. SEVİYE ALT MENÜ (Örn: Teklifler Grubu) ---
+// --- 3. SEVİYE ALT MENÜ ---
 function SubMenuComponent({ item, pathname }: { item: NavItem; pathname: string }) {
   const hasActiveChild = item.children?.some(child => child.href === pathname) || false;
   const [isOpen, setIsOpen] = useState(hasActiveChild);
@@ -52,7 +52,6 @@ function SubMenuComponent({ item, pathname }: { item: NavItem; pathname: string 
             : "text-slate-500 hover:bg-slate-50 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-white/5"
         )}
       >
-        {/* truncate KALDIRILDI, yerine text-wrap eklendi */}
         <span className="whitespace-normal leading-tight text-left break-words pr-2">{item.title}</span>
         <span className="opacity-70 shrink-0">
           {isOpen ? <ChevronDown size={12} /> : <ChevronRight size={12} />}
@@ -77,7 +76,6 @@ function SubMenuComponent({ item, pathname }: { item: NavItem; pathname: string 
                    if (window.innerWidth < 1024) useUIStore.getState().setSidebarOpen(false);
                  }}
                >
-                 {/* truncate KALDIRILDI */}
                  <span className="whitespace-normal leading-tight text-left break-words">{child.title}</span>
                  {isSubLinkActive && <span className="w-2 h-2 rounded-full bg-purple-600 dark:bg-pink-500 shrink-0 ml-2" />}
                </Link>
@@ -124,8 +122,8 @@ function NavItemComponent({
 
   const matchesSearch = useMemo(() => {
     if (!searchQuery.trim()) return true;
-    const normalizedQuery = normalizeText(searchQuery);
-    const queryWords = normalizedQuery.split(/\s+/).filter((word) => word.length > 0);
+    const normalize = normalizeText(searchQuery);
+    const queryWords = normalize.split(/\s+/).filter((word) => word.length > 0);
     if (queryWords.length === 0) return true;
 
     const checkMatch = (nav: NavItem): boolean => {
@@ -194,7 +192,7 @@ function NavItemComponent({
 
           {isSidebarOpen && (
              <span className={cn(
-               "flex-1 text-sm font-medium transition-colors whitespace-normal leading-tight text-left break-words pr-2", // truncate yerine wrap
+               "flex-1 text-sm font-medium transition-colors whitespace-normal leading-tight text-left break-words pr-2",
                visualActive 
                  ? 'text-purple-900 font-semibold dark:text-white' 
                  : 'text-slate-600 dark:text-slate-300'
@@ -236,9 +234,7 @@ function NavItemComponent({
                     if (window.innerWidth < 1024) useUIStore.getState().setSidebarOpen(false);
                   }}
                 >
-                  {/* truncate yerine wrap kullanıldı */}
                   <span className="whitespace-normal leading-tight text-left break-words">{child.title}</span>
-                  
                   {isSubActive && <span className="w-2 h-2 rounded-full bg-purple-600 dark:bg-pink-500 shrink-0 ml-2" />}
                 </Link>
               );
@@ -302,6 +298,7 @@ export function Sidebar({ items }: SidebarProps): ReactElement {
   const navigate = useNavigate();
   const [expandedItemKey, setExpandedItemKey] = useState<string | null>(null);
   const [isManualClick, setIsManualClick] = useState(false);
+  
   useEffect(() => {
     if (!isSidebarOpen) setExpandedItemKey(null);
   }, [isSidebarOpen]);
@@ -315,7 +312,7 @@ export function Sidebar({ items }: SidebarProps): ReactElement {
     <>
       {isSidebarOpen && (
         <div
-          className="fixed inset-0 z-50 bg-black/50 lg:hidden"
+          className="fixed inset-0 z-40 bg-black/50 lg:hidden"
           onClick={() => useUIStore.getState().setSidebarOpen(false)}
           aria-hidden="true"
         />
@@ -323,10 +320,19 @@ export function Sidebar({ items }: SidebarProps): ReactElement {
 
       <aside
         className={cn(
-          'sticky top-0 h-screen z-40 flex flex-col transition-all duration-300 ease-in-out shrink-0 overflow-hidden shadow-2xl',
+          // Temel stiller (Animasyon, pozisyon vb.)
+          'fixed lg:sticky top-0 h-screen z-50 flex flex-col transition-all duration-300 ease-in-out shrink-0 overflow-hidden shadow-2xl',
           'bg-white border-r border-slate-200 dark:bg-[#130822]/90 dark:border-white/5 dark:backdrop-blur-2xl',
-          // DEĞİŞİKLİK BURADA: w-72 yerine w-80 (320px) yapıldı
-          isSidebarOpen ? 'w-80' : 'w-20' 
+          
+          // --- GÜNCELLENEN MANTIK ---
+          // Açıkken: Hem mobil hem masaüstü geniş (w-80) ve görünür (translate-x-0)
+          isSidebarOpen 
+            ? "w-80 translate-x-0" 
+            : 
+            // Kapalıyken:
+            // Mobil (<lg): Genişlik w-80 kalsın (layout bozulmasın) ama EKRANDAN ÇIKAR (-translate-x-full)
+            // Masaüstü (lg): Genişlik w-20 olsun ve GÖRÜNÜR olsun (translate-x-0)
+            "w-80 -translate-x-full lg:w-20 lg:translate-x-0"
         )}
       >
         <div className={cn(
@@ -334,12 +340,24 @@ export function Sidebar({ items }: SidebarProps): ReactElement {
             isSidebarOpen ? "px-4" : "px-0"
         )}>
             {isSidebarOpen ? (
-                 <div className="overflow-hidden w-full flex justify-center">
-                    <img 
-                        src={VeriiLogo}
-                        alt="Logo" 
-                        className="h-28 object-contain" 
-                    />
+                 <div className="w-full flex items-center justify-between">
+                    <div className="w-8 lg:hidden"></div> 
+
+                    <div className="flex justify-center flex-1">
+                       <img 
+                           src={VeriiLogo}
+                           alt="Logo" 
+                           className="h-28 object-contain" 
+                       />
+                    </div>
+
+                    <button 
+                        onClick={() => useUIStore.getState().setSidebarOpen(false)}
+                        className="lg:hidden p-2 text-slate-500 hover:text-red-500 hover:bg-slate-100 rounded-lg transition-colors"
+                    >
+                        <X size={24} />
+                    </button>
+                    <div className="w-8 hidden lg:block"></div> 
                  </div>
             ) : (
                 <div className="flex items-center justify-center w-full h-full">
