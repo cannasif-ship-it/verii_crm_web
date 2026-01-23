@@ -22,7 +22,7 @@ import { useDeleteApprovalFlow } from '../hooks/useDeleteApprovalFlow';
 import type { ApprovalFlowDto } from '../types/approval-flow-types';
 import type { PagedFilter } from '@/types/api';
 import { PricingRuleType } from '@/features/pricing-rule/types/pricing-rule-types';
-import { Edit2, Trash2, ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
+import { Edit2, Trash2, ArrowUpDown, ArrowUp, ArrowDown, AlertCircle } from 'lucide-react';
 
 interface ApprovalFlowTableProps {
   onEdit: (approvalFlow: ApprovalFlowDto) => void;
