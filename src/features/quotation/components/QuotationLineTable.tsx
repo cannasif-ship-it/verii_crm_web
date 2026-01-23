@@ -68,22 +68,12 @@ export function QuotationLineTable({
     exchangeRates,
   });
 
-  // --- 🎨 TASARIM SİSTEMİ (Table Edition - Enhanced Visibility) ---
   const styles = {
-    // Cam Etkisi (Daha opak ve belirgin kenarlıklı)
     glassCard: "relative overflow-hidden rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white/95 dark:bg-zinc-900/50 backdrop-blur-xl shadow-lg shadow-zinc-200/50 dark:shadow-none",
-    
-    // Tablo Başlığı (Hafif gri arka plan ile ayrışır)
     tableHeadRow: "bg-zinc-50/80 dark:bg-zinc-900/50 border-b border-zinc-200 dark:border-zinc-800",
     tableHead: "h-11 px-4 text-xs font-bold text-zinc-600 dark:text-zinc-400 uppercase tracking-wider",
-    
-    // Tablo Hücresi (Kenarlıklar netleştirildi)
     tableCell: "p-4 text-sm font-medium text-zinc-700 dark:text-zinc-200 border-b border-zinc-100 dark:border-zinc-800",
-    
-    // Satır Hover Efekti
     tableRow: "group transition-all duration-200 hover:bg-zinc-50 dark:hover:bg-zinc-800/40",
-    
-    // Action Butonları (Düzenle/Sil)
     actionButton: "h-8 w-8 p-0 rounded-lg hover:bg-white dark:hover:bg-zinc-700 hover:shadow-sm hover:scale-105 transition-all duration-200",
   };
 
@@ -261,10 +251,7 @@ export function QuotationLineTable({
 
   return (
     <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      
-      {/* TABLE CONTAINER CARD */}
       <div className={styles.glassCard}>
-        {/* HEADER */}
         <div className="p-5 border-b border-zinc-200 dark:border-zinc-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <div className="p-2.5 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 shadow-lg shadow-indigo-500/20 text-white">
@@ -283,7 +270,6 @@ export function QuotationLineTable({
             </div>
           </div>
           
-          {/* ✨ YENİLENMİŞ SATIR EKLE BUTONU */}
           <Button 
             onClick={handleAddLine} 
             size="sm"
@@ -294,7 +280,6 @@ export function QuotationLineTable({
           </Button>
         </div>
 
-        {/* CONTENT */}
         <div className="p-0">
           {lines.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-20 px-4 text-center">
@@ -374,7 +359,6 @@ export function QuotationLineTable({
                           </div>
                         </TableCell>
 
-                        {/* BİRİM FİYAT */}
                         <TableCell className={cn(styles.tableCell, "text-right")}>
                           <div className="font-mono font-semibold text-zinc-700 dark:text-zinc-300 bg-zinc-100/50 dark:bg-zinc-800/50 px-2 py-1 rounded inline-block">
                             {formatCurrency(line.unitPrice, currencyCode)}
@@ -388,7 +372,6 @@ export function QuotationLineTable({
                           </span>
                         </TableCell>
 
-                        {/* İNDİRİMLER */}
                         {[line.discountRate1, line.discountRate2, line.discountRate3].map((rate, i) => (
                           <TableCell key={i} className={cn(styles.tableCell, "text-center")}>
                             {rate > 0 ? (
@@ -408,7 +391,6 @@ export function QuotationLineTable({
                           </div>
                         </TableCell>
 
-                        {/* İŞLEMLER */}
                         <TableCell className={cn(styles.tableCell, "text-center pr-4")}>
                           <div className="flex items-center justify-center gap-2">
                             <Button
@@ -446,7 +428,6 @@ export function QuotationLineTable({
         </div>
       </div>
 
-      {/* DİALOGLAR (Mantık ve yapı aynı) */}
       <ProductSelectDialog
         open={productDialogOpen}
         onOpenChange={setProductDialogOpen}

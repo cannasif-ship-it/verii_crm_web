@@ -11,7 +11,8 @@ import {
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { useQuotationList, useCreateRevisionOfQuotation } from '../api/quotation-api';
+import { useQuotationList } from '../hooks/useQuotationList';
+import { useCreateRevisionOfQuotation } from '../hooks/useCreateRevisionOfQuotation';
 import type { QuotationGetDto } from '../types/quotation-types';
 import type { PagedFilter } from '@/types/api';
 import { formatCurrency } from '../utils/format-currency';

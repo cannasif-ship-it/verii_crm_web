@@ -1,7 +1,7 @@
 import { type ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { useWaitingApprovals } from '../api/quotation-api';
+import { useWaitingApprovals } from '../hooks/useWaitingApprovals';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
