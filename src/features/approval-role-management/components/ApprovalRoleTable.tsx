@@ -13,14 +13,15 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
+  DialogFooter,
+  DialogHeader,
   DialogTitle,
-  DialogClose,
 } from '@/components/ui/dialog';
 import { useApprovalRoleList } from '../hooks/useApprovalRoleList';
 import { useDeleteApprovalRole } from '../hooks/useDeleteApprovalRole';
 import type { ApprovalRoleDto } from '../types/approval-role-types';
 import type { PagedFilter } from '@/types/api';
-import { ChevronUp, ChevronDown, ChevronsUpDown, Edit2, Trash2, ShieldCheck, AlertCircle } from 'lucide-react';
+import { ChevronUp, ChevronDown, ChevronsUpDown, Edit2, Trash2, ShieldCheck } from 'lucide-react';
 
 interface ApprovalRoleTableProps {
   onEdit: (role: ApprovalRoleDto) => void;
@@ -240,42 +241,35 @@ export function ApprovalRoleTable({
       </div>
 
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <DialogContent className="sm:max-w-[425px] border-0 bg-white dark:bg-[#130822] shadow-2xl p-0 overflow-hidden rounded-2xl">
-          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-pink-500 to-orange-500" />
-          
-          <div className="p-6 pb-0">
-            <div className="flex items-center gap-4">
-              <div className="flex-shrink-0 w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
-                <AlertCircle className="w-6 h-6 text-red-600 dark:text-red-500" />
-              </div>
-              <div>
-                <DialogTitle className="text-xl font-bold text-zinc-900 dark:text-zinc-100">
-                  {t('common.deleteConfirmTitle', 'Silme Onayı')}
-                </DialogTitle>
-                <DialogDescription className="mt-1 text-zinc-500 dark:text-zinc-400">
-                  {t('common.deleteConfirmDescription', 'Bu kaydı silmek istediğinize emin misiniz? Bu işlem geri alınamaz.')}
-                </DialogDescription>
-              </div>
-            </div>
-          </div>
-
-          <div className="p-6 bg-zinc-50/50 dark:bg-zinc-900/50 mt-6 border-t border-zinc-100 dark:border-zinc-800">
-             <div className="flex justify-end gap-3">
-               <DialogClose asChild>
-                 <Button variant="outline" className="border-zinc-200 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300">
-                   {t('common.cancel', 'İptal')}
-                 </Button>
-               </DialogClose>
-               <Button 
-                 variant="destructive" 
-                 onClick={handleDeleteConfirm}
-                 disabled={deleteRole.isPending}
-                 className="bg-red-600 hover:bg-red-700 text-white shadow-lg shadow-red-500/20"
-               >
-                 {deleteRole.isPending ? t('common.deleting', 'Siliniyor...') : t('common.delete', 'Sil')}
-               </Button>
+        <DialogContent className="sm:max-w-[425px] border-none shadow-2xl bg-white/95 dark:bg-zinc-900/95 backdrop-blur-xl">
+           <DialogHeader className="space-y-4">
+             <div className="mx-auto w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/20 flex items-center justify-center mb-2">
+               <Trash2 className="w-6 h-6 text-red-600 dark:text-red-500" />
              </div>
-          </div>
+             <DialogTitle className="text-center text-xl font-bold text-zinc-900 dark:text-zinc-100">
+               {t('common.deleteConfirmTitle', 'Silme İşlemi')}
+             </DialogTitle>
+             <DialogDescription className="text-center text-zinc-500 dark:text-zinc-400">
+               {t('common.deleteConfirmDescription', 'Bu kaydı silmek istediğinize emin misiniz? Bu işlem geri alınamaz.')}
+             </DialogDescription>
+           </DialogHeader>
+           <DialogFooter className="flex flex-col-reverse sm:flex-row gap-2 mt-6">
+             <Button
+               variant="outline"
+               onClick={() => setDeleteDialogOpen(false)}
+               className="flex-1 bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300"
+             >
+               {t('common.cancel', 'İptal')}
+             </Button>
+             <Button
+               variant="destructive"
+               onClick={handleDeleteConfirm}
+               disabled={deleteRole.isPending}
+               className="flex-1 bg-red-600 hover:bg-red-700 text-white shadow-lg shadow-red-500/20"
+             >
+               {deleteRole.isPending ? t('common.deleting', 'Siliniyor...') : t('common.delete', 'Sil')}
+             </Button>
+           </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>

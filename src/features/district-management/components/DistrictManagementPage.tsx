@@ -91,7 +91,7 @@ export function DistrictManagementPage(): ReactElement {
 
       <DistrictStats />
 
-      <div className="bg-white/70 dark:bg-[#1a1025]/60 backdrop-blur-xl border border-white/60 dark:border-white/5 shadow-sm rounded-2xl p-6 transition-all duration-300">
+      <div className="bg-white/70 dark:bg-[#1a1025]/60 backdrop-blur-xl border border-white/60 dark:border-white/5 shadow-sm rounded-2xl p-6 transition-all duration-300 hover:shadow-pink-500/10 hover:border-pink-500/20">
         <div className="mb-6 px-2">
           <h2 className="text-lg font-bold text-slate-800 dark:text-white tracking-tight">
             {t('districtManagement.listTitle', 'İlçe Listesi')}
