@@ -1,7 +1,9 @@
 import { type ReactElement, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { useWaitingApprovals, useApproveAction, useRejectAction } from '../api/quotation-api';
+import { useWaitingApprovals } from '../hooks/useWaitingApprovals';
+import { useApproveAction } from '../hooks/useApproveAction';
+import { useRejectAction } from '../hooks/useRejectAction';
 import { useUIStore } from '@/stores/ui-store';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';

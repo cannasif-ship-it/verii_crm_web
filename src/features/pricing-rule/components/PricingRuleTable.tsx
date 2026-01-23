@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { usePricingRuleHeaders } from '../api/pricing-rule-api';
+import { usePricingRuleHeaders } from '../hooks/usePricingRuleHeaders';
 import { PricingRuleType, type PricingRuleHeaderGetDto } from '../types/pricing-rule-types';
 import { Edit, TrendingUp } from 'lucide-react';
 

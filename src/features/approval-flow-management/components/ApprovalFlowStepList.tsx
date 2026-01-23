@@ -85,6 +85,16 @@ export function ApprovalFlowStepList({ approvalFlowId }: ApprovalFlowStepListPro
 
   const sortedSteps = [...steps].sort((a, b) => a.stepOrder - b.stepOrder);
 
+  const usedRoleGroupIds = new Set(
+    sortedSteps
+      .filter((step) => step.approvalRoleGroupId !== 0)
+      .map((step) => step.approvalRoleGroupId)
+  );
+
+  const availableRoleGroups = roleGroupOptions.filter(
+    (group) => !usedRoleGroupIds.has(group.id) || (editingStep && editingStep.approvalRoleGroupId === group.id)
+  );
+
   const form = useForm<StepFormSchema>({
     resolver: zodResolver(stepFormSchema),
     defaultValues: {
@@ -330,7 +340,7 @@ export function ApprovalFlowStepList({ approvalFlowId }: ApprovalFlowStepListPro
                           <SelectItem value="0">
                             {t('approvalFlowStep.form.noRoleGroupSelected', 'Rol grubu seçilmedi')}
                           </SelectItem>
-                          {roleGroupOptions.map((group) => (
+                          {availableRoleGroups.map((group) => (
                             <SelectItem key={group.id} value={group.id.toString()}>
                               {group.name}
                             </SelectItem>

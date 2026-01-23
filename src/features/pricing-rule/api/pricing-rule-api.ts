@@ -9,13 +9,7 @@ import type {
   PricingRuleLineUpdateDto,
   PricingRuleSalesmanGetDto,
   PricingRuleSalesmanCreateDto,
-  PricingRuleFilter,
 } from '../types/pricing-rule-types';
-import { pricingRuleQueryKeys } from '../utils/query-keys';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useCustomerOptions } from '@/features/customer-management/hooks/useCustomerOptions';
-import { useUserList } from '@/features/user-management/hooks/useUserList';
-import { useProducts } from '@/features/quotation/api/quotation-api';
 
 export const pricingRuleApi = {
   getHeaders: async (params?: PagedParams & { filters?: PagedFilter[] | Record<string, unknown> }): Promise<PagedResponse<PricingRuleHeaderGetDto>> => {
@@ -34,10 +28,11 @@ export const pricingRuleApi = {
 
     if (response.success && response.data) {
       const pagedData = response.data;
-      if ((pagedData as any).items && !pagedData.data) {
+      const rawData = pagedData as unknown as { items?: PricingRuleHeaderGetDto[]; data?: PricingRuleHeaderGetDto[] };
+      if (rawData.items && !rawData.data) {
         return {
           ...pagedData,
-          data: (pagedData as any).items,
+          data: rawData.items,
         };
       }
       return pagedData;
@@ -129,168 +124,4 @@ export const pricingRuleApi = {
       throw new Error(response.message || 'Satışçı silinemedi');
     }
   },
-};
-
-export const usePricingRuleHeaders = (params?: PagedParams, filter?: PricingRuleFilter) => {
-  const queryParams: PagedParams & { filters?: PagedFilter[] | Record<string, unknown> } = {
-    ...params,
-    ...filter,
-  };
-
-  return useQuery({
-    queryKey: pricingRuleQueryKeys.headerList(queryParams),
-    queryFn: () => pricingRuleApi.getHeaders(queryParams),
-    staleTime: 5 * 60 * 1000,
-  });
-};
-
-export const usePricingRuleHeader = (id: number) => {
-  return useQuery({
-    queryKey: pricingRuleQueryKeys.header(id),
-    queryFn: () => pricingRuleApi.getHeaderById(id),
-    enabled: !!id && id > 0,
-    staleTime: 5 * 60 * 1000,
-  });
-};
-
-export const useCreatePricingRuleHeader = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (data: PricingRuleHeaderCreateDto) => pricingRuleApi.createHeader(data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: pricingRuleQueryKeys.headers() });
-    },
-  });
-};
-
-export const useUpdatePricingRuleHeader = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: ({ id, data }: { id: number; data: PricingRuleHeaderUpdateDto }) => pricingRuleApi.updateHeader(id, data),
-    onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: pricingRuleQueryKeys.headers() });
-      queryClient.invalidateQueries({ queryKey: pricingRuleQueryKeys.header(variables.id) });
-    },
-  });
-};
-
-export const useDeletePricingRuleHeader = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (id: number) => pricingRuleApi.deleteHeader(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: pricingRuleQueryKeys.headers() });
-    },
-  });
-};
-
-export const usePricingRuleLinesByHeaderId = (headerId: number) => {
-  return useQuery({
-    queryKey: pricingRuleQueryKeys.lines(headerId),
-    queryFn: () => pricingRuleApi.getLinesByHeaderId(headerId),
-    enabled: !!headerId && headerId > 0,
-    staleTime: 5 * 60 * 1000,
-  });
-};
-
-export const useCreatePricingRuleLine = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (data: PricingRuleLineCreateDto) => pricingRuleApi.createLine(data),
-    onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: pricingRuleQueryKeys.lines(variables.pricingRuleHeaderId) });
-      queryClient.invalidateQueries({ queryKey: pricingRuleQueryKeys.header(variables.pricingRuleHeaderId) });
-    },
-  });
-};
-
-export const useUpdatePricingRuleLine = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: ({ id, data }: { id: number; data: PricingRuleLineUpdateDto }) => pricingRuleApi.updateLine(id, data),
-    onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: pricingRuleQueryKeys.lines(variables.data.pricingRuleHeaderId) });
-      queryClient.invalidateQueries({ queryKey: pricingRuleQueryKeys.header(variables.data.pricingRuleHeaderId) });
-    },
-  });
-};
-
-export const useDeletePricingRuleLine = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (id: number) => pricingRuleApi.deleteLine(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: pricingRuleQueryKeys.all });
-    },
-  });
-};
-
-export const usePricingRuleSalesmenByHeaderId = (headerId: number) => {
-  return useQuery({
-    queryKey: pricingRuleQueryKeys.salesmen(headerId),
-    queryFn: () => pricingRuleApi.getSalesmenByHeaderId(headerId),
-    enabled: !!headerId && headerId > 0,
-    staleTime: 5 * 60 * 1000,
-  });
-};
-
-export const useCreatePricingRuleSalesman = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (data: PricingRuleSalesmanCreateDto) => pricingRuleApi.createSalesman(data),
-    onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: pricingRuleQueryKeys.salesmen(variables.pricingRuleHeaderId) });
-      queryClient.invalidateQueries({ queryKey: pricingRuleQueryKeys.header(variables.pricingRuleHeaderId) });
-    },
-  });
-};
-
-export const useDeletePricingRuleSalesman = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (id: number) => pricingRuleApi.deleteSalesman(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: pricingRuleQueryKeys.all });
-    },
-  });
-};
-
-export const useCustomersForPricingRule = () => {
-  const { data, isLoading } = useCustomerOptions();
-  return {
-    data: data || [],
-    isLoading,
-  };
-};
-
-export const useUsersForPricingRule = () => {
-  const { data, isLoading } = useUserList({
-    pageNumber: 1,
-    pageSize: 1000,
-    sortBy: 'FirstName',
-    sortDirection: 'asc',
-    filters: [{ column: 'isActive', operator: 'eq', value: 'true' }],
-  });
-  return {
-    data:
-      data?.data?.map((user) => ({
-        id: user.id,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        fullName: `${user.firstName} ${user.lastName}`,
-      })) || [],
-    isLoading,
-  };
-};
-
-export const useProductsForPricingRule = (search?: string) => {
-  return useProducts(search);
 };

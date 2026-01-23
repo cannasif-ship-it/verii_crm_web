@@ -44,7 +44,6 @@ export function QuotationExchangeRateForm({
   );
   const [newIsOfficial, setNewIsOfficial] = useState(false);
 
-  // --- 🎨 TASARIM SİSTEMİ ---
   const styles = {
     glassCard: "relative overflow-hidden rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white/95 dark:bg-zinc-900/50 backdrop-blur-xl shadow-lg shadow-zinc-200/50 dark:shadow-none",
     inputBase: "h-10 bg-zinc-50/50 dark:bg-zinc-900/50 border-zinc-200 dark:border-zinc-800 focus-visible:border-pink-500 focus-visible:ring-4 focus-visible:ring-pink-500/20 rounded-xl transition-all duration-200 font-medium",

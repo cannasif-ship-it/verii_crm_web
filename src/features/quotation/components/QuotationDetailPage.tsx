@@ -4,7 +4,13 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-import { useQuotation, useStartApprovalFlow, useQuotationExchangeRates, useQuotationLines, useUpdateQuotationBulk, usePriceRuleOfQuotation, useUserDiscountLimitsBySalesperson } from '../api/quotation-api';
+import { useQuotation } from '../hooks/useQuotation';
+import { useStartApprovalFlow } from '../hooks/useStartApprovalFlow';
+import { useQuotationExchangeRates } from '../hooks/useQuotationExchangeRates';
+import { useQuotationLines } from '../hooks/useQuotationLines';
+import { useUpdateQuotationBulk } from '../hooks/useUpdateQuotationBulk';
+import { usePriceRuleOfQuotation } from '../hooks/usePriceRuleOfQuotation';
+import { useUserDiscountLimitsBySalesperson } from '../hooks/useUserDiscountLimitsBySalesperson';
 import { useCustomerOptions } from '@/features/customer-management/hooks/useCustomerOptions';
 import { useUIStore } from '@/stores/ui-store';
 import { Button } from '@/components/ui/button';
@@ -27,7 +33,6 @@ export function QuotationDetailPage(): ReactElement {
   const { setPageTitle } = useUIStore();
   const quotationId = id ? parseInt(id, 10) : 0;
 
-  // API Hooks
   const { data: quotation, isLoading } = useQuotation(quotationId);
   const { data: exchangeRatesData = [], isLoading: isLoadingExchangeRates } = useQuotationExchangeRates(quotationId);
   const { data: linesData = [], isLoading: isLoadingLines } = useQuotationLines(quotationId);
@@ -41,7 +46,6 @@ export function QuotationDetailPage(): ReactElement {
   const [pricingRules, setPricingRules] = useState<PricingRuleLineGetDto[]>([]);
   const [temporarySallerData, setTemporarySallerData] = useState<UserDiscountLimitDto[]>([]);
   
-  // Refs to prevent infinite re-renders or overwrites
   const linesInitializedRef = useRef(false);
   const exchangeRatesInitializedRef = useRef(false);
   const formInitializedRef = useRef(false);
@@ -74,7 +78,6 @@ export function QuotationDetailPage(): ReactElement {
     };
   }, [quotation, t, setPageTitle]);
 
-  // Form Verilerinin Yüklenmesi
   useEffect(() => {
     if (quotation && !formInitializedRef.current) {
       form.reset({
@@ -100,7 +103,6 @@ export function QuotationDetailPage(): ReactElement {
     }
   }, [quotation, form]);
 
-  // Satırların Yüklenmesi
   useEffect(() => {
     if (linesData && linesData.length > 0 && !linesInitializedRef.current) {
       const formattedLines: QuotationLineFormState[] = linesData.map((line, index) => ({
@@ -137,7 +139,6 @@ export function QuotationDetailPage(): ReactElement {
   const { data: erpRates = [] } = useExchangeRate();
   const { currencyOptions: currencyOptionsForExchangeRates } = useCurrencyOptions();
 
-  // Döviz Kurlarının Yüklenmesi
   useEffect(() => {
     if (exchangeRatesData && exchangeRatesData.length > 0 && !exchangeRatesInitializedRef.current && currencyOptionsForExchangeRates.length > 0) {
       const formattedExchangeRates: QuotationExchangeRateFormState[] = exchangeRatesData.map((rate) => {
@@ -278,7 +279,6 @@ export function QuotationDetailPage(): ReactElement {
     } catch (error: unknown) {
       let errorMessage = t('quotation.update.errorMessage', 'Teklif güncellenirken bir hata oluştu.');
       if (error instanceof Error) {
-          // Hata mesajı ayrıştırma (önceki koddaki gibi)
           try {
              const parsedError = JSON.parse(error.message);
              if (parsedError?.errors) errorMessage = JSON.stringify(parsedError.errors);
@@ -342,7 +342,6 @@ export function QuotationDetailPage(): ReactElement {
     });
   };
 
-  // Loading Durumu
   if (isLoading || isLoadingExchangeRates || isLoadingLines) {
     return (
       <div className="flex flex-col items-center justify-center py-24 gap-4 border border-zinc-300 dark:border-zinc-700/80 rounded-xl bg-white/50 dark:bg-card/50">
@@ -372,8 +371,6 @@ export function QuotationDetailPage(): ReactElement {
     <div className="w-full space-y-8 relative pb-10">
       <FormProvider {...form}>
         <form onSubmit={handleFormSubmit} className="space-y-6">
-          
-          {/* HEADER SECTION */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div>
               <h2 className="text-2xl font-bold tracking-tight">
@@ -386,8 +383,6 @@ export function QuotationDetailPage(): ReactElement {
           </div>
 
           <div className="flex flex-col gap-6">
-            
-            {/* 1. SECTON: HEADER FORM */}
             <div className="space-y-1">
                 <div className="flex items-center gap-2 pb-2 mb-4 border-b border-zinc-200 dark:border-white/5">
                     <div className="p-2 rounded-lg bg-blue-100 dark:bg-blue-900/20 text-blue-600">
@@ -412,7 +407,6 @@ export function QuotationDetailPage(): ReactElement {
                 />
             </div>
 
-            {/* 2. SECTION: LINE TABLE */}
             <div className="space-y-1 pt-2">
               <QuotationLineTable
                 lines={lines}
@@ -438,9 +432,7 @@ export function QuotationDetailPage(): ReactElement {
                     </h3>
                 </div>
                 <div className="grid md:grid-cols-2 gap-6">
-                    <div className="hidden md:block">
-                        {/* Sol taraf boş bırakıldı */}
-                    </div>
+                    <div className="hidden md:block"></div>
                     <div className="bg-zinc-50/80 dark:bg-zinc-900/50 rounded-xl p-6 border border-zinc-200 dark:border-white/10 shadow-sm">
                          <QuotationSummaryCard lines={lines} currency={watchedCurrency} />
                     </div>

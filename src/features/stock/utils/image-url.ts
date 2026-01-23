@@ -1,6 +1,4 @@
-import { api } from '@/lib/axios';
-
-const DEFAULT_API_URL = 'https://crmapi.v3rii.com';
+import { api, getApiBaseUrl } from '@/lib/axios';
 
 export const getImageUrl = (relativePath: string | null | undefined): string | null => {
   if (!relativePath) return null;
@@ -9,14 +7,14 @@ export const getImageUrl = (relativePath: string | null | undefined): string | n
     return relativePath;
   }
   
-  let baseURL: string = DEFAULT_API_URL;
+  let baseURL: string = getApiBaseUrl();
   try {
     const apiBaseURL = api.defaults.baseURL;
     if (apiBaseURL) {
       baseURL = typeof apiBaseURL === 'string' ? apiBaseURL : String(apiBaseURL);
     }
   } catch (error) {
-    console.warn('Failed to get baseURL from axios, using default:', error);
+    console.warn('Failed to get baseURL from axios, using fallback:', error);
   }
   
   const cleanBaseURL = baseURL.replace(/\/$/, '');

@@ -21,8 +21,8 @@ import { useApprovalFlowList } from '../hooks/useApprovalFlowList';
 import { useDeleteApprovalFlow } from '../hooks/useDeleteApprovalFlow';
 import type { ApprovalFlowDto } from '../types/approval-flow-types';
 import type { PagedFilter } from '@/types/api';
-import { DocumentTypeEnum } from '../types/approval-flow-types';
-import { Edit2, Trash2, ArrowUpDown, ArrowUp, ArrowDown, AlertCircle } from 'lucide-react';
+import { PricingRuleType } from '@/features/pricing-rule/types/pricing-rule-types';
+import { Edit2, Trash2, ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
 
 interface ApprovalFlowTableProps {
   onEdit: (approvalFlow: ApprovalFlowDto) => void;
@@ -80,11 +80,11 @@ export function ApprovalFlowTable({
 
   const getDocumentTypeLabel = (type: number): string => {
     switch (type) {
-      case DocumentTypeEnum.Offer:
-        return t('approvalFlow.documentType.offer', 'Teklif');
-      case DocumentTypeEnum.Request:
+      case PricingRuleType.Demand:
         return t('approvalFlow.documentType.request', 'Talep');
-      case DocumentTypeEnum.Order:
+      case PricingRuleType.Quotation:
+        return t('approvalFlow.documentType.offer', 'Teklif');
+      case PricingRuleType.Order:
         return t('approvalFlow.documentType.order', 'Sipariş');
       default:
         return '-';

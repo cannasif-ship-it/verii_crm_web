@@ -1,5 +1,6 @@
 import { type ReactElement, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner';
 import {
   Table,
   TableBody,
@@ -9,32 +10,80 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { PricingRuleLineForm } from './PricingRuleLineForm';
 import { ProductSelectDialog, type ProductSelectionResult } from '@/components/shared';
-import { Trash2, Edit, Package } from 'lucide-react';
-import type { PricingRuleLineFormState } from '../types/pricing-rule-types';
+import { Trash2, Edit, Package, Loader2 } from 'lucide-react';
+import type { PricingRuleLineFormState, PricingRuleHeaderGetDto } from '../types/pricing-rule-types';
 import { useExchangeRate } from '@/services/hooks/useExchangeRate';
 import type { KurDto } from '@/services/erp-types';
+import { useCreatePricingRuleLine } from '../hooks/useCreatePricingRuleLine';
+import { useDeletePricingRuleLine } from '../hooks/useDeletePricingRuleLine';
 
 interface PricingRuleLineTableProps {
   lines: PricingRuleLineFormState[];
   setLines: (lines: PricingRuleLineFormState[]) => void;
+  header?: PricingRuleHeaderGetDto | null;
 }
 
 export function PricingRuleLineTable({
   lines,
   setLines,
+  header,
 }: PricingRuleLineTableProps): ReactElement {
   const { t } = useTranslation();
   const [editingLineId, setEditingLineId] = useState<string | null>(null);
   const [productDialogOpen, setProductDialogOpen] = useState(false);
+  const [addConfirmOpen, setAddConfirmOpen] = useState(false);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<ProductSelectionResult | null>(null);
+  const [selectedLineToDelete, setSelectedLineToDelete] = useState<{ id: string; dbId?: number } | null>(null);
   const { data: exchangeRates = [] } = useExchangeRate();
+  const createMutation = useCreatePricingRuleLine();
+  const deleteMutation = useDeletePricingRuleLine();
 
+  const isExistingRecord = !!header?.id;
 
   const handleProductSelect = (product: ProductSelectionResult): void => {
+    if (isExistingRecord) {
+      setSelectedProduct(product);
+      setAddConfirmOpen(true);
+    } else {
+      const newLine: PricingRuleLineFormState = {
+        id: `temp-${Date.now()}`,
+        stokCode: product.code,
+        minQuantity: 0,
+        maxQuantity: null,
+        fixedUnitPrice: null,
+        currencyCode: undefined,
+        discountRate1: 0,
+        discountAmount1: 0,
+        discountRate2: 0,
+        discountAmount2: 0,
+        discountRate3: 0,
+        discountAmount3: 0,
+        isEditing: true,
+      };
+      setLines([...lines, newLine]);
+      setEditingLineId(newLine.id);
+    }
+  };
+
+  const handleAddConfirm = (): void => {
+    if (!selectedProduct) {
+      return;
+    }
+
     const newLine: PricingRuleLineFormState = {
       id: `temp-${Date.now()}`,
-      stokCode: product.code,
+      stokCode: selectedProduct.code,
       minQuantity: 0,
       maxQuantity: null,
       fixedUnitPrice: null,
@@ -49,6 +98,8 @@ export function PricingRuleLineTable({
     };
     setLines([...lines, newLine]);
     setEditingLineId(newLine.id);
+    setAddConfirmOpen(false);
+    setSelectedProduct(null);
   };
 
   const handleEditLine = (id: string): void => {
@@ -56,17 +107,125 @@ export function PricingRuleLineTable({
     setLines(lines.map((line) => (line.id === id ? { ...line, isEditing: true } : line)));
   };
 
-  const handleSaveLine = (updatedLine: PricingRuleLineFormState): void => {
+  const handleSaveLine = async (updatedLine: PricingRuleLineFormState): Promise<void> => {
     if (!updatedLine.stokCode || updatedLine.stokCode.trim() === '') {
       return;
     }
 
-    setLines(lines.map((line) => (line.id === updatedLine.id ? { ...updatedLine, isEditing: false } : line)));
-    setEditingLineId(null);
+    if (isExistingRecord && header?.id) {
+      const isNewLine = updatedLine.id.startsWith('temp-');
+      
+      if (isNewLine) {
+        try {
+          const response = await createMutation.mutateAsync({
+            pricingRuleHeaderId: header.id,
+            stokCode: updatedLine.stokCode,
+            minQuantity: updatedLine.minQuantity ?? 0,
+            maxQuantity: updatedLine.maxQuantity ?? null,
+            fixedUnitPrice: updatedLine.fixedUnitPrice ?? null,
+            currencyCode: typeof updatedLine.currencyCode === 'number' ? String(updatedLine.currencyCode) : (updatedLine.currencyCode ? String(updatedLine.currencyCode) : 'TRY'),
+            discountRate1: updatedLine.discountRate1 ?? 0,
+            discountAmount1: updatedLine.discountAmount1 ?? 0,
+            discountRate2: updatedLine.discountRate2 ?? 0,
+            discountAmount2: updatedLine.discountAmount2 ?? 0,
+            discountRate3: updatedLine.discountRate3 ?? 0,
+            discountAmount3: updatedLine.discountAmount3 ?? 0,
+          });
+
+          if (response) {
+            const savedLine: PricingRuleLineFormState = {
+              id: `existing-${response.id}`,
+              stokCode: response.stokCode,
+              minQuantity: response.minQuantity,
+              maxQuantity: response.maxQuantity,
+              fixedUnitPrice: response.fixedUnitPrice,
+              currencyCode: typeof response.currencyCode === 'string' ? Number(response.currencyCode) || 1 : response.currencyCode,
+              discountRate1: response.discountRate1,
+              discountAmount1: response.discountAmount1,
+              discountRate2: response.discountRate2,
+              discountAmount2: response.discountAmount2,
+              discountRate3: response.discountRate3,
+              discountAmount3: response.discountAmount3,
+              isEditing: false,
+            };
+            setLines(lines.map((line) => (line.id === updatedLine.id ? savedLine : line)));
+            setEditingLineId(null);
+            toast.success(
+              t('pricingRule.lines.addSuccess', 'Satır Eklendi'),
+              {
+                description: t('pricingRule.lines.addSuccessMessage', 'Satır fiyat kuralına başarıyla eklendi'),
+              }
+            );
+          }
+        } catch (error: unknown) {
+          const errorMessage = error instanceof Error ? error.message : t('pricingRule.lines.addError', 'Satır eklenirken bir hata oluştu');
+          toast.error(
+            t('pricingRule.lines.addError', 'Hata'),
+            {
+              description: errorMessage,
+            }
+          );
+        }
+      } else {
+        setLines(lines.map((line) => (line.id === updatedLine.id ? { ...updatedLine, isEditing: false } : line)));
+        setEditingLineId(null);
+      }
+    } else {
+      setLines(lines.map((line) => (line.id === updatedLine.id ? { ...updatedLine, isEditing: false } : line)));
+      setEditingLineId(null);
+    }
   };
 
   const handleDeleteLine = (id: string): void => {
-    setLines(lines.filter((line) => line.id !== id));
+    const line = lines.find((l) => l.id === id);
+    if (!line) {
+      return;
+    }
+
+    if (isExistingRecord) {
+      const lineIdMatch = id.match(/^existing-(\d+)$/);
+      if (lineIdMatch) {
+        const dbId = parseInt(lineIdMatch[1], 10);
+        setSelectedLineToDelete({ id, dbId });
+        setDeleteConfirmOpen(true);
+      } else {
+        setLines(lines.filter((l) => l.id !== id));
+      }
+    } else {
+      setLines(lines.filter((l) => l.id !== id));
+    }
+  };
+
+  const handleDeleteConfirm = async (): Promise<void> => {
+    if (!selectedLineToDelete?.dbId) {
+      if (selectedLineToDelete) {
+        setLines(lines.filter((line) => line.id !== selectedLineToDelete.id));
+      }
+      setDeleteConfirmOpen(false);
+      setSelectedLineToDelete(null);
+      return;
+    }
+
+    try {
+      await deleteMutation.mutateAsync(selectedLineToDelete.dbId);
+      setLines(lines.filter((line) => line.id !== selectedLineToDelete.id));
+      setDeleteConfirmOpen(false);
+      setSelectedLineToDelete(null);
+      toast.success(
+        t('pricingRule.lines.deleteSuccess', 'Satır Kaldırıldı'),
+        {
+          description: t('pricingRule.lines.deleteSuccessMessage', 'Satır fiyat kuralından başarıyla kaldırıldı'),
+        }
+      );
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : t('pricingRule.lines.deleteError', 'Satır kaldırılırken bir hata oluştu');
+      toast.error(
+        t('pricingRule.lines.deleteError', 'Hata'),
+        {
+          description: errorMessage,
+        }
+      );
+    }
   };
 
   const formatCurrency = (amount: number | null | undefined, currencyCode: number | string | undefined): string => {
@@ -104,6 +263,9 @@ export function PricingRuleLineTable({
     return `Döviz(${numericCode})`;
   };
 
+  const isLoadingAction = createMutation.isPending || deleteMutation.isPending;
+  const lineToDelete = selectedLineToDelete ? lines.find((l) => l.id === selectedLineToDelete.id) : null;
+
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
@@ -115,6 +277,7 @@ export function PricingRuleLineTable({
           onClick={() => setProductDialogOpen(true)}
           size="sm"
           variant="default"
+          disabled={isLoadingAction}
         >
           <Package className="h-4 w-4 mr-2" />
           {t('pricingRule.lines.selectStock', 'Stok Seç')}
@@ -216,8 +379,13 @@ export function PricingRuleLineTable({
                             variant="ghost"
                             size="sm"
                             onClick={() => handleDeleteLine(line.id)}
+                            disabled={isLoadingAction}
                           >
-                            <Trash2 className="h-4 w-4" />
+                            {isLoadingAction && selectedLineToDelete?.id === line.id ? (
+                              <Loader2 className="h-4 w-4 animate-spin" />
+                            ) : (
+                              <Trash2 className="h-4 w-4" />
+                            )}
                           </Button>
                         </div>
                       </TableCell>
@@ -236,6 +404,84 @@ export function PricingRuleLineTable({
         onSelect={handleProductSelect}
         disableRelatedStocks={true}
       />
+
+      <Dialog open={addConfirmOpen} onOpenChange={setAddConfirmOpen} modal={true}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>
+              {t('pricingRule.lines.addConfirmTitle', 'Satır Ekle')}
+            </DialogTitle>
+            <DialogDescription>
+              {t('pricingRule.lines.addConfirmMessage', '{{code}} stok kodu fiyat kuralına eklenecektir. Onaylıyor musunuz?', {
+                code: selectedProduct?.code || '',
+              })}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => {
+                setAddConfirmOpen(false);
+                setSelectedProduct(null);
+              }}
+              disabled={isLoadingAction}
+            >
+              {t('common.cancel', 'İptal')}
+            </Button>
+            <Button
+              type="button"
+              onClick={handleAddConfirm}
+              disabled={isLoadingAction}
+            >
+              {t('common.confirm', 'Onayla')}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen} modal={true}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>
+              {t('pricingRule.lines.deleteConfirmTitle', 'Satır Kaldır')}
+            </DialogTitle>
+            <DialogDescription>
+              {t('pricingRule.lines.deleteConfirmMessage', '{{code}} stok kodlu satır fiyat kuralından kaldırılacaktır. Onaylıyor musunuz?', {
+                code: lineToDelete?.stokCode || '',
+              })}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => {
+                setDeleteConfirmOpen(false);
+                setSelectedLineToDelete(null);
+              }}
+              disabled={isLoadingAction}
+            >
+              {t('common.cancel', 'İptal')}
+            </Button>
+            <Button
+              type="button"
+              variant="destructive"
+              onClick={handleDeleteConfirm}
+              disabled={isLoadingAction}
+            >
+              {isLoadingAction ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  {t('common.loading', 'Yükleniyor...')}
+                </>
+              ) : (
+                t('common.confirm', 'Onayla')
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

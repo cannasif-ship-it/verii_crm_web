@@ -28,6 +28,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion';
 import { userDetailFormSchema, type UserDetailFormSchema, Gender, GENDER_OPTIONS } from '../types/user-detail-types';
 import { useUserDetailByUserId } from '../hooks/useUserDetailByUserId';
 import { useCreateUserDetail } from '../hooks/useCreateUserDetail';
@@ -36,6 +42,9 @@ import { useUploadProfilePicture } from '../hooks/useUploadProfilePicture';
 import { useAuthStore } from '@/stores/auth-store';
 import { toast } from 'sonner';
 import { getImageUrl } from '../utils/image-url';
+import { useChangePassword } from '@/features/auth/hooks/useChangePassword';
+import { changePasswordSchema, type ChangePasswordRequest } from '@/features/auth/types/auth';
+import { ViewIcon, ViewOffIcon } from 'hugeicons-react';
 
 interface UserDetailDialogProps {
   open: boolean;
@@ -56,6 +65,18 @@ export function UserDetailDialog({
   const createUserDetail = useCreateUserDetail();
   const updateUserDetail = useUpdateUserDetail();
   const uploadProfilePicture = useUploadProfilePicture();
+  const changePassword = useChangePassword();
+
+  const [isCurrentPasswordVisible, setIsCurrentPasswordVisible] = useState(false);
+  const [isNewPasswordVisible, setIsNewPasswordVisible] = useState(false);
+
+  const changePasswordForm = useForm<ChangePasswordRequest>({
+    resolver: zodResolver(changePasswordSchema),
+    defaultValues: {
+      currentPassword: '',
+      newPassword: '',
+    },
+  });
 
   const form = useForm<UserDetailFormSchema>({
     resolver: zodResolver(userDetailFormSchema),
@@ -67,6 +88,15 @@ export function UserDetailDialog({
       gender: undefined,
     },
   });
+
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    if (url.searchParams.has('currentPassword') || url.searchParams.has('newPassword')) {
+      url.searchParams.delete('currentPassword');
+      url.searchParams.delete('newPassword');
+      window.history.replaceState({}, '', url.pathname + url.search);
+    }
+  }, []);
 
   useEffect(() => {
     if (userDetail) {
@@ -162,6 +192,21 @@ export function UserDetailDialog({
       });
     }
     onOpenChange(false);
+  };
+
+  const handleChangePasswordSubmit = async (data: ChangePasswordRequest): Promise<void> => {
+    try {
+      await changePassword.mutateAsync(data);
+      changePasswordForm.reset();
+      const url = new URL(window.location.href);
+      if (url.searchParams.has('currentPassword') || url.searchParams.has('newPassword')) {
+        url.searchParams.delete('currentPassword');
+        url.searchParams.delete('newPassword');
+        window.history.replaceState({}, '', url.pathname + url.search);
+      }
+    } catch (error) {
+      console.error('Password change error:', error);
+    }
   };
 
   if (isLoadingDetail) {
@@ -363,6 +408,103 @@ export function UserDetailDialog({
             </DialogFooter>
           </form>
         </Form>
+
+        <Accordion type="single" collapsible className="w-full mt-4">
+          <AccordionItem value="change-password">
+            <AccordionTrigger>
+              {t('userDetailManagement.changePassword', 'Şifre Değiştir')}
+            </AccordionTrigger>
+            <AccordionContent>
+              <Form {...changePasswordForm}>
+                <form 
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    changePasswordForm.handleSubmit(handleChangePasswordSubmit)(e);
+                  }} 
+                  className="space-y-4"
+                >
+                  <FormField
+                    control={changePasswordForm.control}
+                    name="currentPassword"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          {t('userDetailManagement.currentPassword', 'Mevcut Şifre')}
+                        </FormLabel>
+                        <FormControl>
+                          <div className="relative">
+                            <Input
+                              {...field}
+                              type={isCurrentPasswordVisible ? 'text' : 'password'}
+                              placeholder={t('userDetailManagement.enterCurrentPassword', 'Mevcut şifrenizi girin')}
+                            />
+                            <button
+                              type="button"
+                              onClick={() => setIsCurrentPasswordVisible((v) => !v)}
+                              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                            >
+                              {isCurrentPasswordVisible ? (
+                                <ViewOffIcon size={18} />
+                              ) : (
+                                <ViewIcon size={18} />
+                              )}
+                            </button>
+                          </div>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={changePasswordForm.control}
+                    name="newPassword"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          {t('userDetailManagement.newPassword', 'Yeni Şifre')}
+                        </FormLabel>
+                        <FormControl>
+                          <div className="relative">
+                            <Input
+                              {...field}
+                              type={isNewPasswordVisible ? 'text' : 'password'}
+                              placeholder={t('userDetailManagement.enterNewPassword', 'Yeni şifrenizi girin (min 6 karakter)')}
+                              maxLength={100}
+                            />
+                            <button
+                              type="button"
+                              onClick={() => setIsNewPasswordVisible((v) => !v)}
+                              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                            >
+                              {isNewPasswordVisible ? (
+                                <ViewOffIcon size={18} />
+                              ) : (
+                                <ViewIcon size={18} />
+                              )}
+                            </button>
+                          </div>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <Button
+                    type="submit"
+                    variant="outline"
+                    disabled={changePassword.isPending}
+                    className="w-full"
+                  >
+                    {changePassword.isPending
+                      ? t('userDetailManagement.changingPassword', 'Değiştiriliyor...')
+                      : t('userDetailManagement.changePasswordButton', 'Şifreyi Değiştir')}
+                  </Button>
+                </form>
+              </Form>
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
       </DialogContent>
     </Dialog>
   );

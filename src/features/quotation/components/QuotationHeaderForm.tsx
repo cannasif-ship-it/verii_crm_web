@@ -27,7 +27,9 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { CustomerSelectDialog } from '@/components/shared/CustomerSelectDialog';
-import { useShippingAddresses, useUsers, usePaymentTypes } from '../api/quotation-api';
+import { useShippingAddresses } from '../hooks/useShippingAddresses';
+import { useUsers } from '../hooks/useUsers';
+import { usePaymentTypes } from '../hooks/usePaymentTypes';
 import { useExchangeRate } from '@/services/hooks/useExchangeRate';
 import { useErpCustomers } from '@/services/hooks/useErpCustomers';
 import { useCustomerOptions } from '@/features/customer-management/hooks/useCustomerOptions';
@@ -68,7 +70,6 @@ export function QuotationHeaderForm({
   const { data: erpRates = [] } = useExchangeRate();
   const user = useAuthStore((state) => state.user);
   
-  // State Management
   const [customerSelectDialogOpen, setCustomerSelectDialogOpen] = useState(false);
   const [exchangeRateDialogOpen, setExchangeRateDialogOpen] = useState(false);
   const [currencyChangeDialogOpen, setCurrencyChangeDialogOpen] = useState(false);
@@ -81,7 +82,6 @@ export function QuotationHeaderForm({
   const watchedCurrency = form.watch('quotation.currency');
   const watchedRepresentativeId = form.watch('quotation.representativeId');
 
-  // Queries
   const { data: shippingAddresses } = useShippingAddresses(watchedCustomerId || undefined);
   const { data: users } = useUsers();
   const { data: paymentTypes } = usePaymentTypes();
@@ -189,31 +189,17 @@ export function QuotationHeaderForm({
     setPendingCurrency(null);
   };
 
-  // --- 🎨 TASARIM SİSTEMİ (The Recipe) ---
   const styles = {
-    // Cam etkisi ve kart yapısı
     glassCard: "relative overflow-hidden rounded-2xl border border-zinc-200/80 dark:border-zinc-800/80 bg-white/60 dark:bg-zinc-900/40 backdrop-blur-xl shadow-sm transition-all duration-300 hover:shadow-md",
-    
-    // Özel Input Stili (Signature Ring)
-    // ÖNEMLİ: "pl-10" class'ı input textinin soldan 2.5rem içeriden başlamasını sağlar. İkon buraya oturur.
     inputBase: "pl-10 h-11 bg-white dark:bg-zinc-950/50 border-zinc-200 dark:border-zinc-800 rounded-xl shadow-sm hover:shadow transition-all duration-300 ease-out focus-visible:border-pink-500 focus-visible:ring-4 focus-visible:ring-pink-500/20 w-full",
-    
-    // Etiketler
     label: "text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-2 pl-1 flex items-center gap-1.5",
-    
-    // İkonlar (Grup focus olduğunda pembeleşir)
-    // pointer-events-none: İkonun üzerine tıklansa bile tıklamanın input'a geçmesini sağlar.
     iconWrapper: "absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-pink-600 dark:group-focus-within:text-pink-500 pointer-events-none z-10 flex items-center justify-center",
   };
 
   return (
     <div className="relative space-y-6 pt-2 pb-8 animate-in fade-in slide-in-from-bottom-3 duration-700">
-      
-      {/* Background Decorative Glows */}
       <div className="absolute -top-10 -left-10 w-96 h-96 bg-pink-500/10 blur-[100px] pointer-events-none rounded-full" />
       <div className="absolute top-20 right-0 w-80 h-80 bg-orange-500/5 blur-[80px] pointer-events-none rounded-full" />
-
-      {/* HEADER */}
       <div className="relative z-10 flex items-center gap-3 mb-6 px-1">
         <div className="p-2.5 bg-gradient-to-br from-pink-500 to-rose-600 rounded-xl shadow-lg shadow-pink-500/30 text-white">
            <Quote className="h-5 w-5" />
@@ -234,7 +220,6 @@ export function QuotationHeaderForm({
         </div>
       </div>
 
-      {/* 1. MÜŞTERİ KARTI (Hero Section) */}
       <div className={styles.glassCard}>
         <div className="p-6">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-5">
@@ -313,7 +298,6 @@ export function QuotationHeaderForm({
               />
             </div>
             
-            {/* Sevk Adresi (Varsa görünür) */}
             {selectedCustomer && (
               <div className="lg:col-span-12 animate-in slide-in-from-top-2 fade-in duration-500">
                 <FormField
@@ -383,7 +367,6 @@ export function QuotationHeaderForm({
             </div>
             
             <div className="space-y-4 flex-1">
-              {/* Para Birimi */}
               <FormField
                 control={form.control}
                 name="quotation.currency"
@@ -415,7 +398,6 @@ export function QuotationHeaderForm({
                 )}
               />
 
-              {/* Ödeme Tipi */}
               <FormField
                 control={form.control}
                 name="quotation.paymentTypeId"
@@ -448,7 +430,6 @@ export function QuotationHeaderForm({
           </div>
         </div>
 
-        {/* ORTA: LOJİSTİK & TİP */}
         <div className={styles.glassCard}>
           <div className="p-5 h-full flex flex-col">
             <div className="flex items-center gap-2 mb-4">
@@ -608,7 +589,6 @@ export function QuotationHeaderForm({
         </div>
       </div>
 
-      {/* DİALOGLAR */}
       <CustomerSelectDialog
         open={customerSelectDialogOpen}
         onOpenChange={setCustomerSelectDialogOpen}

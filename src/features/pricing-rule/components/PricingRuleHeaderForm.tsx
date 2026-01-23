@@ -10,7 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { useCustomersForPricingRule } from '../api/pricing-rule-api';
+import { useCustomersForPricingRule } from '../hooks/useCustomersForPricingRule';
 import { CustomerSelectDialog, type CustomerSelectionResult } from '@/components/shared';
 import { PricingRuleType, type PricingRuleHeaderCreateDto } from '../types/pricing-rule-types';
 import { useState } from 'react';

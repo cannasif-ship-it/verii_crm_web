@@ -66,3 +66,13 @@ export const forgotPasswordSchema = z.object({
 });
 
 export type ForgotPasswordRequest = z.infer<typeof forgotPasswordSchema>;
+
+export const changePasswordSchema = z.object({
+  currentPassword: z.string().min(1, 'Mevcut şifre zorunludur'),
+  newPassword: z.string().min(6, 'Yeni şifre en az 6 karakter olmalıdır').max(100, 'Yeni şifre en fazla 100 karakter olabilir'),
+}).refine((data) => data.currentPassword !== data.newPassword, {
+  message: 'Yeni şifre mevcut şifre ile aynı olamaz',
+  path: ['newPassword'],
+});
+
+export type ChangePasswordRequest = z.infer<typeof changePasswordSchema>;

@@ -4,13 +4,15 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
-import { useCreateQuotationBulk, usePriceRuleOfQuotation, useUserDiscountLimitsBySalesperson } from '../api/quotation-api';
+import { useCreateQuotationBulk } from '../hooks/useCreateQuotationBulk';
+import { usePriceRuleOfQuotation } from '../hooks/usePriceRuleOfQuotation';
+import { useUserDiscountLimitsBySalesperson } from '../hooks/useUserDiscountLimitsBySalesperson';
 import { useCustomerOptions } from '@/features/customer-management/hooks/useCustomerOptions';
 import { QuotationHeaderForm } from './QuotationHeaderForm';
 import { QuotationLineTable } from './QuotationLineTable';
 import { QuotationSummaryCard } from './QuotationSummaryCard';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Calculator, Save, X, Layers } from 'lucide-react'; // Layers import edildi
+import { ArrowLeft, Calculator, Save, X, Layers } from 'lucide-react';
 import { createQuotationSchema, type CreateQuotationSchema } from '../schemas/quotation-schema';
 import type { QuotationLineFormState, QuotationExchangeRateFormState, QuotationBulkCreateDto, CreateQuotationDto, PricingRuleLineGetDto, UserDiscountLimitDto } from '../types/quotation-types';
 import { useUIStore } from '@/stores/ui-store';
@@ -25,7 +27,6 @@ export function QuotationCreateForm(): ReactElement {
   const { setPageTitle } = useUIStore();
   const user = useAuthStore((state) => state.user);
   
-  // State tanımları
   const [lines, setLines] = useState<QuotationLineFormState[]>([]);
   const [exchangeRates, setExchangeRates] = useState<QuotationExchangeRateFormState[]>([]);
   const [pricingRules, setPricingRules] = useState<PricingRuleLineGetDto[]>([]);
@@ -34,7 +35,6 @@ export function QuotationCreateForm(): ReactElement {
   const createMutation = useCreateQuotationBulk();
   const { data: customerOptions = [] } = useCustomerOptions();
 
-  // Sayfa başlığı
   useEffect(() => {
     setPageTitle(t('quotation.create.title', 'Yeni Teklif Oluştur'));
     return () => {
@@ -42,7 +42,6 @@ export function QuotationCreateForm(): ReactElement {
     };
   }, [t, setPageTitle]);
 
-  // Form tanımlama
   const form = useForm<CreateQuotationSchema>({
     resolver: zodResolver(createQuotationSchema),
     defaultValues: {
@@ -55,7 +54,6 @@ export function QuotationCreateForm(): ReactElement {
     },
   });
 
-  // Watcher'lar
   const watchedCurrency = Number(form.watch('quotation.currency') ?? '2');
   const watchedCustomerId = form.watch('quotation.potentialCustomerId');
   const watchedErpCustomerCode = form.watch('quotation.erpCustomerCode');
@@ -65,7 +63,6 @@ export function QuotationCreateForm(): ReactElement {
   const { calculateLineTotals } = useQuotationCalculations();
   const { data: erpRates = [] } = useExchangeRate();
 
-  // Müşteri Kodu tespiti
   const customerCode = useMemo(() => {
     if (watchedErpCustomerCode) {
       return watchedErpCustomerCode;
@@ -77,7 +74,6 @@ export function QuotationCreateForm(): ReactElement {
     return null;
   }, [watchedErpCustomerCode, watchedCustomerId, customerOptions]);
 
-  // Fiyat kuralları verisi
   const { data: pricingRulesData } = usePriceRuleOfQuotation(
     customerCode,
     watchedRepresentativeId || undefined,
@@ -90,7 +86,6 @@ export function QuotationCreateForm(): ReactElement {
     }
   }, [pricingRulesData]);
 
-  // İskonto limitleri verisi
   const { data: userDiscountLimitsData } = useUserDiscountLimitsBySalesperson(watchedRepresentativeId);
 
   useEffect(() => {
@@ -101,7 +96,6 @@ export function QuotationCreateForm(): ReactElement {
     }
   }, [watchedRepresentativeId, userDiscountLimitsData]);
 
-  // Submit işlemi
   const onSubmit = async (data: CreateQuotationSchema): Promise<void> => {
     if (lines.length === 0) {
       toast.error(t('quotation.create.error', 'Teklif Oluşturulamadı'), {
@@ -113,7 +107,6 @@ export function QuotationCreateForm(): ReactElement {
     try {
       const linesToSend = lines.map((line) => {
         const { id, isEditing, ...lineData } = line;
-        // Tip güvenliği için cast edip gereksiz alanları çıkarıyoruz
         const { relatedLines, ...cleanLineData } = lineData as QuotationLineFormState & { relatedLines?: unknown[] };
         
         return {
@@ -192,7 +185,6 @@ export function QuotationCreateForm(): ReactElement {
     }
   };
 
-  // Para birimi değişimi
   const handleCurrencyChange = async (newCurrency: string): Promise<void> => {
     if (lines.length === 0) return;
 
@@ -222,7 +214,6 @@ export function QuotationCreateForm(): ReactElement {
     setLines(updatedLines);
   };
 
-  // Manuel Form Submit
   const handleFormSubmit = async (e: React.FormEvent): Promise<void> => {
     e.preventDefault();
     const formData = form.getValues();
@@ -256,8 +247,6 @@ export function QuotationCreateForm(): ReactElement {
     <div className="w-full space-y-8 relative pb-10">
       <FormProvider {...form}>
         <form onSubmit={handleFormSubmit} className="space-y-6">
-          
-          {/* HEADER (Geri Butonu ve Başlık) */}
           <div className="flex items-center gap-5">
             <Button
               type="button"
@@ -277,7 +266,6 @@ export function QuotationCreateForm(): ReactElement {
           </div>
 
           <div className="flex flex-col gap-6">
-            {/* 1. SECTON: HEADER FORM */}
             <div className="space-y-1">
               <div className="flex items-center gap-2 pb-2 mb-4 border-b border-zinc-200 dark:border-white/5">
                 <div className="p-2 rounded-lg bg-blue-100 dark:bg-blue-900/20 text-blue-600">
@@ -316,7 +304,6 @@ export function QuotationCreateForm(): ReactElement {
               />
             </div>
 
-            {/* 3. SECTION: SUMMARY */}
             <div className="space-y-4 pt-4">
               <div className="flex items-center gap-2 pb-2 border-b border-zinc-200 dark:border-white/5">
                 <div className="p-2 rounded-lg bg-green-100 dark:bg-green-900/20 text-green-600">
@@ -336,7 +323,6 @@ export function QuotationCreateForm(): ReactElement {
               </div>
             </div>
 
-            {/* ACTION BUTTONS */}
             <div className="flex items-center justify-end gap-3 pt-6 border-t border-zinc-200 dark:border-white/10">
               <Button
                 type="button"
