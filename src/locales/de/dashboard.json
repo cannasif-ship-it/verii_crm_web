@@ -1,0 +1,43 @@
+{
+  "title": "Dashboard",
+  "loading": "Wird geladen",
+  "stats": {
+    "totalRevenue": "Gesamtumsatz",
+    "activeOpportunities": "Aktive Verkaufschancen",
+    "newLeads": "Neue Interessenten",
+    "pendingOrders": "Ausstehende Bestellungen"
+  },
+  "salesAnalysis": "Verkaufsanalyse",
+  "targetVsActual": "Ziel vs. Ist",
+  "latestActivities": "Neueste Aktivitäten",
+  "viewAll": "Alle anzeigen",
+  "reportDownload": "Bericht herunterladen",
+  "quickAction": "Schnellaktion",
+  "activityType": {
+    "meeting": "Treffen",
+    "call": "Anruf",
+    "email": "E-Mail"
+  },
+  "monthsShort": {
+    "jan": "Jan",
+    "feb": "Feb",
+    "mar": "Mär",
+    "apr": "Apr",
+    "may": "Mai",
+    "jun": "Jun",
+    "jul": "Jul",
+    "aug": "Aug",
+    "sep": "Sep",
+    "oct": "Okt",
+    "nov": "Nov",
+    "dec": "Dez"
+  },
+  "quickStats": {
+    "pendingTasks": "Ausstehende Aufgaben",
+    "pendingTasksDescription": "12 Aufgaben zu erledigen",
+    "openQuotations": "Offene Angebote",
+    "openQuotationsDescription": "5 Angebote warten auf Genehmigung",
+    "criticalStock": "Kritischer Bestand",
+    "criticalStockDescription": "3 Produkte unter kritischem Niveau"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "menu": "Client ERP",
+  "description": "Liste des clients du système ERP",
+  "loading": "Chargement...",
+  "noData": "Aucun client trouvé",
+  "table": {
+    "branchCode": "Code Agence",
+    "businessUnitCode": "Code Unité Commerciale",
+    "customerCode": "Code Client",
+    "customerName": "Nom du Client",
+    "phone": "Téléphone",
+    "city": "Ville",
+    "district": "District",
+    "address": "Adresse",
+    "countryCode": "Code Pays",
+    "email": "E-mail",
+    "website": "Site Web",
+    "taxNumber": "Numéro Fiscal",
+    "taxOffice": "Administration Fiscale",
+    "tcknNumber": "Numéro TCKN"
+  }
+}

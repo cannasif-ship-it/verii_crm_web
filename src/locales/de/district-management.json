@@ -1,0 +1,46 @@
+{
+  "menu": "Bezirksverwaltung",
+  "description": "Bezirke verwalten und bearbeiten",
+  "addButton": "Neuen Bezirk hinzufügen",
+  "listTitle": "Bezirksliste",
+  "listDescription": "Hier können Sie alle im System registrierten Bezirke verwalten.",
+  "loading": "Laden...",
+  "noData": "Keine Daten",
+  "actions": "Aktionen",
+  "previous": "Zurück",
+  "next": "Weiter",
+  "cancel": "Abbrechen",
+  "delete": "Löschen",
+  "save": "Speichern",
+  "saving": "Wird gespeichert...",
+  "table": {
+    "id": "ID",
+    "name": "Bezirksname",
+    "erpCode": "ERP-Code",
+    "cityName": "Stadtname",
+    "createdDate": "Erstellungsdatum",
+    "createdBy": "Erstellt von",
+    "showing": "Zeige {{from}}-{{to}} von {{total}}",
+    "page": "Seite {{current}} von {{total}}"
+  },
+  "delete": {
+    "confirmTitle": "Bezirk löschen",
+    "confirmMessage": "Sind Sie sicher, dass Sie den Bezirk {{name}} löschen möchten?"
+  },
+  "form": {
+    "editDistrict": "Bezirk bearbeiten",
+    "addDistrict": "Neuen Bezirk hinzufügen",
+    "editDescription": "Bezirksinformationen bearbeiten",
+    "addDescription": "Neue Bezirksinformationen eingeben",
+    "name": "Bezirksname",
+    "namePlaceholder": "Bezirksnamen eingeben",
+    "city": "Stadt",
+    "selectCity": "Stadt auswählen",
+    "erpCode": "ERP-Code",
+    "erpCodePlaceholder": "ERP-Code eingeben (optional)",
+    "name.required": "Bezirksname ist erforderlich",
+    "name.maxLength": "Bezirksname darf maximal 100 Zeichen lang sein",
+    "erpCode.maxLength": "ERP-Code darf maximal 10 Zeichen lang sein",
+    "city.required": "Stadtauswahl ist erforderlich"
+  }
+}

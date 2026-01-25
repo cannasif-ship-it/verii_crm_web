@@ -1,0 +1,13 @@
+{
+  "title": "Verwandte Bestände auswählen",
+  "description": "Wählen Sie die verwandten Bestände aus, die Sie zusammen mit dem Hauptbestand hinzufügen möchten. Obligatorische Bestände werden automatisch ausgewählt.",
+  "mandatoryStocks": "Obligatorische Bestände",
+  "optionalStocks": "Optionale Bestände",
+  "unknownStock": "Unbekannter Bestand",
+  "quantity": "Menge",
+  "mandatory": "Obligatorisch",
+  "noRelatedStocks": "Keine verwandten Bestände gefunden",
+  "cancel": "Abbrechen",
+  "add": "Hinzufügen",
+  "calculating": "Berechnung..."
+}

@@ -1,0 +1,43 @@
+{
+  "title": "Tableau de bord",
+  "loading": "Chargement",
+  "stats": {
+    "totalRevenue": "Revenu total",
+    "activeOpportunities": "Opportunités actives",
+    "newLeads": "Nouveaux prospects",
+    "pendingOrders": "Commandes en attente"
+  },
+  "salesAnalysis": "Analyse des ventes",
+  "targetVsActual": "Objectif vs Réel",
+  "latestActivities": "Dernières activités",
+  "viewAll": "Voir tout",
+  "reportDownload": "Télécharger le rapport",
+  "quickAction": "Action rapide",
+  "activityType": {
+    "meeting": "Réunion",
+    "call": "Appel",
+    "email": "E-mail"
+  },
+  "monthsShort": {
+    "jan": "Jan",
+    "feb": "Fév",
+    "mar": "Mar",
+    "apr": "Avr",
+    "may": "Mai",
+    "jun": "Juin",
+    "jul": "Juil",
+    "aug": "Aoû",
+    "sep": "Sep",
+    "oct": "Oct",
+    "nov": "Nov",
+    "dec": "Déc"
+  },
+  "quickStats": {
+    "pendingTasks": "Tâches en attente",
+    "pendingTasksDescription": "12 tâches à compléter",
+    "openQuotations": "Devis ouverts",
+    "openQuotationsDescription": "5 devis en attente d'approbation",
+    "criticalStock": "Stock critique",
+    "criticalStockDescription": "3 produits sous le niveau critique"
+  }
+}

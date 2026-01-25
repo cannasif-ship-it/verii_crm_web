@@ -1,0 +1,24 @@
+{
+  "title": "Kunden auswählen",
+  "description": "Wählen Sie einen Tab und dann einen Kunden aus der Liste",
+  "erpCustomers": "ERP-Kunden",
+  "crmCustomers": "CRM-Kunden",
+  "allCustomers": "Alle",
+  "erp": "ERP",
+  "crm": "CRM",
+  "noErpCustomers": "Keine ERP-Kunden gefunden",
+  "noCrmCustomers": "Keine CRM-Kunden gefunden",
+  "noCustomers": "Keine Kunden gefunden",
+  "noResults": "Keine Suchergebnisse gefunden",
+  "searchPlaceholder": "Nach Name oder Code suchen...",
+  "voiceSearch": "Sprachsuche",
+  "loading": "Laden",
+  "table": {
+    "type": "Typ",
+    "customerCode": "Kundencode",
+    "customerName": "Kundenname",
+    "phone": "Telefon",
+    "city": "Stadt",
+    "email": "E-Mail"
+  }
+}

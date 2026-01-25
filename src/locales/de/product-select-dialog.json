@@ -1,0 +1,9 @@
+{
+  "title": "Produkt auswählen",
+  "description": "Wählen Sie das Produkt aus, das zur Angebotszeile hinzugefügt werden soll",
+  "product": "PRODUKT",
+  "noProducts": "Kein Produkt gefunden",
+  "noResults": "Keine Suchergebnisse gefunden",
+  "searchPlaceholder": "Nach Produktcode oder Namen suchen...",
+  "voiceSearch": "Sprachsuche"
+}

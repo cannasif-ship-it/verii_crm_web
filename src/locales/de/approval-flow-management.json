@@ -1,0 +1,76 @@
+{
+  "approvalFlow": {
+    "menu": "Genehmigungsablauf-Verwaltung",
+    "description": "Genehmigungsabläufe verwalten und bearbeiten",
+    "addButton": "Neuen Genehmigungsablauf hinzufügen",
+    "table": {
+      "id": "ID",
+      "documentType": "Dokumententyp",
+      "description": "Beschreibung",
+      "isActive": "Aktiv",
+      "createdDate": "Erstellungsdatum",
+      "createdBy": "Erstellt von",
+      "actions": "Aktionen",
+      "showing": "Zeige {{from}}-{{to}} / {{total}}",
+      "page": "Seite {{current}} / {{total}}"
+    },
+    "form": {
+      "addTitle": "Neuen Genehmigungsablauf hinzufügen",
+      "editTitle": "Genehmigungsablauf bearbeiten",
+      "addDescription": "Geben Sie die Informationen für den neuen Genehmigungsablauf ein",
+      "editDescription": "Bearbeiten Sie die Informationen des Genehmigungsablaufs",
+      "documentType": "Dokumententyp",
+      "selectDocumentType": "Dokumententyp auswählen",
+      "noDocumentTypeSelected": "Kein Dokumententyp ausgewählt",
+      "description": "Beschreibung",
+      "descriptionPlaceholder": "Beschreibung eingeben (optional)",
+      "isActive": "Aktiv",
+      "isActiveDescription": "Status des Genehmigungsablaufs",
+      "cancel": "Abbrechen",
+      "save": "Speichern",
+      "saving": "Speichern..."
+    },
+    "loading": "Wird geladen...",
+    "noData": "Keine Daten",
+    "active": "Aktiv",
+    "inactive": "Inaktiv",
+    "previous": "Zurück",
+    "next": "Weiter",
+    "delete": {
+      "action": "Löschen",
+      "cancel": "Abbrechen",
+      "confirmTitle": "Genehmigungsablauf löschen",
+      "confirmMessage": "Sind Sie sicher, dass Sie diesen Genehmigungsablauf löschen möchten?"
+    },
+    "documentType": {
+      "offer": "Angebot",
+      "request": "Anfrage",
+      "order": "Bestellung"
+    }
+  },
+  "approvalFlowStep": {
+    "title": "Ablaufschritte",
+    "addButton": "Schritt hinzufügen",
+    "empty": "Noch keine Schritte hinzugefügt",
+    "unknownRoleGroup": "Keine Rollengruppe",
+    "stepDescription": "Genehmigungsreihenfolge: {{order}}",
+    "form": {
+      "addTitle": "Neuen Schritt hinzufügen",
+      "editTitle": "Schritt bearbeiten",
+      "addDescription": "Neuen Ablaufschritt hinzufügen",
+      "editDescription": "Ablaufschritt bearbeiten",
+      "approvalRoleGroup": "Rollengruppe",
+      "selectRoleGroup": "Rollengruppe auswählen",
+      "noRoleGroupSelected": "Keine Rollengruppe ausgewählt",
+      "approvalRoleGroupId": {
+        "required": "Auswahl der Rollengruppe ist erforderlich"
+      },
+      "cancel": "Abbrechen",
+      "save": "Speichern",
+      "saving": "Speichern..."
+    },
+    "messages": {
+      "deleteConfirm": "Möchten Sie diesen Schritt wirklich löschen?"
+    }
+  }
+}

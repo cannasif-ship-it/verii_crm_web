@@ -11,7 +11,9 @@
     "actions": "Actions",
     "viewDetail": "Détail",
     "showing": "Affichage {{from}}-{{to}} / {{total}}",
-    "page": "Page {{current}} / {{total}}"
+    "page": "Page {{current}} / {{total}}",
+    "previous": "Précédent",
+    "next": "Suivant"
   },
   "detail": {
     "title": "Détail du stock",
@@ -28,7 +30,25 @@
     "htmlDescriptionPlaceholder": "Entrer la description HTML",
     "htmlDescription.required": "La description HTML est requise",
     "technicalSpecs": "Spécifications techniques (JSON)",
-    "technicalSpecsPlaceholder": "Spécifications techniques au format JSON (optionnel)"
+    "technicalSpecsPlaceholder": "Spécifications techniques au format JSON (optionnel)",
+    "notFound": "Stock Non Trouvé",
+    "notFoundDesc": "L'enregistrement de stock que vous recherchez a peut-être été supprimé ou n'a jamais été créé.",
+    "backToStockList": "Retour à la Liste",
+    "mainInfo": "Informations de Base",
+    "ureticiKodu": "Code Fabricant",
+    "groupInfo": "Regroupement et Emplacement",
+    "branchCode": "Code Agence",
+    "grup": "Info Groupe",
+    "specialCodes": "Codes Spéciaux",
+    "kod1": "Code Spécial 1",
+    "kod2": "Code Spécial 2",
+    "kod3": "Code Spécial 3",
+    "kod4": "Code Spécial 4",
+    "kod5": "Code Spécial 5",
+    "created": "Créé",
+    "updated": "Mis à jour",
+    "copied": "Copié",
+    "copy": "Copier"
   },
   "images": {
     "upload": "Glisser-déposer les images ici ou cliquer",
@@ -53,12 +73,22 @@
     "descriptionPlaceholder": "Entrer la description (optionnel)",
     "isMandatory": "Obligatoire",
     "delete": "Supprimer",
+    "cancel": "Annuler",
+    "deleting": "Suppression...",
     "actions": "Actions",
     "noRelations": "Aucun stock associé ajouté pour le moment",
+    "noRelationsDesc": "Vous pouvez définir de nouvelles relations en utilisant le formulaire à gauche.",
     "selectStock": "Sélectionner un stock",
     "search": "Rechercher...",
     "deleteConfirm": "Supprimer le stock associé",
-    "deleteConfirmMessage": "Êtes-vous sûr de vouloir supprimer le stock associé {{name}} ?"
+    "deleteConfirmMessage": "Êtes-vous sûr de vouloir supprimer le stock associé {{name}} ?",
+    "confirmDelete": "Oui, supprimer",
+    "stockCode": "Code stock",
+    "stockName": "Nom du stock",
+    "mandatory": "Obligatoire",
+    "optional": "Optionnel",
+    "noStockFound": "Stock non trouvé",
+    "saving": "Traitement..."
   },
   "messages": {
     "detailCreateSuccess": "Détails du stock créés avec succès",

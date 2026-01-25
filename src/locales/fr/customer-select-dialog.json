@@ -1,0 +1,24 @@
+{
+  "title": "Sélectionner un Client",
+  "description": "Sélectionnez un onglet et choisissez un client dans la liste",
+  "erpCustomers": "Clients ERP",
+  "crmCustomers": "Clients CRM",
+  "allCustomers": "Tous",
+  "erp": "ERP",
+  "crm": "CRM",
+  "noErpCustomers": "Aucun client ERP trouvé",
+  "noCrmCustomers": "Aucun client CRM trouvé",
+  "noCustomers": "Aucun client trouvé",
+  "noResults": "Aucun résultat de recherche trouvé",
+  "searchPlaceholder": "Rechercher par nom ou code...",
+  "voiceSearch": "Recherche vocale",
+  "loading": "Chargement",
+  "table": {
+    "type": "Type",
+    "customerCode": "Code Client",
+    "customerName": "Nom du Client",
+    "phone": "Téléphone",
+    "city": "Ville",
+    "email": "E-mail"
+  }
+}

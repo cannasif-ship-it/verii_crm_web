@@ -1,0 +1,62 @@
+{
+  "menu": "Gestion des utilisateurs",
+  "description": "Gérer et modifier les utilisateurs",
+  "addButton": "Ajouter un nouvel utilisateur",
+  "table": {
+    "id": "ID",
+    "username": "Nom d'utilisateur",
+    "email": "E-mail",
+    "fullName": "Nom complet",
+    "role": "Rôle",
+    "status": "Statut",
+    "createdDate": "Date de création",
+    "active": "Actif",
+    "inactive": "Inactif",
+    "confirmed": "Confirmé",
+    "showing": "Affichage {{from}}-{{to}} / {{total}}",
+    "page": "Page {{current}} / {{total}}",
+    "actions": "Actions",
+    "noData": "Pas de données",
+    "loading": "Chargement...",
+    "previous": "Précédent",
+    "next": "Suivant",
+    "edit": "Modifier",
+    "delete": "Supprimer"
+  },
+  "form": {
+    "editUser": "Modifier l'utilisateur",
+    "addUser": "Ajouter un nouvel utilisateur",
+    "editDescription": "Modifier les informations de l'utilisateur",
+    "addDescription": "Entrer les informations du nouvel utilisateur",
+    "username": "Nom d'utilisateur",
+    "usernamePlaceholder": "Entrer le nom d'utilisateur",
+    "email": "E-mail",
+    "emailPlaceholder": "Entrer l'adresse e-mail",
+    "password": "Mot de passe",
+    "passwordPlaceholder": "Entrer le mot de passe (min 8 caractères)",
+    "firstName": "Prénom",
+    "firstNamePlaceholder": "Entrer le prénom",
+    "lastName": "Nom",
+    "lastNamePlaceholder": "Entrer le nom",
+    "phoneNumber": "Téléphone",
+    "phoneNumberPlaceholder": "Entrer le numéro de téléphone",
+    "role": "Rôle",
+    "rolePlaceholder": "Entrer le rôle",
+    "isActive": "Actif",
+    "isActiveDescription": "Statut actif de l'utilisateur",
+    "save": "Enregistrer",
+    "saving": "Enregistrement...",
+    "cancel": "Annuler"
+  },
+  "stats": {
+    "totalUsers": "Total utilisateurs",
+    "activeUsers": "Utilisateurs actifs",
+    "newThisMonth": "Nouveaux ce mois-ci",
+    "confirmedUsers": "Utilisateurs confirmés",
+    "loading": "Chargement..."
+  },
+  "delete": {
+    "confirmTitle": "Supprimer l'utilisateur",
+    "confirmMessage": "Êtes-vous sûr de vouloir supprimer l'utilisateur {{username}} ?"
+  }
+}

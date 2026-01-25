@@ -1,0 +1,51 @@
+{
+  "title": "Zahlungsart-Verwaltung",
+  "description": "Zahlungsarten verwalten und bearbeiten",
+  "create": "Neue Zahlungsart",
+  "edit": "Zahlungsart bearbeiten",
+  "editDescription": "Zahlungsart-Informationen bearbeiten",
+  "createDescription": "Geben Sie die Informationen für die neue Zahlungsart ein",
+  "delete": "Löschen",
+  "deleteTitle": "Zahlungsart löschen",
+  "name": "Name",
+  "namePlaceholder": "Namen der Zahlungsart eingeben",
+  "description": "Beschreibung",
+  "descriptionPlaceholder": "Beschreibung eingeben (optional)",
+  "createdDate": "Erstellungsdatum",
+  "updatedDate": "Aktualisierungsdatum",
+  "actions": "Aktionen",
+  "search": "Suchen",
+  "refresh": "Aktualisieren",
+  "loading": "Wird geladen...",
+  "previous": "Zurück",
+  "next": "Weiter",
+  "cancel": "Abbrechen",
+  "save": "Speichern",
+  "saving": "Wird gespeichert...",
+  "noData": "Keine Daten gefunden",
+  "confirmDelete": "Sind Sie sicher, dass Sie diese Zahlungsart löschen möchten?",
+  "createSuccess": "Zahlungsart erfolgreich erstellt",
+  "updateSuccess": "Zahlungsart erfolgreich aktualisiert",
+  "deleteSuccess": "Zahlungsart erfolgreich gelöscht",
+  "createError": "Fehler beim Erstellen der Zahlungsart",
+  "updateError": "Fehler beim Aktualisieren der Zahlungsart",
+  "deleteError": "Fehler beim Löschen der Zahlungsart",
+  "table": {
+    "id": "ID",
+    "name": "Name",
+    "description": "Beschreibung",
+    "createdDate": "Erstellungsdatum",
+    "updatedDate": "Aktualisierungsdatum",
+    "showing": "Zeige {{from}}-{{to}} von {{total}}",
+    "page": "Seite {{current}} von {{total}}"
+  },
+  "form": {
+    "name": {
+      "required": "Name ist erforderlich",
+      "maxLength": "Name darf maximal 100 Zeichen lang sein"
+    },
+    "description": {
+      "maxLength": "Beschreibung darf maximal 500 Zeichen lang sein"
+    }
+  }
+}

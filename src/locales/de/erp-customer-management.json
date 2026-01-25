@@ -1,0 +1,22 @@
+{
+  "menu": "ERP Kunde",
+  "description": "Kundenliste aus dem ERP-System",
+  "loading": "Laden...",
+  "noData": "Keine Kunden gefunden",
+  "table": {
+    "branchCode": "Filialcode",
+    "businessUnitCode": "Geschäftsbereichscode",
+    "customerCode": "Kundencode",
+    "customerName": "Kundenname",
+    "phone": "Telefon",
+    "city": "Stadt",
+    "district": "Bezirk",
+    "address": "Adresse",
+    "countryCode": "Ländercode",
+    "email": "E-Mail",
+    "website": "Webseite",
+    "taxNumber": "Steuernummer",
+    "taxOffice": "Finanzamt",
+    "tcknNumber": "TCKN Nummer"
+  }
+}
