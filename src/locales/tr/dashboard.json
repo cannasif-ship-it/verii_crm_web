@@ -1,0 +1,43 @@
+{
+  "title": "Dashboard",
+  "loading": "Yükleniyor",
+  "stats": {
+    "totalRevenue": "Toplam Ciro",
+    "activeOpportunities": "Aktif Fırsatlar",
+    "newLeads": "Yeni Adaylar",
+    "pendingOrders": "Bekleyen Siparişler"
+  },
+  "salesAnalysis": "Satış Analizi",
+  "targetVsActual": "Hedef vs Gerçekleşen",
+  "latestActivities": "Son Aktiviteler",
+  "viewAll": "Tümünü Gör",
+  "reportDownload": "Rapor İndir",
+  "quickAction": "Hızlı İşlem",
+  "activityType": {
+    "meeting": "Toplantı",
+    "call": "Arama",
+    "email": "E-posta"
+  },
+  "monthsShort": {
+    "jan": "Oca",
+    "feb": "Şub",
+    "mar": "Mar",
+    "apr": "Nis",
+    "may": "May",
+    "jun": "Haz",
+    "jul": "Tem",
+    "aug": "Ağu",
+    "sep": "Eyl",
+    "oct": "Eki",
+    "nov": "Kas",
+    "dec": "Ara"
+  },
+  "quickStats": {
+    "pendingTasks": "Bekleyen Görevler",
+    "pendingTasksDescription": "Tamamlanması gereken 12 görev",
+    "openQuotations": "Açık Teklifler",
+    "openQuotationsDescription": "Onay bekleyen 5 teklif",
+    "criticalStock": "Kritik Stok",
+    "criticalStockDescription": "3 ürün kritik seviyenin altında"
+  }
+}

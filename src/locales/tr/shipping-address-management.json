@@ -21,6 +21,7 @@
   "updatedDate": "Güncellenme Tarihi",
   "actions": "İşlemler",
   "search": "Ara",
+  "refresh": "Yenile",
   "noData": "Veri bulunamadı",
   "confirmDelete": "Sevk Adresini Sil",
   "confirmDeleteMessage": "Bu sevk adresini silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.",
@@ -56,6 +57,21 @@
   "table": {
     "id": "ID",
     "showing": "{{from}}-{{to}} / {{total}} gösteriliyor",
-    "page": "Sayfa {{current}} / {{total}}"
-  }
+    "page": "Sayfa {{current}} / {{total}}",
+    "customerName": "Müşteri Adı",
+    "address": "Adres",
+    "postalCode": "Posta Kodu",
+    "contactPerson": "Yetkili Kişi",
+    "phone": "Telefon",
+    "location": "Konum",
+    "createdDate": "Oluşturulma Tarihi",
+    "actions": "İşlemler"
+  },
+  "loading": "Yükleniyor...",
+  "previous": "Önceki",
+  "next": "Sonraki",
+  "cancel": "İptal",
+  "save": "Kaydet",
+  "saving": "Kaydediliyor...",
+  "deleting": "Siliniyor..."
 }

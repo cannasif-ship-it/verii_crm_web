@@ -290,12 +290,12 @@ export function ContactForm({
                 onClick={() => onOpenChange(false)}
                 disabled={isLoading}
               >
-                {t('common.cancel', 'İptal')}
+                {t('contactManagement.cancel', 'İptal')}
               </Button>
               <Button type="submit" disabled={isLoading}>
                 {isLoading
-                  ? t('common.saving', 'Kaydediliyor...')
-                  : t('common.save', 'Kaydet')}
+                  ? t('contactManagement.saving', 'Kaydediliyor...')
+                  : t('contactManagement.save', 'Kaydet')}
               </Button>
             </DialogFooter>
           </form>

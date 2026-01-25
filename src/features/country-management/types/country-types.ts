@@ -39,16 +39,16 @@ export interface CountryFormData {
 export const countryFormSchema = z.object({
   name: z
     .string()
-    .min(1, 'countryManagement.form.name.required')
-    .max(100, 'countryManagement.form.name.maxLength'),
+    .min(1, 'countryManagement.form.nameRequired')
+    .max(100, 'countryManagement.form.nameMaxLength'),
   code: z
     .string()
-    .min(2, 'countryManagement.form.code.minLength')
-    .max(5, 'countryManagement.form.code.maxLength')
+    .min(2, 'countryManagement.form.codeMinLength')
+    .max(5, 'countryManagement.form.codeMaxLength')
     .transform((val) => val.toUpperCase()),
   erpCode: z
     .string()
-    .max(10, 'countryManagement.form.erpCode.maxLength')
+    .max(10, 'countryManagement.form.erpCodeMaxLength')
     .optional()
     .or(z.literal('')),
 });

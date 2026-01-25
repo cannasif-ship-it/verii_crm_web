@@ -20,7 +20,7 @@ export function CustomerTypeStats(): ReactElement {
           <Card key={i} className="bg-white/50 dark:bg-[#1a1025]/40 border border-slate-200 dark:border-white/5 shadow-sm">
             <CardHeader>
               <CardTitle className="text-sm font-medium text-slate-400">
-                {t('common.loading', 'Yükleniyor...')}
+                {t('customerTypeManagement.loading', 'Yükleniyor...')}
               </CardTitle>
             </CardHeader>
             <CardContent>

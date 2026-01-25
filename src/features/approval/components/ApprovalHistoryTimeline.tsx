@@ -10,7 +10,7 @@ interface ApprovalHistoryTimelineProps {
 }
 
 export function ApprovalHistoryTimeline({ history }: ApprovalHistoryTimelineProps): ReactElement {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   const getStatusIcon = (status: ApprovalStatus): ReactElement => {
     switch (status) {
@@ -34,7 +34,7 @@ export function ApprovalHistoryTimeline({ history }: ApprovalHistoryTimelineProp
   };
 
   const formatDate = (dateString: string): string => {
-    return new Date(dateString).toLocaleDateString('tr-TR', {
+    return new Date(dateString).toLocaleDateString(i18n.language, {
       year: 'numeric',
       month: 'long',
       day: 'numeric',

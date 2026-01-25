@@ -180,7 +180,7 @@ export function ProductPricingGroupByForm({
                       </FormControl>
                       <SelectContent>
                         {isLoadingGroups ? (
-                          <SelectItem value="__loading__" disabled>Yükleniyor...</SelectItem>
+                          <SelectItem value="__loading__" disabled>{t('productPricingGroupByManagement.loading', 'Yükleniyor...')}</SelectItem>
                         ) : (
                           stokGroups.map((group) => {
                             const groupCode = group.grupKodu || `__group_${group.isletmeKodu}_${group.subeKodu}`;
@@ -220,7 +220,7 @@ export function ProductPricingGroupByForm({
                       </FormControl>
                       <SelectContent>
                         {isLoadingCurrencies ? (
-                          <SelectItem value="0" disabled>Yükleniyor...</SelectItem>
+                          <SelectItem value="0" disabled>{t('productPricingGroupByManagement.loading', 'Yükleniyor...')}</SelectItem>
                         ) : (
                           exchangeRates.map((currency: KurDto) => (
                             <SelectItem key={currency.dovizTipi} value={String(currency.dovizTipi)}>
@@ -392,7 +392,7 @@ export function ProductPricingGroupByForm({
             disabled={isLoading}
             className="bg-white dark:bg-transparent border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white"
           >
-            {t('common.cancel', 'İptal')}
+            {t('productPricingGroupByManagement.cancel', 'İptal')}
           </Button>
           <Button 
             type="submit" 
@@ -401,8 +401,8 @@ export function ProductPricingGroupByForm({
             className="bg-gradient-to-r from-pink-600 to-orange-600 text-white font-bold border-0 hover:shadow-lg hover:shadow-pink-500/20 transition-all transform active:scale-95 px-8"
           >
             {isLoading
-              ? t('common.saving', 'Kaydediliyor...')
-              : t('common.save', 'Kaydet')}
+              ? t('productPricingGroupByManagement.saving', 'Kaydediliyor...')
+              : t('productPricingGroupByManagement.save', 'Kaydet')}
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -152,7 +152,7 @@ export function StockDetailForm({ stockId }: StockDetailFormProps): ReactElement
             {isSaving ? (
                 <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    {t('common.saving', 'Kaydediliyor...')}
+                    {t('stock.detail.saving', 'Kaydediliyor...')}
                 </>
             ) : (
                 <>

@@ -84,7 +84,7 @@ export function QuotationLineTable({
 
   const handleAddLine = (): void => {
     if ((!customerId && !erpCustomerCode) || !representativeId || !currency) {
-      toast.error(t('common.error', 'Hata'), {
+      toast.error(t('quotation.error', 'Hata'), {
         description: t('quotation.lines.requiredFieldsMissing', 'Lütfen müşteri, temsilci ve para birimi seçimlerini yapınız.'),
       });
       return;
@@ -135,7 +135,7 @@ export function QuotationLineTable({
 
   const handleProductSelect = async (product: ProductSelectionResult): Promise<void> => {
      if ((!customerId && !erpCustomerCode) || !representativeId || !currency) {
-      toast.error(t('common.error', 'Hata'), {
+      toast.error(t('quotation.error', 'Hata'), {
         description: t('quotation.lines.requiredFieldsMissing', 'Lütfen müşteri, temsilci ve para birimi seçimlerini yapınız.'),
       });
       return;
@@ -305,7 +305,7 @@ export function QuotationLineTable({
                     <TableHead className={cn(styles.tableHead, "text-center min-w-[80px]")}>{t('quotation.lines.discount2', 'İnd.2')}</TableHead>
                     <TableHead className={cn(styles.tableHead, "text-center min-w-[80px]")}>{t('quotation.lines.discount3', 'İnd.3')}</TableHead>
                     <TableHead className={cn(styles.tableHead, "text-right min-w-[120px]")}>{t('quotation.lines.netPrice', 'Tutar')}</TableHead>
-                    <TableHead className={cn(styles.tableHead, "text-center w-[100px]")}>{t('common.actions', 'İşlem')}</TableHead>
+                    <TableHead className={cn(styles.tableHead, "text-center w-[100px]")}>{t('quotation.actions', 'İşlem')}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -497,8 +497,8 @@ export function QuotationLineTable({
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="gap-2 sm:gap-0">
-            <Button variant="outline" onClick={handleDeleteCancel}>{t('common.cancel', 'Vazgeç')}</Button>
-            <Button variant="destructive" onClick={handleDeleteConfirm}>{t('common.delete', 'Sil')}</Button>
+            <Button variant="outline" onClick={handleDeleteCancel}>{t('quotation.cancel', 'İptal')}</Button>
+            <Button variant="destructive" onClick={handleDeleteConfirm}>{t('quotation.delete', 'Sil')}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

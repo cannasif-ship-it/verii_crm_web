@@ -53,9 +53,19 @@
     "titleRequired": "Ünvan seçimi gereklidir"
   },
   "delete": {
+    "action": "Sil",
     "confirmTitle": "İletişimi Sil",
     "confirmMessage": "{{name}} iletişimini silmek istediğinizden emin misiniz?"
   },
+  "loading": "Yükleniyor...",
+  "noData": "Veri yok",
+  "actions": "İşlemler",
+  "edit": "Düzenle",
+  "previous": "Önceki",
+  "next": "Sonraki",
+  "cancel": "İptal",
+  "save": "Kaydet",
+  "saving": "Kaydediliyor...",
   "messages": {
     "createSuccess": "İletişim başarıyla oluşturuldu",
     "createError": "İletişim oluşturulamadı",

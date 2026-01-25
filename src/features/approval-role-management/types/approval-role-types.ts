@@ -39,14 +39,14 @@ export interface ApprovalRoleFormData {
 export const approvalRoleFormSchema = z.object({
   approvalRoleGroupId: z
     .number()
-    .min(1, 'approvalRole.form.approvalRoleGroupId.required'),
+    .min(1, 'approvalRole.form.approvalRoleGroupIdRequired'),
   name: z
     .string()
-    .min(1, 'approvalRole.form.name.required')
-    .max(100, 'approvalRole.form.name.maxLength'),
+    .min(1, 'approvalRole.form.nameRequired')
+    .max(100, 'approvalRole.form.nameMaxLength'),
   maxAmount: z
     .number()
-    .min(0, 'approvalRole.form.maxAmount.min'),
+    .min(0, 'approvalRole.form.maxAmountMin'),
 });
 
 export type ApprovalRoleFormSchema = z.infer<typeof approvalRoleFormSchema>;

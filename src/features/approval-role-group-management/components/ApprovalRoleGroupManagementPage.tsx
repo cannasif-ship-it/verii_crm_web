@@ -123,7 +123,7 @@ export function ApprovalRoleGroupManagementPage(): ReactElement {
               </div>
               {/* Input Field */}
               <Input
-                placeholder={t('common.search', 'Ara...')}
+                placeholder={t('approvalRoleGroup.searchPlaceholder', 'Ara...')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="
@@ -150,7 +150,7 @@ export function ApprovalRoleGroupManagementPage(): ReactElement {
             <div 
               onClick={handleRefresh}
               className={`hidden md:flex items-center justify-center w-11 h-11 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 text-muted-foreground hover:text-pink-600 hover:border-pink-200 transition-all cursor-pointer ${isRefreshing ? 'animate-spin' : ''}`} 
-              title={t('common.refresh', 'Yenile')}
+              title={t('approvalRoleGroup.refresh', 'Yenile')}
             >
                <RefreshCw size={16} className="opacity-70" />
             </div>
@@ -158,7 +158,7 @@ export function ApprovalRoleGroupManagementPage(): ReactElement {
           {/* Add Button */}
           <Button 
             onClick={handleAddClick}
-            className="px-6 py-2 bg-gradient-to-r from-pink-600 to-orange-600 rounded-lg text-white text-sm font-bold shadow-lg shadow-pink-500/20 hover:scale-105 transition-transform border-0 hover:text-white"
+            className="w-full md:w-auto px-6 py-2 bg-gradient-to-r from-pink-600 to-orange-600 rounded-lg text-white text-sm font-bold shadow-lg shadow-pink-500/20 hover:scale-105 transition-transform border-0 hover:text-white"
           >
             <Plus size={18} className="mr-2" />
             {t('approvalRoleGroup.addButton', 'Yeni Grup Ekle')}

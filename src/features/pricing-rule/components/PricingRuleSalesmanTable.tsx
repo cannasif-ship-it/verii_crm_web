@@ -173,7 +173,7 @@ export function PricingRuleSalesmanTable({
     return (
       <div className="flex items-center justify-center py-12">
         <div className="text-muted-foreground">
-          {t('common.loading', 'Yükleniyor...')}
+          {t('pricingRule.loading', 'Yükleniyor...')}
         </div>
       </div>
     );
@@ -226,7 +226,7 @@ export function PricingRuleSalesmanTable({
                 <TableHead>
                   {t('pricingRule.salesmen.salesman', 'Satışçı')}
                 </TableHead>
-                <TableHead>{t('common.actions', 'İşlemler')}</TableHead>
+                <TableHead>{t('pricingRule.table.actions', 'İşlemler')}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -282,7 +282,7 @@ export function PricingRuleSalesmanTable({
               }}
               disabled={isLoadingAction}
             >
-              {t('common.cancel', 'İptal')}
+              {t('pricingRule.form.cancel', 'İptal')}
             </Button>
             <Button
               type="button"
@@ -290,12 +290,12 @@ export function PricingRuleSalesmanTable({
               disabled={isLoadingAction}
             >
               {isLoadingAction ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  {t('common.loading', 'Yükleniyor...')}
-                </>
+                <div className="flex items-center gap-2">
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  {t('pricingRule.loading', 'Yükleniyor...')}
+                </div>
               ) : (
-                t('common.confirm', 'Onayla')
+                t('pricingRule.form.confirm', 'Onayla')
               )}
             </Button>
           </DialogFooter>
@@ -324,7 +324,7 @@ export function PricingRuleSalesmanTable({
               }}
               disabled={isLoadingAction}
             >
-              {t('common.cancel', 'İptal')}
+              {t('pricingRule.form.cancel', 'İptal')}
             </Button>
             <Button
               type="button"
@@ -333,12 +333,12 @@ export function PricingRuleSalesmanTable({
               disabled={isLoadingAction}
             >
               {isLoadingAction ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  {t('common.loading', 'Yükleniyor...')}
-                </>
+                <div className="flex items-center gap-2">
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  {t('pricingRule.loading', 'Yükleniyor...')}
+                </div>
               ) : (
-                t('common.confirm', 'Onayla')
+                t('pricingRule.form.confirm', 'Onayla')
               )}
             </Button>
           </DialogFooter>

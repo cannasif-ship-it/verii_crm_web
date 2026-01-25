@@ -162,10 +162,12 @@ export const getCurrencySymbol = (currency: string | number, exchangeRates?: Arr
   return currencyData?.symbol || currencyValue;
 };
 
+import i18n from '@/lib/i18n';
+
 export const formatPrice = (price: number, currency: string | number, exchangeRates?: Array<{ dovizTipi: number; dovizIsmi: string | null }>): string => {
   const symbol = getCurrencySymbol(currency, exchangeRates);
   
-  return new Intl.NumberFormat('tr-TR', {
+  return new Intl.NumberFormat(i18n.language, {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   }).format(price) + ` ${symbol}`;

@@ -29,30 +29,29 @@ interface MainLayoutProps {
   navItems?: NavItem[];
 }
 
-// --- YARDIMCI FONKSİYONLAR ---
-const trCollator = new Intl.Collator('tr', { sensitivity: 'base', numeric: true });
-
-// Sadece alt listeleri alfabetik sıralar, ana menü dizilişini elle verdiğimiz gibi bırakır.
-const sortNavItems = (items: NavItem[]): NavItem[] => {
-  return items.map((item) => {
-    if (item.children && item.children.length > 0) {
-      // Çocukları sırala
-      const sortedChildren = [...item.children].sort((a, b) => 
-        trCollator.compare(a.title, b.title)
-      );
-      // Recursive sıralama (3. seviye için)
-      return { ...item, children: sortNavItems(sortedChildren) };
-    }
-    return item;
-  });
-};
-
 export function MainLayout({ navItems }: MainLayoutProps): ReactElement {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   const defaultNavItems: NavItem[] = useMemo(() => {
     
     const iconSize = 22;
+
+    const collator = new Intl.Collator(i18n.language, { sensitivity: 'base', numeric: true });
+
+    // Sadece alt listeleri alfabetik sıralar, ana menü dizilişini elle verdiğimiz gibi bırakır.
+    const sortNavItems = (items: NavItem[]): NavItem[] => {
+      return items.map((item) => {
+        if (item.children && item.children.length > 0) {
+          // Çocukları sırala
+          const sortedChildren = [...item.children].sort((a, b) => 
+            collator.compare(a.title, b.title)
+          );
+          // Recursive sıralama (3. seviye için)
+          return { ...item, children: sortNavItems(sortedChildren) };
+        }
+        return item;
+      });
+    };
 
     // --- TAM İSTEDİĞİN MENÜ YAPISI ---
     const logicalMenuStructure: NavItem[] = [
@@ -173,7 +172,7 @@ export function MainLayout({ navItems }: MainLayoutProps): ReactElement {
 
     // Listeleri alfabetik sırala (recursive)
     return sortNavItems(logicalMenuStructure);
-  }, [t]);
+  }, [t, i18n.language]);
 
   const items = navItems || defaultNavItems;
 

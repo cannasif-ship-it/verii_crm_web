@@ -11,7 +11,9 @@
     "actions": "İşlemler",
     "viewDetail": "Detay",
     "showing": "{{from}}-{{to}} / {{total}} gösteriliyor",
-    "page": "Sayfa {{current}} / {{total}}"
+    "page": "Sayfa {{current}} / {{total}}",
+    "previous": "Önceki",
+    "next": "Sonraki"
   },
   "detail": {
     "title": "Stok Detayı",
@@ -28,7 +30,25 @@
     "htmlDescriptionPlaceholder": "HTML açıklama giriniz",
     "htmlDescription.required": "HTML açıklama gereklidir",
     "technicalSpecs": "Teknik Özellikler (JSON)",
-    "technicalSpecsPlaceholder": "Teknik özellikler JSON formatında (opsiyonel)"
+    "technicalSpecsPlaceholder": "Teknik özellikler JSON formatında (opsiyonel)",
+    "notFound": "Stok Bulunamadı",
+    "notFoundDesc": "Aradığınız stok kaydı silinmiş veya hiç oluşturulmamış olabilir.",
+    "backToStockList": "Listeye Dön",
+    "mainInfo": "Temel Veriler",
+    "ureticiKodu": "Üretici Kodu",
+    "groupInfo": "Gruplama ve Lokasyon",
+    "branchCode": "Şube Kodu",
+    "grup": "Grup Bilgisi",
+    "specialCodes": "Özel Kodlar",
+    "kod1": "Özel Kod 1",
+    "kod2": "Özel Kod 2",
+    "kod3": "Özel Kod 3",
+    "kod4": "Özel Kod 4",
+    "kod5": "Özel Kod 5",
+    "created": "Oluşturulma",
+    "updated": "Güncellenme",
+    "copied": "Kopyalandı",
+    "copy": "Kopyala"
   },
   "images": {
     "upload": "Görselleri buraya sürükleyin veya tıklayın",
@@ -55,12 +75,20 @@
     "mandatory": "Zorunlu",
     "optional": "Opsiyonel",
     "delete": "Sil",
+    "cancel": "Vazgeç",
+    "deleting": "Siliniyor...",
     "actions": "İşlemler",
     "noRelations": "Henüz bağlı stok eklenmemiş",
+    "noRelationsDesc": "Sol taraftaki formu kullanarak yeni ilişkiler tanımlayabilirsiniz.",
     "selectStock": "Stok seçin",
     "search": "Ara...",
     "deleteConfirm": "Bağlı Stok Sil",
-    "deleteConfirmMessage": "{{name}} bağlı stokunu silmek istediğinizden emin misiniz?"
+    "deleteConfirmMessage": "{{name}} bağlı stokunu silmek istediğinizden emin misiniz?",
+    "confirmDelete": "Evet, Sil",
+    "stockCode": "Stok Kodu",
+    "stockName": "Stok Adı",
+    "noStockFound": "Stok bulunamadı",
+    "saving": "İşleniyor..."
   },
   "messages": {
     "detailCreateSuccess": "Stok detayı başarıyla oluşturuldu",

@@ -5,6 +5,9 @@
     "empty": "No pending approvals",
     "error": "An error occurred while loading approvals"
   },
+  "yes": "Yes",
+  "no": "No",
+  "processing": "Processing...",
   "detail": {
     "title": "Quotation Detail",
     "description": "View quotation details and perform actions",

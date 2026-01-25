@@ -44,7 +44,7 @@ export function ApprovalRoleTable({
   onPageChange,
   onSortChange,
 }: ApprovalRoleTableProps): ReactElement {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedRole, setSelectedRole] = useState<ApprovalRoleDto | null>(null);
 
@@ -90,7 +90,7 @@ export function ApprovalRoleTable({
     return (
       <div className={`flex flex-col items-center justify-center py-24 gap-4 border ${borderClass} rounded-xl bg-white/50 dark:bg-card/50`}>
         <div className="w-10 h-10 border-4 border-muted border-t-pink-500 rounded-full animate-spin" />
-        <span className="text-muted-foreground animate-pulse text-sm font-medium">{t('common.loading', 'Yükleniyor...')}</span>
+        <span className="text-muted-foreground animate-pulse text-sm font-medium">{t('approvalRole.loading', 'Yükleniyor...')}</span>
       </div>
     );
   }
@@ -101,7 +101,7 @@ export function ApprovalRoleTable({
     return (
       <div className={`flex flex-col items-center justify-center py-24 text-muted-foreground border ${borderClass} border-dashed rounded-xl bg-white/50 dark:bg-card/50`}>
         <ShieldCheck size={40} className="opacity-40 mb-2" />
-        <p className="text-sm font-medium">{t('common.noData', 'Veri yok')}</p>
+        <p className="text-sm font-medium">{t('approvalRole.noData', 'Veri yok')}</p>
       </div>
     );
   }
@@ -152,7 +152,7 @@ export function ApprovalRoleTable({
               {t('approvalRole.table.createdBy', 'Oluşturan Kullanıcı')}
             </TableHead>
             <TableHead className={`text-right py-4 px-4 text-xs font-bold uppercase tracking-wider text-zinc-900 dark:text-foreground/90 border-b border-zinc-300 dark:border-zinc-700`}>
-              {t('common.actions', 'İşlemler')}
+              {t('approvalRole.table.actions', 'İşlemler')}
             </TableHead>
           </TableRow>
         </TableHeader>
@@ -172,13 +172,13 @@ export function ApprovalRoleTable({
                 {role.name || '-'}
               </TableCell>
               <TableCell className={`text-sm text-foreground/80 border-b border-r ${borderClass} px-4 py-3`}>
-                {new Intl.NumberFormat('tr-TR', {
+                {new Intl.NumberFormat(i18n.language, {
                   style: 'currency',
                   currency: 'TRY',
                 }).format(role.maxAmount || 0)}
               </TableCell>
               <TableCell className={`text-sm text-muted-foreground border-b border-r ${borderClass} px-4 py-3`}>
-                 {role.createdDate ? new Date(role.createdDate).toLocaleDateString('tr-TR') : '-'}
+                 {role.createdDate ? new Date(role.createdDate).toLocaleDateString(i18n.language) : '-'}
               </TableCell>
               <TableCell className={`text-sm text-muted-foreground border-b border-r ${borderClass} px-4 py-3`}>
                 {role.createdByFullUser || role.createdByFullName || role.createdBy || '-'}
@@ -210,7 +210,7 @@ export function ApprovalRoleTable({
 
       <div className={`flex flex-col md:flex-row items-center justify-between px-6 py-4 bg-zinc-50/50 dark:bg-muted/20 border-t-0 rounded-b-xl gap-4 border-x border-b ${borderClass}`}>
         <div className="text-xs text-muted-foreground font-medium">
-            Toplam <span className="font-bold text-foreground">{data?.totalCount || 0}</span> kayıt.
+            <span dangerouslySetInnerHTML={{ __html: t('approvalRole.table.totalRecords', 'Toplam <span class="font-bold text-foreground">{{count}}</span> kayıt.', { count: data?.totalCount || 0 }).replace('{{count}}', `<span class="font-bold text-foreground">${data?.totalCount || 0}</span>`) }} />
         </div>
         
         <div className="flex items-center gap-3">
@@ -221,11 +221,11 @@ export function ApprovalRoleTable({
             onClick={() => onPageChange(pageNumber - 1)}
             disabled={pageNumber <= 1}
           >
-            {t('common.previous', 'Önceki')}
+            {t('approvalRole.table.previous', 'Önceki')}
           </Button>
           
           <div className={`text-xs font-bold bg-white dark:bg-background px-3 py-1.5 rounded-md min-w-[3rem] text-center border ${borderClass}`}>
-            {pageNumber} / {totalPages}
+            {t('approvalRole.table.page', 'Sayfa {{current}} / {{total}}', { current: pageNumber, total: totalPages })}
           </div>
 
           <Button
@@ -235,7 +235,7 @@ export function ApprovalRoleTable({
             onClick={() => onPageChange(pageNumber + 1)}
             disabled={pageNumber >= totalPages}
           >
-            {t('common.next', 'Sonraki')}
+            {t('approvalRole.table.next', 'Sonraki')}
           </Button>
         </div>
       </div>
@@ -247,10 +247,10 @@ export function ApprovalRoleTable({
                <Trash2 className="w-6 h-6 text-red-600 dark:text-red-500" />
              </div>
              <DialogTitle className="text-center text-xl font-bold text-zinc-900 dark:text-zinc-100">
-               {t('common.deleteConfirmTitle', 'Silme İşlemi')}
+               {t('approvalRole.delete.confirmTitle', 'Silme İşlemi')}
              </DialogTitle>
              <DialogDescription className="text-center text-zinc-500 dark:text-zinc-400">
-               {t('common.deleteConfirmDescription', 'Bu kaydı silmek istediğinize emin misiniz? Bu işlem geri alınamaz.')}
+               {t('approvalRole.delete.confirmMessage', 'Bu kaydı silmek istediğinize emin misiniz? Bu işlem geri alınamaz.')}
              </DialogDescription>
            </DialogHeader>
            <DialogFooter className="flex flex-col-reverse sm:flex-row gap-2 mt-6">
@@ -259,7 +259,7 @@ export function ApprovalRoleTable({
                onClick={() => setDeleteDialogOpen(false)}
                className="flex-1 bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300"
              >
-               {t('common.cancel', 'İptal')}
+               {t('approvalRole.delete.cancelButton', 'İptal')}
              </Button>
              <Button
                variant="destructive"
@@ -267,7 +267,7 @@ export function ApprovalRoleTable({
                disabled={deleteRole.isPending}
                className="flex-1 bg-red-600 hover:bg-red-700 text-white shadow-lg shadow-red-500/20"
              >
-               {deleteRole.isPending ? t('common.deleting', 'Siliniyor...') : t('common.delete', 'Sil')}
+               {deleteRole.isPending ? t('approvalRole.delete.deleting', 'Siliniyor...') : t('approvalRole.delete.confirmButton', 'Sil')}
              </Button>
            </DialogFooter>
         </DialogContent>

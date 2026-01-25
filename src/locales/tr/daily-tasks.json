@@ -28,5 +28,15 @@
   "putOnHold": "Bekletmeye Al",
   "complete": "Tamamla",
   "more": "daha fazla",
-  "today": "Bugün"
+  "today": "Bugün",
+  "loading": "Yükleniyor...",
+  "days": {
+    "mon": "Pzt",
+    "tue": "Sal",
+    "wed": "Çar",
+    "thu": "Per",
+    "fri": "Cum",
+    "sat": "Cmt",
+    "sun": "Paz"
+  }
 }

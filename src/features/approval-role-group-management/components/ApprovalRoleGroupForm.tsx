@@ -126,7 +126,7 @@ export function ApprovalRoleGroupForm({
                   disabled={isLoading}
                   className="border-zinc-200 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300"
                 >
-                  {t('common.cancel', 'İptal')}
+                  {t('approvalRoleGroup.cancel', 'İptal')}
                 </Button>
                 <Button 
                   type="submit" 
@@ -134,8 +134,8 @@ export function ApprovalRoleGroupForm({
                   className="bg-gradient-to-r from-pink-600 to-orange-600 hover:from-pink-700 hover:to-orange-700 text-white shadow-lg shadow-pink-500/20 border-0"
                 >
                   {isLoading
-                    ? t('common.saving', 'Kaydediliyor...')
-                    : t('common.save', 'Kaydet')}
+                    ? t('approvalRoleGroup.saving', 'Kaydediliyor...')
+                    : t('approvalRoleGroup.save', 'Kaydet')}
                 </Button>
               </div>
             </form>

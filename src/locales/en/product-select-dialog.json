@@ -5,5 +5,6 @@
   "noProducts": "No products found",
   "noResults": "No search results found",
   "searchPlaceholder": "Search by product code or name...",
-  "voiceSearch": "Voice search"
+  "voiceSearch": "Voice search",
+  "loading": "Loading"
 }

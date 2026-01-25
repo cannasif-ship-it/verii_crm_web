@@ -238,7 +238,7 @@ export function StockImageUpload({ stockId }: StockImageUploadProps): ReactEleme
                 {uploadImages.isPending || uploading ? (
                     <>
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        {t('common.uploading', 'Yükleniyor...')}
+                        {t('stock.images.uploading', 'Yükleniyor...')}
                     </>
                 ) : (
                     <>

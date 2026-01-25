@@ -171,7 +171,7 @@ export function CustomerSelectDialog({
   onOpenChange,
   onSelect,
 }: CustomerSelectDialogProps): ReactElement {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [activeTab, setActiveTab] = useState('erp');
   const [searchQuery, setSearchQuery] = useState('');
   const [isListening, setIsListening] = useState(false);
@@ -186,7 +186,15 @@ export function CustomerSelectDialog({
         const recognition = new SpeechRecognition();
         recognition.continuous = false;
         recognition.interimResults = false;
-        recognition.lang = 'tr-TR';
+        
+        // Dil ayarını i18n'den al
+        const langMap: Record<string, string> = {
+          'tr': 'tr-TR',
+          'en': 'en-US',
+          'de': 'de-DE',
+          'fr': 'fr-FR'
+        };
+        recognition.lang = langMap[i18n.language] || 'tr-TR';
 
         recognition.onresult = (event: SpeechRecognitionEvent) => {
           const transcript = event.results[0][0].transcript;
@@ -306,8 +314,8 @@ export function CustomerSelectDialog({
       });
     });
 
-    return combined.sort((a, b) => a.name.localeCompare(b.name, 'tr'));
-  }, [filteredErpCustomers, filteredCrmCustomers]);
+    return combined.sort((a, b) => a.name.localeCompare(b.name, i18n.language));
+  }, [filteredErpCustomers, filteredCrmCustomers, i18n.language]);
 
   const handleCustomerSelect = (customer: {
     type: 'erp' | 'crm';
@@ -333,7 +341,7 @@ export function CustomerSelectDialog({
       return (
         <div className="flex items-center justify-center py-12">
           <div className="text-muted-foreground">
-            {t('common.loading', 'Yükleniyor...')}
+            {t('customerSelectDialog.loading', 'Yükleniyor...')}
           </div>
         </div>
       );
@@ -375,7 +383,7 @@ export function CustomerSelectDialog({
       return (
         <div className="flex items-center justify-center py-12">
           <div className="text-muted-foreground">
-            {t('common.loading', 'Yükleniyor...')}
+            {t('customerSelectDialog.loading', 'Yükleniyor...')}
           </div>
         </div>
       );
@@ -417,7 +425,7 @@ export function CustomerSelectDialog({
       return (
         <div className="flex items-center justify-center py-12">
           <div className="text-muted-foreground">
-            {t('common.loading', 'Yükleniyor...')}
+            {t('customerSelectDialog.loading', 'Yükleniyor...')}
           </div>
         </div>
       );

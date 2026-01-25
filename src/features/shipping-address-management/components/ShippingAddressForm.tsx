@@ -427,7 +427,7 @@ export function ShippingAddressForm({
                   disabled={isLoading}
                   className="h-10 px-4 rounded-lg border-slate-200 dark:border-white/10 hover:bg-slate-50 dark:hover:bg-white/5 text-slate-700 dark:text-slate-300"
                 >
-                  {t('common.cancel', 'İptal')}
+                  {t('shippingAddressManagement.cancel', 'İptal')}
                 </Button>
                 <Button 
                   type="submit" 
@@ -435,8 +435,8 @@ export function ShippingAddressForm({
                   className="h-10 px-6 rounded-lg bg-gradient-to-r from-pink-600 to-orange-600 hover:from-pink-700 hover:to-orange-700 text-white font-medium shadow-lg shadow-pink-500/20 border-0"
                 >
                   {isLoading
-                    ? t('common.saving', 'Kaydediliyor...')
-                    : t('common.save', 'Kaydet')}
+                    ? t('shippingAddressManagement.saving', 'Kaydediliyor...')
+                    : t('shippingAddressManagement.save', 'Kaydet')}
                 </Button>
               </div>
             </form>

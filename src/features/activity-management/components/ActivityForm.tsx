@@ -313,7 +313,7 @@ export function ActivityForm({
                 const displayValue = selectedCustomer 
                   ? selectedCustomer.name 
                   : watchedErpCode 
-                    ? `ERP: ${watchedErpCode}` 
+                    ? t('activityManagement.erpLabel', { code: watchedErpCode }) 
                     : '';
 
                 return (
@@ -395,7 +395,7 @@ export function ActivityForm({
               render={({ field }) => {
                 const watchedProductName = form.watch('productName');
                 const displayValue = field.value && watchedProductName
-                  ? `${field.value} - ${watchedProductName}`
+                  ? t('activityManagement.productDisplay', { code: field.value, name: watchedProductName })
                   : field.value || watchedProductName || '';
 
                 return (
@@ -582,12 +582,12 @@ export function ActivityForm({
                 onClick={() => onOpenChange(false)}
                 disabled={isLoading}
               >
-                {t('common.cancel', 'İptal')}
+                {t('activityManagement.cancel', 'İptal')}
               </Button>
               <Button type="submit" disabled={isLoading}>
                 {isLoading
-                  ? t('common.saving', 'Kaydediliyor...')
-                  : t('common.save', 'Kaydet')}
+                  ? t('activityManagement.saving', 'Kaydediliyor...')
+                  : t('activityManagement.save', 'Kaydet')}
               </Button>
             </DialogFooter>
           </form>

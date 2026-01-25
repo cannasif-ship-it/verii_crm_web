@@ -16,10 +16,10 @@ interface QuotationDetailViewProps {
 }
 
 export function QuotationDetailView({ quotation }: QuotationDetailViewProps): ReactElement {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   const formatCurrency = (amount: number, currency: string): string => {
-    return new Intl.NumberFormat('tr-TR', {
+    return new Intl.NumberFormat(i18n.language, {
       style: 'currency',
       currency: currency || 'TRY',
     }).format(amount);
@@ -27,7 +27,7 @@ export function QuotationDetailView({ quotation }: QuotationDetailViewProps): Re
 
   const formatDate = (dateString: string | null | undefined): string => {
     if (!dateString) return '-';
-    return new Date(dateString).toLocaleDateString('tr-TR', {
+    return new Date(dateString).toLocaleDateString(i18n.language, {
       year: 'numeric',
       month: 'long',
       day: 'numeric',
@@ -178,7 +178,7 @@ export function QuotationDetailView({ quotation }: QuotationDetailViewProps): Re
                       <TableCell>{rate.currency}</TableCell>
                       <TableCell className="text-right">{rate.exchangeRate}</TableCell>
                       <TableCell>{formatDate(rate.exchangeRateDate)}</TableCell>
-                      <TableCell>{rate.isOfficial ? t('common.yes', 'Evet') : t('common.no', 'Hayır')}</TableCell>
+                      <TableCell>{rate.isOfficial ? t('approval.yes', 'Evet') : t('approval.no', 'Hayır')}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>

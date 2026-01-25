@@ -207,20 +207,20 @@ export function ProductPricingManagementPage(): ReactElement {
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{t('common.deleteConfirmTitle', 'Silme Onayı')}</DialogTitle>
+            <DialogTitle>{t('productPricingManagement.deleteConfirmTitle', 'Silme Onayı')}</DialogTitle>
             <DialogDescription>
-              {t('common.deleteConfirmMessage', 'Bu kaydı silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.')}
+              {t('productPricingManagement.deleteConfirmMessage', 'Bu kaydı silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.')}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <Button variant="outline" onClick={() => setDeleteDialogOpen(false)}>
-              {t('common.cancel', 'İptal')}
+              {t('productPricingManagement.cancel', 'İptal')}
             </Button>
             <Button
               variant="destructive"
               onClick={handleDeleteConfirm}
             >
-              {t('common.delete', 'Sil')}
+              {t('productPricingManagement.delete', 'Sil')}
             </Button>
           </DialogFooter>
         </DialogContent>

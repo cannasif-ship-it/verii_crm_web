@@ -127,7 +127,7 @@ export function PaymentTypeManagementPage(): ReactElement {
 
               {/* Input Alanı */}
               <Input
-                placeholder={t('common.search', 'Ara...')}
+                placeholder={t('paymentTypeManagement.search', 'Ara...')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="
@@ -155,7 +155,7 @@ export function PaymentTypeManagementPage(): ReactElement {
             <div 
               onClick={handleRefresh}
               className={`hidden md:flex items-center justify-center w-11 h-11 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 text-muted-foreground hover:text-pink-600 hover:border-pink-200 transition-all cursor-pointer ${isRefreshing ? 'animate-spin' : ''}`} 
-              title={t('common.refresh', 'Yenile')}
+              title={t('paymentTypeManagement.refresh', 'Yenile')}
             >
                <RefreshCw size={16} className="opacity-70" />
             </div>

@@ -60,7 +60,7 @@ export function StockDetailPage(): ReactElement {
             </div>
         </div>
         <div className="space-y-2">
-            <h2 className="text-2xl font-bold text-zinc-900 dark:text-white">{t('common.notFound', 'Stok Bulunamadı')}</h2>
+            <h2 className="text-2xl font-bold text-zinc-900 dark:text-white">{t('stock.detail.notFound', 'Stok Bulunamadı')}</h2>
             <p className="text-zinc-500 dark:text-zinc-400 max-w-md mx-auto">
                 {t('stock.detail.notFoundDesc', 'Aradığınız stok kaydı silinmiş veya hiç oluşturulmamış olabilir.')}
             </p>
@@ -69,7 +69,7 @@ export function StockDetailPage(): ReactElement {
             onClick={() => navigate('/stocks')}
             className="bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 hover:bg-zinc-800 dark:hover:bg-zinc-200 rounded-full px-8"
         >
-            {t('common.backToStockList', 'Listeye Dön')}
+            {t('stock.detail.backToStockList', 'Listeye Dön')}
         </Button>
       </div>
     );
@@ -175,7 +175,7 @@ export function StockDetailPage(): ReactElement {
                                     <div className="w-full border-t border-zinc-200 dark:border-white/10"></div>
                                 </div>
                                 <div className="relative flex justify-center">
-                                    <span className="px-3 bg-white/0 text-sm text-muted-foreground bg-white dark:bg-[#1a1025]">{t('common.gallery', 'Galeri')}</span>
+                                    <span className="px-3 bg-white/0 text-sm text-muted-foreground bg-white dark:bg-[#1a1025]">{t('stock.detail.gallery', 'Galeri')}</span>
                                 </div>
                             </div>
                             <StockImageList stockId={stockId} />

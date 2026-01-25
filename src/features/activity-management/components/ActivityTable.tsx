@@ -48,7 +48,7 @@ export function ActivityTable({
   onPageChange,
   onSortChange,
 }: ActivityTableProps): ReactElement {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedActivity, setSelectedActivity] = useState<ActivityDto | null>(null);
   const { data: customerOptions = [] } = useCustomerOptions();
@@ -191,7 +191,7 @@ export function ActivityTable({
     return (
       <div className="flex items-center justify-center py-8">
         <div className="text-muted-foreground">
-          {t('common.loading', 'Yükleniyor...')}
+          {t('activityManagement.loading', 'Yükleniyor...')}
         </div>
       </div>
     );
@@ -222,7 +222,7 @@ export function ActivityTable({
                 onClick={() => handleSort('Id')}
               >
                 <div className="flex items-center">
-                  {t('activityManagement.table.id', 'ID')}
+                  {t('activityManagement.id', 'ID')}
                   <SortIcon column="Id" />
                 </div>
               </TableHead>
@@ -306,11 +306,11 @@ export function ActivityTable({
                 </TableCell>
                 <TableCell>
                   {activity.activityDate
-                    ? new Date(activity.activityDate).toLocaleDateString('tr-TR')
+                    ? new Date(activity.activityDate).toLocaleDateString(i18n.language)
                     : '-'}
                 </TableCell>
                 <TableCell>
-                  {new Date(activity.createdDate).toLocaleDateString('tr-TR')}
+                  {new Date(activity.createdDate).toLocaleDateString(i18n.language)}
                 </TableCell>
                 <TableCell className="text-right">
                   <div className="flex justify-end gap-2">
@@ -353,7 +353,7 @@ export function ActivityTable({
                       size="sm"
                       onClick={() => onEdit(activity)}
                     >
-                      {t('common.edit', 'Düzenle')}
+                      {t('activityManagement.editButton', 'Düzenle')}
                     </Button>
                     <Button
                       variant="destructive"
@@ -385,7 +385,7 @@ export function ActivityTable({
             onClick={() => onPageChange(pageNumber - 1)}
             disabled={pageNumber <= 1}
           >
-            {t('common.previous', 'Önceki')}
+            {t('activityManagement.previous', 'Önceki')}
           </Button>
           <div className="flex items-center px-4 text-sm">
             {t('activityManagement.table.page', 'Sayfa {{current}} / {{total}}', {
@@ -399,7 +399,7 @@ export function ActivityTable({
             onClick={() => onPageChange(pageNumber + 1)}
             disabled={pageNumber >= totalPages}
           >
-            {t('common.next', 'Sonraki')}
+            {t('activityManagement.next', 'Sonraki')}
           </Button>
         </div>
       </div>
@@ -420,7 +420,7 @@ export function ActivityTable({
               onClick={() => setDeleteDialogOpen(false)}
               disabled={deleteActivity.isPending}
             >
-              {t('common.cancel', 'İptal')}
+              {t('activityManagement.cancel', 'İptal')}
             </Button>
             <Button
               variant="destructive"
@@ -428,7 +428,7 @@ export function ActivityTable({
               disabled={deleteActivity.isPending}
             >
               {deleteActivity.isPending
-                ? t('common.loading', 'Yükleniyor...')
+                ? t('activityManagement.loading', 'Yükleniyor...')
                 : t('activityManagement.delete', 'Sil')}
             </Button>
           </DialogFooter>

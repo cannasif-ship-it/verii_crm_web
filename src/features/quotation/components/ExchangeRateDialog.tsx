@@ -127,7 +127,7 @@ export function ExchangeRateDialog({
           {isLoading ? (
             <div className="flex flex-col items-center justify-center py-12 gap-3 text-muted-foreground">
               <RefreshCw className="h-8 w-8 animate-spin text-zinc-300" />
-              <span className="text-sm font-medium">{t('common.loading', 'Kurlar yükleniyor...')}</span>
+              <span className="text-sm font-medium">{t('quotation.loading', 'Kurlar yükleniyor...')}</span>
             </div>
           ) : (
             <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 overflow-hidden shadow-sm bg-white dark:bg-zinc-900/20">
@@ -137,7 +137,7 @@ export function ExchangeRateDialog({
                     <TableHead className={cn(styles.tableHead, "pl-6")}>{t('quotation.exchangeRates.currency', 'Para Birimi')}</TableHead>
                     <TableHead className={cn(styles.tableHead, "text-right")}>{t('quotation.exchangeRates.rate', 'Kur Değeri')}</TableHead>
                     <TableHead className={cn(styles.tableHead, "text-center")}>{t('quotation.exchangeRates.status', 'Durum')}</TableHead>
-                    <TableHead className={cn(styles.tableHead, "text-center w-[100px]")}>{t('common.actions', 'İşlem')}</TableHead>
+                    <TableHead className={cn(styles.tableHead, "text-center w-[100px]")}>{t('quotation.actions', 'İşlemler')}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -231,7 +231,7 @@ export function ExchangeRateDialog({
                                 }}
                                 className={cn(styles.actionButton, "text-zinc-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20")}
                                 disabled={isUsed}
-                                title={isUsed ? t('quotation.exchangeRates.cannotEditUsedCurrency') : t('common.edit')}
+                                title={isUsed ? t('quotation.exchangeRates.cannotEditUsedCurrency') : t('quotation.edit')}
                               >
                                 <Edit2 className="h-4 w-4" />
                               </Button>
@@ -260,7 +260,7 @@ export function ExchangeRateDialog({
             onClick={handleCancel}
             className="rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 border-zinc-200 dark:border-zinc-700"
           >
-            {t('common.cancel', 'Vazgeç')}
+            {t('quotation.cancel', 'Vazgeç')}
           </Button>
           <Button 
             type="button" 
@@ -268,7 +268,7 @@ export function ExchangeRateDialog({
             disabled={isLoading}
             className="rounded-lg bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white shadow-md hover:shadow-lg transition-all border-0"
           >
-            {t('common.save', 'Kaydet ve Uygula')}
+            {t('quotation.saveAndApply', 'Kaydet ve Uygula')}
           </Button>
         </DialogFooter>
       </DialogContent>

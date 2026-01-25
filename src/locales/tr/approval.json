@@ -5,9 +5,12 @@
     "empty": "Bekleyen onay bulunmuyor",
     "error": "Onaylar yüklenirken bir hata oluştu"
   },
+  "yes": "Evet",
+  "no": "Hayır",
+  "processing": "İşleniyor...",
   "detail": {
     "title": "Teklif Detayı",
-    "description": "Teklif detaylarını görüntüleyin ve işlem yapın",
+    "subtitle": "Teklif detaylarını görüntüleyin ve işlem yapın",
     "tabs": {
       "detail": "Detay",
       "history": "Geçmiş",

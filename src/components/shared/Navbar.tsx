@@ -6,6 +6,7 @@ import { useAuthStore } from '@/stores/auth-store';
 import { useUIStore } from '@/stores/ui-store';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { NotificationIcon } from '@/features/notification/components/NotificationIcon';
+import { LanguageSwitcher } from './LanguageSwitcher';
 import { UserDetailDialog } from '@/features/user-detail-management/components/UserDetailDialog';
 import { useUserDetailByUserId } from '@/features/user-detail-management/hooks/useUserDetailByUserId';
 import { getImageUrl } from '@/features/user-detail-management/utils/image-url';
@@ -81,6 +82,7 @@ export function Navbar(): ReactElement {
 
         <div className="flex items-center gap-6">
           <div className="flex items-center gap-4">
+            <LanguageSwitcher />
             <div className="relative p-2 rounded-full hover:bg-accent transition-colors group cursor-pointer text-muted-foreground hover:text-foreground flex items-center justify-center">
                <NotificationIcon />
             </div>

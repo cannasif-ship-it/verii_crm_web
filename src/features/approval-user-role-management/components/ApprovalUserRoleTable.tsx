@@ -44,7 +44,7 @@ export function ApprovalUserRoleTable({
   onPageChange,
   onSortChange,
 }: ApprovalUserRoleTableProps): ReactElement {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedUserRole, setSelectedUserRole] = useState<ApprovalUserRoleDto | null>(null);
 
@@ -96,7 +96,7 @@ export function ApprovalUserRoleTable({
         <div className="flex flex-col items-center gap-2">
           <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-current text-pink-500" />
           <div className="text-sm text-muted-foreground animate-pulse">
-            {t('common.loading', 'Yükleniyor...')}
+            {t('approvalUserRole.loading', 'Yükleniyor...')}
           </div>
         </div>
       </div>
@@ -110,7 +110,7 @@ export function ApprovalUserRoleTable({
       <div className="flex items-center justify-center py-12">
         <div className="text-muted-foreground bg-slate-50 dark:bg-white/5 px-6 py-4 rounded-xl border border-dashed border-slate-200 dark:border-white/10 flex flex-col items-center gap-2">
           <ShieldCheck size={40} className="opacity-20" />
-          <span>{t('common.noData', 'Veri yok')}</span>
+          <span>{t('approvalUserRole.noData', 'Veri yok')}</span>
         </div>
       </div>
     );
@@ -158,7 +158,7 @@ export function ApprovalUserRoleTable({
                 {t('approvalUserRole.table.createdBy', 'Oluşturan Kullanıcı')}
               </TableHead>
               <TableHead className="text-right text-slate-500 dark:text-slate-400 py-4">
-                {t('common.actions', 'İşlemler')}
+                {t('approvalUserRole.table.actions', 'İşlemler')}
               </TableHead>
             </TableRow>
           </TableHeader>
@@ -178,7 +178,7 @@ export function ApprovalUserRoleTable({
                   {userRole.approvalRoleName || '-'}
                 </TableCell>
                 <TableCell className="text-slate-600 dark:text-slate-400 text-sm">
-                  {new Date(userRole.createdDate).toLocaleDateString('tr-TR')}
+                  {new Date(userRole.createdDate).toLocaleDateString(i18n.language)}
                 </TableCell>
                 <TableCell className="text-slate-600 dark:text-slate-400">
                   {userRole.createdByFullUser || userRole.createdByFullName || userRole.createdBy || '-'}
@@ -225,7 +225,7 @@ export function ApprovalUserRoleTable({
             disabled={pageNumber <= 1}
             className="bg-white dark:bg-transparent border-slate-200 dark:border-white/10 hover:bg-slate-50 dark:hover:bg-white/5"
           >
-            {t('common.previous', 'Önceki')}
+            {t('approvalUserRole.table.previous', 'Önceki')}
           </Button>
           <div className="flex items-center px-4 text-sm font-medium text-slate-700 dark:text-slate-200">
             {t('approvalUserRole.table.page', 'Sayfa {{current}} / {{total}}', {
@@ -240,7 +240,7 @@ export function ApprovalUserRoleTable({
             disabled={pageNumber >= totalPages}
             className="bg-white dark:bg-transparent border-slate-200 dark:border-white/10 hover:bg-slate-50 dark:hover:bg-white/5"
           >
-            {t('common.next', 'Sonraki')}
+            {t('approvalUserRole.table.next', 'Sonraki')}
           </Button>
         </div>
       </div>
@@ -249,10 +249,10 @@ export function ApprovalUserRoleTable({
         <DialogContent className="bg-white dark:bg-[#130822] border border-slate-100 dark:border-white/10 text-slate-900 dark:text-white sm:rounded-2xl">
           <DialogHeader>
             <DialogTitle className="text-slate-900 dark:text-white">
-              {t('approvalUserRole.deleteTitle', 'Rolü Sil')}
+              {t('approvalUserRole.delete.title', 'Rolü Sil')}
             </DialogTitle>
             <DialogDescription className="text-slate-500 dark:text-slate-400">
-              {t('approvalUserRole.confirmDelete', 'Bu kullanıcı rolünü silmek istediğinizden emin misiniz?')}
+              {t('approvalUserRole.delete.confirmMessage', 'Bu kullanıcı rolünü silmek istediğinizden emin misiniz?')}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="gap-2 sm:gap-0">
@@ -262,7 +262,7 @@ export function ApprovalUserRoleTable({
               disabled={deleteUserRole.isPending}
               className="bg-white dark:bg-transparent border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/5"
             >
-              {t('common.cancel', 'İptal')}
+              {t('approvalUserRole.delete.cancelButton', 'İptal')}
             </Button>
             <Button
               variant="destructive"
@@ -271,8 +271,8 @@ export function ApprovalUserRoleTable({
               className="bg-red-600 hover:bg-red-700 dark:bg-red-900/50 dark:hover:bg-red-900/70 border border-transparent dark:border-red-500/20 text-white"
             >
               {deleteUserRole.isPending
-                ? t('common.loading', 'Yükleniyor...')
-                : t('common.delete', 'Sil')}
+                ? t('approvalUserRole.loading', 'Yükleniyor...')
+                : t('approvalUserRole.delete.confirmButton', 'Sil')}
             </Button>
           </DialogFooter>
         </DialogContent>

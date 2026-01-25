@@ -2,6 +2,11 @@
   "menu": "Müşteri Tipi Yönetimi",
   "description": "Müşteri tiplerini yönetin ve düzenleyin",
   "addButton": "Yeni Müşteri Tipi Ekle",
+  "loading": "Yükleniyor...",
+  "noData": "Veri bulunamadı",
+  "actions": "İşlemler",
+  "previous": "Önceki",
+  "next": "Sonraki",
   "stats": {
     "totalCustomerTypes": "Toplam Müşteri Tipi",
     "activeCustomerTypes": "Aktif Müşteri Tipi",
@@ -29,11 +34,16 @@
     "nameMaxLength": "Müşteri tipi adı en fazla 100 karakter olabilir",
     "description": "Açıklama",
     "descriptionPlaceholder": "Açıklama girin (opsiyonel)",
-    "descriptionMaxLength": "Açıklama en fazla 500 karakter olabilir"
+    "descriptionMaxLength": "Açıklama en fazla 500 karakter olabilir",
+    "cancel": "İptal",
+    "save": "Kaydet",
+    "saving": "Kaydediliyor..."
   },
   "delete": {
     "confirmTitle": "Müşteri Tipini Sil",
-    "confirmMessage": "{{name}} müşteri tipini silmek istediğinizden emin misiniz?"
+    "confirmMessage": "{{name}} müşteri tipini silmek istediğinizden emin misiniz?",
+    "confirmButton": "Sil",
+    "deleting": "Siliniyor..."
   },
   "messages": {
     "createSuccess": "Müşteri tipi başarıyla oluşturuldu",

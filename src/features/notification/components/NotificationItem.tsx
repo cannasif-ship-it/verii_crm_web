@@ -1,4 +1,5 @@
 import { type ReactElement } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { FileText, Receipt, Package, Headphones, Info } from 'lucide-react'; // İkon seti
 import type { NotificationDto } from '../types/notification';
@@ -11,6 +12,7 @@ interface NotificationItemProps {
 }
 
 export function NotificationItem({ notification }: NotificationItemProps): ReactElement {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { markAsRead: markAsReadStore, addMarkedAsReadId } = useNotificationStore();
 
@@ -113,7 +115,7 @@ export function NotificationItem({ notification }: NotificationItemProps): React
         {!notification.isRead && (
             <div 
                 className="w-2 h-2 rounded-full bg-pink-500 shrink-0 mt-1.5 shadow-[0_0_8px_rgba(236,72,153,0.5)]" 
-                title="Okunmadı"
+                title={t('notification.unread')}
                 onClick={handleMarkAsRead} // Sadece noktaya basınca okundu yap
             />
         )}

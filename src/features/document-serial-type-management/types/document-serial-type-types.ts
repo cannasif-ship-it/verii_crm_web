@@ -56,7 +56,7 @@ export interface DocumentSerialTypeFormData {
 export const documentSerialTypeFormSchema = z.object({
   ruleType: z
     .number()
-    .min(1, 'documentSerialType.form.ruleType.required'),
+    .min(1, 'documentSerialTypeManagement.form.ruleType.required'),
   customerTypeId: z
     .number()
     .nullable()
@@ -67,21 +67,21 @@ export const documentSerialTypeFormSchema = z.object({
     .optional(),
   serialPrefix: z
     .string()
-    .min(1, 'documentSerialType.form.serialPrefix.required')
-    .max(50, 'documentSerialType.form.serialPrefix.maxLength'),
+    .min(1, 'documentSerialTypeManagement.form.serialPrefix.required')
+    .max(50, 'documentSerialTypeManagement.form.serialPrefix.maxLength'),
   serialLength: z
     .number()
-    .min(1, 'documentSerialType.form.serialLength.min')
-    .max(100, 'documentSerialType.form.serialLength.max'),
+    .min(1, 'documentSerialTypeManagement.form.serialLength.min')
+    .max(100, 'documentSerialTypeManagement.form.serialLength.max'),
   serialStart: z
     .number()
-    .min(0, 'documentSerialType.form.serialStart.min'),
+    .min(0, 'documentSerialTypeManagement.form.serialStart.min'),
   serialCurrent: z
     .number()
-    .min(0, 'documentSerialType.form.serialCurrent.min'),
+    .min(0, 'documentSerialTypeManagement.form.serialCurrent.min'),
   serialIncrement: z
     .number()
-    .min(1, 'documentSerialType.form.serialIncrement.min'),
+    .min(1, 'documentSerialTypeManagement.form.serialIncrement.min'),
 });
 
 export type DocumentSerialTypeFormSchema = z.infer<typeof documentSerialTypeFormSchema>;

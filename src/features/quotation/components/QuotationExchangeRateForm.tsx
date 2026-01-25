@@ -111,7 +111,7 @@ export function QuotationExchangeRateForm({
               onValueChange={(value) => setNewDovizTipi(parseInt(value, 10))}
             >
               <SelectTrigger className={styles.inputBase}>
-                <SelectValue placeholder={t('common.select', 'Seçiniz')} />
+                <SelectValue placeholder={t('quotation.select', 'Seçiniz')} />
               </SelectTrigger>
               <SelectContent>
                 {currencyOptions
@@ -182,7 +182,7 @@ export function QuotationExchangeRateForm({
               className="h-10 px-4 rounded-xl bg-gradient-to-r from-pink-600 to-orange-600 hover:from-pink-700 hover:to-orange-700 text-white shadow-md hover:shadow-lg transition-all border-0 flex-1 font-bold"
             >
               <Plus className="h-4 w-4 mr-1.5" />
-              {t('common.add', 'Ekle')}
+              {t('quotation.add', 'Ekle')}
             </Button>
           </div>
         </div>
@@ -198,7 +198,7 @@ export function QuotationExchangeRateForm({
                 <TableHead className={cn(styles.tableHead, "text-right")}>{t('quotation.exchangeRates.rate', 'Kur')}</TableHead>
                 <TableHead className={cn(styles.tableHead, "text-center")}>{t('quotation.exchangeRates.date', 'Tarih')}</TableHead>
                 <TableHead className={cn(styles.tableHead, "text-center")}>{t('quotation.exchangeRates.isOfficial', 'Durum')}</TableHead>
-                <TableHead className={cn(styles.tableHead, "text-center w-[80px]")}>{t('common.actions', 'İşlem')}</TableHead>
+                <TableHead className={cn(styles.tableHead, "text-center w-[80px]")}>{t('quotation.actions', 'İşlem')}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>

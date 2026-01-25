@@ -44,7 +44,7 @@ export function CustomerTypeTable({
   onPageChange,
   onSortChange,
 }: CustomerTypeTableProps): ReactElement {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedCustomerType, setSelectedCustomerType] = useState<CustomerTypeDto | null>(null);
 
@@ -95,7 +95,7 @@ export function CustomerTypeTable({
         <div className="flex flex-col items-center gap-2">
           <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-current text-pink-500" />
           <div className="text-sm text-muted-foreground animate-pulse">
-            {t('common.loading', 'Yükleniyor...')}
+            {t('customerTypeManagement.loading', 'Yükleniyor...')}
           </div>
         </div>
       </div>
@@ -108,7 +108,7 @@ export function CustomerTypeTable({
     return (
       <div className="flex items-center justify-center py-12">
         <div className="text-muted-foreground bg-slate-50 dark:bg-white/5 px-6 py-4 rounded-xl border border-dashed border-slate-200 dark:border-white/10">
-          {t('common.noData', 'Veri yok')}
+          {t('customerTypeManagement.noData', 'Veri bulunamadı')}
         </div>
       </div>
     );
@@ -150,7 +150,7 @@ export function CustomerTypeTable({
                 {t('customerTypeManagement.table.createdBy', 'Oluşturan')}
               </TableHead>
               <TableHead className="text-right text-slate-500 dark:text-slate-400">
-                {t('common.actions', 'İşlemler')}
+                {t('customerTypeManagement.actions', 'İşlemler')}
               </TableHead>
             </TableRow>
           </TableHeader>
@@ -170,7 +170,7 @@ export function CustomerTypeTable({
                   {customerType.description || '-'}
                 </TableCell>
                 <TableCell className="text-slate-600 dark:text-slate-400 text-sm">
-                  {new Date(customerType.createdDate).toLocaleDateString('tr-TR')}
+                  {new Date(customerType.createdDate).toLocaleDateString(i18n.language)}
                 </TableCell>
                 <TableCell className="text-slate-600 dark:text-slate-400">
                   {customerType.createdByFullUser || '-'}
@@ -218,7 +218,7 @@ export function CustomerTypeTable({
             disabled={pageNumber <= 1}
             className="bg-white dark:bg-transparent border-slate-200 dark:border-white/10 hover:bg-slate-50 dark:hover:bg-white/5"
           >
-            {t('common.previous', 'Önceki')}
+            {t('customerTypeManagement.previous', 'Önceki')}
           </Button>
           <div className="flex items-center px-4 text-sm font-medium text-slate-700 dark:text-slate-200">
             {t('customerTypeManagement.table.page', 'Sayfa {{current}} / {{total}}', {
@@ -233,7 +233,7 @@ export function CustomerTypeTable({
             disabled={pageNumber >= totalPages}
             className="bg-white dark:bg-transparent border-slate-200 dark:border-white/10 hover:bg-slate-50 dark:hover:bg-white/5"
           >
-            {t('common.next', 'Sonraki')}
+            {t('customerTypeManagement.next', 'Sonraki')}
           </Button>
         </div>
       </div>
@@ -257,7 +257,7 @@ export function CustomerTypeTable({
               disabled={deleteCustomerType.isPending}
               className="bg-white dark:bg-transparent border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/5"
             >
-              {t('common.cancel', 'İptal')}
+              {t('customerTypeManagement.form.cancel', 'İptal')}
             </Button>
             <Button
               variant="destructive"
@@ -266,8 +266,8 @@ export function CustomerTypeTable({
               className="bg-red-600 hover:bg-red-700 dark:bg-red-900/50 dark:hover:bg-red-900/70 border border-transparent dark:border-red-500/20 text-white"
             >
               {deleteCustomerType.isPending
-                ? t('common.loading', 'Yükleniyor...')
-                : t('common.delete', 'Sil')}
+                ? t('customerTypeManagement.delete.deleting', 'Siliniyor...')
+                : t('customerTypeManagement.delete.confirmButton', 'Sil')}
             </Button>
           </DialogFooter>
         </DialogContent>

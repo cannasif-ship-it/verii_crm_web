@@ -36,10 +36,10 @@ export interface ApprovalUserRoleFormData {
 export const approvalUserRoleFormSchema = z.object({
   userId: z
     .number()
-    .min(1, 'approvalUserRole.form.userId.required'),
+    .min(1, 'approvalUserRole.form.userIdRequired'),
   approvalRoleId: z
     .number()
-    .min(1, 'approvalUserRole.form.approvalRoleId.required'),
+    .min(1, 'approvalUserRole.form.approvalRoleIdRequired'),
 });
 
 export type ApprovalUserRoleFormSchema = z.infer<typeof approvalUserRoleFormSchema>;

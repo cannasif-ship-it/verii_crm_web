@@ -4,7 +4,6 @@
   "profilePicture": "Profile Picture",
   "height": "Height (cm)",
   "weight": "Weight (kg)",
-  "description": "Description",
   "gender": "Gender",
   "enterHeight": "Enter Height (cm)",
   "enterWeight": "Enter Weight (kg)",
@@ -30,5 +29,17 @@
   "genderNotSpecified": "Not Specified",
   "genderMale": "Male",
   "genderFemale": "Female",
-  "genderOther": "Other"
+  "genderOther": "Other",
+  "loading": "Loading...",
+  "loadingDescription": "Loading data, please wait",
+  "cancel": "Cancel",
+  "saving": "Saving...",
+  "save": "Save",
+  "changePassword": "Change Password",
+  "currentPassword": "Current Password",
+  "enterCurrentPassword": "Enter your current password",
+  "newPassword": "New Password",
+  "enterNewPassword": "Enter your new password (min 6 chars)",
+  "changingPassword": "Changing...",
+  "changePasswordButton": "Change Password"
 }

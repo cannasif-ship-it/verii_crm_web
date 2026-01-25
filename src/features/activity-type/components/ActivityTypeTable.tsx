@@ -43,7 +43,7 @@ export function ActivityTypeTable({
   onPageChange,
   onSortChange,
 }: ActivityTypeTableProps): ReactElement {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedActivityType, setSelectedActivityType] = useState<ActivityTypeDto | null>(null);
 
@@ -133,7 +133,7 @@ export function ActivityTypeTable({
     return (
       <div className="flex items-center justify-center py-8">
         <div className="text-muted-foreground">
-          {t('common.loading', 'Yükleniyor...')}
+          {t('activityType.loading', 'Yükleniyor...')}
         </div>
       </div>
     );
@@ -145,7 +145,7 @@ export function ActivityTypeTable({
     return (
       <div className="flex items-center justify-center py-8">
         <div className="text-muted-foreground">
-          {t('common.noData', 'Veri yok')}
+          {t('activityType.noData', 'Veri yok')}
         </div>
       </div>
     );
@@ -187,7 +187,7 @@ export function ActivityTypeTable({
                 {t('activityType.table.createdBy', 'Oluşturan Kullanıcı')}
               </TableHead>
               <TableHead className="text-right">
-                {t('common.actions', 'İşlemler')}
+                {t('activityType.actions', 'İşlemler')}
               </TableHead>
             </TableRow>
           </TableHeader>
@@ -198,7 +198,7 @@ export function ActivityTypeTable({
                 <TableCell className="font-medium">{activityType.name}</TableCell>
                 <TableCell>{activityType.description || '-'}</TableCell>
                 <TableCell>
-                  {new Date(activityType.createdDate).toLocaleDateString('tr-TR')}
+                  {activityType.createdDate ? new Date(activityType.createdDate).toLocaleDateString(i18n.language) : '-'}
                 </TableCell>
                 <TableCell>
                   {activityType.createdByFullUser || activityType.createdByFullName || activityType.createdBy || '-'}
@@ -210,14 +210,14 @@ export function ActivityTypeTable({
                       size="sm"
                       onClick={() => onEdit(activityType)}
                     >
-                      {t('common.edit', 'Düzenle')}
+                      {t('activityType.edit', 'Düzenle')}
                     </Button>
                     <Button
                       variant="destructive"
                       size="sm"
                       onClick={() => handleDeleteClick(activityType)}
                     >
-                      {t('common.delete', 'Sil')}
+                      {t('activityType.deleteButton', 'Sil')}
                     </Button>
                   </div>
                 </TableCell>
@@ -242,7 +242,7 @@ export function ActivityTypeTable({
             onClick={() => onPageChange(pageNumber - 1)}
             disabled={pageNumber <= 1}
           >
-            {t('common.previous', 'Önceki')}
+            {t('activityType.previous', 'Önceki')}
           </Button>
           <div className="flex items-center px-4 text-sm">
             {t('activityType.table.page', 'Sayfa {{current}} / {{total}}', {
@@ -256,7 +256,7 @@ export function ActivityTypeTable({
             onClick={() => onPageChange(pageNumber + 1)}
             disabled={pageNumber >= totalPages}
           >
-            {t('common.next', 'Sonraki')}
+            {t('activityType.next', 'Sonraki')}
           </Button>
         </div>
       </div>
@@ -265,10 +265,10 @@ export function ActivityTypeTable({
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
-              {t('activityType.delete.confirmTitle', 'Aktivite Tipini Sil')}
+              {t('activityType.deleteConfirm.confirmTitle', 'Aktivite Tipini Sil')}
             </DialogTitle>
             <DialogDescription>
-              {t('activityType.delete.confirmMessage', '{{name}} aktivite tipini silmek istediğinizden emin misiniz?', {
+              {t('activityType.deleteConfirm.confirmMessage', '{{name}} aktivite tipini silmek istediğinizden emin misiniz?', {
                 name: selectedActivityType?.name || '',
               })}
             </DialogDescription>
@@ -279,7 +279,7 @@ export function ActivityTypeTable({
               onClick={() => setDeleteDialogOpen(false)}
               disabled={deleteActivityType.isPending}
             >
-              {t('common.cancel', 'İptal')}
+              {t('activityType.cancel', 'İptal')}
             </Button>
             <Button
               variant="destructive"
@@ -287,8 +287,8 @@ export function ActivityTypeTable({
               disabled={deleteActivityType.isPending}
             >
               {deleteActivityType.isPending
-                ? t('common.loading', 'Yükleniyor...')
-                : t('common.delete', 'Sil')}
+                ? t('activityType.loading', 'Yükleniyor...')
+                : t('activityType.deleteButton', 'Sil')}
             </Button>
           </DialogFooter>
         </DialogContent>

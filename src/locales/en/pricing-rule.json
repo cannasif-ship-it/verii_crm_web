@@ -1,4 +1,6 @@
 {
+  "loading": "Loading...",
+  "loadingDescription": "Loading data, please wait",
   "list": {
     "title": "Pricing Rules",
     "description": "Manage and edit pricing rules",
@@ -13,9 +15,16 @@
     "validTo": "Valid To",
     "customer": "Customer",
     "currency": "Currency",
-    "status": "Status"
+    "status": "Status",
+    "actions": "Actions"
   },
   "form": {
+    "cancel": "Cancel",
+    "save": "Save",
+    "saving": "Saving...",
+    "confirm": "Confirm",
+    "update": "Update",
+    "createButton": "Create",
     "create": "New Pricing Rule",
     "edit": "Edit Pricing Rule",
     "createDescription": "Enter new pricing rule information",
@@ -42,6 +51,26 @@
       "minQuantityInvalid": "Invalid Min Quantity",
       "minQuantityInvalidMessage": "Minimum quantity cannot be less than 0"
     }
+  },
+  "delete": {
+    "button": "Delete",
+    "confirmTitle": "Delete Confirmation",
+    "confirmMessage": "Are you sure you want to delete this record?"
+  },
+  "salesmen": {
+    "title": "Salesmen",
+    "addSuccess": "Salesman Added",
+    "addSuccessMessage": "Salesman successfully added to pricing rule",
+    "addError": "Error",
+    "addErrorMessage": "Error occurred while adding salesman",
+    "deleteSuccess": "Salesman Removed",
+    "deleteSuccessMessage": "Salesman successfully removed from pricing rule",
+    "deleteError": "Error",
+    "deleteErrorMessage": "Error occurred while removing salesman",
+    "add": "Add Salesman",
+    "empty": "No salesmen added yet",
+    "emptyDescription": "Will be valid for all salesmen",
+    "salesman": "Salesman"
   },
   "header": {
     "ruleType": "Rule Type",
@@ -104,13 +133,6 @@
     "selectCurrency": "Select currency",
     "minQuantityInvalid": "Invalid Min Quantity",
     "minQuantityInvalidMessage": "Minimum quantity cannot be less than 0"
-  },
-  "salesmen": {
-    "title": "Salesmen",
-    "add": "Add Salesman",
-    "empty": "No salesmen added yet",
-    "emptyDescription": "Will be valid for all salesmen",
-    "salesman": "Salesman"
   },
   "card": {
     "customer": "Customer",

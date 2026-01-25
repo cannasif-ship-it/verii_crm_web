@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { resetPasswordSchema, type ResetPasswordRequest } from '../types/auth';
 import { useResetPassword } from '../hooks/useResetPassword';
@@ -18,6 +19,7 @@ import { LockKeyIcon, ViewIcon, ViewOffIcon } from 'hugeicons-react';
 import loginImage from '../../../../public/veriicrmlogo.png';
 
 export function ResetPasswordPage(): React.JSX.Element {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const token = searchParams.get('token');
@@ -36,18 +38,18 @@ export function ResetPasswordPage(): React.JSX.Element {
 
   useEffect(() => {
     if (!token) {
-      toast.error('Geçersiz veya eksik token. Lütfen şifre sıfırlama linkini tekrar kontrol edin.');
+      toast.error(t('auth.resetPassword.invalidToken'));
       setTimeout(() => {
         navigate('/auth/login', { replace: true });
       }, 2000);
       return;
     }
     form.setValue('token', token);
-  }, [token, form, navigate]);
+  }, [token, form, navigate, t]);
 
   const onSubmit = (data: ResetPasswordRequest): void => {
     if (!token) {
-      toast.error('Token bulunamadı');
+      toast.error(t('auth.resetPassword.tokenNotFound'));
       return;
     }
     resetPassword({
@@ -73,7 +75,7 @@ export function ResetPasswordPage(): React.JSX.Element {
               className="inline-flex items-center justify-center w-80 h-50 object-contain p-2"
             />
             <p className="text-slate-400 text-xs uppercase tracking-[0.15em] mt-2 font-medium">
-              Şifre Sıfırlama
+              {t('auth.resetPassword.title')}
             </p>
           </div>
 
@@ -93,7 +95,7 @@ export function ResetPasswordPage(): React.JSX.Element {
                         <Input
                           {...field}
                           type={isPasswordVisible ? 'text' : 'password'}
-                          placeholder="Yeni Şifre"
+                          placeholder={t('auth.resetPassword.newPasswordPlaceholder', 'Yeni Şifre')}
                           className="w-full bg-black/30 border border-white/10 rounded-xl px-4 py-6 pl-12 pr-10 text-sm text-white placeholder-slate-500 focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-pink-500 focus:bg-black/50"
                         />
                         <button
@@ -128,7 +130,7 @@ export function ResetPasswordPage(): React.JSX.Element {
                         <Input
                           {...field}
                           type={isConfirmPasswordVisible ? 'text' : 'password'}
-                          placeholder="Şifre Tekrarı"
+                          placeholder={t('auth.resetPassword.confirmPasswordPlaceholder', 'Şifre Tekrarı')}
                           className="w-full bg-black/30 border border-white/10 rounded-xl px-4 py-6 pl-12 pr-10 text-sm text-white placeholder-slate-500 focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-pink-500 focus:bg-black/50"
                         />
                         <button
@@ -154,7 +156,7 @@ export function ResetPasswordPage(): React.JSX.Element {
                 disabled={isPending || !token}
                 className="w-full py-4 rounded-xl bg-gradient-to-r from-pink-600 via-orange-500 to-yellow-500 hover:from-pink-500 hover:via-orange-400 hover:to-yellow-400 text-white font-bold text-sm mt-6 shadow-lg shadow-orange-900/20 tracking-wide uppercase transition-all transform hover:-translate-y-0.5 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center"
               >
-                {isPending ? 'İşleniyor...' : 'Şifreyi Sıfırla'}
+                {isPending ? t('auth.resetPassword.processing') : t('auth.resetPassword.submitButton')}
               </button>
             </form>
           </Form>

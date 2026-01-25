@@ -45,7 +45,7 @@ export function ProductPricingGroupByTable({
   onPageChange,
   onSortChange,
 }: ProductPricingGroupByTableProps): ReactElement {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedProductPricingGroupBy, setSelectedProductPricingGroupBy] = useState<ProductPricingGroupByDto | null>(null);
 
@@ -98,7 +98,7 @@ export function ProductPricingGroupByTable({
         <div className="flex flex-col items-center gap-2">
           <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-current text-pink-500" />
           <div className="text-sm text-muted-foreground animate-pulse">
-            {t('common.loading', 'Yükleniyor...')}
+            {t('productPricingGroupByManagement.loading', 'Yükleniyor...')}
           </div>
         </div>
       </div>
@@ -229,7 +229,7 @@ export function ProductPricingGroupByTable({
                     {formatPrice(finalPrice, productPricingGroupBy.currency)}
                   </TableCell>
                   <TableCell className="text-slate-600 dark:text-slate-400 text-sm">
-                    {new Date(productPricingGroupBy.createdDate).toLocaleDateString('tr-TR')}
+                    {new Date(productPricingGroupBy.createdDate).toLocaleDateString(i18n.language)}
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
@@ -274,7 +274,7 @@ export function ProductPricingGroupByTable({
             disabled={pageNumber <= 1}
             className="bg-white dark:bg-transparent border-slate-200 dark:border-white/10 hover:bg-slate-50 dark:hover:bg-white/5"
           >
-            {t('common.previous', 'Önceki')}
+            {t('productPricingGroupByManagement.previous', 'Önceki')}
           </Button>
           <div className="flex items-center px-4 text-sm font-medium text-slate-700 dark:text-slate-200">
             {t('productPricingGroupByManagement.table.page', 'Sayfa {{current}} / {{total}}', {
@@ -289,7 +289,7 @@ export function ProductPricingGroupByTable({
             disabled={pageNumber >= totalPages}
             className="bg-white dark:bg-transparent border-slate-200 dark:border-white/10 hover:bg-slate-50 dark:hover:bg-white/5"
           >
-            {t('common.next', 'Sonraki')}
+            {t('productPricingGroupByManagement.next', 'Sonraki')}
           </Button>
         </div>
       </div>
@@ -311,7 +311,7 @@ export function ProductPricingGroupByTable({
               disabled={deleteProductPricingGroupBy.isPending}
               className="bg-white dark:bg-transparent border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/5"
             >
-              {t('common.cancel', 'İptal')}
+              {t('productPricingGroupByManagement.cancel', 'İptal')}
             </Button>
             <Button
               variant="destructive"
@@ -320,8 +320,8 @@ export function ProductPricingGroupByTable({
               className="bg-red-600 hover:bg-red-700 dark:bg-red-900/50 dark:hover:bg-red-900/70 border border-transparent dark:border-red-500/20 text-white"
             >
               {deleteProductPricingGroupBy.isPending
-                ? t('common.loading', 'Yükleniyor...')
-                : t('common.delete', 'Sil')}
+                ? t('productPricingGroupByManagement.loading', 'Yükleniyor...')
+                : t('productPricingGroupByManagement.delete', 'Sil')}
             </Button>
           </DialogFooter>
         </DialogContent>

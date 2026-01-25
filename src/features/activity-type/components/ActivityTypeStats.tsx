@@ -18,10 +18,10 @@ export function ActivityTypeStats(): ReactElement {
         {[1, 2, 3].map((i) => (
           <Card key={i}>
             <CardHeader>
-              <CardTitle className="text-sm font-medium text-muted-foreground">
-                {t('common.loading', 'Yükleniyor...')}
-              </CardTitle>
-            </CardHeader>
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              {t('activityType.loading', 'Yükleniyor...')}
+            </CardTitle>
+          </CardHeader>
             <CardContent>
               <div className="h-8 w-20 animate-pulse rounded bg-muted" />
             </CardContent>

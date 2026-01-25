@@ -215,15 +215,15 @@ export function UserDetailDialog({
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
-              {t('common.loading', 'Yükleniyor...')}
+              {t('userDetailManagement.loading', 'Yükleniyor...')}
             </DialogTitle>
             <DialogDescription>
-              {t('common.loadingDescription', 'Veriler yükleniyor, lütfen bekleyin')}
+              {t('userDetailManagement.loadingDescription', 'Veriler yükleniyor, lütfen bekleyin')}
             </DialogDescription>
           </DialogHeader>
           <div className="flex items-center justify-center py-8">
             <div className="text-muted-foreground">
-              {t('common.loading', 'Yükleniyor...')}
+              {t('userDetailManagement.loading', 'Yükleniyor...')}
             </div>
           </div>
         </DialogContent>
@@ -398,12 +398,12 @@ export function UserDetailDialog({
                 onClick={() => onOpenChange(false)}
                 disabled={createUserDetail.isPending || updateUserDetail.isPending}
               >
-                {t('common.cancel', 'İptal')}
+                {t('userDetailManagement.cancel', 'İptal')}
               </Button>
               <Button type="submit" disabled={createUserDetail.isPending || updateUserDetail.isPending}>
                 {createUserDetail.isPending || updateUserDetail.isPending
-                  ? t('common.saving', 'Kaydediliyor...')
-                  : t('common.save', 'Kaydet')}
+                  ? t('userDetailManagement.saving', 'Kaydediliyor...')
+                  : t('userDetailManagement.save', 'Kaydet')}
               </Button>
             </DialogFooter>
           </form>

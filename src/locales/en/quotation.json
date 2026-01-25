@@ -1,4 +1,30 @@
 {
+  "loading": "Loading...",
+  "saving": "Saving...",
+  "error": "Error",
+  "noData": "No data found",
+  "previous": "Previous",
+  "next": "Next",
+  "actions": "Actions",
+  "edit": "Edit",
+  "delete": "Delete",
+  "back": "Back",
+  "refresh": "Refresh",
+  "select": "Select",
+  "yes": "Yes",
+  "add": "Add",
+  "backToQuotations": "Back to Quotations",
+  "cancel": "Cancel",
+  "save": "Save",
+  "confirm": "Confirm",
+  "saveAndApply": "Save and Apply",
+  "list": {
+    "revise": "Revise",
+    "showing": "Showing {{from}}-{{to}} / {{total}}"
+  },
+  "detail": {
+    "title": "Quotation Detail"
+  },
   "create": {
     "title": "Create New Quotation",
     "submit": "Save Quotation and Send for Approval",

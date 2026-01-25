@@ -121,8 +121,8 @@ export function ApprovalActionForm({ queue, onSuccess }: ApprovalActionFormProps
           >
             <XCircle className="h-4 w-4 mr-2" />
             {rejectMutation.isPending
-              ? t('common.processing', 'İşleniyor...')
-              : t('approval.actions.reject', 'Reddet')}
+          ? t('approval.processing', 'İşleniyor...')
+          : t('approval.actions.reject', 'Reddet')}
           </Button>
           <Button
             type="button"
@@ -132,7 +132,7 @@ export function ApprovalActionForm({ queue, onSuccess }: ApprovalActionFormProps
           >
             <CheckCircle2 className="h-4 w-4 mr-2" />
             {approveMutation.isPending
-              ? t('common.processing', 'İşleniyor...')
+              ? t('approval.processing', 'İşleniyor...')
               : t('approval.actions.approve', 'Onayla')}
           </Button>
         </div>

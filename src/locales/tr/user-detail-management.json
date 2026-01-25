@@ -4,7 +4,6 @@
   "profilePicture": "Profil Resmi",
   "height": "Boy (cm)",
   "weight": "Kilo (kg)",
-  "description": "Açıklama",
   "gender": "Cinsiyet",
   "enterHeight": "Boy Girin (cm)",
   "enterWeight": "Kilo Girin (kg)",
@@ -30,5 +29,17 @@
   "genderNotSpecified": "Belirtilmemiş",
   "genderMale": "Erkek",
   "genderFemale": "Kadın",
-  "genderOther": "Diğer"
+  "genderOther": "Diğer",
+  "loading": "Yükleniyor...",
+  "loadingDescription": "Veriler yükleniyor, lütfen bekleyin",
+  "cancel": "İptal",
+  "saving": "Kaydediliyor...",
+  "save": "Kaydet",
+  "changePassword": "Şifre Değiştir",
+  "currentPassword": "Mevcut Şifre",
+  "enterCurrentPassword": "Mevcut şifrenizi girin",
+  "newPassword": "Yeni Şifre",
+  "enterNewPassword": "Yeni şifrenizi girin (min 6 karakter)",
+  "changingPassword": "Değiştiriliyor...",
+  "changePasswordButton": "Şifreyi Değiştir"
 }

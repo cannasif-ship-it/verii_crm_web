@@ -11,7 +11,9 @@
     "actions": "Actions",
     "viewDetail": "Detail",
     "showing": "Showing {{from}}-{{to}} / {{total}}",
-    "page": "Page {{current}} / {{total}}"
+    "page": "Page {{current}} / {{total}}",
+    "previous": "Previous",
+    "next": "Next"
   },
   "detail": {
     "title": "Stock Detail",
@@ -28,7 +30,25 @@
     "htmlDescriptionPlaceholder": "Enter HTML description",
     "htmlDescription.required": "HTML description is required",
     "technicalSpecs": "Technical Specifications (JSON)",
-    "technicalSpecsPlaceholder": "Technical specifications in JSON format (optional)"
+    "technicalSpecsPlaceholder": "Technical specifications in JSON format (optional)",
+    "notFound": "Stock Not Found",
+    "notFoundDesc": "The stock record you are looking for may have been deleted or never created.",
+    "backToStockList": "Back to List",
+    "mainInfo": "Basic Information",
+    "ureticiKodu": "Manufacturer Code",
+    "groupInfo": "Grouping and Location",
+    "branchCode": "Branch Code",
+    "grup": "Group Info",
+    "specialCodes": "Special Codes",
+    "kod1": "Special Code 1",
+    "kod2": "Special Code 2",
+    "kod3": "Special Code 3",
+    "kod4": "Special Code 4",
+    "kod5": "Special Code 5",
+    "created": "Created",
+    "updated": "Updated",
+    "copied": "Copied",
+    "copy": "Copy"
   },
   "images": {
     "upload": "Drag and drop images here or click",
@@ -60,7 +80,9 @@
     "selectStock": "Select stock",
     "search": "Search...",
     "deleteConfirm": "Delete Related Stock",
-    "deleteConfirmMessage": "Are you sure you want to delete {{name}} related stock?"
+    "deleteConfirmMessage": "Are you sure you want to delete {{name}} related stock?",
+    "noStockFound": "Stock not found",
+    "saving": "Processing..."
   },
   "messages": {
     "detailCreateSuccess": "Stock detail created successfully",

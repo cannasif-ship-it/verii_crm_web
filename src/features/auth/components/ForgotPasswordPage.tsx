@@ -1,6 +1,7 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { forgotPasswordSchema, type ForgotPasswordRequest } from '../types/auth';
 import { useForgotPassword } from '../hooks/useForgotPassword';
 import type React from 'react';
@@ -16,6 +17,7 @@ import { Mail02Icon } from 'hugeicons-react';
 import loginImage from '../../../../public/veriicrmlogo.png';
 
 export function ForgotPasswordPage(): React.JSX.Element {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { mutate: requestPasswordReset, isPending } = useForgotPassword();
 
@@ -47,13 +49,13 @@ export function ForgotPasswordPage(): React.JSX.Element {
               className="inline-flex items-center justify-center w-80 h-50 object-contain p-2"
             />
             <p className="text-slate-400 text-xs uppercase tracking-[0.15em] mt-2 font-medium">
-              Şifremi Unuttum
+              {t('auth.forgotPassword.title')}
             </p>
           </div>
 
           <div className="mb-6">
             <p className="text-slate-300 text-sm text-center">
-              Şifrenizi sıfırlamak için e-posta adresinizi girin. Size şifre sıfırlama linki göndereceğiz.
+              {t('auth.forgotPassword.description')}
             </p>
           </div>
 
@@ -73,7 +75,7 @@ export function ForgotPasswordPage(): React.JSX.Element {
                         <Input
                           {...field}
                           type="email"
-                          placeholder="E-posta Adresi"
+                          placeholder={t('auth.forgotPassword.emailPlaceholder', 'E-posta Adresi')}
                           className="w-full bg-black/30 border border-white/10 rounded-xl px-4 py-6 pl-12 pr-10 text-sm text-white placeholder-slate-500 focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-pink-500 focus:bg-black/50"
                         />
                       </div>
@@ -88,7 +90,7 @@ export function ForgotPasswordPage(): React.JSX.Element {
                 disabled={isPending}
                 className="w-full py-4 rounded-xl bg-gradient-to-r from-pink-600 via-orange-500 to-yellow-500 hover:from-pink-500 hover:via-orange-400 hover:to-yellow-400 text-white font-bold text-sm mt-6 shadow-lg shadow-orange-900/20 tracking-wide uppercase transition-all transform hover:-translate-y-0.5 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center"
               >
-                {isPending ? 'İşleniyor...' : 'Şifre Sıfırlama İsteği Gönder'}
+                {isPending ? t('auth.forgotPassword.processing') : t('auth.forgotPassword.submitButton')}
               </button>
 
               <button
@@ -96,7 +98,7 @@ export function ForgotPasswordPage(): React.JSX.Element {
                 onClick={() => navigate('/auth/login')}
                 className="w-full py-3 rounded-xl bg-black/30 border border-white/10 text-white text-sm hover:bg-black/50 transition-all"
               >
-                Giriş Sayfasına Dön
+                {t('auth.forgotPassword.backToLogin')}
               </button>
             </form>
           </Form>

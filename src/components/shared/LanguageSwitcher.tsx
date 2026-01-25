@@ -26,12 +26,11 @@ export function LanguageSwitcher(): ReactElement {
 
   return (
     <Select value={i18n.language} onValueChange={handleLanguageChange}>
-      {/* Tetikleyici Buton: Search input ile aynı stil (Koyu Mor) */}
       <SelectTrigger 
-        className="w-[130px] h-9 bg-[#1a1025] border-white/10 text-slate-300 rounded-full focus:ring-1 focus:ring-pink-500/20 focus:border-pink-500/50 hover:bg-white/5 transition-colors border shadow-none"
+        className="w-[130px] h-9 bg-secondary/50 border-input text-foreground rounded-full focus:ring-1 focus:ring-pink-500/20 focus:border-pink-500/50 hover:bg-accent transition-colors border shadow-none"
       >
         <div className="flex items-center gap-2 flex-1 overflow-hidden">
-          <Languages className="h-4 w-4 shrink-0 text-slate-500" />
+          <Languages className="h-4 w-4 shrink-0 text-muted-foreground" />
           <SelectValue>
             <span className="flex items-center gap-2">
               <span className="text-sm">{currentLanguage.flag}</span>
@@ -43,13 +42,12 @@ export function LanguageSwitcher(): ReactElement {
         </div>
       </SelectTrigger>
       
-      {/* Açılır Menü: Koyu tema ve Glassmorphism */}
-      <SelectContent className="bg-[#1a1025] border-white/10 text-slate-200 rounded-xl shadow-2xl z-[60]">
+      <SelectContent className="bg-popover border-border text-popover-foreground rounded-xl shadow-2xl z-[60]">
         {languages.map((language) => (
           <SelectItem 
             key={language.code} 
             value={language.code}
-            className="focus:bg-white/10 focus:text-white cursor-pointer data-[state=checked]:text-pink-400 pl-8"
+            className="focus:bg-accent focus:text-accent-foreground cursor-pointer data-[state=checked]:text-pink-500 pl-8"
           >
             <div className="flex items-center gap-2">
               <span className="text-base">{language.flag}</span>

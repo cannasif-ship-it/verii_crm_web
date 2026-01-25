@@ -31,7 +31,7 @@ import { WaitingApprovalsSidebar } from './WaitingApprovalsSidebar';
 import type { ApprovalActionGetDto } from '../types/quotation-types';
 
 export function WaitingApprovalsPage(): ReactElement {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const { setPageTitle } = useUIStore();
   const { data: approvals, isLoading } = useWaitingApprovals();
@@ -77,7 +77,7 @@ export function WaitingApprovalsPage(): ReactElement {
   };
 
   const formatDate = (dateString: string): string => {
-    return new Date(dateString).toLocaleDateString('tr-TR', {
+    return new Date(dateString).toLocaleDateString(i18n.language, {
       year: 'numeric',
       month: 'long',
       day: 'numeric',
@@ -91,7 +91,7 @@ export function WaitingApprovalsPage(): ReactElement {
       <div className="flex items-center justify-between">
         <Button variant="outline" onClick={() => navigate('/quotations/create')}>
           <ArrowLeft className="h-4 w-4 mr-2" />
-          {t('common.back', 'Geri')}
+          {t('quotation.back', 'Geri')}
         </Button>
       </div>
 
@@ -146,7 +146,7 @@ export function WaitingApprovalsPage(): ReactElement {
                           {t('quotation.waitingApprovals.status', 'Durum')}
                         </TableHead>
                         <TableHead className="text-right">
-                          {t('common.actions', 'İşlemler')}
+                          {t('quotation.actions', 'İşlemler')}
                         </TableHead>
                       </TableRow>
                     </TableHeader>
@@ -262,7 +262,7 @@ export function WaitingApprovalsPage(): ReactElement {
               }}
               disabled={rejectAction.isPending}
             >
-              {t('common.cancel', 'İptal')}
+              {t('quotation.cancel', 'İptal')}
             </Button>
             <Button
               variant="destructive"
@@ -270,7 +270,7 @@ export function WaitingApprovalsPage(): ReactElement {
               disabled={rejectAction.isPending}
             >
               {rejectAction.isPending
-                ? t('common.loading', 'Yükleniyor...')
+                ? t('quotation.loading', 'Yükleniyor...')
                 : t('quotation.approval.reject', 'Reddet')}
             </Button>
           </DialogFooter>

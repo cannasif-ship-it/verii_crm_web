@@ -43,7 +43,7 @@ export function ContactTable({
   onPageChange,
   onSortChange,
 }: ContactTableProps): ReactElement {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedContact, setSelectedContact] = useState<ContactDto | null>(null);
 
@@ -133,7 +133,7 @@ export function ContactTable({
     return (
       <div className="flex items-center justify-center py-8">
         <div className="text-muted-foreground">
-          {t('common.loading', 'Yükleniyor...')}
+          {t('contactManagement.loading', 'Yükleniyor...')}
         </div>
       </div>
     );
@@ -145,7 +145,7 @@ export function ContactTable({
     return (
       <div className="flex items-center justify-center py-8">
         <div className="text-muted-foreground">
-          {t('common.noData', 'Veri yok')}
+          {t('contactManagement.noData', 'Veri yok')}
         </div>
       </div>
     );
@@ -205,7 +205,7 @@ export function ContactTable({
                 {t('contactManagement.table.createdBy', 'Oluşturan')}
               </TableHead>
               <TableHead className="text-right">
-                {t('common.actions', 'İşlemler')}
+                {t('contactManagement.actions', 'İşlemler')}
               </TableHead>
             </TableRow>
           </TableHeader>
@@ -220,7 +220,7 @@ export function ContactTable({
                 <TableCell>{contact.customerName || '-'}</TableCell>
                 <TableCell>{contact.titleName || '-'}</TableCell>
                 <TableCell>
-                  {new Date(contact.createdDate).toLocaleDateString('tr-TR')}
+                  {new Date(contact.createdDate).toLocaleDateString(i18n.language)}
                 </TableCell>
                 <TableCell>
                   {contact.createdByFullUser || '-'}
@@ -232,14 +232,14 @@ export function ContactTable({
                       size="sm"
                       onClick={() => onEdit(contact)}
                     >
-                      {t('common.edit', 'Düzenle')}
+                      {t('contactManagement.edit', 'Düzenle')}
                     </Button>
                     <Button
                       variant="destructive"
                       size="sm"
                       onClick={() => handleDeleteClick(contact)}
                     >
-                      {t('common.delete', 'Sil')}
+                      {t('contactManagement.delete.action', 'Sil')}
                     </Button>
                   </div>
                 </TableCell>
@@ -264,7 +264,7 @@ export function ContactTable({
             onClick={() => onPageChange(pageNumber - 1)}
             disabled={pageNumber <= 1}
           >
-            {t('common.previous', 'Önceki')}
+            {t('contactManagement.previous', 'Önceki')}
           </Button>
           <div className="flex items-center px-4 text-sm">
             {t('contactManagement.table.page', 'Sayfa {{current}} / {{total}}', {
@@ -278,7 +278,7 @@ export function ContactTable({
             onClick={() => onPageChange(pageNumber + 1)}
             disabled={pageNumber >= totalPages}
           >
-            {t('common.next', 'Sonraki')}
+            {t('contactManagement.next', 'Sonraki')}
           </Button>
         </div>
       </div>
@@ -301,7 +301,7 @@ export function ContactTable({
               onClick={() => setDeleteDialogOpen(false)}
               disabled={deleteContact.isPending}
             >
-              {t('common.cancel', 'İptal')}
+              {t('contactManagement.cancel', 'İptal')}
             </Button>
             <Button
               variant="destructive"
@@ -309,8 +309,8 @@ export function ContactTable({
               disabled={deleteContact.isPending}
             >
               {deleteContact.isPending
-                ? t('common.loading', 'Yükleniyor...')
-                : t('common.delete', 'Sil')}
+                ? t('contactManagement.loading', 'Yükleniyor...')
+                : t('contactManagement.delete.action', 'Sil')}
             </Button>
           </DialogFooter>
         </DialogContent>

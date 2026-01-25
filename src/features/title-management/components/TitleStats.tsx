@@ -19,7 +19,7 @@ export function TitleStats(): ReactElement {
           <Card key={i}>
             <CardHeader>
               <CardTitle className="text-sm font-medium text-muted-foreground">
-                {t('common.loading', 'Yükleniyor...')}
+                {t('titleManagement.loading', 'Yükleniyor...')}
               </CardTitle>
             </CardHeader>
             <CardContent>

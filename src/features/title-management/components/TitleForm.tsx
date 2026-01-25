@@ -177,7 +177,7 @@ export function TitleForm({
               disabled={isLoading}
               className="bg-white dark:bg-transparent border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/5 h-11 px-6 rounded-lg"
             >
-              {t('common.cancel', 'İptal')}
+              {t('titleManagement.form.cancel', 'İptal')}
             </Button>
             <Button 
               onClick={form.handleSubmit(handleSubmit)}
@@ -185,8 +185,8 @@ export function TitleForm({
               className="bg-gradient-to-r from-pink-600 to-orange-600 hover:from-pink-700 hover:to-orange-700 text-white border-0 shadow-lg shadow-pink-500/20 h-11 px-8 rounded-lg font-bold tracking-wide transition-all hover:scale-105"
             >
               {isLoading
-                ? t('common.saving', 'Kaydediliyor...')
-                : t('common.save', 'Kaydet')}
+                ? t('titleManagement.saving', 'Kaydediliyor...')
+                : t('titleManagement.save', 'Kaydet')}
             </Button>
           </div>
         </DialogFooter>

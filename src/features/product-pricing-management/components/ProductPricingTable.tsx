@@ -135,7 +135,7 @@ export function ProductPricingTable({
                   <div className="flex flex-col items-center justify-center gap-2 py-4">
                     <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-current text-pink-500" />
                     <div className="text-sm text-muted-foreground animate-pulse">
-                      {t('common.loading', 'Yükleniyor...')}
+                      {t('productPricingManagement.loading', 'Yükleniyor...')}
                     </div>
                   </div>
                 </TableCell>
@@ -158,7 +158,7 @@ export function ProductPricingTable({
               );
 
               // Mock stock status since it's not in DTO yet
-              const stockStatus = "Stok Takibi Yok"; 
+              const stockStatus = t('productPricingManagement.noStockTracking', 'Stok Takibi Yok');
 
               return (
                 <TableRow 
@@ -266,7 +266,7 @@ export function ProductPricingTable({
             disabled={pageNumber <= 1}
             className="bg-white dark:bg-transparent border-slate-200 dark:border-white/10 hover:bg-slate-50 dark:hover:bg-white/5"
           >
-            {t('common.previous', 'Önceki')}
+            {t('productPricingManagement.previous', 'Önceki')}
           </Button>
           <div className="flex items-center px-4 text-sm font-medium text-slate-700 dark:text-slate-200">
             {t('productPricingManagement.table.page', 'Sayfa {{current}} / {{total}}', {
@@ -281,7 +281,7 @@ export function ProductPricingTable({
             disabled={pageNumber >= totalPages}
             className="bg-white dark:bg-transparent border-slate-200 dark:border-white/10 hover:bg-slate-50 dark:hover:bg-white/5"
           >
-            {t('common.next', 'Sonraki')}
+            {t('productPricingManagement.next', 'Sonraki')}
           </Button>
         </div>
       </div>
@@ -303,7 +303,7 @@ export function ProductPricingTable({
               disabled={deleteProductPricing.isPending}
               className="bg-white dark:bg-transparent border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/5"
             >
-              {t('common.cancel', 'İptal')}
+              {t('productPricingManagement.cancel', 'İptal')}
             </Button>
             <Button
               variant="destructive"
@@ -312,8 +312,8 @@ export function ProductPricingTable({
               className="bg-red-600 hover:bg-red-700 dark:bg-red-900/50 dark:hover:bg-red-900/70 border border-transparent dark:border-red-500/20 text-white"
             >
               {deleteProductPricing.isPending
-                ? t('common.loading', 'Yükleniyor...')
-                : t('common.delete', 'Sil')}
+                ? t('productPricingManagement.loading', 'Yükleniyor...')
+                : t('productPricingManagement.delete', 'Sil')}
             </Button>
           </DialogFooter>
         </DialogContent>

@@ -40,7 +40,7 @@ export function ApprovalDetailModal({
             {t('approval.detail.title', 'Teklif Detayı')} - {queue.quotationOfferNo || `#${queue.quotationId}`}
           </DialogTitle>
           <DialogDescription>
-            {t('approval.detail.description', 'Teklif detaylarını görüntüleyin ve işlem yapın')}
+            {t('approval.detail.subtitle', 'Teklif detaylarını görüntüleyin ve işlem yapın')}
           </DialogDescription>
         </DialogHeader>
 

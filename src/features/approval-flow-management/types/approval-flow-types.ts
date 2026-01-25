@@ -50,13 +50,19 @@ export interface ApprovalFlowFormData {
 export const approvalFlowFormSchema = z.object({
   documentType: z
     .number()
-    .min(1, 'approvalFlow.form.documentType.required'),
+    .min(1, 'approvalFlow.form.documentTypeRequired'),
   description: z
     .string()
-    .max(200, 'approvalFlow.form.description.maxLength')
+    .max(200, 'approvalFlow.form.descriptionMaxLength')
     .nullable()
     .optional(),
   isActive: z.boolean(),
 });
+
+export const approvalFlowStepFormSchema = z.object({
+  approvalRoleGroupId: z.number().min(1, 'approvalFlowStep.form.approvalRoleGroupIdRequired'),
+});
+
+export type ApprovalFlowStepFormSchema = z.infer<typeof approvalFlowStepFormSchema>;
 
 export type ApprovalFlowFormSchema = z.infer<typeof approvalFlowFormSchema>;

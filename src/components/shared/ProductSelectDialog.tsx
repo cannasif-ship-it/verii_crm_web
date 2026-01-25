@@ -376,7 +376,7 @@ export function ProductSelectDialog({
   onSelect,
   disableRelatedStocks = false,
 }: ProductSelectDialogProps): ReactElement {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState('stocks');
   const [isListening, setIsListening] = useState(false);
@@ -393,7 +393,14 @@ export function ProductSelectDialog({
         const recognition = new SpeechRecognition();
         recognition.continuous = false;
         recognition.interimResults = false;
-        recognition.lang = 'tr-TR';
+        
+        const langMap: Record<string, string> = {
+          'tr': 'tr-TR',
+          'en': 'en-US',
+          'de': 'de-DE',
+          'fr': 'fr-FR'
+        };
+        recognition.lang = langMap[i18n.language] || i18n.language;
 
         recognition.onresult = (event: SpeechRecognitionEvent) => {
           const transcript = event.results[0][0].transcript;
@@ -555,7 +562,7 @@ export function ProductSelectDialog({
       return (
         <div className="flex items-center justify-center py-12">
           <div className="text-muted-foreground">
-            {t('common.loading', 'Yükleniyor...')}
+            {t('productSelectDialog.loading', 'Yükleniyor...')}
           </div>
         </div>
       );
@@ -592,7 +599,7 @@ export function ProductSelectDialog({
       return (
         <div className="flex items-center justify-center py-12">
           <div className="text-muted-foreground">
-            {t('common.loading', 'Yükleniyor...')}
+            {t('productSelectDialog.loading', 'Yükleniyor...')}
           </div>
         </div>
       );

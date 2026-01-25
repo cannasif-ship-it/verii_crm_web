@@ -24,7 +24,7 @@ export function ErpCustomerTable({ customers, isLoading }: ErpCustomerTableProps
         <div className="flex flex-col items-center gap-2">
            <div className="h-10 w-10 animate-spin rounded-full border-b-2 border-current text-pink-500" />
            <div className="text-sm text-muted-foreground animate-pulse">
-             {t('common.loading', 'Yükleniyor...')}
+             {t('erpCustomerManagement.loading', 'Yükleniyor...')}
            </div>
         </div>
       </div>

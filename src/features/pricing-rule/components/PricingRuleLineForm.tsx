@@ -249,7 +249,7 @@ export function PricingRuleLineForm({
                 >
                   <FormControl>
                     <SelectTrigger className="w-full">
-                      <SelectValue placeholder={isLoadingRates ? t('common.loading', 'Yükleniyor...') : t('pricingRule.lines.selectCurrency', 'Seçiniz')} />
+                      <SelectValue placeholder={isLoadingRates ? t('pricingRule.loading', 'Yükleniyor...') : t('pricingRule.lines.selectCurrency', 'Seçiniz')} />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
@@ -423,14 +423,14 @@ export function PricingRuleLineForm({
             onClick={onCancel}
             className="w-full sm:w-auto"
           >
-            {t('common.cancel', 'İptal')}
+            {t('pricingRule.form.cancel', 'İptal')}
           </Button>
           <Button 
             type="submit"
             disabled={!form.watch('stokCode') || form.watch('stokCode').trim() === ''}
             className="w-full sm:w-auto"
           >
-            {t('common.save', 'Kaydet')}
+            {t('pricingRule.form.save', 'Kaydet')}
           </Button>
         </div>
       </form>

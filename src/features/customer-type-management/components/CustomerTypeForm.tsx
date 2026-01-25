@@ -184,7 +184,7 @@ export function CustomerTypeForm({
             disabled={isLoading}
             className="bg-white dark:bg-transparent border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white"
           >
-            {t('common.cancel', 'İptal')}
+            {t('customerTypeManagement.form.cancel', 'İptal')}
           </Button>
           <Button 
             type="submit" 
@@ -193,8 +193,8 @@ export function CustomerTypeForm({
             className="bg-gradient-to-r from-pink-600 to-orange-600 text-white font-bold border-0 hover:shadow-lg hover:shadow-pink-500/20 transition-all transform active:scale-95 px-8"
           >
             {isLoading
-              ? t('common.saving', 'Kaydediliyor...')
-              : t('common.save', 'Kaydet')}
+              ? t('customerTypeManagement.form.saving', 'Kaydediliyor...')
+              : t('customerTypeManagement.form.save', 'Kaydet')}
           </Button>
         </DialogFooter>
 

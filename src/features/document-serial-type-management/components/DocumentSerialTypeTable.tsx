@@ -45,7 +45,7 @@ export function DocumentSerialTypeTable({
   onPageChange,
   onSortChange,
 }: DocumentSerialTypeTableProps): ReactElement {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedDocumentSerialType, setSelectedDocumentSerialType] = useState<DocumentSerialTypeDto | null>(null);
 
@@ -100,7 +100,7 @@ export function DocumentSerialTypeTable({
     return (
       <div className={`flex flex-col items-center justify-center py-24 gap-4 border ${borderClass} rounded-xl bg-white/50 dark:bg-card/50`}>
         <div className="w-10 h-10 border-4 border-muted border-t-pink-500 rounded-full animate-spin" />
-        <span className="text-muted-foreground animate-pulse text-sm font-medium">{t('common.loading', 'Yükleniyor...')}</span>
+        <span className="text-muted-foreground animate-pulse text-sm font-medium">{t('documentSerialTypeManagement.loading', 'Yükleniyor...')}</span>
       </div>
     );
   }
@@ -111,7 +111,7 @@ export function DocumentSerialTypeTable({
     return (
       <div className={`flex flex-col items-center justify-center py-24 text-muted-foreground border ${borderClass} border-dashed rounded-xl bg-white/50 dark:bg-card/50`}>
         <FileText size={40} className="opacity-40 mb-2" />
-        <p className="text-sm font-medium">{t('common.noData', 'Veri yok')}</p>
+        <p className="text-sm font-medium">{t('documentSerialTypeManagement.noData', 'Veri yok')}</p>
       </div>
     );
   }
@@ -128,7 +128,7 @@ export function DocumentSerialTypeTable({
               onClick={() => handleSort('Id')}
             >
               <div className="flex items-center gap-1">
-                {t('documentSerialType.table.id', 'ID')} <SortIcon column="Id" />
+                {t('documentSerialTypeManagement.table.id', 'ID')} <SortIcon column="Id" />
               </div>
             </TableHead>
             <TableHead 
@@ -136,7 +136,7 @@ export function DocumentSerialTypeTable({
               onClick={() => handleSort('RuleType')}
             >
               <div className="flex items-center gap-1">
-                {t('documentSerialType.table.ruleType', 'Kural Tipi')} <SortIcon column="RuleType" />
+                {t('documentSerialTypeManagement.table.ruleType', 'Kural Tipi')} <SortIcon column="RuleType" />
               </div>
             </TableHead>
             <TableHead 
@@ -144,7 +144,7 @@ export function DocumentSerialTypeTable({
               onClick={() => handleSort('CustomerTypeName')}
             >
               <div className="flex items-center gap-1">
-                {t('documentSerialType.table.customerType', 'Müşteri Tipi')} <SortIcon column="CustomerTypeName" />
+                {t('documentSerialTypeManagement.table.customerType', 'Müşteri Tipi')} <SortIcon column="CustomerTypeName" />
               </div>
             </TableHead>
             <TableHead 
@@ -152,7 +152,7 @@ export function DocumentSerialTypeTable({
               onClick={() => handleSort('SalesRepFullName')}
             >
               <div className="flex items-center gap-1">
-                {t('documentSerialType.table.salesRep', 'Satış Temsilcisi')} <SortIcon column="SalesRepFullName" />
+                {t('documentSerialTypeManagement.table.salesRep', 'Satış Temsilcisi')} <SortIcon column="SalesRepFullName" />
               </div>
             </TableHead>
             <TableHead 
@@ -160,7 +160,7 @@ export function DocumentSerialTypeTable({
               onClick={() => handleSort('SerialPrefix')}
             >
               <div className="flex items-center gap-1">
-                {t('documentSerialType.table.serialPrefix', 'Seri Öneki')} <SortIcon column="SerialPrefix" />
+                {t('documentSerialTypeManagement.table.serialPrefix', 'Seri Öneki')} <SortIcon column="SerialPrefix" />
               </div>
             </TableHead>
             <TableHead 
@@ -168,14 +168,14 @@ export function DocumentSerialTypeTable({
               onClick={() => handleSort('SerialLength')}
             >
               <div className="flex items-center gap-1">
-                {t('documentSerialType.table.serialLength', 'Seri Uzunluğu')} <SortIcon column="SerialLength" />
+                {t('documentSerialTypeManagement.table.serialLength', 'Seri Uzunluğu')} <SortIcon column="SerialLength" />
               </div>
             </TableHead>
             <TableHead className={`py-4 px-4 text-xs font-bold uppercase tracking-wider text-zinc-900 dark:text-foreground/90 border-b border-r border-zinc-300 dark:border-zinc-700`}>
-              {t('documentSerialType.table.createdDate', 'Oluşturulma Tarihi')}
+              {t('documentSerialTypeManagement.table.createdDate', 'Oluşturulma Tarihi')}
             </TableHead>
             <TableHead className={`text-right py-4 px-4 text-xs font-bold uppercase tracking-wider text-zinc-900 dark:text-foreground/90 border-b border-zinc-300 dark:border-zinc-700`}>
-              {t('common.actions', 'İşlemler')}
+              {t('documentSerialTypeManagement.actions', 'İşlemler')}
             </TableHead>
           </TableRow>
         </TableHeader>
@@ -204,7 +204,7 @@ export function DocumentSerialTypeTable({
                 {documentSerialType.serialLength || '-'}
               </TableCell>
               <TableCell className={`text-sm text-muted-foreground border-b border-r ${borderClass} px-4 py-3`}>
-                 {documentSerialType.createdDate ? new Date(documentSerialType.createdDate).toLocaleDateString('tr-TR') : '-'}
+                 {documentSerialType.createdDate ? new Date(documentSerialType.createdDate).toLocaleDateString(i18n.language) : '-'}
               </TableCell>
               <TableCell className={`text-right border-b ${borderClass} px-4 py-3`}>
                 <div className="flex justify-end gap-2">
@@ -233,7 +233,7 @@ export function DocumentSerialTypeTable({
 
       <div className={`flex flex-col md:flex-row items-center justify-between px-6 py-4 bg-zinc-50/50 dark:bg-muted/20 border-t-0 rounded-b-xl gap-4 border-x border-b ${borderClass}`}>
         <div className="text-xs text-muted-foreground font-medium">
-            Toplam <span className="font-bold text-foreground">{data?.totalCount || 0}</span> kayıt.
+            {t('documentSerialTypeManagement.totalRecords', { count: data?.totalCount || 0 })}
         </div>
         
         <div className="flex items-center gap-3">
@@ -244,7 +244,7 @@ export function DocumentSerialTypeTable({
             onClick={() => onPageChange(pageNumber - 1)}
             disabled={pageNumber <= 1}
           >
-            {t('common.previous', 'Önceki')}
+            {t('documentSerialTypeManagement.previous', 'Önceki')}
           </Button>
           
           <div className={`text-xs font-bold bg-white dark:bg-background px-3 py-1.5 rounded-md min-w-[3rem] text-center border ${borderClass}`}>
@@ -258,7 +258,7 @@ export function DocumentSerialTypeTable({
             onClick={() => onPageChange(pageNumber + 1)}
             disabled={pageNumber >= totalPages}
           >
-            {t('common.next', 'Sonraki')}
+            {t('documentSerialTypeManagement.next', 'Sonraki')}
           </Button>
         </div>
       </div>
@@ -270,10 +270,10 @@ export function DocumentSerialTypeTable({
                <Trash2 className="w-6 h-6 text-red-600 dark:text-red-500" />
              </div>
              <DialogTitle className="text-center text-xl font-bold text-zinc-900 dark:text-zinc-100">
-               {t('common.deleteConfirmTitle', 'Silme İşlemi')}
+               {t('documentSerialTypeManagement.deleteConfirmTitle', 'Silme İşlemi')}
              </DialogTitle>
              <DialogDescription className="text-center text-zinc-500 dark:text-zinc-400">
-               {t('common.deleteConfirmDescription', 'Bu kaydı silmek istediğinize emin misiniz? Bu işlem geri alınamaz.')}
+               {t('documentSerialTypeManagement.deleteConfirmDescription', 'Bu kaydı silmek istediğinize emin misiniz? Bu işlem geri alınamaz.')}
              </DialogDescription>
            </DialogHeader>
            <DialogFooter className="flex flex-col-reverse sm:flex-row gap-2 mt-6">
@@ -282,7 +282,7 @@ export function DocumentSerialTypeTable({
                onClick={() => setDeleteDialogOpen(false)}
                className="flex-1 bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300"
              >
-               {t('common.cancel', 'İptal')}
+               {t('documentSerialTypeManagement.cancel', 'İptal')}
              </Button>
              <Button
                variant="destructive"
@@ -290,7 +290,7 @@ export function DocumentSerialTypeTable({
                disabled={deleteDocumentSerialType.isPending}
                className="flex-1 bg-red-600 hover:bg-red-700 text-white shadow-lg shadow-red-500/20"
              >
-               {deleteDocumentSerialType.isPending ? t('common.deleting', 'Siliniyor...') : t('common.delete', 'Sil')}
+               {deleteDocumentSerialType.isPending ? t('documentSerialTypeManagement.deleting', 'Siliniyor...') : t('documentSerialTypeManagement.delete', 'Sil')}
              </Button>
            </DialogFooter>
         </DialogContent>

@@ -19,7 +19,7 @@ interface PricingRuleTableProps {
 }
 
 export function PricingRuleTable({ onEdit }: PricingRuleTableProps): ReactElement {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { data, isLoading } = usePricingRuleHeaders();
 
   const getRuleTypeLabel = (type: PricingRuleType): string => {
@@ -42,7 +42,7 @@ export function PricingRuleTable({ onEdit }: PricingRuleTableProps): ReactElemen
 
   const formatDate = (dateString: string): string => {
     try {
-      return new Date(dateString).toLocaleDateString('tr-TR');
+      return new Date(dateString).toLocaleDateString(i18n.language);
     } catch {
       return dateString;
     }
@@ -59,7 +59,7 @@ export function PricingRuleTable({ onEdit }: PricingRuleTableProps): ReactElemen
     return (
       <div className="flex items-center justify-center py-12">
         <div className="text-muted-foreground">
-          {t('common.loading', 'Yükleniyor...')}
+          {t('pricingRule.loading', 'Yükleniyor...')}
         </div>
       </div>
     );
@@ -88,7 +88,7 @@ export function PricingRuleTable({ onEdit }: PricingRuleTableProps): ReactElemen
             <TableHead>{t('pricingRule.table.validTo', 'Geçerlilik Bitiş')}</TableHead>
             <TableHead>{t('pricingRule.table.customer', 'Müşteri')}</TableHead>
             <TableHead>{t('pricingRule.table.status', 'Durum')}</TableHead>
-            <TableHead>{t('common.actions', 'İşlemler')}</TableHead>
+            <TableHead>{t('pricingRule.table.actions', 'İşlemler')}</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -121,7 +121,7 @@ export function PricingRuleTable({ onEdit }: PricingRuleTableProps): ReactElemen
                   onClick={() => onEdit(header)}
                 >
                   <Edit className="h-4 w-4 mr-2" />
-                  {t('common.edit', 'Düzenle')}
+                  {t('pricingRule.form.edit', 'Düzenle')}
                 </Button>
               </TableCell>
             </TableRow>

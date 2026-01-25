@@ -25,7 +25,7 @@ interface StockBasicInfoProps {
 }
 
 export function StockBasicInfo({ stock }: StockBasicInfoProps): ReactElement {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   const specialCodes = [
     { id: 1, code: stock.kod1, name: stock.kod1Adi },
@@ -157,13 +157,13 @@ export function StockBasicInfo({ stock }: StockBasicInfoProps): ReactElement {
          {stock.createdAt && (
             <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-zinc-50 dark:bg-white/5 text-xs text-zinc-500 border border-zinc-200 dark:border-white/5">
                 <Calendar className="w-3.5 h-3.5 text-zinc-400" />
-                <span>{t('common.created', 'Oluşturuldu')}: <span className="font-semibold text-zinc-700 dark:text-zinc-300">{new Date(stock.createdAt).toLocaleDateString('tr-TR')}</span></span>
+                <span>{t('stock.detail.created', 'Oluşturuldu')}: <span className="font-semibold text-zinc-700 dark:text-zinc-300">{new Date(stock.createdAt).toLocaleDateString(i18n.language)}</span></span>
             </div>
          )}
          {stock.updatedAt && (
             <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-zinc-50 dark:bg-white/5 text-xs text-zinc-500 border border-zinc-200 dark:border-white/5">
                 <CheckCircle2 className="w-3.5 h-3.5 text-zinc-400" />
-                <span>{t('common.updated', 'Güncellendi')}: <span className="font-semibold text-zinc-700 dark:text-zinc-300">{new Date(stock.updatedAt).toLocaleDateString('tr-TR')}</span></span>
+                <span>{t('stock.detail.updated', 'Güncellendi')}: <span className="font-semibold text-zinc-700 dark:text-zinc-300">{new Date(stock.updatedAt).toLocaleDateString(i18n.language)}</span></span>
             </div>
          )}
       </div>
@@ -207,7 +207,7 @@ function InfoItem({
     const handleCopy = () => {
         if (value) {
             navigator.clipboard.writeText(value);
-            toast.success(t('common.copied', 'Kopyalandı'));
+            toast.success(t('stock.detail.copied', 'Kopyalandı'));
         }
     };
 
@@ -246,7 +246,7 @@ function InfoItem({
                             multiline ? "ml-2 mt-0.5" : "absolute right-2 top-1/2 -translate-y-1/2"
                         )}
                         onClick={handleCopy}
-                        title={t('common.copy', 'Kopyala')}
+                        title={t('stock.detail.copy', 'Kopyala')}
                     >
                         <Copy className="h-4 w-4" />
                     </Button>

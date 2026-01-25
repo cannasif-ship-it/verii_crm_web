@@ -123,7 +123,7 @@ export function StockRelationForm({ stockId }: StockRelationFormProps): ReactEle
                     <CommandInput placeholder={t('stock.relations.search', 'Stok adı veya kodu ara...')} className="h-11 border-none focus:ring-0" />
                     <CommandList>
                         <CommandEmpty className="py-6 text-center text-sm text-muted-foreground">
-                            {t('common.noData', 'Stok bulunamadı.')}
+                            {t('stock.relations.noStockFound', 'Stok bulunamadı.')}
                         </CommandEmpty>
                         <CommandGroup className="max-h-[240px] overflow-y-auto p-1">
                         {stocks
@@ -278,7 +278,7 @@ export function StockRelationForm({ stockId }: StockRelationFormProps): ReactEle
           {createRelation.isPending ? (
             <>
                 <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                {t('common.saving', 'İşleniyor...')}
+                {t('stock.relations.saving', 'İşleniyor...')}
             </>
           ) : (
             <>

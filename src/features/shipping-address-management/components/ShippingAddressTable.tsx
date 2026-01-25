@@ -44,7 +44,7 @@ export function ShippingAddressTable({
   onPageChange,
   onSortChange,
 }: ShippingAddressTableProps): ReactElement {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedShippingAddress, setSelectedShippingAddress] = useState<ShippingAddressDto | null>(null);
 
@@ -100,7 +100,7 @@ export function ShippingAddressTable({
         <div className="flex flex-col items-center gap-2">
           <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-current text-pink-500" />
           <div className="text-sm text-muted-foreground animate-pulse">
-            {t('common.loading', 'Yükleniyor...')}
+            {t('shippingAddressManagement.loading', 'Yükleniyor...')}
           </div>
         </div>
       </div>
@@ -133,7 +133,7 @@ export function ShippingAddressTable({
                 onClick={() => handleSort('CustomerName')}
               >
                 <div className="flex items-center">
-                  {t('shippingAddressManagement.customerName', 'Müşteri')}
+                  {t('shippingAddressManagement.table.customerName', 'Müşteri')}
                   <SortIcon column="CustomerName" />
                 </div>
               </TableHead>
@@ -142,33 +142,33 @@ export function ShippingAddressTable({
                 onClick={() => handleSort('Address')}
               >
                 <div className="flex items-center">
-                  {t('shippingAddressManagement.address', 'Adres')}
+                  {t('shippingAddressManagement.table.address', 'Adres')}
                   <SortIcon column="Address" />
                 </div>
               </TableHead>
               <TableHead className="text-slate-500 dark:text-slate-400 py-4">
-                {t('shippingAddressManagement.postalCode', 'Posta Kodu')}
+                {t('shippingAddressManagement.table.postalCode', 'Posta Kodu')}
               </TableHead>
               <TableHead className="text-slate-500 dark:text-slate-400 py-4">
-                {t('shippingAddressManagement.contactPerson', 'Yetkili Kişi')}
+                {t('shippingAddressManagement.table.contactPerson', 'Yetkili Kişi')}
               </TableHead>
               <TableHead className="text-slate-500 dark:text-slate-400 py-4">
-                {t('shippingAddressManagement.phone', 'Telefon')}
+                {t('shippingAddressManagement.table.phone', 'Telefon')}
               </TableHead>
               <TableHead className="text-slate-500 dark:text-slate-400 py-4">
-                {t('shippingAddressManagement.location', 'Konum')}
+                {t('shippingAddressManagement.table.location', 'Konum')}
               </TableHead>
               <TableHead
                 className={headStyle}
                 onClick={() => handleSort('CreatedDate')}
               >
                 <div className="flex items-center">
-                  {t('shippingAddressManagement.createdDate', 'Oluşturulma Tarihi')}
+                  {t('shippingAddressManagement.table.createdDate', 'Oluşturulma Tarihi')}
                   <SortIcon column="CreatedDate" />
                 </div>
               </TableHead>
               <TableHead className="text-right text-slate-500 dark:text-slate-400 py-4">
-                {t('shippingAddressManagement.actions', 'İşlemler')}
+                {t('shippingAddressManagement.table.actions', 'İşlemler')}
               </TableHead>
             </TableRow>
           </TableHeader>
@@ -207,7 +207,7 @@ export function ShippingAddressTable({
                 </TableCell>
                 <TableCell className="text-slate-600 dark:text-slate-400 text-sm">
                   {shippingAddress.createdDate
-                    ? new Date(shippingAddress.createdDate).toLocaleDateString('tr-TR')
+                    ? new Date(shippingAddress.createdDate).toLocaleDateString(i18n.language)
                     : '-'}
                 </TableCell>
                 <TableCell className="text-right">
@@ -252,7 +252,7 @@ export function ShippingAddressTable({
             disabled={pageNumber <= 1}
             className="bg-white dark:bg-transparent border-slate-200 dark:border-white/10 hover:bg-slate-50 dark:hover:bg-white/5"
           >
-            {t('common.previous', 'Önceki')}
+            {t('shippingAddressManagement.previous', 'Önceki')}
           </Button>
           <div className="flex items-center px-4 text-sm font-medium text-slate-700 dark:text-slate-200">
             {t('shippingAddressManagement.table.page', 'Sayfa {{current}} / {{total}}', {
@@ -267,7 +267,7 @@ export function ShippingAddressTable({
             disabled={pageNumber >= totalPages}
             className="bg-white dark:bg-transparent border-slate-200 dark:border-white/10 hover:bg-slate-50 dark:hover:bg-white/5"
           >
-            {t('common.next', 'Sonraki')}
+            {t('shippingAddressManagement.next', 'Sonraki')}
           </Button>
         </div>
       </div>
@@ -291,7 +291,7 @@ export function ShippingAddressTable({
               onClick={() => setDeleteDialogOpen(false)}
               className="bg-white dark:bg-transparent border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/5"
             >
-              {t('common.cancel', 'İptal')}
+              {t('shippingAddressManagement.cancel', 'İptal')}
             </Button>
             <Button
               variant="destructive"
@@ -300,8 +300,8 @@ export function ShippingAddressTable({
               className="bg-red-600 hover:bg-red-700 dark:bg-red-900/50 dark:hover:bg-red-900/70 border border-transparent dark:border-red-500/20 text-white"
             >
               {deleteShippingAddress.isPending
-                ? t('common.deleting', 'Siliniyor...')
-                : t('common.delete', 'Sil')}
+                ? t('shippingAddressManagement.deleting', 'Siliniyor...')
+                : t('shippingAddressManagement.delete', 'Sil')}
             </Button>
           </DialogFooter>
         </DialogContent>

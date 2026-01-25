@@ -21,3 +21,5 @@ export interface ApprovalFlowStepUpdateDto {
   stepOrder: number;
   approvalRoleGroupId: number;
 }
+
+

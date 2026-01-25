@@ -60,7 +60,7 @@ export function DashboardPage(): ReactElement {
   }, [t, setPageTitle]);
 
   const formatCurrency = (amount: number): string => {
-    return new Intl.NumberFormat('tr-TR', {
+    return new Intl.NumberFormat(i18n.language, {
       style: 'currency',
       currency: 'TRY',
       minimumFractionDigits: 2,
@@ -69,20 +69,18 @@ export function DashboardPage(): ReactElement {
 
   const formatDate = (): string => {
     const now = new Date();
-    const locale = i18n.language === 'tr' ? 'tr-TR' : i18n.language === 'en' ? 'en-US' : i18n.language === 'de' ? 'de-DE' : 'fr-FR';
     const options: Intl.DateTimeFormatOptions = {
       day: 'numeric',
       month: 'long',
       year: 'numeric',
       weekday: 'long',
     };
-    return now.toLocaleDateString(locale, options);
+    return now.toLocaleDateString(i18n.language, options);
   };
 
   const formatTime = (): string => {
     const now = new Date();
-    const locale = i18n.language === 'tr' ? 'tr-TR' : i18n.language === 'en' ? 'en-US' : i18n.language === 'de' ? 'de-DE' : 'fr-FR';
-    return now.toLocaleTimeString(locale, {
+    return now.toLocaleTimeString(i18n.language, {
       hour: '2-digit',
       minute: '2-digit',
       second: '2-digit',
@@ -92,7 +90,7 @@ export function DashboardPage(): ReactElement {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <p className="text-muted-foreground">{t('common.loading')}</p>
+        <p className="text-muted-foreground">{t('dashboard.loading')}</p>
       </div>
     );
   }

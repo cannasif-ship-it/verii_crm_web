@@ -255,7 +255,7 @@ export function QuotationHeaderForm({
                         className="h-11 px-6 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-white shadow-md hover:shadow-lg transition-all border border-zinc-800 active:scale-95"
                       >
                         <Search className="h-4 w-4 mr-2" />
-                        {t('common.select', 'Seç')}
+                        {t('quotation.select', 'Seç')}
                       </Button>
                     </div>
                     <FormMessage className="mt-1.5" />
@@ -282,7 +282,7 @@ export function QuotationHeaderForm({
                         <div className="relative">
                            <div className={styles.iconWrapper}><Briefcase className="h-4 w-4" /></div>
                            <SelectTrigger className={styles.inputBase}>
-                             <SelectValue placeholder={t('common.select', 'Seçiniz')} />
+                             <SelectValue placeholder={t('quotation.select', 'Seçiniz')} />
                            </SelectTrigger>
                         </div>
                       </FormControl>
@@ -381,7 +381,7 @@ export function QuotationHeaderForm({
                         <div className="relative">
                           <div className={styles.iconWrapper}><DollarSign className="h-4 w-4 text-emerald-600" /></div>
                           <SelectTrigger className={cn(styles.inputBase, "font-bold tracking-wide text-emerald-700 dark:text-emerald-400 bg-emerald-50/50 dark:bg-emerald-950/20 border-emerald-100 dark:border-emerald-900/30")}>
-                            <SelectValue placeholder="Seçiniz" />
+                            <SelectValue placeholder={t('quotation.select', 'Seçiniz')} />
                           </SelectTrigger>
                         </div>
                       </FormControl>
@@ -412,7 +412,7 @@ export function QuotationHeaderForm({
                         <div className="relative">
                            <div className={styles.iconWrapper}><CreditCard className="h-4 w-4" /></div>
                            <SelectTrigger className={styles.inputBase}>
-                             <SelectValue placeholder={t('common.select', 'Seçiniz')} />
+                             <SelectValue placeholder={t('quotation.select', 'Seçiniz')} />
                            </SelectTrigger>
                         </div>
                       </FormControl>
@@ -543,8 +543,8 @@ export function QuotationHeaderForm({
                           <div className="relative">
                             <div className={styles.iconWrapper}><Hash className="h-4 w-4" /></div>
                             <SelectTrigger className={styles.inputBase}>
-                              <SelectValue placeholder={t('common.select', 'Seç')} />
-                            </SelectTrigger>
+                      <SelectValue placeholder={t('quotation.select', 'Seç')} />
+                    </SelectTrigger>
                           </div>
                         </FormControl>
                         <SelectContent>
@@ -627,10 +627,10 @@ export function QuotationHeaderForm({
           </DialogHeader>
           <DialogFooter className="gap-2 sm:gap-0 mt-4">
             <Button variant="outline" onClick={handleCurrencyChangeCancel} className="rounded-xl">
-              {t('common.cancel', 'Vazgeç')}
+              {t('quotation.cancel', 'Vazgeç')}
             </Button>
             <Button onClick={handleCurrencyChangeConfirm} className="rounded-xl bg-pink-600 hover:bg-pink-700 text-white">
-              {t('common.yes', 'Onayla')}
+              {t('quotation.confirm', 'Onayla')}
             </Button>
           </DialogFooter>
         </DialogContent>

@@ -1,3 +1,5 @@
+'use client';
+
 import { type ReactElement, useState, useEffect, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Input } from '@/components/ui/input';
@@ -1009,7 +1011,7 @@ export function QuotationLineForm({
         <div className="flex justify-end gap-2 pt-2 border-t">
           <Button type="button" variant="outline" onClick={onCancel} size="sm" className="gap-2">
             <X className="h-4 w-4" />
-            {t('common.cancel', 'İptal')}
+            {t('quotation.cancel', 'İptal')}
           </Button>
           <Button 
             type="button" 
@@ -1019,7 +1021,7 @@ export function QuotationLineForm({
             disabled={!formData.productCode || !formData.productName}
           >
             <Check className="h-4 w-4" />
-            {t('common.save', 'Kaydet')}
+            {t('quotation.save', 'Kaydet')}
           </Button>
         </div>
 

@@ -156,7 +156,7 @@ export function CountryManagementPage(): ReactElement {
             <div className="relative group w-full md:w-[280px]">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-pink-500 transition-colors" />
               <Input
-                placeholder={t('common.search', 'Ara...')}
+                placeholder={t('countryManagement.search', 'Ara...')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10 h-11 bg-white/50 dark:bg-card/50 border-slate-200 dark:border-white/10 focus:border-pink-500/50 focus:ring-pink-500/20 rounded-xl transition-all"

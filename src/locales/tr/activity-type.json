@@ -2,6 +2,16 @@
   "menu": "Aktivite Tipi Yönetimi",
   "description": "Aktivite tiplerini yönetin ve düzenleyin",
   "addButton": "Yeni Aktivite Tipi Ekle",
+  "loading": "Yükleniyor...",
+  "noData": "Veri yok",
+  "actions": "İşlemler",
+  "edit": "Düzenle",
+  "deleteButton": "Sil",
+  "cancel": "İptal",
+  "save": "Kaydet",
+  "saving": "Kaydediliyor...",
+  "previous": "Önceki",
+  "next": "Sonraki",
   "form": {
     "addTitle": "Yeni Aktivite Tipi Ekle",
     "editTitle": "Aktivite Tipi Düzenle",
@@ -37,7 +47,7 @@
     "deleteSuccess": "Aktivite tipi başarıyla silindi",
     "deleteError": "Aktivite tipi silinemedi"
   },
-  "delete": {
+  "deleteConfirm": {
     "confirmTitle": "Aktivite Tipini Sil",
     "confirmMessage": "{{name}} aktivite tipini silmek istediğinizden emin misiniz?"
   }

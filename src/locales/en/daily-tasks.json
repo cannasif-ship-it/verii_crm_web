@@ -28,5 +28,15 @@
   "putOnHold": "Put on Hold",
   "complete": "Complete",
   "more": "more",
-  "today": "Today"
+  "today": "Today",
+  "loading": "Loading...",
+  "days": {
+    "mon": "Mon",
+    "tue": "Tue",
+    "wed": "Wed",
+    "thu": "Thu",
+    "fri": "Fri",
+    "sat": "Sat",
+    "sun": "Sun"
+  }
 }

@@ -12,6 +12,7 @@
   "noResults": "Arama sonucu bulunamadı",
   "searchPlaceholder": "İsim veya kod ile ara...",
   "voiceSearch": "Sesli arama",
+  "loading": "Yükleniyor",
   "table": {
     "type": "Tip",
     "customerCode": "Müşteri Kodu",

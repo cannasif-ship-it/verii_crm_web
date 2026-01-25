@@ -188,7 +188,7 @@ export function ApprovalRoleForm({
                 disabled={isLoading}
                 className="h-11 px-6 border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300"
               >
-                {t('common.cancel', 'İptal')}
+                {t('approvalRole.form.cancel', 'İptal')}
               </Button>
               <Button 
                 type="submit" 
@@ -196,8 +196,8 @@ export function ApprovalRoleForm({
                 className="h-11 px-8 bg-gradient-to-r from-pink-600 to-orange-600 text-white font-semibold shadow-lg shadow-pink-500/20 hover:scale-[1.02] transition-transform"
               >
                 {isLoading
-                  ? t('common.saving', 'Kaydediliyor...')
-                  : t('common.save', 'Kaydet')}
+                  ? t('approvalRole.form.saving', 'Kaydediliyor...')
+                  : t('approvalRole.form.save', 'Kaydet')}
               </Button>
             </DialogFooter>
           </form>

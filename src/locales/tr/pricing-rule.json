@@ -1,4 +1,6 @@
 {
+  "loading": "Yükleniyor...",
+  "loadingDescription": "Veriler yükleniyor, lütfen bekleyin",
   "list": {
     "title": "Fiyat Kuralları",
     "description": "Fiyat kurallarını yönetin ve düzenleyin",
@@ -13,9 +15,16 @@
     "validTo": "Geçerlilik Bitiş",
     "customer": "Müşteri",
     "currency": "Para Birimi",
-    "status": "Durum"
+    "status": "Durum",
+    "actions": "İşlemler"
   },
   "form": {
+    "cancel": "İptal",
+    "save": "Kaydet",
+    "saving": "Kaydediliyor...",
+    "confirm": "Onayla",
+    "update": "Güncelle",
+    "createButton": "Oluştur",
     "create": "Yeni Fiyat Kuralı",
     "edit": "Fiyat Kuralı Düzenle",
     "createDescription": "Yeni fiyat kuralı bilgilerini girin",
@@ -42,6 +51,22 @@
       "minQuantityInvalid": "Geçersiz Min Miktar",
       "minQuantityInvalidMessage": "Minimum miktar 0'dan küçük olamaz"
     }
+  },
+  "delete": {
+    "button": "Sil",
+    "confirmTitle": "Silme Onayı",
+    "confirmMessage": "Bu kaydı silmek istediğinizden emin misiniz?"
+  },
+  "salesmen": {
+    "title": "Satışçılar",
+    "addSuccess": "Satışçı Eklendi",
+    "addSuccessMessage": "Satışçı fiyat kuralına başarıyla eklendi",
+    "addError": "Hata",
+    "addErrorMessage": "Satışçı eklenirken bir hata oluştu",
+    "deleteSuccess": "Satışçı Kaldırıldı",
+    "deleteSuccessMessage": "Satışçı fiyat kuralından başarıyla kaldırıldı",
+    "deleteError": "Hata",
+    "deleteErrorMessage": "Satışçı kaldırılırken bir hata oluştu"
   },
   "header": {
     "ruleType": "Kural Tipi",
@@ -104,13 +129,6 @@
     "selectCurrency": "Para birimi seçin",
     "minQuantityInvalid": "Geçersiz Min Miktar",
     "minQuantityInvalidMessage": "Minimum miktar 0'dan küçük olamaz"
-  },
-  "salesmen": {
-    "title": "Satışçılar",
-    "add": "Satışçı Ekle",
-    "empty": "Henüz satışçı eklenmedi",
-    "emptyDescription": "Tüm satışçılar için geçerli olacaktır",
-    "salesman": "Satışçı"
   },
   "card": {
     "customer": "Müşteri",

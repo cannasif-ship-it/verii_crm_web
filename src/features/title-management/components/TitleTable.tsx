@@ -44,7 +44,7 @@ export function TitleTable({
   onPageChange,
   onSortChange,
 }: TitleTableProps): ReactElement {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedTitle, setSelectedTitle] = useState<TitleDto | null>(null);
 
@@ -138,7 +138,7 @@ export function TitleTable({
         <div className="flex flex-col items-center gap-2">
           <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-current text-pink-500" />
           <div className="text-sm text-muted-foreground animate-pulse">
-            {t('common.loading', 'Yükleniyor...')}
+            {t('titleManagement.loading', 'Yükleniyor...')}
           </div>
         </div>
       </div>
@@ -200,7 +200,7 @@ export function TitleTable({
                 {t('titleManagement.table.createdBy', 'Oluşturan Kullanıcı')}
               </TableHead>
               <TableHead className="text-right text-slate-500 dark:text-slate-400 py-4">
-                {t('common.actions', 'İşlemler')}
+                {t('titleManagement.actions', 'İşlemler')}
               </TableHead>
             </TableRow>
           </TableHeader>
@@ -222,7 +222,7 @@ export function TitleTable({
                   </div>
                 </TableCell>
                 <TableCell className="text-slate-600 dark:text-slate-400">
-                  {new Date(title.createdDate).toLocaleDateString('tr-TR')}
+                  {new Date(title.createdDate).toLocaleDateString(i18n.language)}
                 </TableCell>
                 <TableCell className="text-slate-600 dark:text-slate-400">
                   <div className="flex items-center gap-2">
@@ -276,7 +276,7 @@ export function TitleTable({
             disabled={pageNumber <= 1}
             className="bg-white dark:bg-transparent border-slate-200 dark:border-white/10 hover:bg-slate-50 dark:hover:bg-white/5"
           >
-            {t('common.previous', 'Önceki')}
+            {t('titleManagement.previous', 'Önceki')}
           </Button>
           <div className="flex items-center px-4 text-sm font-medium text-slate-700 dark:text-slate-200">
             {t('titleManagement.table.page', 'Sayfa {{current}} / {{total}}', {
@@ -291,7 +291,7 @@ export function TitleTable({
             disabled={pageNumber >= totalPages}
             className="bg-white dark:bg-transparent border-slate-200 dark:border-white/10 hover:bg-slate-50 dark:hover:bg-white/5"
           >
-            {t('common.next', 'Sonraki')}
+            {t('titleManagement.next', 'Sonraki')}
           </Button>
         </div>
       </div>
@@ -315,7 +315,7 @@ export function TitleTable({
               disabled={deleteTitle.isPending}
               className="bg-white dark:bg-transparent border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/5"
             >
-              {t('common.cancel', 'İptal')}
+              {t('titleManagement.cancel', 'İptal')}
             </Button>
             <Button
               variant="destructive"
@@ -324,8 +324,8 @@ export function TitleTable({
               className="bg-red-600 hover:bg-red-700 dark:bg-red-900/50 dark:hover:bg-red-900/70 border border-transparent dark:border-red-500/20 text-white"
             >
               {deleteTitle.isPending
-                ? t('common.loading', 'Yükleniyor...')
-                : t('common.delete', 'Sil')}
+                ? t('titleManagement.deleting', 'Siliniyor...')
+                : t('titleManagement.delete.button', 'Sil')}
             </Button>
           </DialogFooter>
         </DialogContent>

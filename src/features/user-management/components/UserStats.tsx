@@ -19,7 +19,7 @@ export function UserStats(): ReactElement {
           <Card key={i}>
             <CardHeader>
               <CardTitle className="text-sm font-medium text-muted-foreground">
-                {t('common.loading', 'Yükleniyor...')}
+                {t('userManagement.stats.loading', 'Yükleniyor...')}
               </CardTitle>
             </CardHeader>
             <CardContent>

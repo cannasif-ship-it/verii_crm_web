@@ -1,7 +1,28 @@
 {
   "menu": "Dosya Tip Yönetimi",
   "description": "Dosya tiplerini yönetin ve düzenleyin",
+  "search": "Ara...",
+  "refresh": "Yenile",
   "addButton": "Yeni Dosya Tipi Ekle",
+  "loading": "Yükleniyor...",
+  "noData": "Veri yok",
+  "actions": "İşlemler",
+  "cancel": "İptal",
+  "save": "Kaydet",
+  "saving": "Kaydediliyor...",
+  "delete": "Sil",
+  "deleting": "Siliniyor...",
+  "deleteConfirmTitle": "Silme Onayı",
+  "deleteConfirmDescription": "Bu kaydı silmek istediğinize emin misiniz? Bu işlem geri alınamaz.",
+  "table": {
+    "id": "ID",
+    "ruleType": "Kural Tipi",
+    "customerType": "Müşteri Tipi",
+    "salesRep": "Satış Temsilcisi",
+    "serialPrefix": "Seri Öneki",
+    "serialLength": "Seri Uzunluğu",
+    "createdDate": "Oluşturulma Tarihi"
+  },
   "form": {
     "addTitle": "Yeni Dosya Tipi Ekle",
     "editTitle": "Dosya Tipi Düzenle",
@@ -27,20 +48,12 @@
     "serialStart": "Seri Başlangıç",
     "serialStart.min": "Seri başlangıç en az 0 olmalıdır",
     "serialStartPlaceholder": "Seri başlangıç değerini girin",
-    "serialCurrent": "Seri Mevcut",
+    "serialCurrent": "Mevcut Seri",
     "serialCurrent.min": "Seri mevcut en az 0 olmalıdır",
     "serialCurrentPlaceholder": "Mevcut seri değerini girin",
     "serialIncrement": "Seri Artış",
     "serialIncrement.min": "Seri artış en az 1 olmalıdır",
     "serialIncrementPlaceholder": "Seri artış değerini girin"
   },
-  "table": {
-    "id": "ID",
-    "ruleType": "Kural Tipi",
-    "customerType": "Müşteri Tipi",
-    "salesRep": "Satış Temsilcisi",
-    "serialPrefix": "Seri Öneki",
-    "serialLength": "Seri Uzunluğu",
-    "createdDate": "Oluşturulma Tarihi"
-  }
+  "totalRecords": "Toplam {{count}} kayıt"
 }

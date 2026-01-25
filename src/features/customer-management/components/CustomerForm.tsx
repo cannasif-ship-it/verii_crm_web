@@ -218,7 +218,7 @@ export function CustomerForm({
         {/* BODY: Kaydırılabilir */}
         <div className="flex-1 overflow-y-auto p-6 custom-scrollbar">
           <Form {...form}>
-            <form id="customer-form" onSubmit={form.handleSubmit(handleSubmit)} className="space-y-5">
+            <form id="customer-form" onSubmit={form.handleSubmit(handleSubmit)} className="space-y-5 ">
               
               {/* Grup: Temel Bilgiler */}
               <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
@@ -646,7 +646,7 @@ export function CustomerForm({
                             <SelectItem value="__loading__" disabled>Yükleniyor...</SelectItem>
                           ) : (
                             <>
-                              <SelectItem value="__none__">{t('common.none', 'Yok')}</SelectItem>
+                              <SelectItem value="__none__">{t('customerManagement.form.none', 'Yok')}</SelectItem>
                               {stokGroups.map((group) => {
                                 const groupCode = group.grupKodu || `__group_${group.isletmeKodu}_${group.subeKodu}`;
                                 const displayText = group.grupKodu && group.grupAdi 
@@ -757,7 +757,7 @@ export function CustomerForm({
                         {t('customerManagement.form.isCompleted', 'Tamamlandı')}
                       </FormLabel>
                       <DialogDescription className="text-[10px] text-slate-500 dark:text-slate-500">
-                        Bu müşterinin tüm bilgileri eksiksiz dolduruldu mu?
+                        {t('customerManagement.form.isCompletedDescription', 'Bu müşterinin tüm bilgileri eksiksiz dolduruldu mu?')}
                       </DialogDescription>
                     </div>
                     <FormControl>
@@ -783,7 +783,7 @@ export function CustomerForm({
             disabled={isLoading}
             className="bg-white dark:bg-transparent border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white"
           >
-            {t('common.cancel', 'İptal')}
+            {t('customerManagement.cancel', 'İptal')}
           </Button>
           <Button 
             type="submit" 
@@ -792,8 +792,8 @@ export function CustomerForm({
             className="bg-gradient-to-r from-pink-600 to-orange-600 text-white font-bold border-0 hover:shadow-lg hover:shadow-pink-500/20 transition-all transform active:scale-95 px-8"
           >
             {isLoading
-              ? t('common.saving', 'Kaydediliyor...')
-              : t('common.save', 'Kaydet')}
+              ? t('customerManagement.saving', 'Kaydediliyor...')
+              : t('customerManagement.save', 'Kaydet')}
           </Button>
         </DialogFooter>
 

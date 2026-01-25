@@ -29,8 +29,8 @@ export interface ApprovalRoleGroupFormData {
 export const approvalRoleGroupFormSchema = z.object({
   name: z
     .string()
-    .min(1, 'approvalRoleGroup.form.name.required')
-    .max(100, 'approvalRoleGroup.form.name.maxLength'),
+    .min(1, 'approvalRoleGroup.form.nameRequired')
+    .max(100, 'approvalRoleGroup.form.nameMaxLength'),
 });
 
 export type ApprovalRoleGroupFormSchema = z.infer<typeof approvalRoleGroupFormSchema>;

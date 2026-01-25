@@ -152,7 +152,7 @@ export function StockRelationList({ stockId }: StockRelationListProps): ReactEle
                     "
                     onClick={() => handleDeleteClick(relation)}
                     disabled={deleteRelation.isPending}
-                    title={t('common.delete', 'Sil')}
+                    title={t('stock.relations.delete', 'Sil')}
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>
@@ -188,7 +188,7 @@ export function StockRelationList({ stockId }: StockRelationListProps): ReactEle
               disabled={deleteRelation.isPending}
               className="rounded-lg"
             >
-              {t('common.cancel', 'Vazgeç')}
+              {t('stock.relations.cancel', 'Vazgeç')}
             </Button>
             <Button
               variant="destructive"
@@ -199,10 +199,10 @@ export function StockRelationList({ stockId }: StockRelationListProps): ReactEle
               {deleteRelation.isPending ? (
                  <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    {t('common.deleting', 'Siliniyor...')}
+                    {t('stock.relations.deleting', 'Siliniyor...')}
                  </>
               ) : (
-                 t('common.delete', 'Evet, Sil')
+                 t('stock.relations.confirmDelete', 'Evet, Sil')
               )}
             </Button>
           </DialogFooter>

@@ -2,6 +2,16 @@
   "menu": "Activity Type Management",
   "description": "Manage and edit activity types",
   "addButton": "Add New Activity Type",
+  "loading": "Loading...",
+  "noData": "No data found",
+  "actions": "Actions",
+  "edit": "Edit",
+  "deleteButton": "Delete",
+  "cancel": "Cancel",
+  "save": "Save",
+  "saving": "Saving...",
+  "previous": "Previous",
+  "next": "Next",
   "form": {
     "addTitle": "Add New Activity Type",
     "editTitle": "Edit Activity Type",
@@ -21,8 +31,8 @@
     "description": "Description",
     "createdDate": "Created Date",
     "createdBy": "Created By",
-    "showing": "Showing {{from}}-{{to}} of {{total}}",
-    "page": "Page {{current}} of {{total}}"
+    "showing": "Showing {{from}}-{{to}} / {{total}}",
+    "page": "Page {{current}} / {{total}}"
   },
   "stats": {
     "totalActivityTypes": "Total Activity Types",
@@ -37,7 +47,7 @@
     "deleteSuccess": "Activity type deleted successfully",
     "deleteError": "Failed to delete activity type"
   },
-  "delete": {
+  "deleteConfirm": {
     "confirmTitle": "Delete Activity Type",
     "confirmMessage": "Are you sure you want to delete {{name}} activity type?"
   }

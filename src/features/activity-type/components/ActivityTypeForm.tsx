@@ -138,12 +138,12 @@ export function ActivityTypeForm({
                 onClick={() => onOpenChange(false)}
                 disabled={isLoading}
               >
-                {t('common.cancel', 'İptal')}
+                {t('activityType.cancel', 'İptal')}
               </Button>
               <Button type="submit" disabled={isLoading}>
                 {isLoading
-                  ? t('common.saving', 'Kaydediliyor...')
-                  : t('common.save', 'Kaydet')}
+                  ? t('activityType.saving', 'Kaydediliyor...')
+                  : t('activityType.save', 'Kaydet')}
               </Button>
             </DialogFooter>
           </form>

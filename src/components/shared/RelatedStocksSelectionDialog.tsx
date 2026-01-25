@@ -188,7 +188,7 @@ export function RelatedStocksSelectionDialog({
 
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isLoading}>
-            {t('common.cancel', 'İptal')}
+            {t('relatedStocksSelectionDialog.cancel', 'İptal')}
           </Button>
           <Button onClick={handleConfirm} disabled={isLoading}>
             {isLoading ? (

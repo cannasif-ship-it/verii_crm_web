@@ -347,7 +347,7 @@ export function QuotationDetailPage(): ReactElement {
       <div className="flex flex-col items-center justify-center py-24 gap-4 border border-zinc-300 dark:border-zinc-700/80 rounded-xl bg-white/50 dark:bg-card/50">
         <div className="w-10 h-10 border-4 border-muted border-t-pink-500 rounded-full animate-spin" />
         <span className="text-muted-foreground animate-pulse text-sm font-medium">
-          {t('common.loading', 'Yükleniyor...')}
+          {t('quotation.loading', 'Yükleniyor...')}
         </span>
       </div>
     );
@@ -361,7 +361,7 @@ export function QuotationDetailPage(): ReactElement {
           {t('quotation.detail.notFound', 'Teklif bulunamadı')}
         </p>
         <Button variant="outline" onClick={() => navigate('/quotations')}>
-          {t('common.backToQuotations', 'Tekliflere Dön')}
+          {t('quotation.backToQuotations', 'Tekliflere Dön')}
         </Button>
       </div>
     );
@@ -448,7 +448,7 @@ export function QuotationDetailPage(): ReactElement {
                 className="group"
               >
                 <X className="mr-2 h-4 w-4" />
-                {t('common.cancel', 'İptal')}
+                {t('quotation.cancel', 'İptal')}
               </Button>
               {quotation?.status === 0 && (
                 <Button 
@@ -462,16 +462,12 @@ export function QuotationDetailPage(): ReactElement {
                   {t('quotation.approval.sendForApproval', 'Onaya Gönder')}
                 </Button>
               )}
-              <Button
-                type="submit"
-                disabled={updateMutation.isPending}
-                className="group bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-700 hover:to-purple-700 text-white min-w-[140px]"
-              >
-                <Save className="mr-2 h-4 w-4" />
-                {updateMutation.isPending
-                  ? t('common.saving', 'Kaydediliyor...')
-                  : t('common.save', 'Kaydet')}
-              </Button>
+              <Button type="submit" disabled={updateMutation.isPending} className="group bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-700 hover:to-purple-700 text-white min-w-[140px]">
+          <Save className="mr-2 h-4 w-4" />
+          {updateMutation.isPending
+            ? t('quotation.saving', 'Kaydediliyor...')
+            : t('quotation.save', 'Kaydet')}
+        </Button>
             </div>
 
           </div>

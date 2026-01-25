@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useTranslation } from 'react-i18next';
+import { useTranslation, Trans } from 'react-i18next';
 import { useSearchParams, useNavigate, Link } from 'react-router-dom';
 import { toast } from 'sonner';
 import { loginRequestSchema } from '../types/auth';
@@ -314,7 +314,7 @@ export function LoginPage(): React.JSX.Element {
               className="inline-flex items-center justify-center w-80 h-50  object-contain p-2"
             />
             <p className="text-slate-400 text-xs uppercase tracking-[0.15em] mt-2 font-medium">
-              Satış & Müşteri Yönetimi
+              {t('auth.login.title')}
             </p>
           </div>
           
@@ -341,7 +341,7 @@ export function LoginPage(): React.JSX.Element {
                           value={field.value}
                         >
                           <SelectTrigger className="w-full h-auto bg-black/10 border border-white/10 rounded-xl px-4 py-6 pl-12 text-sm text-white focus:ring-0 focus:ring-offset-0 focus:border-pink-500 focus:bg-black/30 transition-colors">
-                            <SelectValue placeholder="Şube Seçiniz" />
+                            <SelectValue placeholder={t('auth.login.branchPlaceholder')} />
                           </SelectTrigger>
                           <SelectContent className="bg-black/90 backdrop-blur-xl border border-white/10 text-white">
                             {branches?.map((branch) => (
@@ -379,7 +379,7 @@ export function LoginPage(): React.JSX.Element {
                         <Input
                           {...field}
                           type="email"
-                          placeholder="Kurumsal E-posta"
+                          placeholder={t('auth.login.emailPlaceholder', 'Kurumsal E-posta')}
                           className="w-full bg-black/30 border border-white/10 rounded-xl px-4 py-6 pl-12 pr-10 text-sm text-white placeholder-slate-500 focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-pink-500 focus:bg-black/50"
                         />
                       </div>
@@ -406,7 +406,7 @@ export function LoginPage(): React.JSX.Element {
                         <Input
                           {...field}
                           type={isPasswordVisible ? 'text' : 'password'}
-                          placeholder="Şifre"
+                          placeholder={t('auth.login.passwordPlaceholder', 'Şifre')}
                           className="w-full bg-black/30 border border-white/10 rounded-xl px-4 py-6 pl-12 pr-10 text-sm text-white placeholder-slate-500 focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-pink-500 focus:bg-black/50"
                         />
                         <button
@@ -442,13 +442,13 @@ export function LoginPage(): React.JSX.Element {
                             onChange={field.onChange}
                             className="accent-pink-500 rounded bg-slate-800 border-none w-3.5 h-3.5"
                           />
-                          Beni Hatırla
+                          {t('auth.login.rememberMe')}
                         </label>
                       </FormControl>
                     </FormItem>
                   )}
                 />
-                <Link to="/auth/forgot-password" className="hover:text-orange-400 transition">Şifremi Unuttum?</Link>
+                <Link to="/auth/forgot-password" className="hover:text-orange-400 transition">{t('auth.login.forgotPassword')}</Link>
               </div>
 
               {/* BUTTON */}
@@ -457,7 +457,7 @@ export function LoginPage(): React.JSX.Element {
                 disabled={isPending}
                 className="w-full py-4 rounded-xl bg-gradient-to-r from-pink-600 via-orange-500 to-yellow-500 hover:from-pink-500 hover:via-orange-400 hover:to-yellow-400 text-white font-bold text-sm mt-6 shadow-lg shadow-orange-900/20 tracking-wide uppercase transition-all transform hover:-translate-y-0.5 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center"
               >
-                {isPending ? 'İşleniyor...' : 'Giriş Yap'}
+                {isPending ? t('auth.login.processing') : t('auth.login.submitButton')}
               </button>
 
             </form>
@@ -467,7 +467,10 @@ export function LoginPage(): React.JSX.Element {
 {/* --- FOOTER --- */}
         <div className="w-full max-w-4xl z-20 mt-8 flex flex-col items-center gap-6 pb-6">
           <p className="text-slate-400 text-sm font-light tracking-[0.2em] uppercase opacity-80 text-center">
-          "İŞİNİZİ TAHMİNLERLE DEĞİL, <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-yellow-400 font-bold border-b border-pink-500/20 pb-0.5">v3rii</span> 'yle yönetin."
+            <Trans
+              i18nKey="auth.login.slogan"
+              components={{ 1: <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-yellow-400 font-bold border-b border-pink-500/20 pb-0.5" /> }}
+            />
           </p>
           
           {/* YENİ SOSYAL BUTON ALANI: Flex + Round Icons Only */}

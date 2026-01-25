@@ -23,7 +23,7 @@ import { useUserOptions } from '@/features/user-discount-limit-management/hooks/
 import { useAuthStore } from '@/stores/auth-store';
 
 export function DailyTasksPage(): ReactElement {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { user } = useAuthStore();
   const [activeTab, setActiveTab] = useState('tasks');
   const [statusFilter, setStatusFilter] = useState<string>('all');
@@ -305,7 +305,7 @@ export function DailyTasksPage(): ReactElement {
     return (
       <div className="flex items-center justify-center py-8">
         <div className="text-muted-foreground">
-          {t('common.loading', 'Yükleniyor...')}
+          {t('dailyTasks.loading', 'Yükleniyor...')}
         </div>
       </div>
     );
@@ -530,7 +530,7 @@ export function DailyTasksPage(): ReactElement {
                         <line x1="8" y1="2" x2="8" y2="6" />
                         <line x1="3" y1="10" x2="21" y2="10" />
                       </svg>
-                      {new Date(activity.activityDate).toLocaleDateString('tr-TR')}
+                      {new Date(activity.activityDate).toLocaleDateString(i18n.language)}
                     </div>
                   )}
                   <div className="flex items-center gap-2">
@@ -687,10 +687,10 @@ export function DailyTasksPage(): ReactElement {
                             <line x1="16" y1="2" x2="16" y2="6" />
                             <line x1="8" y1="2" x2="8" y2="6" />
                             <line x1="3" y1="10" x2="21" y2="10" />
-                          </svg>
-                          {new Date(activity.activityDate).toLocaleDateString('tr-TR')}
-                        </div>
-                      )}
+                      </svg>
+                      {new Date(activity.activityDate).toLocaleDateString(i18n.language)}
+                    </div>
+                  )}
                     </div>
                   </div>
                 </div>
@@ -750,11 +750,19 @@ export function DailyTasksPage(): ReactElement {
                 </Button>
               </div>
               <h2 className="text-lg font-semibold">
-                {calendarMonth.toLocaleDateString('tr-TR', { month: 'long', year: 'numeric' })}
+                {calendarMonth.toLocaleDateString(i18n.language, { month: 'long', year: 'numeric' })}
               </h2>
             </div>
             <div className="grid grid-cols-7 gap-2 mb-4">
-              {['Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz'].map((day) => (
+              {[
+                t('dailyTasks.days.mon'),
+                t('dailyTasks.days.tue'),
+                t('dailyTasks.days.wed'),
+                t('dailyTasks.days.thu'),
+                t('dailyTasks.days.fri'),
+                t('dailyTasks.days.sat'),
+                t('dailyTasks.days.sun')
+              ].map((day) => (
                 <div key={day} className="text-center text-sm font-medium text-muted-foreground py-2">
                   {day}
                 </div>

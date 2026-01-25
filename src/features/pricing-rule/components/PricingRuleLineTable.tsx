@@ -38,7 +38,7 @@ export function PricingRuleLineTable({
   setLines,
   header,
 }: PricingRuleLineTableProps): ReactElement {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [editingLineId, setEditingLineId] = useState<string | null>(null);
   const [productDialogOpen, setProductDialogOpen] = useState(false);
   const [addConfirmOpen, setAddConfirmOpen] = useState(false);
@@ -238,14 +238,14 @@ export function PricingRuleLineTable({
     
     try {
       const isoCode = numericCode === 1 ? 'TRY' : numericCode === 2 ? 'USD' : numericCode === 3 ? 'EUR' : 'TRY';
-      return new Intl.NumberFormat('tr-TR', {
+      return new Intl.NumberFormat(i18n.language, {
         style: 'currency',
         currency: isoCode,
         minimumFractionDigits: 2,
         maximumFractionDigits: 2,
       }).format(amount);
     } catch {
-      return new Intl.NumberFormat('tr-TR', {
+      return new Intl.NumberFormat(i18n.language, {
         style: 'decimal',
         minimumFractionDigits: 2,
         maximumFractionDigits: 2,
@@ -308,7 +308,7 @@ export function PricingRuleLineTable({
               <TableHead className="text-right">
                 {t('pricingRule.lines.discount3', 'İndirim 3 %')}
               </TableHead>
-              <TableHead>{t('common.actions', 'İşlemler')}</TableHead>
+              <TableHead>{t('pricingRule.table.actions', 'İşlemler')}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -427,14 +427,14 @@ export function PricingRuleLineTable({
               }}
               disabled={isLoadingAction}
             >
-              {t('common.cancel', 'İptal')}
+              {t('pricingRule.form.cancel', 'İptal')}
             </Button>
             <Button
               type="button"
               onClick={handleAddConfirm}
               disabled={isLoadingAction}
             >
-              {t('common.confirm', 'Onayla')}
+              {t('pricingRule.form.confirm', 'Onayla')}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -462,7 +462,7 @@ export function PricingRuleLineTable({
               }}
               disabled={isLoadingAction}
             >
-              {t('common.cancel', 'İptal')}
+              {t('pricingRule.form.cancel', 'İptal')}
             </Button>
             <Button
               type="button"
@@ -473,10 +473,10 @@ export function PricingRuleLineTable({
               {isLoadingAction ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  {t('common.loading', 'Yükleniyor...')}
+                  {t('pricingRule.loading', 'Yükleniyor...')}
                 </>
               ) : (
-                t('common.confirm', 'Onayla')
+                t('pricingRule.form.confirm', 'Onayla')
               )}
             </Button>
           </DialogFooter>

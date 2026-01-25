@@ -331,7 +331,7 @@ export function QuotationCreateForm(): ReactElement {
                 className="group"
               >
                 <X className="mr-2 h-4 w-4" />
-                {t('common.cancel', 'İptal')}
+                {t('quotation.cancel', 'İptal')}
               </Button>
               <Button
                 type="submit"
@@ -340,8 +340,8 @@ export function QuotationCreateForm(): ReactElement {
               >
                 <Save className="mr-2 h-4 w-4" />
                 {createMutation.isPending 
-                  ? t('common.saving', 'Kaydediliyor...') 
-                  : t('common.save', 'Teklifi Kaydet')
+                  ? t('quotation.saving', 'Kaydediliyor...') 
+                  : t('quotation.save', 'Teklifi Kaydet')
                 }
               </Button>
             </div>

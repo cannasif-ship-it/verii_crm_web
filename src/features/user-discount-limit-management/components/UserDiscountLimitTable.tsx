@@ -43,7 +43,7 @@ export function UserDiscountLimitTable({
   onPageChange,
   onSortChange,
 }: UserDiscountLimitTableProps): ReactElement {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedUserDiscountLimit, setSelectedUserDiscountLimit] = useState<UserDiscountLimitDto | null>(null);
 
@@ -138,7 +138,7 @@ export function UserDiscountLimitTable({
     return (
       <div className="flex items-center justify-center py-8">
         <div className="text-muted-foreground">
-          {t('common.loading', 'Yükleniyor...')}
+          {t('userDiscountLimitManagement.loading', 'Yükleniyor...')}
         </div>
       </div>
     );
@@ -251,11 +251,11 @@ export function UserDiscountLimitTable({
                 <TableCell>{formatPercentage(userDiscountLimit.maxDiscount2)}</TableCell>
                 <TableCell>{formatPercentage(userDiscountLimit.maxDiscount3)}</TableCell>
                 <TableCell>
-                  {new Date(userDiscountLimit.createdDate).toLocaleDateString('tr-TR')}
+                  {new Date(userDiscountLimit.createdDate).toLocaleDateString(i18n.language)}
                 </TableCell>
                 <TableCell>
                   {userDiscountLimit.updatedDate
-                    ? new Date(userDiscountLimit.updatedDate).toLocaleDateString('tr-TR')
+                    ? new Date(userDiscountLimit.updatedDate).toLocaleDateString(i18n.language)
                     : '-'}
                 </TableCell>
                 <TableCell className="text-right">
@@ -265,7 +265,7 @@ export function UserDiscountLimitTable({
                       size="sm"
                       onClick={() => onEdit(userDiscountLimit)}
                     >
-                      {t('common.edit', 'Düzenle')}
+                      {t('userDiscountLimitManagement.edit', 'Düzenle')}
                     </Button>
                     <Button
                       variant="destructive"
@@ -297,7 +297,7 @@ export function UserDiscountLimitTable({
             onClick={() => onPageChange(pageNumber - 1)}
             disabled={pageNumber <= 1}
           >
-            {t('common.previous', 'Önceki')}
+            {t('userDiscountLimitManagement.previous', 'Önceki')}
           </Button>
           <div className="flex items-center px-4 text-sm">
             {t('userDiscountLimitManagement.table.page', 'Sayfa {{current}} / {{total}}', {
@@ -311,7 +311,7 @@ export function UserDiscountLimitTable({
             onClick={() => onPageChange(pageNumber + 1)}
             disabled={pageNumber >= totalPages}
           >
-            {t('common.next', 'Sonraki')}
+            {t('userDiscountLimitManagement.next', 'Sonraki')}
           </Button>
         </div>
       </div>
@@ -332,7 +332,7 @@ export function UserDiscountLimitTable({
               onClick={() => setDeleteDialogOpen(false)}
               disabled={deleteUserDiscountLimit.isPending}
             >
-              {t('common.cancel', 'İptal')}
+              {t('userDiscountLimitManagement.cancel', 'İptal')}
             </Button>
             <Button
               variant="destructive"
@@ -340,7 +340,7 @@ export function UserDiscountLimitTable({
               disabled={deleteUserDiscountLimit.isPending}
             >
               {deleteUserDiscountLimit.isPending
-                ? t('common.loading', 'Yükleniyor...')
+                ? t('userDiscountLimitManagement.loading', 'Yükleniyor...')
                 : t('userDiscountLimitManagement.delete', 'Sil')}
             </Button>
           </DialogFooter>

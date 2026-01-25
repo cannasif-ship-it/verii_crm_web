@@ -44,7 +44,7 @@ export function UserTable({
   onPageChange,
   onSortChange,
 }: UserTableProps): ReactElement {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<UserDto | null>(null);
 
@@ -134,7 +134,7 @@ export function UserTable({
     return (
       <div className="flex items-center justify-center py-8">
         <div className="text-muted-foreground">
-          {t('common.loading', 'Yükleniyor...')}
+          {t('userManagement.table.loading', 'Yükleniyor...')}
         </div>
       </div>
     );
@@ -146,7 +146,7 @@ export function UserTable({
     return (
       <div className="flex items-center justify-center py-8">
         <div className="text-muted-foreground">
-          {t('common.noData', 'Veri yok')}
+          {t('userManagement.table.noData', 'Veri yok')}
         </div>
       </div>
     );
@@ -200,7 +200,7 @@ export function UserTable({
                 {t('userManagement.table.createdDate', 'Oluşturulma Tarihi')}
               </TableHead>
               <TableHead className="text-right">
-                {t('common.actions', 'İşlemler')}
+                {t('userManagement.table.actions', 'İşlemler')}
               </TableHead>
             </TableRow>
           </TableHeader>
@@ -230,7 +230,7 @@ export function UserTable({
                 </TableCell>
                 <TableCell>
                   {user.creationTime
-                    ? new Date(user.creationTime).toLocaleDateString('tr-TR')
+                    ? new Date(user.creationTime).toLocaleDateString(i18n.language)
                     : '-'}
                 </TableCell>
                 <TableCell className="text-right">
@@ -240,14 +240,14 @@ export function UserTable({
                       size="sm"
                       onClick={() => onEdit(user)}
                     >
-                      {t('common.edit', 'Düzenle')}
+                      {t('userManagement.table.edit', 'Düzenle')}
                     </Button>
                     <Button
                       variant="destructive"
                       size="sm"
                       onClick={() => handleDeleteClick(user)}
                     >
-                      {t('common.delete', 'Sil')}
+                      {t('userManagement.table.delete', 'Sil')}
                     </Button>
                   </div>
                 </TableCell>
@@ -272,7 +272,7 @@ export function UserTable({
             onClick={() => onPageChange(pageNumber - 1)}
             disabled={pageNumber <= 1}
           >
-            {t('common.previous', 'Önceki')}
+            {t('userManagement.table.previous', 'Önceki')}
           </Button>
           <div className="flex items-center px-4 text-sm">
             {t('userManagement.table.page', 'Sayfa {{current}} / {{total}}', {
@@ -286,7 +286,7 @@ export function UserTable({
             onClick={() => onPageChange(pageNumber + 1)}
             disabled={pageNumber >= totalPages}
           >
-            {t('common.next', 'Sonraki')}
+            {t('userManagement.table.next', 'Sonraki')}
           </Button>
         </div>
       </div>
@@ -304,23 +304,23 @@ export function UserTable({
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setDeleteDialogOpen(false)}
-              disabled={deleteUser.isPending}
-            >
-              {t('common.cancel', 'İptal')}
-            </Button>
-            <Button
-              variant="destructive"
-              onClick={handleDeleteConfirm}
-              disabled={deleteUser.isPending}
-            >
-              {deleteUser.isPending
-                ? t('common.loading', 'Yükleniyor...')
-                : t('common.delete', 'Sil')}
-            </Button>
-          </DialogFooter>
+              <Button
+                variant="outline"
+                onClick={() => setDeleteDialogOpen(false)}
+                disabled={deleteUser.isPending}
+              >
+                {t('userManagement.form.cancel', 'İptal')}
+              </Button>
+              <Button
+                variant="destructive"
+                onClick={handleDeleteConfirm}
+                disabled={deleteUser.isPending}
+              >
+                {deleteUser.isPending
+                  ? t('userManagement.table.loading', 'Yükleniyor...')
+                  : t('userManagement.table.delete', 'Sil')}
+              </Button>
+            </DialogFooter>
         </DialogContent>
       </Dialog>
     </>

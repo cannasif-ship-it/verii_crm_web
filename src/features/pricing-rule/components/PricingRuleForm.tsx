@@ -234,10 +234,10 @@ export function PricingRuleForm({ open, onOpenChange, header }: PricingRuleFormP
         <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>
-              {t('common.loading', 'Yükleniyor...')}
+              {t('pricingRule.loading', 'Yükleniyor...')}
             </DialogTitle>
             <DialogDescription>
-              {t('common.loadingDescription', 'Veriler yükleniyor, lütfen bekleyin')}
+              {t('pricingRule.loadingDescription', 'Veriler yükleniyor, lütfen bekleyin')}
             </DialogDescription>
           </DialogHeader>
         </DialogContent>
@@ -309,7 +309,7 @@ export function PricingRuleForm({ open, onOpenChange, header }: PricingRuleFormP
             onClick={() => onOpenChange(false)}
             disabled={createMutation.isPending || updateMutation.isPending}
           >
-            {t('common.cancel', 'İptal')}
+            {t('pricingRule.form.cancel', 'İptal')}
           </Button>
           <Button
             type="button"
@@ -317,10 +317,10 @@ export function PricingRuleForm({ open, onOpenChange, header }: PricingRuleFormP
             disabled={createMutation.isPending || updateMutation.isPending}
           >
             {createMutation.isPending || updateMutation.isPending
-              ? t('common.saving', 'Kaydediliyor...')
+              ? t('pricingRule.form.saving', 'Kaydediliyor...')
               : header?.id
-                ? t('common.update', 'Güncelle')
-                : t('common.create', 'Oluştur')}
+                ? t('pricingRule.form.update', 'Güncelle')
+                : t('pricingRule.form.createButton', 'Oluştur')}
           </Button>
         </DialogFooter>
       </DialogContent>

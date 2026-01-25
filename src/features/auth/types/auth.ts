@@ -2,17 +2,17 @@ import { z } from 'zod';
 import type { ApiResponse } from '@/types/api';
 
 export const loginRequestSchema = z.object({
-  email: z.string().email('Geçerli bir email adresi giriniz'),
-  password: z.string().min(1, 'Şifre zorunludur'),
-  branchId: z.string().min(1, 'Şube seçimi zorunludur'),
+  email: z.string().email('auth.validation.emailInvalid'),
+  password: z.string().min(1, 'auth.validation.passwordRequired'),
+  branchId: z.string().min(1, 'auth.validation.branchRequired'),
   rememberMe: z.boolean(),
 });
 
 export type LoginRequest = z.infer<typeof loginRequestSchema>;
 
 export const registerRequestSchema = z.object({
-  email: z.string().email('Geçerli bir email adresi giriniz'),
-  password: z.string().min(8, 'Şifre en az 8 karakter olmalıdır'),
+  email: z.string().email('auth.validation.emailInvalid'),
+  password: z.string().min(8, 'auth.validation.passwordMinLength'),
 });
 
 export type RegisterRequest = z.infer<typeof registerRequestSchema>;
@@ -51,27 +51,27 @@ export interface UserDto {
 export type ActiveUsersResponse = ApiResponse<UserDto[]>;
 
 export const resetPasswordSchema = z.object({
-  token: z.string().min(1, 'Token zorunludur'),
-  newPassword: z.string().min(6, 'Şifre en az 6 karakter olmalıdır'),
-  confirmPassword: z.string().min(6, 'Şifre tekrarı zorunludur'),
+  token: z.string().min(1, 'auth.validation.tokenRequired'),
+  newPassword: z.string().min(6, 'auth.validation.newPasswordMinLength'),
+  confirmPassword: z.string().min(6, 'auth.validation.confirmPasswordRequired'),
 }).refine((data) => data.newPassword === data.confirmPassword, {
-  message: 'Şifreler eşleşmiyor',
+  message: 'auth.validation.passwordsMismatch',
   path: ['confirmPassword'],
 });
 
 export type ResetPasswordRequest = z.infer<typeof resetPasswordSchema>;
 
 export const forgotPasswordSchema = z.object({
-  email: z.string().email('Geçerli bir email adresi giriniz'),
+  email: z.string().email('auth.validation.emailInvalid'),
 });
 
 export type ForgotPasswordRequest = z.infer<typeof forgotPasswordSchema>;
 
 export const changePasswordSchema = z.object({
-  currentPassword: z.string().min(1, 'Mevcut şifre zorunludur'),
-  newPassword: z.string().min(6, 'Yeni şifre en az 6 karakter olmalıdır').max(100, 'Yeni şifre en fazla 100 karakter olabilir'),
+  currentPassword: z.string().min(1, 'auth.validation.currentPasswordRequired'),
+  newPassword: z.string().min(6, 'auth.validation.newPasswordMinLength').max(100, 'auth.validation.newPasswordMaxLength'),
 }).refine((data) => data.currentPassword !== data.newPassword, {
-  message: 'Yeni şifre mevcut şifre ile aynı olamaz',
+  message: 'auth.validation.newPasswordSameAsCurrent',
   path: ['newPassword'],
 });
 

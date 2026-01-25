@@ -276,12 +276,12 @@ export function UserDiscountLimitForm({
                 onClick={() => onOpenChange(false)}
                 disabled={isLoading}
               >
-                {t('common.cancel', 'İptal')}
+                {t('userDiscountLimitManagement.cancel', 'İptal')}
               </Button>
               <Button type="submit" disabled={isLoading}>
                 {isLoading
-                  ? t('common.saving', 'Kaydediliyor...')
-                  : t('common.save', 'Kaydet')}
+                  ? t('userDiscountLimitManagement.saving', 'Kaydediliyor...')
+                  : t('userDiscountLimitManagement.save', 'Kaydet')}
               </Button>
             </DialogFooter>
           </form>

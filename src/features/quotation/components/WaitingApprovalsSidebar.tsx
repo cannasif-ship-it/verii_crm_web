@@ -9,7 +9,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Clock, FileText } from 'lucide-react';
 
 export function WaitingApprovalsSidebar(): ReactElement {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const { data: approvals, isLoading } = useWaitingApprovals();
 
@@ -96,7 +96,7 @@ export function WaitingApprovalsSidebar(): ReactElement {
                 </div>
               )}
               <div>
-                {t('quotation.waitingApprovals.actionDate', 'Tarih')}: {new Date(approval.actionDate).toLocaleDateString('tr-TR')}
+                {t('quotation.waitingApprovals.actionDate', 'Tarih')}: {new Date(approval.actionDate).toLocaleDateString(i18n.language)}
               </div>
             </div>
           </Button>

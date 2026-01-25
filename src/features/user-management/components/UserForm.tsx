@@ -290,12 +290,12 @@ export function UserForm({
                 onClick={() => onOpenChange(false)}
                 disabled={isLoading}
               >
-                {t('common.cancel', 'İptal')}
+                {t('userManagement.form.cancel', 'İptal')}
               </Button>
               <Button type="submit" disabled={isLoading}>
                 {isLoading
-                  ? t('common.saving', 'Kaydediliyor...')
-                  : t('common.save', 'Kaydet')}
+                  ? t('userManagement.form.saving', 'Kaydediliyor...')
+                  : t('userManagement.form.save', 'Kaydet')}
               </Button>
             </DialogFooter>
           </form>

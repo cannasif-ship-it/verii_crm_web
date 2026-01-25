@@ -212,7 +212,7 @@ export function StockImageList({ stockId }: StockImageListProps): ReactElement {
               disabled={deleteImage.isPending}
               className="rounded-lg"
             >
-              {t('common.cancel', 'Vazgeç')}
+              {t('stock.images.cancel', 'Vazgeç')}
             </Button>
             <Button
               variant="destructive"
@@ -223,11 +223,11 @@ export function StockImageList({ stockId }: StockImageListProps): ReactElement {
               {deleteImage.isPending ? (
                  <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    {t('common.deleting', 'Siliniyor...')}
-                 </>
-              ) : (
-                 t('common.delete', 'Evet, Sil')
-              )}
+                    {t('stock.images.deleting', 'Siliniyor...')}
+                  </>
+                ) : (
+                 t('stock.images.confirmDelete', 'Evet, Sil')
+                )}
             </Button>
           </DialogFooter>
         </DialogContent>

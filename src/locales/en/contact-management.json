@@ -53,9 +53,19 @@
     "titleRequired": "Title selection is required"
   },
   "delete": {
+    "action": "Delete",
     "confirmTitle": "Delete Contact",
     "confirmMessage": "Are you sure you want to delete {{name}} contact?"
   },
+  "loading": "Loading...",
+  "noData": "No data",
+  "actions": "Actions",
+  "edit": "Edit",
+  "previous": "Previous",
+  "next": "Next",
+  "cancel": "Cancel",
+  "save": "Save",
+  "saving": "Saving...",
   "messages": {
     "createSuccess": "Contact created successfully",
     "createError": "Contact could not be created",

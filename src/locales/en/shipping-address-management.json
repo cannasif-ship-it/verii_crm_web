@@ -21,6 +21,7 @@
   "updatedDate": "Updated Date",
   "actions": "Actions",
   "search": "Search",
+  "refresh": "Refresh",
   "noData": "No data found",
   "confirmDelete": "Delete Shipping Address",
   "confirmDeleteMessage": "Are you sure you want to delete this shipping address? This action cannot be undone.",
@@ -52,5 +53,25 @@
   "selectCountryFirst": "Select country first",
   "selectCityFirst": "Select city first",
   "createDescription": "Enter new shipping address information",
-  "editDescription": "Edit shipping address information"
+  "editDescription": "Edit shipping address information",
+  "table": {
+    "id": "ID",
+    "showing": "Showing {{from}}-{{to}} / {{total}}",
+    "page": "Page {{current}} / {{total}}",
+    "customerName": "Customer Name",
+    "address": "Address",
+    "postalCode": "Postal Code",
+    "contactPerson": "Contact Person",
+    "phone": "Phone",
+    "location": "Location",
+    "createdDate": "Created Date",
+    "actions": "Actions"
+  },
+  "loading": "Loading...",
+  "previous": "Previous",
+  "next": "Next",
+  "cancel": "Cancel",
+  "save": "Save",
+  "saving": "Saving...",
+  "deleting": "Deleting..."
 }

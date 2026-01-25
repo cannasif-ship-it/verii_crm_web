@@ -39,7 +39,7 @@ export function QuotationTable({
   onSortChange,
   onRowClick,
 }: QuotationTableProps): ReactElement {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const createRevisionMutation = useCreateRevisionOfQuotation();
 
@@ -83,7 +83,7 @@ export function QuotationTable({
       <div className="flex flex-col items-center justify-center py-24 gap-4 border border-zinc-300 dark:border-zinc-700/80 rounded-xl bg-white/50 dark:bg-card/50">
         <div className="w-10 h-10 border-4 border-muted border-t-pink-500 rounded-full animate-spin" />
         <span className="text-muted-foreground animate-pulse text-sm font-medium">
-          {t('common.loading', 'Yükleniyor...')}
+          {t('quotation.loading', 'Yükleniyor...')}
         </span>
       </div>
     );
@@ -94,7 +94,7 @@ export function QuotationTable({
   if (!data || quotations.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-24 text-muted-foreground border border-zinc-300 dark:border-zinc-700/80 border-dashed rounded-xl bg-white/50 dark:bg-card/50">
-        <p className="text-sm font-medium">{t('common.noData', 'Veri yok')}</p>
+        <p className="text-sm font-medium">{t('quotation.noData', 'Veri yok')}</p>
       </div>
     );
   }
@@ -103,7 +103,7 @@ export function QuotationTable({
 
   const formatDate = (dateString: string | null | undefined): string => {
     if (!dateString) return '-';
-    return new Date(dateString).toLocaleDateString('tr-TR');
+    return new Date(dateString).toLocaleDateString(i18n.language);
   };
 
   return (
@@ -219,7 +219,7 @@ export function QuotationTable({
                     className="w-full"
                   >
                     {createRevisionMutation.isPending
-                      ? t('common.loading', 'Yükleniyor...')
+                      ? t('quotation.loading', 'Yükleniyor...')
                       : t('quotation.list.revise', 'Revize et')}
                   </Button>
                 </TableCell>
@@ -244,7 +244,7 @@ export function QuotationTable({
             onClick={() => onPageChange(pageNumber - 1)}
             disabled={pageNumber <= 1}
           >
-            {t('common.previous', 'Önceki')}
+            {t('quotation.previous', 'Önceki')}
           </Button>
           <div className="flex items-center px-4 text-sm">
             {t('quotation.list.page', 'Sayfa {{current}} / {{total}}', {
@@ -258,7 +258,7 @@ export function QuotationTable({
             onClick={() => onPageChange(pageNumber + 1)}
             disabled={pageNumber >= totalPages}
           >
-            {t('common.next', 'Sonraki')}
+            {t('quotation.next', 'Sonraki')}
           </Button>
         </div>
       </div>

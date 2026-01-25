@@ -1,0 +1,43 @@
+{
+  "title": "Dashboard",
+  "loading": "Loading",
+  "stats": {
+    "totalRevenue": "Total Revenue",
+    "activeOpportunities": "Active Opportunities",
+    "newLeads": "New Leads",
+    "pendingOrders": "Pending Orders"
+  },
+  "salesAnalysis": "Sales Analysis",
+  "targetVsActual": "Target vs Actual",
+  "latestActivities": "Latest Activities",
+  "viewAll": "View All",
+  "reportDownload": "Download Report",
+  "quickAction": "Quick Action",
+  "activityType": {
+    "meeting": "Meeting",
+    "call": "Call",
+    "email": "Email"
+  },
+  "monthsShort": {
+    "jan": "Jan",
+    "feb": "Feb",
+    "mar": "Mar",
+    "apr": "Apr",
+    "may": "May",
+    "jun": "Jun",
+    "jul": "Jul",
+    "aug": "Aug",
+    "sep": "Sep",
+    "oct": "Oct",
+    "nov": "Nov",
+    "dec": "Dec"
+  },
+  "quickStats": {
+    "pendingTasks": "Pending Tasks",
+    "pendingTasksDescription": "12 tasks to complete",
+    "openQuotations": "Open Quotations",
+    "openQuotationsDescription": "5 quotations pending approval",
+    "criticalStock": "Critical Stock",
+    "criticalStockDescription": "3 products below critical level"
+  }
+}

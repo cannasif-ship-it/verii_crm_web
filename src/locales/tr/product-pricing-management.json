@@ -10,6 +10,7 @@
   "productInfo": "ÜRÜN BİLGİSİ",
   "category": "KATEGORİ",
   "stockStatus": "STOK DURUMU",
+  "noStockTracking": "Stok Takibi Yok",
   "priceAndDiscount": "FİYAT & İSKONTO",
   "searchPlaceholder": "Ürün adı, SKU veya Kategori ara...",
   "filter": {
@@ -70,6 +71,7 @@
   "finalPriceAfterDiscounts": "İndirimler Sonrası Son Fiyat",
   "loading": "Yükleniyor...",
   "save": "Kaydet",
+  "saving": "Kaydediliyor...",
   "cancel": "İptal",
   "close": "Kapat",
   "clearFilters": "Filtreleri Temizle",
@@ -94,7 +96,10 @@
   "duplicateExists": "Bu kombinasyon zaten mevcut",
   "checkingDuplicate": "Kontrol ediliyor...",
   "noDuplicate": "Bu kombinasyon kullanılabilir",
-  "profitAmount": "Kar Tutarı",
+  "selectStokCode": "Stok seçin",
+    "selectStok": "Stok Seç",
+    "erpGroupCodePlaceholder": "Stok seçildiğinde otomatik doldurulur",
+    "profitAmount": "Kar Tutarı",
   "profitPercentage": "Kar Yüzdesi",
   "searchProductCode": "Ürün Kodu Ara",
   "searchGroupCode": "Grup Kodu Ara",
@@ -114,5 +119,9 @@
     "updatedDate": "Güncellenme Tarihi",
     "showing": "{{from}}-{{to}} / {{total}} gösteriliyor",
     "page": "Sayfa {{current}} / {{total}}"
-  }
+  },
+  "previous": "Önceki",
+  "next": "Sonraki",
+  "deleteConfirmTitle": "Silme Onayı",
+  "deleteConfirmMessage": "Bu kaydı silmek istediğinizden emin misiniz? Bu işlem geri alınamaz."
 }

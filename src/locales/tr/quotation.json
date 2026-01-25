@@ -1,4 +1,30 @@
 {
+  "loading": "Yükleniyor...",
+  "saving": "Kaydediliyor...",
+  "error": "Hata",
+  "noData": "Veri yok",
+  "previous": "Önceki",
+  "next": "Sonraki",
+  "actions": "İşlemler",
+  "edit": "Düzenle",
+  "delete": "Sil",
+  "back": "Geri",
+  "refresh": "Yenile",
+  "select": "Seç",
+  "yes": "Evet",
+  "add": "Ekle",
+  "backToQuotations": "Tekliflere Dön",
+  "cancel": "İptal",
+  "save": "Kaydet",
+  "confirm": "Onayla",
+  "saveAndApply": "Kaydet ve Uygula",
+  "list": {
+    "revise": "Revize et",
+    "showing": "{{from}}-{{to}} / {{total}} gösteriliyor"
+  },
+  "detail": {
+    "title": "Teklif Detayı"
+  },
   "create": {
     "title": "Yeni Teklif Oluştur",
     "submit": "Teklifi Kaydet ve Onaya Gönder",
@@ -10,9 +36,9 @@
   "header": {
     "title": "Teklif Bilgileri",
     "customer": "Müşteri",
-    "selectCustomer": "Müşteri seçin",
+    "selectCustomer": "Müşteri Seçin",
     "shippingAddress": "Sevk Adresi",
-    "selectShippingAddress": "Sevk adresi seçin",
+    "selectShippingAddress": "Sevk Adresi Seçin",
     "representative": "Satış Temsilcisi",
     "selectRepresentative": "Temsilci seçin",
     "offerType": "Teklif Tipi",

@@ -43,7 +43,7 @@ export function ApprovalRoleGroupTable({
   onPageChange,
   onSortChange,
 }: ApprovalRoleGroupTableProps): ReactElement {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedGroup, setSelectedGroup] = useState<ApprovalRoleGroupDto | null>(null);
 
@@ -92,7 +92,7 @@ export function ApprovalRoleGroupTable({
       <div className="flex flex-col items-center justify-center py-12 space-y-4">
         <div className="w-8 h-8 border-4 border-pink-500/30 border-t-pink-500 rounded-full animate-spin" />
         <div className="text-muted-foreground text-sm font-medium">
-          {t('common.loading', 'Yükleniyor...')}
+          {t('approvalRoleGroup.loading', 'Yükleniyor...')}
         </div>
       </div>
     );
@@ -107,10 +107,10 @@ export function ApprovalRoleGroupTable({
           <Search className="w-8 h-8 text-muted-foreground/50" />
         </div>
         <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">
-          {t('common.noData', 'Veri bulunamadı')}
+          {t('approvalRoleGroup.noData', 'Veri bulunamadı')}
         </h3>
         <p className="text-muted-foreground text-sm mt-1 text-center max-w-sm">
-          {t('common.noDataDescription', 'Arama kriterlerinize uygun kayıt bulunamadı veya henüz hiç kayıt eklenmemiş.')}
+          {t('approvalRoleGroup.noDataDescription', 'Arama kriterlerinize uygun kayıt bulunamadı veya henüz hiç kayıt eklenmemiş.')}
         </p>
       </div>
     );
@@ -142,14 +142,26 @@ export function ApprovalRoleGroupTable({
                   <SortIcon column="Name" />
                 </div>
               </TableHead>
-              <TableHead className="py-4 font-semibold text-zinc-900 dark:text-zinc-100">
-                {t('approvalRoleGroup.table.createdDate', 'Oluşturulma Tarihi')}
+              <TableHead
+                className="cursor-pointer select-none py-4 font-semibold text-zinc-900 dark:text-zinc-100"
+                onClick={() => handleSort('CreatedDate')}
+              >
+                <div className="flex items-center">
+                  {t('approvalRoleGroup.table.createdDate', 'Oluşturulma Tarihi')}
+                  <SortIcon column="CreatedDate" />
+                </div>
               </TableHead>
-              <TableHead className="py-4 font-semibold text-zinc-900 dark:text-zinc-100">
-                {t('approvalRoleGroup.table.createdBy', 'Oluşturan Kullanıcı')}
+              <TableHead
+                className="cursor-pointer select-none py-4 font-semibold text-zinc-900 dark:text-zinc-100"
+                onClick={() => handleSort('CreatedBy')}
+              >
+                <div className="flex items-center">
+                  {t('approvalRoleGroup.table.createdBy', 'Oluşturan Kullanıcı')}
+                  <SortIcon column="CreatedBy" />
+                </div>
               </TableHead>
               <TableHead className="text-right py-4 font-semibold text-zinc-900 dark:text-zinc-100">
-                {t('common.actions', 'İşlemler')}
+                {t('approvalRoleGroup.table.actions', 'İşlemler')}
               </TableHead>
             </TableRow>
           </TableHeader>
@@ -166,7 +178,7 @@ export function ApprovalRoleGroupTable({
                   {group.name}
                 </TableCell>
                 <TableCell className="text-zinc-600 dark:text-zinc-400">
-                  {new Date(group.createdDate).toLocaleDateString('tr-TR')}
+                  {new Date(group.createdDate).toLocaleDateString(i18n.language)}
                 </TableCell>
                 <TableCell className="text-zinc-600 dark:text-zinc-400">
                   {group.createdByFullUser || group.createdByFullName || group.createdBy || '-'}
@@ -201,7 +213,11 @@ export function ApprovalRoleGroupTable({
       {totalPages > 1 && (
         <div className="flex items-center justify-between px-4 py-4 border-t border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50">
           <div className="text-sm text-muted-foreground">
-            Toplam {data?.totalCount || 0} kayıttan {(pageNumber - 1) * pageSize + 1} - {Math.min(pageNumber * pageSize, data?.totalCount || 0)} arası gösteriliyor
+             <span dangerouslySetInnerHTML={{ __html: t('approvalRoleGroup.table.showing', 'Toplam {{total}} kayıttan {{from}}-{{to}} arası gösteriliyor', {
+                from: (pageNumber - 1) * pageSize + 1,
+                to: Math.min(pageNumber * pageSize, data?.totalCount || 0),
+                total: data?.totalCount || 0
+             }) }} />
           </div>
           <div className="flex items-center space-x-2">
             <Button
@@ -262,10 +278,10 @@ export function ApprovalRoleGroupTable({
               </div>
               <div>
                 <DialogTitle className="text-xl font-bold text-zinc-900 dark:text-zinc-100">
-                  {t('common.deleteConfirmTitle', 'Silme Onayı')}
+                  {t('approvalRoleGroup.delete.confirmTitle', 'Silme Onayı')}
                 </DialogTitle>
                 <DialogDescription className="mt-1 text-zinc-500 dark:text-zinc-400">
-                  Bu işlem geri alınamaz. Devam etmek istiyor musunuz?
+                  {t('approvalRoleGroup.delete.confirmMessage', 'Bu işlem geri alınamaz. Devam etmek istiyor musunuz?')}
                 </DialogDescription>
               </div>
             </div>
@@ -275,7 +291,7 @@ export function ApprovalRoleGroupTable({
              <div className="flex justify-end gap-3">
                <DialogClose asChild>
                  <Button variant="outline" className="border-zinc-200 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300">
-                   {t('common.cancel', 'İptal')}
+                   {t('approvalRoleGroup.cancel', 'İptal')}
                  </Button>
                </DialogClose>
                <Button 
@@ -283,7 +299,7 @@ export function ApprovalRoleGroupTable({
                  onClick={handleDeleteConfirm}
                  className="bg-red-600 hover:bg-red-700 text-white shadow-lg shadow-red-500/20"
                >
-                 {t('common.delete', 'Sil')}
+                 {t('approvalRoleGroup.deleteButton', 'Sil')}
                </Button>
              </div>
           </div>

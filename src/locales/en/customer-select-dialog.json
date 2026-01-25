@@ -12,6 +12,7 @@
   "noResults": "No search results found",
   "searchPlaceholder": "Search by name or code...",
   "voiceSearch": "Voice search",
+  "loading": "Loading",
   "table": {
     "type": "Type",
     "customerCode": "Customer Code",

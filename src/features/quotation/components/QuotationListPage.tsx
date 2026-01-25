@@ -120,7 +120,7 @@ export function QuotationListPage(): ReactElement {
             className="h-12 px-6 rounded-xl border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950/50 hover:bg-zinc-50 dark:hover:bg-zinc-900 text-zinc-600 dark:text-zinc-400 gap-2 font-medium w-full md:w-auto shadow-sm"
           >
             <RefreshCw size={18} className="opacity-70" />
-            {t('common.refresh', 'Yenile')}
+            {t('quotation.refresh', 'Yenile')}
           </Button>
         </div>
 

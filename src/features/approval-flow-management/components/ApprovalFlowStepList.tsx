@@ -227,7 +227,7 @@ export function ApprovalFlowStepList({ approvalFlowId }: ApprovalFlowStepListPro
         <div>
           {isLoading ? (
             <div className="text-sm text-slate-500 dark:text-slate-400 text-center py-4">
-              {t('common.loading', 'Yükleniyor...')}
+              {t('approvalFlow.loading', 'Yükleniyor...')}
             </div>
           ) : sortedSteps.length === 0 ? (
             <div className="text-sm text-slate-500 dark:text-slate-400 text-center py-8 border-2 border-dashed border-slate-200 dark:border-white/10 rounded-xl bg-slate-50/50 dark:bg-white/5">
@@ -360,7 +360,7 @@ export function ApprovalFlowStepList({ approvalFlowId }: ApprovalFlowStepListPro
                     disabled={createStep.isPending || updateStep.isPending}
                     className="h-10 px-4 rounded-lg border-slate-200 dark:border-white/10 hover:bg-slate-50 dark:hover:bg-white/5 text-slate-700 dark:text-slate-300"
                   >
-                    {t('common.cancel', 'İptal')}
+                    {t('approvalFlowStep.form.cancel', 'İptal')}
                   </Button>
                   <Button
                     type="submit"
@@ -368,8 +368,8 @@ export function ApprovalFlowStepList({ approvalFlowId }: ApprovalFlowStepListPro
                     className="h-10 px-6 rounded-lg bg-gradient-to-r from-pink-600 to-orange-600 hover:from-pink-700 hover:to-orange-700 text-white font-medium shadow-lg shadow-pink-500/20 border-0"
                   >
                     {createStep.isPending || updateStep.isPending
-                      ? t('common.saving', 'Kaydediliyor...')
-                      : t('common.save', 'Kaydet')}
+                      ? t('approvalFlowStep.form.saving', 'Kaydediliyor...')
+                      : t('approvalFlowStep.form.save', 'Kaydet')}
                   </Button>
                 </div>
               </form>

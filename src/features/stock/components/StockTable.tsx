@@ -94,7 +94,7 @@ export function StockTable({
         <div className="p-4 bg-white dark:bg-zinc-800 rounded-full shadow-sm mb-3">
             <PackageOpen size={48} className="text-zinc-300 dark:text-zinc-600" />
         </div>
-        <h3 className="text-lg font-semibold text-zinc-900 dark:text-white">{t('common.noData', 'Kayıt Bulunamadı')}</h3>
+        <h3 className="text-lg font-semibold text-zinc-900 dark:text-white">{t('stock.list.noData', 'Kayıt Bulunamadı')}</h3>
         <p className="text-sm max-w-xs text-center mt-1">Arama kriterlerinize uygun stok kaydı mevcut değil.</p>
       </div>
     );
@@ -199,7 +199,7 @@ export function StockTable({
             disabled={pageNumber <= 1}
           >
             <ArrowLeft className="w-3 h-3 mr-1" />
-            {t('common.previous', 'Önceki')}
+            {t('stock.list.previous', 'Önceki')}
           </Button>
           
           <div className="text-xs font-semibold bg-zinc-100 dark:bg-white/10 px-3 py-1.5 rounded-md min-w-[3rem] text-center text-zinc-700 dark:text-zinc-200">
@@ -213,7 +213,7 @@ export function StockTable({
             onClick={() => onPageChange(pageNumber + 1)}
             disabled={pageNumber >= totalPages}
           >
-            {t('common.next', 'Sonraki')}
+            {t('stock.list.next', 'Sonraki')}
             <ArrowRight className="w-3 h-3 ml-1" />
           </Button>
         </div>

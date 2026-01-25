@@ -43,7 +43,7 @@ export function CountryTable({
   onPageChange,
   onSortChange,
 }: CountryTableProps): ReactElement {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedCountry, setSelectedCountry] = useState<CountryDto | null>(null);
 
@@ -137,7 +137,7 @@ export function CountryTable({
         <div className="flex flex-col items-center gap-2">
           <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-current text-pink-500" />
           <div className="text-sm text-muted-foreground animate-pulse">
-            {t('common.loading', 'Yükleniyor...')}
+            {t('countryManagement.loading', 'Yükleniyor...')}
           </div>
         </div>
       </div>
@@ -208,7 +208,7 @@ export function CountryTable({
                 {t('countryManagement.table.createdBy', 'Oluşturan')}
               </TableHead>
               <TableHead className="text-right text-slate-500 dark:text-slate-400 py-4">
-                {t('common.actions', 'İşlemler')}
+                {t('countryManagement.actions', 'İşlemler')}
               </TableHead>
             </TableRow>
           </TableHeader>
@@ -235,7 +235,7 @@ export function CountryTable({
                   </div>
                 </TableCell>
                 <TableCell className="text-slate-600 dark:text-slate-400">
-                  {new Date(country.createdDate).toLocaleDateString('tr-TR')}
+                  {new Date(country.createdDate).toLocaleDateString(i18n.language)}
                 </TableCell>
                 <TableCell className="text-slate-600 dark:text-slate-400">
                   <div className="flex items-center gap-2">
@@ -287,7 +287,7 @@ export function CountryTable({
             disabled={pageNumber <= 1}
             className="bg-white dark:bg-transparent border-slate-200 dark:border-white/10 hover:bg-slate-50 dark:hover:bg-white/5"
           >
-            {t('common.previous', 'Önceki')}
+            {t('countryManagement.previous', 'Önceki')}
           </Button>
           <div className="flex items-center px-4 text-sm font-medium text-slate-700 dark:text-slate-200">
             {t('countryManagement.table.page', 'Sayfa {{current}} / {{total}}', {
@@ -302,7 +302,7 @@ export function CountryTable({
             disabled={pageNumber >= totalPages}
             className="bg-white dark:bg-transparent border-slate-200 dark:border-white/10 hover:bg-slate-50 dark:hover:bg-white/5"
           >
-            {t('common.next', 'Sonraki')}
+            {t('countryManagement.next', 'Sonraki')}
           </Button>
         </div>
       </div>
@@ -318,7 +318,7 @@ export function CountryTable({
               </div>
               <div>
                 <DialogTitle className="text-xl font-bold text-zinc-900 dark:text-zinc-100">
-                  {t('common.deleteConfirmTitle', 'Silme Onayı')}
+                  {t('countryManagement.deleteConfirmTitle', 'Silme Onayı')}
                 </DialogTitle>
                 <DialogDescription className="mt-1 text-zinc-500 dark:text-zinc-400">
                   {t('countryManagement.delete.confirmMessage', '{{name}} ülkesini silmek istediğinizden emin misiniz?', {
@@ -333,7 +333,7 @@ export function CountryTable({
              <div className="flex justify-end gap-3">
                <DialogClose asChild>
                  <Button variant="outline" className="border-zinc-200 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300">
-                   {t('common.cancel', 'İptal')}
+                   {t('countryManagement.cancel', 'İptal')}
                  </Button>
                </DialogClose>
                <Button 
@@ -343,8 +343,8 @@ export function CountryTable({
                  className="bg-red-600 hover:bg-red-700 text-white shadow-lg shadow-red-500/20"
                >
                  {deleteCountry.isPending
-                   ? t('common.deleting', 'Siliniyor...')
-                   : t('common.delete', 'Sil')}
+                   ? t('countryManagement.deleting', 'Siliniyor...')
+                   : t('countryManagement.delete', 'Sil')}
                </Button>
              </div>
           </div>

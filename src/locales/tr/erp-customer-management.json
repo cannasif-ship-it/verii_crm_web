@@ -1,6 +1,7 @@
 {
   "menu": "ERP Müşteri",
   "description": "ERP sisteminden gelen müşteri listesi",
+  "loading": "Yükleniyor...",
   "noData": "Müşteri bulunamadı",
   "table": {
     "branchCode": "Şube Kodu",

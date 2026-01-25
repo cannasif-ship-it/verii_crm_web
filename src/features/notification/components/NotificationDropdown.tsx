@@ -165,7 +165,7 @@ export function NotificationDropdown({ children }: NotificationDropdownProps): R
                 onClick={() => setIsOpen(false)} 
                 className="text-xs text-slate-400 hover:text-white transition-colors"
             >
-                {t('common.close', 'Kapat')}
+                {t('notification.close')}
             </button>
         </div>
 

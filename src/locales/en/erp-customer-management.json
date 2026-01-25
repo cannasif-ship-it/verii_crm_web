@@ -1,6 +1,7 @@
 {
   "menu": "ERP Customer",
   "description": "Customer list from ERP system",
+  "loading": "Loading...",
   "noData": "No customers found",
   "table": {
     "branchCode": "Branch Code",
