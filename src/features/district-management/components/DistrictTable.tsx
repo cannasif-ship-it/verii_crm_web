@@ -44,7 +44,7 @@ export function DistrictTable({
   onPageChange,
   onSortChange,
 }: DistrictTableProps): ReactElement {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedDistrict, setSelectedDistrict] = useState<DistrictDto | null>(null);
 
@@ -134,7 +134,7 @@ export function DistrictTable({
     return (
       <div className="flex items-center justify-center py-8">
         <div className="text-muted-foreground">
-          {t('common.loading', 'Yükleniyor...')}
+          {t('districtManagement.loading', 'Yükleniyor...')}
         </div>
       </div>
     );
@@ -146,7 +146,7 @@ export function DistrictTable({
     return (
       <div className="flex items-center justify-center py-8">
         <div className="text-muted-foreground">
-          {t('common.noData', 'Veri yok')}
+          {t('districtManagement.noData', 'Veri yok')}
         </div>
       </div>
     );
@@ -197,7 +197,7 @@ export function DistrictTable({
                 {t('districtManagement.table.createdBy', 'Oluşturan')}
               </TableHead>
               <TableHead className="text-right text-slate-500 dark:text-slate-400 py-4">
-                {t('common.actions', 'İşlemler')}
+                {t('districtManagement.actions', 'İşlemler')}
               </TableHead>
             </TableRow>
           </TableHeader>
@@ -220,7 +220,7 @@ export function DistrictTable({
                   {district.cityName || '-'}
                 </TableCell>
                 <TableCell className="text-slate-600 dark:text-slate-400 text-sm">
-                  {new Date(district.createdDate).toLocaleDateString('tr-TR')}
+                  {new Date(district.createdDate).toLocaleDateString(i18n.language)}
                 </TableCell>
                 <TableCell className="text-slate-600 dark:text-slate-400">
                   {district.createdByFullUser || '-'}
@@ -267,7 +267,7 @@ export function DistrictTable({
             disabled={pageNumber <= 1}
             className="bg-white dark:bg-transparent border-slate-200 dark:border-white/10 hover:bg-slate-50 dark:hover:bg-white/5"
           >
-            {t('common.previous', 'Önceki')}
+            {t('districtManagement.previous', 'Önceki')}
           </Button>
           <div className="flex items-center px-4 text-sm font-medium text-slate-700 dark:text-slate-200">
             {t('districtManagement.table.page', 'Sayfa {{current}} / {{total}}', {
@@ -282,7 +282,7 @@ export function DistrictTable({
             disabled={pageNumber >= totalPages}
             className="bg-white dark:bg-transparent border-slate-200 dark:border-white/10 hover:bg-slate-50 dark:hover:bg-white/5"
           >
-            {t('common.next', 'Sonraki')}
+            {t('districtManagement.next', 'Sonraki')}
           </Button>
         </div>
       </div>
@@ -306,7 +306,7 @@ export function DistrictTable({
               disabled={deleteDistrict.isPending}
               className="bg-white dark:bg-transparent border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/5"
             >
-              {t('common.cancel', 'İptal')}
+              {t('districtManagement.cancel', 'İptal')}
             </Button>
             <Button
               variant="destructive"
@@ -315,8 +315,8 @@ export function DistrictTable({
               className="bg-red-600 hover:bg-red-700 dark:bg-red-900/50 dark:hover:bg-red-900/70 border border-transparent dark:border-red-500/20 text-white"
             >
               {deleteDistrict.isPending
-                ? t('common.loading', 'Yükleniyor...')
-                : t('common.delete', 'Sil')}
+                ? t('districtManagement.loading', 'Yükleniyor...')
+                : t('districtManagement.delete', 'Sil')}
             </Button>
           </DialogFooter>
         </DialogContent>

@@ -44,7 +44,7 @@ export function CityTable({
   onPageChange,
   onSortChange,
 }: CityTableProps): ReactElement {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedCity, setSelectedCity] = useState<CityDto | null>(null);
 
@@ -138,7 +138,7 @@ export function CityTable({
         <div className="flex flex-col items-center gap-2">
           <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-current text-pink-500" />
           <div className="text-sm text-muted-foreground animate-pulse">
-            {t('common.loading', 'Yükleniyor...')}
+            {t('cityManagement.loading', 'Loading...')}
           </div>
         </div>
       </div>
@@ -203,7 +203,7 @@ export function CityTable({
                 {t('cityManagement.table.createdBy', 'Oluşturan')}
               </TableHead>
               <TableHead className="text-right text-slate-500 dark:text-slate-400 py-4">
-                {t('common.actions', 'İşlemler')}
+                {t('cityManagement.actions', 'İşlemler')}
               </TableHead>
             </TableRow>
           </TableHeader>
@@ -228,7 +228,7 @@ export function CityTable({
                   {city.countryName || '-'}
                 </TableCell>
                 <TableCell className="text-slate-600 dark:text-slate-400">
-                  {new Date(city.createdDate).toLocaleDateString('tr-TR')}
+                  {new Date(city.createdDate).toLocaleDateString(i18n.language)}
                 </TableCell>
                 <TableCell className="text-slate-600 dark:text-slate-400">
                   <div className="flex items-center gap-2">
@@ -280,7 +280,7 @@ export function CityTable({
             disabled={pageNumber <= 1}
             className="bg-white dark:bg-transparent border-slate-200 dark:border-white/10 hover:bg-slate-50 dark:hover:bg-white/5"
           >
-            {t('common.previous', 'Önceki')}
+            {t('cityManagement.previous', 'Önceki')}
           </Button>
           <div className="flex items-center px-4 text-sm font-medium text-slate-700 dark:text-slate-200">
             {t('cityManagement.table.page', 'Sayfa {{current}} / {{total}}', {
@@ -295,7 +295,7 @@ export function CityTable({
             disabled={pageNumber >= totalPages}
             className="bg-white dark:bg-transparent border-slate-200 dark:border-white/10 hover:bg-slate-50 dark:hover:bg-white/5"
           >
-            {t('common.next', 'Sonraki')}
+            {t('cityManagement.next', 'Sonraki')}
           </Button>
         </div>
       </div>
@@ -319,7 +319,7 @@ export function CityTable({
               disabled={deleteCity.isPending}
               className="bg-white dark:bg-transparent border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/5"
             >
-              {t('common.cancel', 'İptal')}
+              {t('cityManagement.form.cancel', 'İptal')}
             </Button>
             <Button
               variant="destructive"
@@ -328,8 +328,8 @@ export function CityTable({
               className="bg-red-600 hover:bg-red-700 dark:bg-red-900/50 dark:hover:bg-red-900/70 border border-transparent dark:border-red-500/20 text-white"
             >
               {deleteCity.isPending
-                ? t('common.loading', 'Yükleniyor...')
-                : t('common.delete', 'Sil')}
+                ? t('cityManagement.loading', 'Yükleniyor...')
+                : t('cityManagement.delete.button', 'Sil')}
             </Button>
           </DialogFooter>
         </DialogContent>

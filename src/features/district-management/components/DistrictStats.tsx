@@ -7,9 +7,11 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { MapPin, Activity, Calendar } from 'lucide-react';
+import { useDistrictStats } from '../hooks/useDistrictStats';
 
 export function DistrictStats(): ReactElement {
   const { t } = useTranslation();
+  const { data: statsData } = useDistrictStats();
 
   const cardStyle = `
     bg-white/60 dark:bg-[#1a1025]/40 
@@ -27,19 +29,19 @@ export function DistrictStats(): ReactElement {
   const stats = [
     {
       title: t('districtManagement.stats.totalDistricts', 'TOPLAM İLÇE'),
-      value: '-',
+      value: statsData?.totalDistricts ?? '-',
       icon: MapPin,
       iconContainerClass: 'bg-pink-50 text-pink-600 dark:bg-pink-500/10 dark:text-pink-400 border-pink-100 dark:border-pink-500/20',
     },
     {
       title: t('districtManagement.stats.activeDistricts', 'AKTİF İLÇE'),
-      value: '-',
+      value: statsData?.activeDistricts ?? '-',
       icon: Activity,
       iconContainerClass: 'bg-orange-50 text-orange-600 dark:bg-orange-500/10 dark:text-orange-400 border-orange-100 dark:border-orange-500/20',
     },
     {
       title: t('districtManagement.stats.newThisMonth', 'BU AY YENİ'),
-      value: '-',
+      value: statsData?.newThisMonth ?? '-',
       icon: Calendar,
       iconContainerClass: 'bg-blue-50 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400 border-blue-100 dark:border-blue-500/20',
     },

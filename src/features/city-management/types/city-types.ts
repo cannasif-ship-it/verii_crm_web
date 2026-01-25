@@ -41,16 +41,16 @@ export interface CityFormData {
 export const cityFormSchema = z.object({
   name: z
     .string()
-    .min(1, 'cityManagement.form.name.required')
-    .max(100, 'cityManagement.form.name.maxLength'),
+    .min(1, 'cityManagement.form.nameRequired')
+    .max(100, 'cityManagement.form.nameMaxLength'),
   erpCode: z
     .string()
-    .max(10, 'cityManagement.form.erpCode.maxLength')
+    .max(10, 'cityManagement.form.erpCodeMaxLength')
     .optional()
     .or(z.literal('')),
   countryId: z
     .number()
-    .min(1, 'cityManagement.form.country.required'),
+    .min(1, 'cityManagement.form.countryRequired'),
 });
 
 export type CityFormSchema = z.infer<typeof cityFormSchema>;

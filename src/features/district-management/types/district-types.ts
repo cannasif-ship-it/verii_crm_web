@@ -41,16 +41,16 @@ export interface DistrictFormData {
 export const districtFormSchema = z.object({
   name: z
     .string()
-    .min(1, 'districtManagement.form.name.required')
-    .max(100, 'districtManagement.form.name.maxLength'),
+    .min(1, 'districtManagement.form.nameRequired')
+    .max(100, 'districtManagement.form.nameMaxLength'),
   erpCode: z
     .string()
-    .max(10, 'districtManagement.form.erpCode.maxLength')
+    .max(10, 'districtManagement.form.erpCodeMaxLength')
     .optional()
     .or(z.literal('')),
   cityId: z
     .number()
-    .min(1, 'districtManagement.form.city.required'),
+    .min(1, 'districtManagement.form.cityRequired'),
 });
 
 export type DistrictFormSchema = z.infer<typeof districtFormSchema>;
