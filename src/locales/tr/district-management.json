@@ -23,7 +23,7 @@
     "showing": "{{from}}-{{to}} / {{total}} gösteriliyor",
     "page": "Sayfa {{current}} / {{total}}"
   },
-  "delete": {
+  "deleteConfirm": {
     "confirmTitle": "İlçeyi Sil",
     "confirmMessage": "{{name}} ilçesini silmek istediğinizden emin misiniz?"
   },

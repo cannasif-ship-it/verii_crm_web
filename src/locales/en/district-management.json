@@ -23,7 +23,7 @@
     "showing": "Showing {{from}}-{{to}} / {{total}}",
     "page": "Page {{current}} / {{total}}"
   },
-  "delete": {
+  "deleteConfirm": {
     "confirmTitle": "Delete District",
     "confirmMessage": "Are you sure you want to delete district {{name}}?"
   },
@@ -42,5 +42,10 @@
     "nameMaxLength": "District name cannot exceed 100 characters",
     "erpCodeMaxLength": "ERP code cannot exceed 10 characters",
     "cityRequired": "City selection is required"
+  },
+  "stats": {
+    "totalDistricts": "Total Districts",
+    "activeDistricts": "Active Districts",
+    "newThisMonth": "New This Month"
   }
 }

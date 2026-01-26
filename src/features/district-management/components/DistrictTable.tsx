@@ -291,10 +291,10 @@ export function DistrictTable({
         <DialogContent className="bg-white dark:bg-[#130822] border border-slate-100 dark:border-white/10 text-slate-900 dark:text-white sm:rounded-2xl">
           <DialogHeader>
             <DialogTitle className="text-slate-900 dark:text-white">
-              {t('districtManagement.delete.confirmTitle', 'İlçeyi Sil')}
+              {t('districtManagement.deleteConfirm.confirmTitle', 'İlçeyi Sil')}
             </DialogTitle>
             <DialogDescription className="text-slate-500 dark:text-slate-400">
-              {t('districtManagement.delete.confirmMessage', '{{name}} ilçesini silmek istediğinizden emin misiniz?', {
+              {t('districtManagement.deleteConfirm.confirmMessage', '{{name}} ilçesini silmek istediğinizden emin misiniz?', {
                 name: selectedDistrict?.name || '',
               })}
             </DialogDescription>
