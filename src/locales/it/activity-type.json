@@ -1,54 +1,54 @@
 {
-  "menu": "Activity Type Management",
-  "description": "Manage and edit activity types",
-  "addButton": "Add New Activity Type",
-  "loading": "Loading...",
-  "noData": "No data found",
-  "actions": "Actions",
-  "edit": "Edit",
-  "deleteButton": "Delete",
-  "cancel": "Cancel",
-  "save": "Save",
-  "saving": "Saving...",
-  "previous": "Previous",
-  "next": "Next",
+  "menu": "Gestione Tipi Attività",
+  "description": "Gestisci e modifica i tipi di attività",
+  "addButton": "Aggiungi Nuovo Tipo Attività",
+  "loading": "Caricamento...",
+  "noData": "Nessun dato trovato",
+  "actions": "Azioni",
+  "edit": "Modifica",
+  "deleteButton": "Elimina",
+  "cancel": "Annulla",
+  "save": "Salva",
+  "saving": "Salvataggio...",
+  "previous": "Precedente",
+  "next": "Successivo",
   "form": {
-    "addTitle": "Add New Activity Type",
-    "editTitle": "Edit Activity Type",
-    "addDescription": "Enter new activity type information",
-    "editDescription": "Edit activity type information",
-    "name": "Activity Type Name",
-    "namePlaceholder": "Enter activity type name",
-    "nameRequired": "Activity type name is required",
-    "nameMaxLength": "Activity type name can be at most 100 characters",
-    "description": "Description",
-    "descriptionPlaceholder": "Enter description (optional)",
-    "descriptionMaxLength": "Description can be at most 500 characters"
+    "addTitle": "Aggiungi Nuovo Tipo Attività",
+    "editTitle": "Modifica Tipo Attività",
+    "addDescription": "Inserisci le informazioni del nuovo tipo di attività",
+    "editDescription": "Modifica le informazioni del tipo di attività",
+    "name": "Nome Tipo Attività",
+    "namePlaceholder": "Inserisci nome tipo attività",
+    "nameRequired": "Il nome del tipo di attività è obbligatorio",
+    "nameMaxLength": "Il nome del tipo di attività deve essere di massimo 100 caratteri",
+    "description": "Descrizione",
+    "descriptionPlaceholder": "Inserisci descrizione (opzionale)",
+    "descriptionMaxLength": "La descrizione deve essere di massimo 500 caratteri"
   },
   "table": {
     "id": "ID",
-    "name": "Activity Type Name",
-    "description": "Description",
-    "createdDate": "Created Date",
-    "createdBy": "Created By",
-    "showing": "Showing {{from}}-{{to}} / {{total}}",
-    "page": "Page {{current}} / {{total}}"
+    "name": "Nome Tipo Attività",
+    "description": "Descrizione",
+    "createdDate": "Data Creazione",
+    "createdBy": "Creato Da",
+    "showing": "Visualizzazione {{from}}-{{to}} / {{total}}",
+    "page": "Pagina {{current}} / {{total}}"
   },
   "stats": {
-    "totalActivityTypes": "Total Activity Types",
-    "activeActivityTypes": "Active Activity Types",
-    "newThisMonth": "New This Month"
+    "totalActivityTypes": "Totale Tipi Attività",
+    "activeActivityTypes": "Tipi Attività Attivi",
+    "newThisMonth": "Nuovi Questo Mese"
   },
   "messages": {
-    "createSuccess": "Activity type created successfully",
-    "createError": "Failed to create activity type",
-    "updateSuccess": "Activity type updated successfully",
-    "updateError": "Failed to update activity type",
-    "deleteSuccess": "Activity type deleted successfully",
-    "deleteError": "Failed to delete activity type"
+    "createSuccess": "Tipo attività creato con successo",
+    "createError": "Impossibile creare il tipo attività",
+    "updateSuccess": "Tipo attività aggiornato con successo",
+    "updateError": "Impossibile aggiornare il tipo attività",
+    "deleteSuccess": "Tipo attività eliminato con successo",
+    "deleteError": "Impossibile eliminare il tipo attività"
   },
   "deleteConfirm": {
-    "confirmTitle": "Delete Activity Type",
-    "confirmMessage": "Are you sure you want to delete {{name}} activity type?"
+    "confirmTitle": "Elimina Tipo Attività",
+    "confirmMessage": "Sei sicuro di voler eliminare il tipo attività {{name}}?"
   }
 }

@@ -1,43 +1,43 @@
 {
   "title": "Dashboard",
-  "loading": "Loading",
+  "loading": "Caricamento",
   "stats": {
-    "totalRevenue": "Total Revenue",
-    "activeOpportunities": "Active Opportunities",
-    "newLeads": "New Leads",
-    "pendingOrders": "Pending Orders"
+    "totalRevenue": "Entrate Totali",
+    "activeOpportunities": "Opportunità Attive",
+    "newLeads": "Nuovi Lead",
+    "pendingOrders": "Ordini in Sospeso"
   },
-  "salesAnalysis": "Sales Analysis",
-  "targetVsActual": "Target vs Actual",
-  "latestActivities": "Latest Activities",
-  "viewAll": "View All",
-  "reportDownload": "Download Report",
-  "quickAction": "Quick Action",
+  "salesAnalysis": "Analisi Vendite",
+  "targetVsActual": "Obiettivo vs Reale",
+  "latestActivities": "Ultime Attività",
+  "viewAll": "Vedi Tutti",
+  "reportDownload": "Scarica Report",
+  "quickAction": "Azione Rapida",
   "activityType": {
-    "meeting": "Meeting",
-    "call": "Call",
+    "meeting": "Riunione",
+    "call": "Chiamata",
     "email": "Email"
   },
   "monthsShort": {
-    "jan": "Jan",
+    "jan": "Gen",
     "feb": "Feb",
     "mar": "Mar",
     "apr": "Apr",
-    "may": "May",
-    "jun": "Jun",
-    "jul": "Jul",
-    "aug": "Aug",
-    "sep": "Sep",
-    "oct": "Oct",
+    "may": "Mag",
+    "jun": "Giu",
+    "jul": "Lug",
+    "aug": "Ago",
+    "sep": "Set",
+    "oct": "Ott",
     "nov": "Nov",
-    "dec": "Dec"
+    "dec": "Dic"
   },
   "quickStats": {
-    "pendingTasks": "Pending Tasks",
-    "pendingTasksDescription": "12 tasks to complete",
-    "openQuotations": "Open Quotations",
-    "openQuotationsDescription": "5 quotations pending approval",
-    "criticalStock": "Critical Stock",
-    "criticalStockDescription": "3 products below critical level"
+    "pendingTasks": "Attività in Sospeso",
+    "pendingTasksDescription": "12 attività da completare",
+    "openQuotations": "Preventivi Aperti",
+    "openQuotationsDescription": "5 preventivi in attesa di approvazione",
+    "criticalStock": "Scorte Critiche",
+    "criticalStockDescription": "3 prodotti sotto il livello critico"
   }
 }
