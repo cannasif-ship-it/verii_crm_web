@@ -27,6 +27,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
+import { LanguageSwitcher } from '@/components/shared/LanguageSwitcher';
 
 import loginImage from '../../../../public/veriicrmlogo.png';
 
@@ -303,6 +304,11 @@ export function LoginPage(): React.JSX.Element {
 
       {/* İÇERİK KAPSAYICISI */}
       <div className="relative z-10 w-full h-full flex flex-col justify-between items-center px-4 py-8 overflow-y-auto">
+
+        {/* DİL SEÇİMİ */}
+        <div className="absolute top-6 right-6 z-20">
+          <LanguageSwitcher />
+        </div>
 
         {/* LOGIN CARD */}
         <div className="w-full max-w-md p-10 rounded-3xl bg-[#140a1e]/70 backdrop-blur-xl border border-white/10 shadow-[0_20px_40px_rgba(0,0,0,0.4),_inset_0_0_20px_rgba(255,255,255,0.07)] animate-[fadeIn_0.8s_ease-out] my-auto">
