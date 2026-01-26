@@ -283,7 +283,6 @@
       "isPlanned": "Planificado",
       "priorityLevel": "Nivel de Prioridad",
       "statusInfo": "Información de Estado",
-      "status": "Estado",
       "isCompleted": "Completado",
       "completionDate": "Fecha de Finalización",
       "isPendingApproval": "Pendiente Aprobación",
@@ -903,7 +902,10 @@
       "serialNo2": "Nº Serie 2",
       "serialNo3": "Nº Serie 3",
       "serialNo4": "Nº Serie 4",
-      "sourceRouteId": "ID Ruta Origen"
+      "sourceRouteId": "ID Ruta Origen",
+      "selectWarehouse": "Seleccionar Almacén",
+      "selectCustomer": "Seleccionar Cliente",
+      "selectCarrier": "Seleccionar Transportista"
     },
     "status": {
       "draft": "Borrador",
@@ -933,11 +935,6 @@
       "wi": "Entrada de Almacén",
       "wo": "Salida de Almacén",
       "sh": "Envío"
-    },
-    "form": {
-      "selectWarehouse": "Seleccionar Almacén",
-      "selectCustomer": "Seleccionar Cliente",
-      "selectCarrier": "Seleccionar Transportista"
     }
   },
   "notification": {
