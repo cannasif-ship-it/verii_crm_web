@@ -40,7 +40,20 @@ import { contactApi } from '@/features/contact-management/api/contact-api';
 import type { PagedFilter } from '@/types/api';
 import { CustomerSelectDialog, type CustomerSelectionResult } from '@/components/shared';
 import { ProductSelectDialog, type ProductSelectionResult } from '@/components/shared/ProductSelectDialog';
-import { Search } from 'lucide-react';
+// İkonlar
+import { 
+  Search, 
+  Calendar, 
+  FileText, 
+  List, 
+  CheckSquare, 
+  Building2, 
+  Box, 
+  User, 
+  AlertCircle, 
+  Briefcase, 
+  X 
+} from 'lucide-react';
 
 interface ActivityFormProps {
   open: boolean;
@@ -50,6 +63,31 @@ interface ActivityFormProps {
   isLoading?: boolean;
   initialDate?: string | null;
 }
+
+// --- TASARIM SABİTLERİ ---
+const INPUT_STYLE = `
+  h-11 rounded-lg
+  bg-slate-50 dark:bg-[#0c0516] 
+  border border-slate-200 dark:border-white/10 
+  text-slate-900 dark:text-white text-sm
+  placeholder:text-slate-400 dark:placeholder:text-slate-600 
+  
+  focus-visible:ring-0 focus-visible:ring-offset-0 
+  
+  /* LIGHT MODE FOCUS */
+  focus:bg-white 
+  focus:border-pink-500 
+  focus:shadow-[0_0_0_3px_rgba(236,72,153,0.15)] 
+
+  /* DARK MODE FOCUS */
+  dark:focus:bg-[#0c0516] 
+  dark:focus:border-pink-500/60 
+  dark:focus:shadow-[0_0_0_3px_rgba(236,72,153,0.1)]
+
+  transition-all duration-200
+`;
+
+const LABEL_STYLE = "text-[11px] text-slate-500 dark:text-slate-400 uppercase tracking-wider font-bold ml-1 mb-1.5 block flex items-center gap-1.5";
 
 export function ActivityForm({
   open,
@@ -87,6 +125,7 @@ export function ActivityForm({
   const watchedStatus = form.watch('status');
   const watchedCustomerId = form.watch('potentialCustomerId');
 
+  // Aktivite Tiplerini Çekme
   const { data: activityTypesResponse } = useQuery({
     queryKey: ['activityTypes'],
     queryFn: async () => {
@@ -103,6 +142,7 @@ export function ActivityForm({
 
   const activityTypes = activityTypesResponse || [];
 
+  // İletişim Seçeneklerini Çekme (Müşteriye Göre)
   const { data: contactData } = useQuery({
     queryKey: ['contactOptions', watchedCustomerId],
     queryFn: async () => {
@@ -121,6 +161,7 @@ export function ActivityForm({
 
   const contactOptions = contactData || [];
 
+  // Form Reset Mantığı
   useEffect(() => {
     if (open && !activity && initialDate) {
       form.setValue('activityDate', initialDate);
@@ -187,412 +228,437 @@ export function ActivityForm({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle>
-            {activity
-              ? t('activityManagement.edit', 'Aktivite Düzenle')
-              : t('activityManagement.create', 'Yeni Aktivite')}
-          </DialogTitle>
-          <DialogDescription>
-            {activity
-              ? t('activityManagement.editDescription', 'Aktivite bilgilerini düzenleyin')
-              : t('activityManagement.createDescription', 'Yeni aktivite bilgilerini girin')}
-          </DialogDescription>
+      <DialogContent className="bg-white dark:bg-[#130822] border border-slate-100 dark:border-white/10 text-slate-900 dark:text-white max-w-3xl shadow-2xl shadow-slate-200/50 dark:shadow-black/50 sm:rounded-2xl max-h-[90vh] h-full flex flex-col gap-0 p-0 overflow-hidden transition-colors duration-300">
+        
+        {/* HEADER: Sabit */}
+        <DialogHeader className="border-b border-slate-100 dark:border-white/5 px-6 py-5 bg-white/80 dark:bg-[#130822]/90 backdrop-blur-md shrink-0 flex-row items-center justify-between space-y-0">
+          <div className="flex items-center gap-3">
+             <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-pink-500/20 to-orange-500/20 border border-pink-500/10 flex items-center justify-center text-pink-500 shrink-0">
+               <Calendar size={20} />
+             </div>
+             <div>
+                <DialogTitle className="text-lg font-bold text-slate-900 dark:text-white">
+                  {activity
+                    ? t('activityManagement.edit', 'Aktivite Düzenle')
+                    : t('activityManagement.create', 'Yeni Aktivite')}
+                </DialogTitle>
+                <DialogDescription className="text-slate-500 dark:text-slate-400 text-xs mt-0.5">
+                  {activity
+                    ? t('activityManagement.editDescription', 'Aktivite bilgilerini düzenleyin')
+                    : t('activityManagement.createDescription', 'Yeni aktivite bilgilerini girin')}
+                </DialogDescription>
+             </div>
+          </div>
         </DialogHeader>
 
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
-            <FormField
-              control={form.control}
-              name="subject"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>
-                    {t('activityManagement.subject', 'Konu')} *
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      {...field}
-                      placeholder={t('activityManagement.enterSubject', 'Konu Girin')}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="description"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>
-                    {t('activityManagement.description', 'Açıklama')}
-                  </FormLabel>
-                  <FormControl>
-                    <Textarea
-                      {...field}
-                      placeholder={t('activityManagement.enterDescription', 'Açıklama Girin (Opsiyonel)')}
-                      rows={4}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        {/* BODY: Kaydırılabilir */}
+        <div className="flex-1 overflow-y-auto p-6 custom-scrollbar">
+          <Form {...form}>
+            <form id="activity-form" onSubmit={form.handleSubmit(handleSubmit)} className="space-y-5">
+              
+              {/* Konu */}
               <FormField
                 control={form.control}
-                name="activityType"
+                name="subject"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      {t('activityManagement.activityType', 'Aktivite Tipi')} *
+                  <FormItem className="space-y-0">
+                    <FormLabel className={LABEL_STYLE}>
+                      <FileText size={12} className="text-pink-500" />
+                      {t('activityManagement.subject', 'Konu')} *
                     </FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      value={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder={t('activityManagement.selectActivityType', 'Aktivite Tipi Seçin')} />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {activityTypes.map((type) => (
-                          <SelectItem key={type.id} value={String(type.id)}>
-                            {type.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="status"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      {t('activityManagement.status', 'Durum')} *
-                    </FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      value={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder={t('activityManagement.selectStatus', 'Durum Seçin')} />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {ACTIVITY_STATUSES.map((status) => (
-                          <SelectItem key={status.value} value={status.value}>
-                            {t(`activityManagement.status${status.value.replace(' ', '')}`, status.label)}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-
-            <FormField
-              control={form.control}
-              name="potentialCustomerId"
-              render={({ field }) => {
-                const watchedErpCode = form.watch('erpCustomerCode');
-                const selectedCustomer = customerOptions.find((c) => c.id === field.value);
-                const displayValue = selectedCustomer 
-                  ? selectedCustomer.name 
-                  : watchedErpCode 
-                    ? t('activityManagement.erpLabel', { code: watchedErpCode }) 
-                    : '';
-
-                return (
-                  <FormItem>
-                    <FormLabel>
-                      {t('activityManagement.customer', 'Müşteri')}
-                    </FormLabel>
-                    <div className="flex gap-2">
-                      <FormControl>
-                        <Input
-                          readOnly
-                          value={displayValue}
-                          placeholder={t('activityManagement.selectCustomer', 'Müşteri seçin (Opsiyonel)')}
-                          className="flex-1"
-                        />
-                      </FormControl>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        onClick={() => setCustomerSelectDialogOpen(true)}
-                      >
-                        {t('activityManagement.selectCustomer', 'Müşteri Seç')}
-                      </Button>
-                      {(field.value || watchedErpCode) && (
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => {
-                            field.onChange(undefined);
-                            form.setValue('erpCustomerCode', '');
-                          }}
-                        >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="16"
-                            height="16"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          >
-                            <path d="M18 6L6 18M6 6l12 12" />
-                          </svg>
-                        </Button>
-                      )}
-                    </div>
-                    <FormMessage />
-                  </FormItem>
-                );
-              }}
-            />
-
-            <FormField
-              control={form.control}
-              name="activityDate"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>
-                    {t('activityManagement.activityDate', 'Aktivite Tarihi')} *
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      {...field}
-                      type="date"
-                      value={field.value || ''}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="productCode"
-              render={({ field }) => {
-                const watchedProductName = form.watch('productName');
-                const displayValue = field.value && watchedProductName
-                  ? t('activityManagement.productDisplay', { code: field.value, name: watchedProductName })
-                  : field.value || watchedProductName || '';
-
-                return (
-                  <FormItem>
-                    <FormLabel>
-                      {t('activityManagement.product', 'Stok/Ürün')}
-                    </FormLabel>
-                    <div className="flex gap-2">
-                      <FormControl>
-                        <Input
-                          readOnly
-                          value={displayValue}
-                          placeholder={t('activityManagement.selectProduct', 'Stok/Ürün seçin (Opsiyonel)')}
-                          className="flex-1"
-                        />
-                      </FormControl>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="icon"
-                        onClick={() => setProductSelectDialogOpen(true)}
-                        title={t('activityManagement.selectProduct', 'Stok/Ürün Seç')}
-                      >
-                        <Search className="h-4 w-4" />
-                      </Button>
-                      {(field.value || watchedProductName) && (
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => {
-                            field.onChange('');
-                            form.setValue('productName', '');
-                          }}
-                        >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="16"
-                            height="16"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          >
-                            <path d="M18 6L6 18M6 6l12 12" />
-                          </svg>
-                        </Button>
-                      )}
-                    </div>
-                    <FormMessage />
-                  </FormItem>
-                );
-              }}
-            />
-
-            <FormField
-              control={form.control}
-              name="contactId"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>
-                    {t('activityManagement.contactId', 'İletişim')}
-                  </FormLabel>
-                  <Select
-                    onValueChange={(value) => field.onChange(value && value !== 'none' ? parseInt(value) : undefined)}
-                    value={field.value && field.value !== 0 ? field.value.toString() : 'none'}
-                    disabled={!watchedCustomerId}
-                  >
                     <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder={watchedCustomerId ? t('activityManagement.selectContact', 'İletişim Seçin (Opsiyonel)') : t('activityManagement.selectCustomerFirst', 'Önce müşteri seçin')} />
-                      </SelectTrigger>
+                      <Input
+                        {...field}
+                        className={INPUT_STYLE}
+                        placeholder={t('activityManagement.enterSubject', 'Konu Girin')}
+                      />
                     </FormControl>
-                    <SelectContent>
-                      <SelectItem value="none">
-                        {t('activityManagement.noContactSelected', 'İletişim seçilmedi')}
-                      </SelectItem>
-                      {contactOptions.map((contact) => (
-                        <SelectItem key={contact.id} value={contact.id.toString()}>
-                          {contact.fullName}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-              <FormField
-                control={form.control}
-                name="priority"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      {t('activityManagement.priority', 'Öncelik')}
-                    </FormLabel>
-                    <Select
-                      onValueChange={(value) => field.onChange(value && value !== 'none' ? value : undefined)}
-                      value={field.value || 'none'}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder={t('activityManagement.selectPriority', 'Öncelik Seçin (Opsiyonel)')} />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="none">
-                          {t('activityManagement.noPrioritySelected', 'Öncelik seçilmedi')}
-                        </SelectItem>
-                        {ACTIVITY_PRIORITIES.map((priority) => (
-                          <SelectItem key={priority.value} value={priority.value}>
-                            {t(`activityManagement.priority${priority.value}`, priority.label)}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
+                    <FormMessage className="text-red-500 text-[10px] mt-1" />
                   </FormItem>
                 )}
               />
 
+              {/* Açıklama */}
               <FormField
                 control={form.control}
-                name="assignedUserId"
+                name="description"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      {t('activityManagement.assignedUserId', 'Atanan Kullanıcı')}
+                  <FormItem className="space-y-0">
+                    <FormLabel className={LABEL_STYLE}>
+                      <FileText size={12} className="text-pink-500" />
+                      {t('activityManagement.description', 'Açıklama')}
                     </FormLabel>
-                    <Select
-                      onValueChange={(value) => field.onChange(value && value !== 'none' ? parseInt(value) : undefined)}
-                      value={field.value && field.value !== 0 ? field.value.toString() : 'none'}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder={t('activityManagement.selectAssignedUser', 'Atanan Kullanıcı Seçin (Opsiyonel)')} />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="none">
-                          {t('activityManagement.noUserSelected', 'Kullanıcı seçilmedi')}
-                        </SelectItem>
-                        {userOptions.map((user) => (
-                          <SelectItem key={user.id} value={user.id.toString()}>
-                            {user.fullName || user.username}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
+                    <FormControl>
+                      <Textarea
+                        {...field}
+                        className={`${INPUT_STYLE} h-auto min-h-[80px] py-3`}
+                        placeholder={t('activityManagement.enterDescription', 'Açıklama Girin (Opsiyonel)')}
+                        rows={3}
+                      />
+                    </FormControl>
+                    <FormMessage className="text-red-500 text-[10px] mt-1" />
                   </FormItem>
                 )}
               />
-            </div>
 
-            <FormField
-              control={form.control}
-              name="isCompleted"
-              render={({ field }) => (
-                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                  <div className="space-y-0.5">
-                    <FormLabel className="text-base">
-                      {t('activityManagement.isCompleted', 'Tamamlandı')}
-                    </FormLabel>
-                  </div>
-                  <FormControl>
-                    <Switch
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
+              {/* Tip ve Durum (2 Kolon) */}
+              <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+                <FormField
+                  control={form.control}
+                  name="activityType"
+                  render={({ field }) => (
+                    <FormItem className="space-y-0">
+                      <FormLabel className={LABEL_STYLE}>
+                        <List size={12} className="text-pink-500" />
+                        {t('activityManagement.activityType', 'Aktivite Tipi')} *
+                      </FormLabel>
+                      <Select onValueChange={field.onChange} value={field.value}>
+                        <FormControl>
+                          <SelectTrigger className={INPUT_STYLE}>
+                            <SelectValue placeholder={t('activityManagement.selectActivityType', 'Aktivite Tipi Seçin')} />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent className="bg-white dark:bg-[#1a1025] border border-slate-100 dark:border-white/10 text-slate-900 dark:text-white shadow-xl max-h-60">
+                          {activityTypes.map((type) => (
+                            <SelectItem key={type.id} value={String(type.id)}>
+                              {type.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage className="text-red-500 text-[10px] mt-1" />
+                    </FormItem>
+                  )}
+                />
 
-            <DialogFooter>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => onOpenChange(false)}
-                disabled={isLoading}
-              >
-                {t('activityManagement.cancel', 'İptal')}
-              </Button>
-              <Button type="submit" disabled={isLoading}>
-                {isLoading
-                  ? t('activityManagement.saving', 'Kaydediliyor...')
-                  : t('activityManagement.save', 'Kaydet')}
-              </Button>
-            </DialogFooter>
-          </form>
-        </Form>
+                <FormField
+                  control={form.control}
+                  name="status"
+                  render={({ field }) => (
+                    <FormItem className="space-y-0">
+                      <FormLabel className={LABEL_STYLE}>
+                        <CheckSquare size={12} className="text-pink-500" />
+                        {t('activityManagement.status', 'Durum')} *
+                      </FormLabel>
+                      <Select onValueChange={field.onChange} value={field.value}>
+                        <FormControl>
+                          <SelectTrigger className={INPUT_STYLE}>
+                            <SelectValue placeholder={t('activityManagement.selectStatus', 'Durum Seçin')} />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent className="bg-white dark:bg-[#1a1025] border border-slate-100 dark:border-white/10 text-slate-900 dark:text-white shadow-xl max-h-60">
+                          {ACTIVITY_STATUSES.map((status) => (
+                            <SelectItem key={status.value} value={status.value}>
+                              {t(`activityManagement.status${status.value.replace(' ', '')}`, status.label)}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage className="text-red-500 text-[10px] mt-1" />
+                    </FormItem>
+                  )}
+                />
+              </div>
 
+              {/* Müşteri Seçimi (Tam Genişlik) */}
+              <FormField
+                control={form.control}
+                name="potentialCustomerId"
+                render={({ field }) => {
+                  const watchedErpCode = form.watch('erpCustomerCode');
+                  const selectedCustomer = customerOptions.find((c) => c.id === field.value);
+                  const displayValue = selectedCustomer 
+                    ? selectedCustomer.name 
+                    : watchedErpCode 
+                      ? t('activityManagement.erpLabel', { code: watchedErpCode }) 
+                      : '';
+
+                  return (
+                    <FormItem className="space-y-0">
+                      <FormLabel className={LABEL_STYLE}>
+                        <Building2 size={12} className="text-pink-500" />
+                        {t('activityManagement.customer', 'Müşteri')}
+                      </FormLabel>
+                      <div className="flex gap-2">
+                        <FormControl>
+                          <Input
+                            readOnly
+                            value={displayValue}
+                            placeholder={t('activityManagement.selectCustomer', 'Müşteri seçin (Opsiyonel)')}
+                            className={`${INPUT_STYLE} flex-1`}
+                          />
+                        </FormControl>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={() => setCustomerSelectDialogOpen(true)}
+                          className="h-11 border-slate-200 dark:border-white/10 hover:bg-slate-50 dark:hover:bg-white/5"
+                        >
+                          <Search size={16} className="mr-2" />
+                          {t('activityManagement.selectCustomer', 'Seç')}
+                        </Button>
+                        {(field.value || watchedErpCode) && (
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="icon"
+                            className="h-11 w-11 text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
+                            onClick={() => {
+                              field.onChange(undefined);
+                              form.setValue('erpCustomerCode', '');
+                            }}
+                          >
+                            <X size={16} />
+                          </Button>
+                        )}
+                      </div>
+                      <FormMessage className="text-red-500 text-[10px] mt-1" />
+                    </FormItem>
+                  );
+                }}
+              />
+
+              {/* Tarih ve Ürün (2 Kolon) */}
+              <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+                <FormField
+                  control={form.control}
+                  name="activityDate"
+                  render={({ field }) => (
+                    <FormItem className="space-y-0">
+                      <FormLabel className={LABEL_STYLE}>
+                        <Calendar size={12} className="text-pink-500" />
+                        {t('activityManagement.activityDate', 'Aktivite Tarihi')} *
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          type="date"
+                          className={INPUT_STYLE}
+                          value={field.value || ''}
+                        />
+                      </FormControl>
+                      <FormMessage className="text-red-500 text-[10px] mt-1" />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="productCode"
+                  render={({ field }) => {
+                    const watchedProductName = form.watch('productName');
+                    const displayValue = field.value && watchedProductName
+                      ? `${field.value} - ${watchedProductName}` // Basit format
+                      : field.value || watchedProductName || '';
+
+                    return (
+                      <FormItem className="space-y-0">
+                        <FormLabel className={LABEL_STYLE}>
+                          <Box size={12} className="text-pink-500" />
+                          {t('activityManagement.product', 'Stok/Ürün')}
+                        </FormLabel>
+                        <div className="flex gap-2">
+                          <FormControl>
+                            <Input
+                              readOnly
+                              value={displayValue}
+                              placeholder={t('activityManagement.selectProduct', 'Stok/Ürün seçin')}
+                              className={`${INPUT_STYLE} flex-1`}
+                            />
+                          </FormControl>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="icon"
+                            className="h-11 w-11 border-slate-200 dark:border-white/10 hover:bg-slate-50 dark:hover:bg-white/5"
+                            onClick={() => setProductSelectDialogOpen(true)}
+                          >
+                            <Search size={16} />
+                          </Button>
+                          {(field.value || watchedProductName) && (
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="icon"
+                              className="h-11 w-11 text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
+                              onClick={() => {
+                                field.onChange('');
+                                form.setValue('productName', '');
+                              }}
+                            >
+                              <X size={16} />
+                            </Button>
+                          )}
+                        </div>
+                        <FormMessage className="text-red-500 text-[10px] mt-1" />
+                      </FormItem>
+                    );
+                  }}
+                />
+              </div>
+
+              {/* İletişim ve Öncelik (2 Kolon) */}
+              <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+                <FormField
+                  control={form.control}
+                  name="contactId"
+                  render={({ field }) => (
+                    <FormItem className="space-y-0">
+                      <FormLabel className={LABEL_STYLE}>
+                        <User size={12} className="text-pink-500" />
+                        {t('activityManagement.contactId', 'İletişim')}
+                      </FormLabel>
+                      <Select
+                        onValueChange={(value) => field.onChange(value && value !== 'none' ? parseInt(value) : undefined)}
+                        value={field.value && field.value !== 0 ? field.value.toString() : 'none'}
+                        disabled={!watchedCustomerId}
+                      >
+                        <FormControl>
+                          <SelectTrigger className={INPUT_STYLE}>
+                            <SelectValue placeholder={watchedCustomerId ? t('activityManagement.selectContact', 'İletişim Seçin') : t('activityManagement.selectCustomerFirst', 'Önce müşteri seçin')} />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent className="bg-white dark:bg-[#1a1025] border border-slate-100 dark:border-white/10 text-slate-900 dark:text-white shadow-xl max-h-60">
+                          <SelectItem value="none">
+                            {t('activityManagement.noContactSelected', 'İletişim seçilmedi')}
+                          </SelectItem>
+                          {contactOptions.map((contact) => (
+                            <SelectItem key={contact.id} value={contact.id.toString()}>
+                              {contact.fullName}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage className="text-red-500 text-[10px] mt-1" />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="priority"
+                  render={({ field }) => (
+                    <FormItem className="space-y-0">
+                      <FormLabel className={LABEL_STYLE}>
+                        <AlertCircle size={12} className="text-pink-500" />
+                        {t('activityManagement.priority', 'Öncelik')}
+                      </FormLabel>
+                      <Select
+                        onValueChange={(value) => field.onChange(value && value !== 'none' ? value : undefined)}
+                        value={field.value || 'none'}
+                      >
+                        <FormControl>
+                          <SelectTrigger className={INPUT_STYLE}>
+                            <SelectValue placeholder={t('activityManagement.selectPriority', 'Öncelik Seçin')} />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent className="bg-white dark:bg-[#1a1025] border border-slate-100 dark:border-white/10 text-slate-900 dark:text-white shadow-xl max-h-60">
+                          <SelectItem value="none">
+                            {t('activityManagement.noPrioritySelected', 'Öncelik seçilmedi')}
+                          </SelectItem>
+                          {ACTIVITY_PRIORITIES.map((priority) => (
+                            <SelectItem key={priority.value} value={priority.value}>
+                              {t(`activityManagement.priority${priority.value}`, priority.label)}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage className="text-red-500 text-[10px] mt-1" />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              {/* Atanan Kullanıcı (2 Kolon yerine tek satırda solda veya 2. kolon boş) */}
+              <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+                <FormField
+                  control={form.control}
+                  name="assignedUserId"
+                  render={({ field }) => (
+                    <FormItem className="space-y-0">
+                      <FormLabel className={LABEL_STYLE}>
+                        <Briefcase size={12} className="text-pink-500" />
+                        {t('activityManagement.assignedUserId', 'Atanan Kullanıcı')}
+                      </FormLabel>
+                      <Select
+                        onValueChange={(value) => field.onChange(value && value !== 'none' ? parseInt(value) : undefined)}
+                        value={field.value && field.value !== 0 ? field.value.toString() : 'none'}
+                      >
+                        <FormControl>
+                          <SelectTrigger className={INPUT_STYLE}>
+                            <SelectValue placeholder={t('activityManagement.selectAssignedUser', 'Kullanıcı Seçin')} />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent className="bg-white dark:bg-[#1a1025] border border-slate-100 dark:border-white/10 text-slate-900 dark:text-white shadow-xl max-h-60">
+                          <SelectItem value="none">
+                            {t('activityManagement.noUserSelected', 'Kullanıcı seçilmedi')}
+                          </SelectItem>
+                          {userOptions.map((user) => (
+                            <SelectItem key={user.id} value={user.id.toString()}>
+                              {user.fullName || user.username}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage className="text-red-500 text-[10px] mt-1" />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              {/* Tamamlandı Switch */}
+              <FormField
+                control={form.control}
+                name="isCompleted"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-center justify-between rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50/50 dark:bg-[#0c0516] p-4 transition-colors">
+                    <div className="space-y-0.5">
+                      <FormLabel className="text-sm font-semibold text-slate-700 dark:text-slate-300">
+                        {t('activityManagement.isCompleted', 'Tamamlandı')}
+                      </FormLabel>
+                      <DialogDescription className="text-[10px] text-slate-500 dark:text-slate-500">
+                        {t('activityManagement.isCompletedDesc', 'Bu aktivite tamamlandı olarak işaretlensin mi?')}
+                      </DialogDescription>
+                    </div>
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                        className="data-[state=checked]:bg-pink-600"
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+
+            </form>
+          </Form>
+        </div>
+
+        {/* FOOTER: Sabit */}
+        <DialogFooter className="border-t border-slate-100 dark:border-white/10 px-6 py-4 bg-white/80 dark:bg-[#130822]/90 backdrop-blur-md shrink-0 gap-3">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => onOpenChange(false)}
+            disabled={isLoading}
+            className="bg-white dark:bg-transparent border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white"
+          >
+            {t('activityManagement.cancel', 'İptal')}
+          </Button>
+          <Button 
+            type="submit" 
+            form="activity-form" // Form ID'si ile bağlantı
+            disabled={isLoading}
+            className="bg-gradient-to-r from-pink-600 to-orange-600 text-white font-bold border-0 hover:shadow-lg hover:shadow-pink-500/20 transition-all transform active:scale-95 px-8"
+          >
+            {isLoading
+              ? t('activityManagement.saving', 'Kaydediliyor...')
+              : t('activityManagement.save', 'Kaydet')}
+          </Button>
+        </DialogFooter>
+
+        {/* Dış Dialoglar (DialogContent içinde olmalı ki düzgün çalışsın) */}
         <CustomerSelectDialog
           open={customerSelectDialogOpen}
           onOpenChange={setCustomerSelectDialogOpen}
@@ -615,6 +681,7 @@ export function ActivityForm({
             form.setValue('productName', result.name);
           }}
         />
+
       </DialogContent>
     </Dialog>
   );
