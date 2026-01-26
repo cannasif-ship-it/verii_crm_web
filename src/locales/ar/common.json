@@ -49,7 +49,13 @@
       "wrongPassword": "البريد الإلكتروني أو كلمة المرور غير صحيحة",
       "loginError": "حدث خطأ أثناء تسجيل الدخول",
       "sessionExpired": "انتهت صلاحية الجلسة. يرجى تسجيل الدخول مرة أخرى.",
-      "copyright": "© 2025 VERII. جميع الحقوق محفوظة."
+      "copyright": "© 2025 VERII. جميع الحقوق محفوظة.",
+      "branchPlaceholder": "اختر الفرع",
+      "rememberMe": "تذكرني",
+      "forgotPassword": "نسيت كلمة المرور؟",
+      "processing": "جاري المعالجة...",
+      "submitButton": "تسجيل الدخول",
+      "slogan": "قم بتمكين عملك مع <1>VERII CRM</1>"
     },
     "logout": "تسجيل الخروج"
   },
@@ -102,7 +108,14 @@
     "documentSerialTypeManagement": "إدارة أنواع تسلسل المستندات",
     "stockManagement": "إدارة المخزون",
     "settings": "الإعدادات",
-    "logout": "تسجيل الخروج"
+    "logout": "تسجيل الخروج",
+    "productAndStock": "المنتجات والمخزون",
+    "salesManagement": "إدارة المبيعات",
+    "proposals": "العروض",
+    "quotationList": "قائمة عروض الأسعار",
+    "waitingApprovals": "في انتظار الموافقة",
+    "definitions": "التعريفات",
+    "users": "المستخدمين"
   },
   "dashboard": {
     "title": "لوحة التحكم",
