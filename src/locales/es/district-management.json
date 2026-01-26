@@ -1,0 +1,51 @@
+{
+  "menu": "Gestión de Distritos",
+  "description": "Gestionar y editar distritos",
+  "addButton": "Añadir Nuevo Distrito",
+  "listTitle": "Lista de Distritos",
+  "listDescription": "Puede gestionar todos los distritos registrados en el sistema aquí.",
+  "loading": "Cargando...",
+  "noData": "Sin datos",
+  "actions": "Acciones",
+  "previous": "Anterior",
+  "next": "Siguiente",
+  "cancel": "Cancelar",
+  "delete": "Eliminar",
+  "save": "Guardar",
+  "saving": "Guardando...",
+  "table": {
+    "id": "ID",
+    "name": "Nombre del Distrito",
+    "erpCode": "Código ERP",
+    "cityName": "Nombre de la Ciudad",
+    "createdDate": "Fecha de Creación",
+    "createdBy": "Creado Por",
+    "showing": "Mostrando {{from}}-{{to}} / {{total}}",
+    "page": "Página {{current}} / {{total}}"
+  },
+  "deleteConfirm": {
+    "confirmTitle": "Eliminar Distrito",
+    "confirmMessage": "¿Está seguro de que desea eliminar el distrito {{name}}?"
+  },
+  "form": {
+    "editDistrict": "Editar Distrito",
+    "addDistrict": "Añadir Nuevo Distrito",
+    "editDescription": "Editar información del distrito",
+    "addDescription": "Introducir nueva información del distrito",
+    "name": "Nombre del Distrito",
+    "namePlaceholder": "Introducir nombre del distrito",
+    "city": "Ciudad",
+    "selectCity": "Seleccionar ciudad",
+    "erpCode": "Código ERP",
+    "erpCodePlaceholder": "Introducir código ERP (opcional)",
+    "nameRequired": "El nombre del distrito es obligatorio",
+    "nameMaxLength": "El nombre del distrito no puede exceder los 100 caracteres",
+    "erpCodeMaxLength": "El código ERP no puede exceder los 10 caracteres",
+    "cityRequired": "La selección de ciudad es obligatoria"
+  },
+  "stats": {
+    "totalDistricts": "Total Distritos",
+    "activeDistricts": "Distritos Activos",
+    "newThisMonth": "Nuevos Este Mes"
+  }
+}
