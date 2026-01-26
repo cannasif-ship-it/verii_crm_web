@@ -1,0 +1,166 @@
+{
+  "loading": "Wird geladen...",
+  "saving": "Wird gespeichert...",
+  "error": "Fehler",
+  "noData": "Keine Daten",
+  "previous": "Zurück",
+  "next": "Weiter",
+  "actions": "Aktionen",
+  "edit": "Bearbeiten",
+  "delete": "Löschen",
+  "back": "Zurück",
+  "refresh": "Aktualisieren",
+  "select": "Auswählen",
+  "yes": "Ja",
+  "confirm": "Bestätigen",
+  "add": "Hinzufügen",
+  "backToOrders": "Zurück zu Angeboten",
+  "cancel": "Abbrechen",
+  "save": "Speichern",
+  "saveAndApply": "Speichern und Anwenden",
+  "list": {
+    "revise": "Überarbeiten",
+    "showing": "Zeige {{from}}-{{to}} / {{total}}"
+  },
+  "detail": {
+    "title": "Angebotsdetails"
+  },
+  "create": {
+    "title": "Neues Angebot erstellen",
+    "submit": "Angebot speichern und zur Genehmigung senden",
+    "success": "Angebot erfolgreich erstellt",
+    "successMessage": "Angebot wurde an den Genehmigungsprozess gesendet.",
+    "error": "Angebot konnte nicht erstellt werden",
+    "errorMessage": "Beim Erstellen des Angebots ist ein Fehler aufgetreten."
+  },
+  "header": {
+    "title": "Angebotsinformationen",
+    "customer": "Kunde",
+    "selectCustomer": "Kunde auswählen",
+    "shippingAddress": "Lieferadresse",
+    "selectShippingAddress": "Lieferadresse auswählen",
+    "representative": "Vertriebsmitarbeiter",
+    "selectRepresentative": "Mitarbeiter auswählen",
+    "offerType": "Angebotstyp",
+    "selectOfferType": "Angebotstyp auswählen",
+    "currency": "Währung",
+    "selectCurrency": "Bitte Währung auswählen",
+    "showExchangeRates": "Wechselkurse anzeigen",
+    "offerDate": "Angebotsdatum",
+    "deliveryDate": "Lieferdatum",
+    "paymentType": "Zahlungsart",
+    "selectPaymentType": "Zahlungsart auswählen",
+    "description": "Beschreibung",
+    "descriptionPlaceholder": "Beschreibung eingeben",
+    "offerNo": "Angebots-Nr.",
+    "offerNoPlaceholder": "Angebotsnummer",
+    "currencyChange": {
+      "title": "Währungsänderung",
+      "message": "Wenn die Währung geändert wird, werden alle vorhandenen Zeilen basierend auf der neuen Währung neu berechnet. Bestätigen Sie diesen Vorgang?"
+    }
+  },
+  "lines": {
+    "title": "Angebotszeilen",
+    "add": "Zeile hinzufügen",
+    "empty": "Noch keine Zeile hinzugefügt",
+    "emptyDescription": "Verwenden Sie die Schaltfläche \"Bestand auswählen\" oder \"Zeile hinzufügen\", um Angebotszeilen hinzuzufügen",
+    "itemCount": "Artikel",
+    "editLine": "Zeile bearbeiten",
+    "selectStock": "Bestand auswählen",
+    "selectProduct": "Produkt auswählen",
+    "selectStockFirst": "Kein Bestand ausgewählt",
+    "stock": "Bestand",
+    "productCode": "Bestandscode",
+    "enterProductCode": "Produktcode eingeben oder suchen",
+    "productName": "Bestandsname",
+    "enterProductName": "Produktname eingeben",
+    "quantity": "Menge",
+    "unitPrice": "Stückpreis",
+    "discount1": "Rabatt 1 %",
+    "discount2": "Rabatt 2 %",
+    "discount3": "Rabatt 3 %",
+    "discounts": "Rabatte",
+    "discountAmount": "Rabattbetrag",
+    "netPrice": "Nettopreis",
+    "vatRate": "MwSt.-Satz %",
+    "lineTotal": "Zeilensumme (inkl. MwSt.)",
+    "calculations": "Berechnungen",
+    "required": "Mindestens 1 Zeile muss hinzugefügt werden",
+    "noProductsFound": "Kein Produkt gefunden",
+    "delete": {
+      "confirmTitle": "Zeile löschen",
+      "confirmMessage": "Möchten Sie diese Zeile wirklich löschen?"
+    }
+  },
+  "exchangeRates": {
+    "title": "Wechselkurse",
+    "currency": "Währung",
+    "rate": "Kurs",
+    "date": "Kursdatum",
+    "isOfficial": "Offizieller Kurs",
+    "official": "Offiziell",
+    "custom": "Benutzerdefiniert",
+    "empty": "Kein Kurs gefunden",
+    "status": "Status",
+    "dialog": {
+      "title": "Wechselkurse",
+      "description": "Kursdaten anzeigen und bei Bedarf bearbeiten. Geänderte Kurse werden nicht als offizieller Kurs markiert."
+    }
+  },
+  "summary": {
+    "title": "Zusammenfassung",
+    "subtotal": "Zwischensumme",
+    "totalVat": "Gesamt MwSt.",
+    "grandTotal": "Gesamtsumme"
+  },
+  "offerType": {
+    "domestic": "Inland",
+    "export": "Export"
+  },
+  "wizard": {
+    "title": "Neues Angebot erstellen",
+    "step1": {
+      "title": "Schritt 1: Angebotsinformationen",
+      "description": "Angebotskopfdaten und Wechselkurse eingeben",
+      "validation": {
+        "offerType": "Angebotstyp",
+        "currency": "Währung",
+        "exchangeRate": "Wechselkurs"
+      },
+      "exchangeRate": {
+        "required": "Für Nicht-TRY-Währungen muss mindestens ein Wechselkurs hinzugefügt werden"
+      },
+      "currency": {
+        "try": {
+          "info": "Wenn TRY ausgewählt ist, ist kein Wechselkurs erforderlich"
+        }
+      }
+    },
+    "step2": {
+      "title": "Schritt 2: Angebotszeilen",
+      "description": "Produkt- und Preisinformationen hinzufügen",
+      "info": "Sie müssen mindestens eine Zeile hinzufügen",
+      "validation": {
+        "noLines": "Mindestens eine Zeile muss hinzugefügt werden",
+        "invalidLines": "Alle Zeilen müssen gültige Informationen enthalten",
+        "allValid": "{{count}} Zeilen erfolgreich hinzugefügt"
+      }
+    },
+    "step3": {
+      "title": "Schritt 3: Zusammenfassung und Genehmigung",
+      "description": "Informationen überprüfen und Angebot speichern",
+      "header": {
+        "title": "Angebotsinformationen"
+      },
+      "lines": {
+        "title": "Angebotszeilen"
+      },
+      "summary": {
+        "title": "Endgültige Zusammenfassung"
+      },
+      "approval": {
+        "info": "Nach dem Speichern wird das Angebot automatisch an den Genehmigungsprozess gesendet"
+      }
+    }
+  }
+}
