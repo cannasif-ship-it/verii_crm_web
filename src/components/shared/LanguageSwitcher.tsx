@@ -14,6 +14,9 @@ const languages = [
   { code: 'en', name: 'English', flag: '🇬🇧' },
   { code: 'de', name: 'Deutsch', flag: '🇩🇪' },
   { code: 'fr', name: 'Français', flag: '🇫🇷' },
+  { code: 'it', name: 'Italiano', flag: '🇮🇹' },
+  { code: 'es', name: 'Español', flag: '🇪🇸' },
+  { code: 'sa', name: 'العربية', flag: '🇸🇦' },
 ];
 
 export function LanguageSwitcher(): ReactElement {

@@ -296,7 +296,7 @@ i18n
           userDetailManagement: trUserDetailManagement,
           notification: trNotification,
           dashboard: trDashboard,
-          auth: trAuth,
+          auth: trAuth.auth,
         } as unknown as typeof trCommon & { 
           customerTypeManagement: typeof trCustomerTypeManagement; 
           customerManagement: typeof trCustomerManagement; 
@@ -369,7 +369,7 @@ i18n
           userDetailManagement: enUserDetailManagement,
           notification: enNotification,
           dashboard: enDashboard,
-          auth: enAuth,
+          auth: enAuth.auth,
         } as unknown as typeof enCommon & {  
           customerTypeManagement: typeof enCustomerTypeManagement; 
           customerManagement: typeof enCustomerManagement; 
@@ -442,7 +442,7 @@ i18n
           userDetailManagement: deUserDetailManagement,
           notification: deNotification,
           dashboard: deDashboard,
-          auth: deAuth,
+          auth: deAuth.auth,
         },
       },
       fr: {
@@ -479,7 +479,7 @@ i18n
           userDetailManagement: frUserDetailManagement,
           notification: frNotification,
           dashboard: frDashboard,
-          auth: frAuth,
+          auth: frAuth.auth,
           ...frApprovalFlowManagement,
           ...frApprovalRoleManagement,
           ...frApprovalUserRoleManagement,
@@ -519,7 +519,7 @@ i18n
           userDetailManagement: itUserDetailManagement,
           notification: itNotification,
           dashboard: itDashboard,
-          auth: itAuth,
+          auth: itAuth.auth,
           ...itApprovalFlowManagement,
           ...itApprovalRoleManagement,
           ...itApprovalUserRoleManagement,
@@ -559,13 +559,13 @@ i18n
           userDetailManagement: esUserDetailManagement,
           notification: esNotification,
           dashboard: esDashboard,
-          auth: esAuth,
+          auth: esAuth.auth,
           ...esApprovalFlowManagement,
           ...esApprovalRoleManagement,
           ...esApprovalUserRoleManagement,
         },
       },
-      ar: {
+      sa: {
         translation: {
           ...arCommon,
           customerTypeManagement: arCustomerTypeManagement,
@@ -599,7 +599,7 @@ i18n
           userDetailManagement: arUserDetailManagement,
           notification: arNotification,
           dashboard: arDashboard,
-          auth: arAuth,
+          auth: arAuth.auth,
           ...arApprovalFlowManagement,
           ...arApprovalRoleManagement,
           ...arApprovalUserRoleManagement,
