@@ -26,8 +26,18 @@ import { ApprovalUserRoleManagementPage } from '@/features/approval-user-role-ma
 import { ApprovalRoleManagementPage } from '@/features/approval-role-management';
 import { ApprovalFlowManagementPage } from '@/features/approval-flow-management';
 import { QuotationCreateForm, QuotationDetailPage, QuotationListPage, WaitingApprovalsPage } from '@/features/quotation';
-import { OrderCreateForm, OrderDetailPage, OrderListPage, WaitingApprovalsPage as OrderWaitingApprovalsPage } from '@/features/order';
-import { DemandCreateForm, DemandDetailPage, DemandListPage, WaitingApprovalsPage as DemandWaitingApprovalsPage } from '@/features/demand';
+import { 
+  DemandCreateForm, 
+  DemandDetailPage, 
+  DemandListPage, 
+  WaitingApprovalsPage as DemandWaitingApprovalsPage 
+} from '@/features/demand';
+import { 
+  OrderCreateForm, 
+  OrderDetailPage, 
+  OrderListPage, 
+  WaitingApprovalsPage as OrderWaitingApprovalsPage 
+} from '@/features/order';
 import { PricingRuleManagementPage } from '@/features/pricing-rule';
 import { StockListPage, StockDetailPage } from '@/features/stock';
 import { DocumentSerialTypeManagementPage } from '@/features/document-serial-type-management';
@@ -130,22 +140,6 @@ export const router = createBrowserRouter([
         element: <ApprovalFlowManagementPage />,
       },
       {
-        path: 'demands',
-        element: <DemandListPage />,
-      },
-      {
-        path: 'demands/create',
-        element: <DemandCreateForm />,
-      },
-      {
-        path: 'demands/:id',
-        element: <DemandDetailPage />,
-      },
-      {
-        path: 'demands/waiting-approvals',
-        element: <DemandWaitingApprovalsPage />,
-      },
-      {
         path: 'quotations',
         element: <QuotationListPage />,
       },
@@ -161,6 +155,24 @@ export const router = createBrowserRouter([
         path: 'quotations/waiting-approvals',
         element: <WaitingApprovalsPage />,
       },
+      // DEMAND ROUTES
+      {
+        path: 'demands',
+        element: <DemandListPage />,
+      },
+      {
+        path: 'demands/create',
+        element: <DemandCreateForm />,
+      },
+      {
+        path: 'demands/:id',
+        element: <DemandDetailPage />,
+      },
+      {
+        path: 'demands/waiting-approvals',
+        element: <DemandWaitingApprovalsPage />,
+      },
+      // ORDER ROUTES
       {
         path: 'orders',
         element: <OrderListPage />,

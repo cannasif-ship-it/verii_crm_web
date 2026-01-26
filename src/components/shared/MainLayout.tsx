@@ -23,7 +23,6 @@ interface NavItem {
   href?: string;
   icon?: ReactElement;
   children?: NavItem[];
-  disableSorting?: boolean;
 }
 
 interface MainLayoutProps {
@@ -43,13 +42,10 @@ export function MainLayout({ navItems }: MainLayoutProps): ReactElement {
     const sortNavItems = (items: NavItem[]): NavItem[] => {
       return items.map((item) => {
         if (item.children && item.children.length > 0) {
-          // Çocukları sırala (disableSorting true ise sıralama yapma)
-          let sortedChildren = [...item.children];
-          if (!item.disableSorting) {
-            sortedChildren.sort((a, b) => 
-              collator.compare(a.title, b.title)
-            );
-          }
+          // Çocukları sırala
+          const sortedChildren = [...item.children].sort((a, b) => 
+            collator.compare(a.title, b.title)
+          );
           // Recursive sıralama (3. seviye için)
           return { ...item, children: sortNavItems(sortedChildren) };
         }
@@ -105,8 +101,8 @@ export function MainLayout({ navItems }: MainLayoutProps): ReactElement {
       {
         title: t('sidebar.salesManagement', 'Satış Yönetimi'),
         icon: <ShoppingBag03Icon size={iconSize} className="text-orange-500" />,
-        disableSorting: true,
         children: [
+          // TALEPLER
           {
             title: t('sidebar.demands', 'Talepler'),
             children: [
@@ -119,11 +115,12 @@ export function MainLayout({ navItems }: MainLayoutProps): ReactElement {
                 href: '/demands/create',
               },
               {
-                title: t('sidebar.waitingDemandApprovals', 'Onay Bekleyen Talepler'),
+                title: t('sidebar.waitingApprovalDemands', 'Onay Bekleyen Talepler'),
                 href: '/demands/waiting-approvals',
               },
             ]
           },
+          // TEKLİFLER
           {
             title: t('sidebar.proposals', 'Teklifler'),
             // href YOK, çünkü açılır menü (Grup)
@@ -142,6 +139,7 @@ export function MainLayout({ navItems }: MainLayoutProps): ReactElement {
               },
             ]
           },
+          // SİPARİŞLER
           {
             title: t('sidebar.orders', 'Siparişler'),
             children: [
@@ -154,7 +152,7 @@ export function MainLayout({ navItems }: MainLayoutProps): ReactElement {
                 href: '/orders/create',
               },
               {
-                title: t('sidebar.waitingOrderApprovals', 'Onay Bekleyen Siparişler'),
+                title: t('sidebar.waitingApprovalOrders', 'Onay Bekleyen Siparişler'),
                 href: '/orders/waiting-approvals',
               },
             ]
