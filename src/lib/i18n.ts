@@ -549,7 +549,7 @@ i18n
           wizard: esWizard,
           pricingRule: esPricingRule,
           documentSerialTypeManagement: esDocumentSerialTypeManagement,
-          approvalRoleGroup: esApprovalRoleGroup,
+          approvalRoleGroup: esApprovalRoleGroupManagement,
           quotationLineManagement: esQuotationLineManagement,
           districtManagement: esDistrictManagement,
           stock: esStock,
