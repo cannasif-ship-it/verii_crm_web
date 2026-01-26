@@ -21,6 +21,24 @@ import type { ActivityFormSchema } from '@/features/activity-management/types/ac
 import { Checkbox } from '@/components/ui/checkbox';
 import { useUserOptions } from '@/features/user-discount-limit-management/hooks/useUserOptions';
 import { useAuthStore } from '@/stores/auth-store';
+// Modern İkon Seti
+import { 
+  Plus, 
+  Trash2, 
+  Calendar as CalendarIcon, 
+  ListTodo, 
+  LayoutGrid, 
+  ChevronLeft, 
+  ChevronRight, 
+  User, 
+  Play, 
+  PauseCircle, 
+  CheckCircle2, 
+  CalendarDays,
+  Sparkles,
+  Clock,
+  Target,
+  } from 'lucide-react';
 
 export function DailyTasksPage(): ReactElement {
   const { t, i18n } = useTranslation();
@@ -31,8 +49,17 @@ export function DailyTasksPage(): ReactElement {
   const [formOpen, setFormOpen] = useState(false);
   const [calendarMonth, setCalendarMonth] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  const [greeting, setGreeting] = useState('');
 
   const { data: userOptions = [] } = useUserOptions();
+
+  // Dinamik Selamlama
+  useEffect(() => {
+    const hour = new Date().getHours();
+    if (hour < 12) setGreeting(t('dailyTasks.morning', 'Günaydın'));
+    else if (hour < 18) setGreeting(t('dailyTasks.afternoon', 'İyi Günler'));
+    else setGreeting(t('dailyTasks.evening', 'İyi Akşamlar'));
+  }, [t]);
 
   useEffect(() => {
     if (user?.id && !assignedUserFilter) {
@@ -40,6 +67,7 @@ export function DailyTasksPage(): ReactElement {
     }
   }, [user, assignedUserFilter]);
 
+  // --- Date Helpers ---
   const getWeekDateRange = (): { startDate: string; endDate: string } => {
     const today = new Date();
     const dayOfWeek = today.getDay();
@@ -49,17 +77,10 @@ export function DailyTasksPage(): ReactElement {
     const sunday = new Date(monday);
     sunday.setDate(monday.getDate() + 6);
     sunday.setHours(23, 59, 59, 999);
-    
-    return {
-      startDate: monday.toISOString().split('T')[0],
-      endDate: sunday.toISOString().split('T')[0],
-    };
+    return { startDate: monday.toISOString().split('T')[0], endDate: sunday.toISOString().split('T')[0] };
   };
 
-  const getTodayDate = (): string => {
-    const today = new Date();
-    return today.toISOString().split('T')[0];
-  };
+  const getTodayDate = (): string => new Date().toISOString().split('T')[0];
 
   const getCalendarDateRange = (): { startDate: string; endDate: string } => {
     const year = calendarMonth.getFullYear();
@@ -69,17 +90,14 @@ export function DailyTasksPage(): ReactElement {
     startDate.setDate(startDate.getDate() - startDate.getDay());
     const endDate = new Date(startDate);
     endDate.setDate(endDate.getDate() + 41);
-    
-    return {
-      startDate: startDate.toISOString().split('T')[0],
-      endDate: endDate.toISOString().split('T')[0],
-    };
+    return { startDate: startDate.toISOString().split('T')[0], endDate: endDate.toISOString().split('T')[0] };
   };
 
   const weekDateRange = getWeekDateRange();
   const todayDate = getTodayDate();
   const calendarDateRange = getCalendarDateRange();
 
+  // --- Filters ---
   const filters: Array<{ column: string; operator: string; value: string }> = [
     statusFilter !== 'all' ? { column: 'Status', operator: 'eq', value: statusFilter } : undefined,
     assignedUserFilter ? { column: 'AssignedUserId', operator: 'eq', value: assignedUserFilter.toString() } : undefined,
@@ -106,15 +124,9 @@ export function DailyTasksPage(): ReactElement {
 
   const filteredActivities = useMemo(() => {
     let filtered = activities;
-
-    if (statusFilter !== 'all') {
-      filtered = filtered.filter((activity) => activity.status === statusFilter);
-    }
-
-    if (assignedUserFilter) {
-      filtered = filtered.filter((activity) => activity.assignedUserId === assignedUserFilter);
-    }
-
+    if (statusFilter !== 'all') filtered = filtered.filter((activity) => activity.status === statusFilter);
+    if (assignedUserFilter) filtered = filtered.filter((activity) => activity.assignedUserId === assignedUserFilter);
+    
     if (activeTab === 'tasks') {
       filtered = filtered.filter((activity) => {
         if (!activity.activityDate) return false;
@@ -122,7 +134,6 @@ export function DailyTasksPage(): ReactElement {
         return activityDate >= new Date(weekDateRange.startDate) && activityDate <= new Date(weekDateRange.endDate);
       });
     }
-
     if (activeTab === 'list') {
       filtered = filtered.filter((activity) => {
         if (!activity.activityDate) return false;
@@ -130,7 +141,6 @@ export function DailyTasksPage(): ReactElement {
         return activityDate === todayDate;
       });
     }
-
     if (activeTab === 'calendar') {
       filtered = filtered.filter((activity) => {
         if (!activity.activityDate) return false;
@@ -138,686 +148,462 @@ export function DailyTasksPage(): ReactElement {
         return activityDate >= new Date(calendarDateRange.startDate) && activityDate <= new Date(calendarDateRange.endDate);
       });
     }
-
     return filtered;
   }, [activities, statusFilter, assignedUserFilter, activeTab, weekDateRange, todayDate, calendarDateRange]);
 
-  const handleToggleComplete = async (activity: ActivityDto): Promise<void> => {
-    await updateActivity.mutateAsync({
-      id: activity.id,
-      data: {
-        ...activity,
-        status: activity.isCompleted ? 'Scheduled' : 'Completed',
-        isCompleted: !activity.isCompleted,
-      },
-    });
+  // --- Handlers ---
+  const handleToggleComplete = async (activity: ActivityDto) => {
+    await updateActivity.mutateAsync({ id: activity.id, data: { ...activity, status: activity.isCompleted ? 'Scheduled' : 'Completed', isCompleted: !activity.isCompleted } });
     void refetch();
   };
-
-  const handleDelete = async (id: number): Promise<void> => {
-    await deleteActivity.mutateAsync(id);
-    void refetch();
-  };
-
-  const handleNewTask = (): void => {
-    setFormOpen(true);
-  };
-
-  const handleFormSubmit = async (data: ActivityFormSchema): Promise<void> => {
-    await createActivity.mutateAsync({
+  const handleDelete = async (id: number) => { await deleteActivity.mutateAsync(id); void refetch(); };
+  const handleNewTask = () => setFormOpen(true);
+  const handleFormSubmit = async (data: ActivityFormSchema) => {
+    await createActivity.mutateAsync({ 
       subject: data.subject,
       description: data.description,
       activityType: data.activityType,
-      potentialCustomerId: data.potentialCustomerId || undefined,
-      erpCustomerCode: data.erpCustomerCode || undefined,
+      activityDate: data.activityDate,
       status: data.status,
       isCompleted: data.isCompleted,
+      potentialCustomerId: data.potentialCustomerId || undefined,
+      erpCustomerCode: data.erpCustomerCode || undefined,
       priority: data.priority || undefined,
       contactId: data.contactId || undefined,
       assignedUserId: data.assignedUserId || user?.id || undefined,
-      activityDate: data.activityDate,
     });
-    setFormOpen(false);
+    setFormOpen(false); 
     void refetch();
   };
+  const handleStartTask = async (activity: ActivityDto) => { await updateActivity.mutateAsync({ id: activity.id, data: { ...activity, status: 'In Progress', isCompleted: false } }); void refetch(); };
+  const handleCompleteTask = async (activity: ActivityDto) => { await updateActivity.mutateAsync({ id: activity.id, data: { ...activity, status: 'Completed', isCompleted: true } }); void refetch(); };
+  const handlePutOnHold = async (activity: ActivityDto) => { await updateActivity.mutateAsync({ id: activity.id, data: { ...activity, status: 'Postponed' } }); void refetch(); };
+  const handlePreviousMonth = () => setCalendarMonth(new Date(calendarMonth.getFullYear(), calendarMonth.getMonth() - 1, 1));
+  const handleNextMonth = () => setCalendarMonth(new Date(calendarMonth.getFullYear(), calendarMonth.getMonth() + 1, 1));
+  const handleToday = () => setCalendarMonth(new Date());
 
-  const handleStartTask = async (activity: ActivityDto): Promise<void> => {
-    await updateActivity.mutateAsync({
-      id: activity.id,
-      data: {
-        ...activity,
-        status: 'In Progress',
-        isCompleted: false,
-      },
-    });
-    void refetch();
-  };
-
-  const handleCompleteTask = async (activity: ActivityDto): Promise<void> => {
-    await updateActivity.mutateAsync({
-      id: activity.id,
-      data: {
-        ...activity,
-        status: 'Completed',
-        isCompleted: true,
-      },
-    });
-    void refetch();
-  };
-
-  const handlePutOnHold = async (activity: ActivityDto): Promise<void> => {
-    await updateActivity.mutateAsync({
-      id: activity.id,
-      data: {
-        ...activity,
-        status: 'Postponed',
-      },
-    });
-    void refetch();
-  };
-
-  const getPriorityColor = (priority?: string): string => {
-    switch (priority) {
-      case 'High':
-        return 'bg-orange-500';
-      case 'Medium':
-        return 'bg-green-500';
-      case 'Low':
-        return 'bg-gray-500';
-      default:
-        return 'bg-gray-500';
-    }
-  };
-
+  // --- Helpers ---
   const getCategoryColor = (activityType: string): string => {
     switch (activityType) {
-      case 'Call':
-        return 'bg-blue-500';
-      case 'Meeting':
-        return 'bg-purple-500';
-      case 'Email':
-        return 'bg-yellow-500';
-      case 'Task':
-        return 'bg-indigo-500';
-      case 'Note':
-        return 'bg-teal-500';
-      case 'Event':
-        return 'bg-pink-500';
-      default:
-        return 'bg-gray-500';
+      case 'Call': return 'border-blue-500 text-blue-600 bg-blue-50 dark:bg-blue-900/20 dark:text-blue-300';
+      case 'Meeting': return 'border-purple-500 text-purple-600 bg-purple-50 dark:bg-purple-900/20 dark:text-purple-300';
+      case 'Email': return 'border-yellow-500 text-yellow-600 bg-yellow-50 dark:bg-yellow-900/20 dark:text-yellow-300';
+      case 'Task': return 'border-indigo-500 text-indigo-600 bg-indigo-50 dark:bg-indigo-900/20 dark:text-indigo-300';
+      default: return 'border-slate-500 text-slate-600 bg-slate-50 dark:bg-slate-800 dark:text-slate-300';
     }
   };
-
-  const getAssignedUserName = (userId?: number): string => {
-    if (!userId) return t('dailyTasks.unassigned', 'Atanmamış');
-    const foundUser = userOptions.find((u) => u.id === userId);
-    return foundUser?.fullName || foundUser?.username || t('dailyTasks.unknownUser', 'Bilinmeyen Kullanıcı');
-  };
-
+  const getAssignedUserName = (userId?: number) => userOptions.find((u) => u.id === userId)?.fullName || t('dailyTasks.unassigned', 'Atanmamış');
+  
   const getActivitiesByDate = (): Record<string, ActivityDto[]> => {
     const grouped: Record<string, ActivityDto[]> = {};
     filteredActivities.forEach((activity) => {
       const dateKey = activity.activityDate ? new Date(activity.activityDate).toISOString().split('T')[0] : 'no-date';
-      if (!grouped[dateKey]) {
-        grouped[dateKey] = [];
-      }
+      if (!grouped[dateKey]) grouped[dateKey] = [];
       grouped[dateKey].push(activity);
     });
     return grouped;
   };
 
-  const getCalendarDays = (): Array<{ date: Date; activities: ActivityDto[] }> => {
+  const getCalendarDays = () => {
     const year = calendarMonth.getFullYear();
     const month = calendarMonth.getMonth();
     const firstDay = new Date(year, month, 1);
     const startDate = new Date(firstDay);
     startDate.setDate(startDate.getDate() - startDate.getDay());
-    
-    const days: Array<{ date: Date; activities: ActivityDto[] }> = [];
+    const days = [];
     const activitiesByDate = getActivitiesByDate();
-    
     for (let i = 0; i < 42; i++) {
       const date = new Date(startDate);
       date.setDate(startDate.getDate() + i);
       const dateKey = date.toISOString().split('T')[0];
-      days.push({
-        date,
-        activities: activitiesByDate[dateKey] || [],
-      });
+      days.push({ date, activities: activitiesByDate[dateKey] || [] });
     }
-    
     return days;
   };
 
-  const handlePreviousMonth = (): void => {
-    setCalendarMonth(new Date(calendarMonth.getFullYear(), calendarMonth.getMonth() - 1, 1));
+  const filterButtonStyle = (isActive: boolean) => `
+    h-8 text-xs font-medium transition-all rounded-lg shrink-0
+    ${isActive 
+      ? 'bg-gradient-to-r from-pink-600 to-orange-600 text-white shadow-lg shadow-pink-500/20 border-transparent' 
+      : 'bg-white/50 dark:bg-white/5 border border-slate-200 dark:border-white/10 hover:bg-slate-100 dark:hover:bg-white/10 text-slate-600 dark:text-slate-300'}
+  `;
+
+  // Safe User Name Access
+  const getUserDisplayName = () => {
+    if (!user) return '';
+    return (user as any).fullName || (user as any).username || (user as any).name || 'Kullanıcı';
   };
 
-  const handleNextMonth = (): void => {
-    setCalendarMonth(new Date(calendarMonth.getFullYear(), calendarMonth.getMonth() + 1, 1));
-  };
-
-  const handleToday = (): void => {
-    setCalendarMonth(new Date());
-  };
+  // Background
+  const backgroundBlobs = (
+    <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10">
+      <div className="absolute top-0 left-1/4 w-[200px] md:w-[500px] h-[200px] md:h-[500px] bg-purple-500/10 dark:bg-purple-900/20 rounded-full blur-[60px] md:blur-[100px] animate-pulse" />
+      <div className="absolute bottom-0 right-1/4 w-[200px] md:w-[400px] h-[200px] md:h-[400px] bg-pink-500/10 dark:bg-pink-900/20 rounded-full blur-[50px] md:blur-[80px] animate-pulse" style={{ animationDelay: '2s' }} />
+    </div>
+  );
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center py-8">
-        <div className="text-muted-foreground">
-          {t('dailyTasks.loading', 'Yükleniyor...')}
+      <div className="flex items-center justify-center h-[60vh]">
+        <div className="flex flex-col items-center gap-4">
+           <div className="relative">
+             <div className="h-12 w-12 md:h-16 md:w-16 animate-spin rounded-full border-b-4 border-pink-500" />
+             <div className="absolute inset-0 h-12 w-12 md:h-16 md:w-16 animate-ping rounded-full border-pink-500 opacity-20" />
+           </div>
+           <div className="text-xs md:text-sm font-medium text-slate-500 animate-pulse">
+             {t('dailyTasks.loading', 'Yükleniyor...')}
+           </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      <div className="bg-gradient-to-r from-blue-900/50 to-purple-900/50 border border-blue-800/30 rounded-lg p-6">
-        <div className="flex items-start justify-between">
-          <div>
-            <div className="flex items-center gap-3">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="text-blue-400"
-              >
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                <polyline points="14 2 14 8 20 8" />
-              </svg>
-              <h1 className="text-3xl font-bold text-white">
-                {t('dailyTasks.fullTitle', 'Günlük Aktiviteler & To-Do')}
-              </h1>
+    <div className="w-full space-y-6 md:space-y-8 relative pb-20 overflow-x-hidden">
+      {backgroundBlobs}
+      
+      {/* 1. HERO SECTION: Responsive Layout */}
+      <div className="relative overflow-hidden rounded-2xl md:rounded-3xl bg-gradient-to-br from-indigo-900 via-purple-900 to-slate-900 p-6 md:p-8 shadow-2xl ring-1 ring-white/10">
+        <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 brightness-100 contrast-150"></div>
+        <div className="absolute -right-20 -top-20 h-40 w-40 md:h-64 md:w-64 rounded-full bg-pink-500/30 blur-3xl"></div>
+        
+        <div className="relative z-10 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
+          <div className="space-y-2 w-full lg:w-auto">
+            <div className="flex items-center gap-2 text-pink-300 font-medium text-xs md:text-sm uppercase tracking-wider">
+              <Sparkles size={14} className="md:w-4 md:h-4" />
+              <span>{t('dailyTasks.dashboard', 'Günlük Kontrol Paneli')}</span>
             </div>
-            <p className="text-muted-foreground mt-2 text-sm">
-              {t('dailyTasks.subtitle', 'Görevlerinizi yönetin, aktiviteleri takip edin ve takvim görünümünü kullanın')}
+            <h1 className="text-2xl md:text-4xl font-bold text-white leading-tight">
+              {greeting}, <br className="md:hidden" /> 
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-orange-400">
+                {getUserDisplayName()}
+              </span>
+            </h1>
+            <p className="text-slate-300 text-sm md:text-base max-w-lg">
+              {t('dailyTasks.summary', 'Bugün için planlanmış işlerinizi buradan takip edebilirsiniz.')}
             </p>
           </div>
-          <div className="flex items-center gap-2">
-            <Button
+
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full lg:w-auto mt-2 lg:mt-0">
+             <div className="flex items-center justify-between w-full sm:w-auto sm:flex-col sm:items-end sm:mr-4 sm:text-right bg-white/5 sm:bg-transparent p-3 sm:p-0 rounded-xl">
+                <span className="text-sm sm:text-xs text-slate-300 sm:text-slate-400 uppercase tracking-wide">{t('dailyTasks.totalTasks', 'Toplam Görev')}</span>
+                <span className="text-xl sm:text-2xl font-bold text-white">{filteredActivities.length}</span>
+             </div>
+             <Button 
               onClick={handleNewTask}
-              className="bg-green-600 hover:bg-green-700 text-white"
+              className="w-full sm:w-auto h-12 px-6 bg-white text-purple-900 hover:bg-slate-100 font-bold rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 border-0"
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="mr-2"
-              >
-                <line x1="12" y1="5" x2="12" y2="19" />
-                <line x1="5" y1="12" x2="19" y2="12" />
-              </svg>
-              {t('dailyTasks.newTask', 'Yeni Görev')}
+              <Plus size={20} className="mr-2 text-pink-600" />
+              {t('dailyTasks.newTask', 'Yeni Görev Oluştur')}
             </Button>
           </div>
         </div>
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-fit grid-cols-3 bg-muted">
-          <TabsTrigger value="tasks" className="data-[state=active]:bg-purple-600 data-[state=active]:text-white">
-            {t('dailyTasks.weeklyTasks', 'Haftalık Görevler')}
-          </TabsTrigger>
-          <TabsTrigger value="list" className="data-[state=active]:bg-purple-600 data-[state=active]:text-white">
-            {t('dailyTasks.dailyList', 'Günlük Liste')}
-          </TabsTrigger>
-          <TabsTrigger value="calendar" className="data-[state=active]:bg-purple-600 data-[state=active]:text-white">
-            {t('dailyTasks.calendar', 'Takvim')}
-          </TabsTrigger>
-        </TabsList>
+        
+        {/* 2. KONTROL PANELİ: Responsive Layout */}
+        <div className="sticky top-2 z-30 bg-white/80 dark:bg-[#0c0516]/80 backdrop-blur-xl border border-white/20 dark:border-white/10 shadow-lg rounded-2xl p-3 md:p-4 transition-all duration-300">
+            <div className="flex flex-col xl:flex-row gap-4 justify-between items-center">
+                
+                {/* Sol: Tablar (Mobilde Grid) */}
+                <TabsList className="bg-slate-100 dark:bg-white/5 p-1 rounded-xl h-auto w-full xl:w-auto grid grid-cols-3 xl:flex gap-1">
+                    <TabsTrigger value="tasks" className="rounded-lg data-[state=active]:bg-white dark:data-[state=active]:bg-[#2d1b4e] data-[state=active]:text-pink-600 dark:data-[state=active]:text-pink-400 data-[state=active]:shadow-md py-2 px-2 md:px-4 text-[10px] md:text-xs font-medium transition-all duration-300">
+                        <LayoutGrid size={14} className="mr-1 md:mr-2 md:w-4 md:h-4" />
+                        <span className="truncate">{t('dailyTasks.weeklyTasks', 'Kartlar')}</span>
+                    </TabsTrigger>
+                    <TabsTrigger value="list" className="rounded-lg data-[state=active]:bg-white dark:data-[state=active]:bg-[#2d1b4e] data-[state=active]:text-pink-600 dark:data-[state=active]:text-pink-400 data-[state=active]:shadow-md py-2 px-2 md:px-4 text-[10px] md:text-xs font-medium transition-all duration-300">
+                        <ListTodo size={14} className="mr-1 md:mr-2 md:w-4 md:h-4" />
+                        <span className="truncate">{t('dailyTasks.dailyList', 'Liste')}</span>
+                    </TabsTrigger>
+                    <TabsTrigger value="calendar" className="rounded-lg data-[state=active]:bg-white dark:data-[state=active]:bg-[#2d1b4e] data-[state=active]:text-pink-600 dark:data-[state=active]:text-pink-400 data-[state=active]:shadow-md py-2 px-2 md:px-4 text-[10px] md:text-xs font-medium transition-all duration-300">
+                        <CalendarIcon size={14} className="mr-1 md:mr-2 md:w-4 md:h-4" />
+                        <span className="truncate">{t('dailyTasks.calendar', 'Takvim')}</span>
+                    </TabsTrigger>
+                </TabsList>
 
-        <div className="mt-4 space-y-4">
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2">
-              <span className="text-sm font-medium">{t('dailyTasks.status', 'Durum:')}</span>
-              <div className="flex gap-2">
-                <Button
-                  variant={statusFilter === 'all' ? 'default' : 'outline'}
-                  size="sm"
-                  onClick={() => setStatusFilter('all')}
-                  className={statusFilter === 'all' ? 'bg-blue-600 hover:bg-blue-700' : ''}
-                >
-                  {t('dailyTasks.all', 'Tümü')}
-                </Button>
-                <Button
-                  variant={statusFilter === 'Scheduled' ? 'default' : 'outline'}
-                  size="sm"
-                  onClick={() => setStatusFilter('Scheduled')}
-                  className={statusFilter === 'Scheduled' ? 'bg-blue-600 hover:bg-blue-700' : ''}
-                >
-                  {t('dailyTasks.pending', 'Bekliyor')}
-                </Button>
-                <Button
-                  variant={statusFilter === 'In Progress' ? 'default' : 'outline'}
-                  size="sm"
-                  onClick={() => setStatusFilter('In Progress')}
-                  className={statusFilter === 'In Progress' ? 'bg-blue-600 hover:bg-blue-700' : ''}
-                >
-                  {t('dailyTasks.inProgress', 'Devam Ediyor')}
-                </Button>
-                <Button
-                  variant={statusFilter === 'Completed' ? 'default' : 'outline'}
-                  size="sm"
-                  onClick={() => setStatusFilter('Completed')}
-                  className={statusFilter === 'Completed' ? 'bg-blue-600 hover:bg-blue-700' : ''}
-                >
-                  {t('dailyTasks.completed', 'Tamamlandı')}
-                </Button>
-              </div>
+                {/* Sağ: Filtreler (Mobilde Stack) */}
+                <div className="flex flex-col sm:flex-row w-full xl:w-auto gap-3">
+                    
+                    {/* Status Pill Group (Scrollable on mobile) */}
+                    <div className="flex items-center p-1 bg-slate-100/50 dark:bg-white/5 rounded-xl border border-slate-200/50 dark:border-white/5 w-full sm:w-auto overflow-x-auto no-scrollbar">
+                        <div className="flex gap-1 min-w-max">
+                            <Button variant="ghost" size="sm" onClick={() => setStatusFilter('all')} className={filterButtonStyle(statusFilter === 'all')}>
+                                {t('dailyTasks.all', 'Tümü')}
+                            </Button>
+                            <Button variant="ghost" size="sm" onClick={() => setStatusFilter('Scheduled')} className={filterButtonStyle(statusFilter === 'Scheduled')}>
+                                <Clock size={12} className="mr-1" /> {t('dailyTasks.pending', 'Bekleyen')}
+                            </Button>
+                            <Button variant="ghost" size="sm" onClick={() => setStatusFilter('In Progress')} className={filterButtonStyle(statusFilter === 'In Progress')}>
+                                <Play size={10} className="mr-1" fill="currentColor" /> {t('dailyTasks.inProgress', 'Aktif')}
+                            </Button>
+                            <Button variant="ghost" size="sm" onClick={() => setStatusFilter('Completed')} className={filterButtonStyle(statusFilter === 'Completed')}>
+                                <CheckCircle2 size={12} className="mr-1" /> {t('dailyTasks.completed', 'Biten')}
+                            </Button>
+                        </div>
+                    </div>
+
+                    {/* Personel Seçimi */}
+                    <Select
+                        value={assignedUserFilter?.toString() || 'all'}
+                        onValueChange={(value) => setAssignedUserFilter(value === 'all' ? undefined : parseInt(value))}
+                    >
+                        <SelectTrigger className="w-full sm:w-[160px] h-10 rounded-xl border-slate-200 dark:border-white/10 bg-white/50 dark:bg-white/5 focus:ring-pink-500">
+                            <div className="flex items-center text-xs">
+                                <User size={14} className="mr-2 text-pink-500" />
+                                <SelectValue placeholder={t('dailyTasks.allEmployees', 'Personel')} />
+                            </div>
+                        </SelectTrigger>
+                        <SelectContent className="rounded-xl border-slate-200 dark:border-white/10">
+                            <SelectItem value="all">{t('dailyTasks.allEmployees', 'Tüm Ekip')}</SelectItem>
+                            {userOptions.map((u) => (
+                                <SelectItem key={u.id} value={u.id.toString()}>{u.fullName}</SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                </div>
             </div>
-            <div className="flex items-center gap-2">
-              <span className="text-sm font-medium">{t('dailyTasks.employee', 'Çalışan:')}</span>
-              <Select
-                value={assignedUserFilter?.toString() || 'all'}
-                onValueChange={(value) => setAssignedUserFilter(value === 'all' ? undefined : parseInt(value))}
-              >
-                <SelectTrigger className="w-[200px]">
-                  <SelectValue placeholder={t('dailyTasks.allEmployees', 'Tüm Çalışanlar')} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">{t('dailyTasks.allEmployees', 'Tüm Çalışanlar')}</SelectItem>
-                  {userOptions.map((userOption) => (
-                    <SelectItem key={userOption.id} value={userOption.id.toString()}>
-                      {userOption.fullName || userOption.username}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
         </div>
 
-        <TabsContent value="tasks" className="mt-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {filteredActivities.length === 0 ? (
-              <div className="col-span-full text-center py-8 text-muted-foreground">
-                {t('dailyTasks.noTasks', 'Görev bulunamadı')}
-              </div>
-            ) : (
-              filteredActivities.map((activity) => (
-                <div
-                  key={activity.id}
-                  className="bg-card border border-border rounded-lg p-4 shadow-sm flex flex-col gap-3"
-                >
-                  <div className="flex items-start justify-between">
-                    <h3 className="font-semibold text-lg text-blue-300 flex-1">
-                      {activity.subject}
-                    </h3>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-6 w-6 text-destructive hover:text-destructive"
-                      onClick={() => handleDelete(activity.id)}
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="14"
-                        height="14"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      >
-                        <path d="M18 6L6 18M6 6l12 12" />
-                      </svg>
-                    </Button>
-                  </div>
-                  {activity.description && (
-                    <p className="text-sm text-muted-foreground">
-                      {activity.description}
-                    </p>
-                  )}
-                  <div className="flex flex-wrap items-center gap-2">
-                    {activity.priority && (
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium text-white ${getPriorityColor(activity.priority)}`}>
-                        {t(`activityManagement.priority${activity.priority}`, activity.priority)}
-                      </span>
-                    )}
-                    {activity.activityType && (
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium text-white ${getCategoryColor(activity.activityType)}`}>
-                        <span className="mr-1">►</span>
-                        {t(`activityManagement.activityType${activity.activityType}`, activity.activityType)}
-                      </span>
-                    )}
-                  </div>
-                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="14"
-                      height="14"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
-                      <circle cx="12" cy="7" r="4" />
-                    </svg>
-                    {getAssignedUserName(activity.assignedUserId)}
-                  </div>
-                  {activity.activityDate && (
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="14"
-                        height="14"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      >
-                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-                        <line x1="16" y1="2" x2="16" y2="6" />
-                        <line x1="8" y1="2" x2="8" y2="6" />
-                        <line x1="3" y1="10" x2="21" y2="10" />
-                      </svg>
-                      {new Date(activity.activityDate).toLocaleDateString(i18n.language)}
+        {/* 3. İÇERİK ALANI */}
+        <div className="mt-6 md:mt-8 animate-in fade-in slide-in-from-bottom-8 duration-700">
+            
+            {/* --- KART GÖRÜNÜMÜ --- */}
+            <TabsContent value="tasks" className="mt-0">
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 md:gap-6">
+                {filteredActivities.length === 0 ? (
+                <div className="col-span-full flex flex-col items-center justify-center py-20 bg-white/30 dark:bg-white/5 rounded-3xl border border-dashed border-slate-300 dark:border-white/10 mx-auto w-full max-w-lg text-center p-6">
+                    <div className="bg-slate-100 dark:bg-white/10 p-4 rounded-full mb-4">
+                        <Target size={40} className="text-slate-400" />
                     </div>
-                  )}
-                  <div className="flex items-center gap-2">
-                    <ActivityStatusBadge status={activity.status} />
-                  </div>
-                  <div className="flex gap-2 mt-auto">
-                    {activity.status === 'Scheduled' && (
-                      <Button
-                        size="sm"
-                        onClick={() => handleStartTask(activity)}
-                        className="bg-blue-600 hover:bg-blue-700 text-white flex-1"
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="14"
-                          height="14"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          className="mr-1"
-                        >
-                          <path d="M5 12l5 5l10 -10" />
-                        </svg>
-                        {t('dailyTasks.start', 'Başlat')}
-                      </Button>
-                    )}
-                    {activity.status === 'In Progress' && (
-                      <Button
-                        size="sm"
-                        onClick={() => handlePutOnHold(activity)}
-                        className="bg-yellow-600 hover:bg-yellow-700 text-white flex-1"
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="14"
-                          height="14"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          className="mr-1"
-                        >
-                          <rect x="6" y="4" width="4" height="16" />
-                          <rect x="14" y="4" width="4" height="16" />
-                        </svg>
-                        {t('dailyTasks.putOnHold', 'Bekletmeye Al')}
-                      </Button>
-                    )}
-                    <Button
-                      size="sm"
-                      onClick={() => handleCompleteTask(activity)}
-                      className="bg-green-600 hover:bg-green-700 text-white flex-1"
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="14"
-                        height="14"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        className="mr-1"
-                      >
-                        <polyline points="20 6 9 17 4 12" />
-                      </svg>
-                      {t('dailyTasks.complete', 'Tamamla')}
-                    </Button>
-                  </div>
+                    <p className="text-lg font-medium text-slate-600 dark:text-slate-300">{t('dailyTasks.noTasks', 'Görüntülenecek görev yok')}</p>
+                    <p className="text-sm text-slate-400">{t('dailyTasks.relax', 'Filtreleri değiştirmeyi veya yeni görev eklemeyi deneyin.')}</p>
                 </div>
-              ))
-            )}
-          </div>
-        </TabsContent>
+                ) : (
+                filteredActivities.map((activity) => (
+                    <div
+                    key={activity.id}
+                    className="group relative bg-white/80 dark:bg-[#150d22]/80 backdrop-blur-md border border-white/50 dark:border-white/5 rounded-2xl p-4 md:p-5 shadow-sm hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 flex flex-col gap-3 md:gap-4 overflow-hidden"
+                    >
+                        {/* Sol Kenar Öncelik Çizgisi */}
+                        <div className={`absolute left-0 top-0 bottom-0 w-1 ${activity.priority === 'High' ? 'bg-red-500' : activity.priority === 'Medium' ? 'bg-orange-500' : 'bg-blue-500'}`} />
 
-        <TabsContent value="list" className="mt-6">
-          <div className="space-y-3">
-            {filteredActivities.length === 0 ? (
-              <div className="text-center py-8 text-muted-foreground">
-                {t('dailyTasks.noTasks', 'Görev bulunamadı')}
-              </div>
-            ) : (
-              filteredActivities.map((activity) => (
-                <div
-                  key={activity.id}
-                  className="bg-card border rounded-lg p-4 flex items-start gap-4 hover:bg-accent/50 transition-colors"
-                >
-                  <Checkbox
-                    checked={activity.isCompleted}
-                    onCheckedChange={() => handleToggleComplete(activity)}
-                    className="mt-1"
-                  />
-                  <div className="flex-1 space-y-2">
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <h3 className={`font-medium ${activity.isCompleted ? 'line-through text-muted-foreground' : ''}`}>
-                          {activity.subject}
-                        </h3>
+                        {/* Kart Başlık */}
+                        <div className="flex items-start justify-between pl-2">
+                            <div className="flex flex-col overflow-hidden">
+                                <span className="text-[10px] uppercase font-bold tracking-wider text-slate-400 mb-1 flex items-center gap-1">
+                                    {activity.activityType && <span className={`w-1.5 h-1.5 rounded-full ${activity.priority === 'High' ? 'bg-red-500' : 'bg-blue-500'}`}></span>}
+                                    {activity.activityType}
+                                </span>
+                                <h3 className={`font-bold text-base md:text-lg leading-tight truncate transition-colors ${activity.isCompleted ? 'text-slate-400 line-through' : 'text-slate-800 dark:text-slate-100 group-hover:text-pink-600 dark:group-hover:text-pink-400'}`}>
+                                    {activity.subject}
+                                </h3>
+                            </div>
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8 text-slate-300 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity"
+                                onClick={() => handleDelete(activity.id)}
+                            >
+                                <Trash2 size={16} />
+                            </Button>
+                        </div>
+
+                        {/* Açıklama */}
                         {activity.description && (
-                          <p className="text-sm text-muted-foreground mt-1">
-                            {activity.description}
-                          </p>
+                            <div className="pl-2 relative">
+                                <p className="text-xs md:text-sm text-slate-500 dark:text-slate-400 line-clamp-2 min-h-[2.5em]">
+                                    {activity.description}
+                                </p>
+                            </div>
                         )}
-                      </div>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8 text-destructive hover:text-destructive"
-                        onClick={() => handleDelete(activity.id)}
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="16"
-                          height="16"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
-                          <path d="M18 6L6 18M6 6l12 12" />
-                        </svg>
-                      </Button>
-                    </div>
-                    <div className="flex items-center gap-3 flex-wrap">
-                      <ActivityPriorityBadge priority={activity.priority} />
-                      <ActivityStatusBadge status={activity.status} />
-                      {activity.activityType && (
-                        <span className="px-2 py-1 text-xs bg-blue-500/20 text-blue-400 rounded">
-                          {activity.activityType}
-                        </span>
-                      )}
-                      {activity.activityDate && (
-                        <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="14"
-                            height="14"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          >
-                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-                            <line x1="16" y1="2" x2="16" y2="6" />
-                            <line x1="8" y1="2" x2="8" y2="6" />
-                            <line x1="3" y1="10" x2="21" y2="10" />
-                      </svg>
-                      {new Date(activity.activityDate).toLocaleDateString(i18n.language)}
-                    </div>
-                  )}
-                    </div>
-                  </div>
-                </div>
-              ))
-            )}
-          </div>
-        </TabsContent>
 
-        <TabsContent value="calendar" className="mt-6">
-          <div className="bg-card border rounded-lg p-4">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handlePreviousMonth}
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <polyline points="15 18 9 12 15 6" />
-                  </svg>
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleToday}
-                >
-                  {t('dailyTasks.today', 'Bugün')}
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleNextMonth}
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <polyline points="9 18 15 12 9 6" />
-                  </svg>
-                </Button>
-              </div>
-              <h2 className="text-lg font-semibold">
-                {calendarMonth.toLocaleDateString(i18n.language, { month: 'long', year: 'numeric' })}
-              </h2>
+                        {/* Bilgi Hapları */}
+                        <div className="pl-2 flex flex-wrap gap-2">
+                            <ActivityPriorityBadge priority={activity.priority} />
+                            {activity.activityType && (
+                                <div className={`px-2 py-0.5 rounded-md text-[10px] font-semibold border border-current ${getCategoryColor(activity.activityType)}`}>
+                                    {t(`activityManagement.activityType${activity.activityType}`, activity.activityType)}
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Alt Bilgi ve Aksiyonlar */}
+                        <div className="mt-auto pt-3 md:pt-4 pl-2 border-t border-slate-100 dark:border-white/5 flex items-center justify-between">
+                            <div className="flex items-center gap-2 text-xs text-slate-400">
+                                <div className="w-5 h-5 md:w-6 md:h-6 rounded-full bg-slate-200 dark:bg-white/10 flex items-center justify-center text-slate-500">
+                                    <User size={10} className="md:w-3 md:h-3" />
+                                </div>
+                                <div className="flex flex-col">
+                                    <span className="font-medium text-slate-600 dark:text-slate-300 text-[10px]">{getAssignedUserName(activity.assignedUserId).split(' ')[0]}</span>
+                                    <span className="text-[9px]">{activity.activityDate ? new Date(activity.activityDate).toLocaleDateString(i18n.language, {day:'numeric', month:'short'}) : '-'}</span>
+                                </div>
+                            </div>
+
+                            {/* Hızlı Aksiyonlar */}
+                            <div className="flex gap-2">
+                                {activity.status === 'Scheduled' && (
+                                    <Button size="sm" className="h-7 w-7 md:h-8 md:w-8 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 hover:bg-blue-600 hover:text-white p-0 transition-colors shadow-none" onClick={() => handleStartTask(activity)}>
+                                        <Play size={12} className="md:w-3.5 md:h-3.5" fill="currentColor" />
+                                    </Button>
+                                )}
+                                {activity.status === 'In Progress' && (
+                                    <Button size="sm" className="h-7 w-7 md:h-8 md:w-8 rounded-full bg-amber-100 dark:bg-amber-900/30 text-amber-600 hover:bg-amber-600 hover:text-white p-0 transition-colors shadow-none" onClick={() => handlePutOnHold(activity)}>
+                                        <PauseCircle size={14} className="md:w-4 md:h-4" />
+                                    </Button>
+                                )}
+                                <Button size="sm" variant={activity.isCompleted ? "default" : "outline"} className={`h-7 w-7 md:h-8 md:w-8 rounded-full p-0 transition-colors ${activity.isCompleted ? 'bg-green-500 text-white' : 'border-slate-200 text-slate-400 hover:text-green-600 hover:border-green-600'}`} onClick={() => handleCompleteTask(activity)}>
+                                    <CheckCircle2 size={14} className="md:w-4 md:h-4" />
+                                </Button>
+                            </div>
+                        </div>
+                    </div>
+                ))
+                )}
             </div>
-            <div className="grid grid-cols-7 gap-2 mb-4">
-              {[
-                t('dailyTasks.days.mon'),
-                t('dailyTasks.days.tue'),
-                t('dailyTasks.days.wed'),
-                t('dailyTasks.days.thu'),
-                t('dailyTasks.days.fri'),
-                t('dailyTasks.days.sat'),
-                t('dailyTasks.days.sun')
-              ].map((day) => (
-                <div key={day} className="text-center text-sm font-medium text-muted-foreground py-2">
-                  {day}
+            </TabsContent>
+
+            {/* --- LİSTE GÖRÜNÜMÜ --- */}
+            <TabsContent value="list" className="mt-0">
+                <div className="bg-white/70 dark:bg-[#1a1025]/60 backdrop-blur-xl border border-white/60 dark:border-white/5 shadow-sm rounded-2xl overflow-hidden">
+                    {filteredActivities.length === 0 ? (
+                        <div className="py-20 text-center text-slate-400">{t('dailyTasks.noTasks', 'Görev bulunamadı')}</div>
+                    ) : (
+                        <div className="divide-y divide-slate-100 dark:divide-white/5">
+                            {filteredActivities.map((activity) => (
+                                <div key={activity.id} className="group flex flex-col md:flex-row items-start md:items-center gap-3 md:gap-4 p-4 hover:bg-slate-50/80 dark:hover:bg-white/5 transition-colors">
+                                    <div className="flex items-start gap-3 w-full md:w-auto">
+                                        <Checkbox
+                                            checked={activity.isCompleted}
+                                            onCheckedChange={() => handleToggleComplete(activity)}
+                                            className="mt-1 md:mt-0 h-5 w-5 border-2 rounded-md data-[state=checked]:bg-green-500 data-[state=checked]:border-green-500"
+                                        />
+                                        <div className="flex-1 md:hidden">
+                                            <span className={`font-semibold text-sm line-clamp-1 ${activity.isCompleted ? 'line-through text-slate-400' : 'text-slate-800 dark:text-slate-200'}`}>
+                                                {activity.subject}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="flex-1 min-w-0 pl-8 md:pl-0 w-full">
+                                        <div className="hidden md:flex items-center gap-3">
+                                            <span className={`font-semibold text-sm truncate ${activity.isCompleted ? 'line-through text-slate-400' : 'text-slate-800 dark:text-slate-200'}`}>
+                                                {activity.subject}
+                                            </span>
+                                            <ActivityPriorityBadge priority={activity.priority} />
+                                            <ActivityStatusBadge status={activity.status} />
+                                        </div>
+                                        <div className="flex flex-wrap items-center gap-2 md:gap-4 mt-1 text-xs text-slate-500 dark:text-slate-400">
+                                            <span className="flex items-center gap-1"><CalendarDays size={12} className="text-pink-500" /> {activity.activityDate ? new Date(activity.activityDate).toLocaleDateString() : '-'}</span>
+                                            <span className="flex items-center gap-1"><User size={12} className="text-blue-500" /> {getAssignedUserName(activity.assignedUserId)}</span>
+                                            <div className="md:hidden flex gap-2">
+                                                <ActivityStatusBadge status={activity.status} />
+                                            </div>
+                                            {activity.description && <span className="hidden md:inline truncate max-w-md opacity-70 border-l pl-2 border-slate-300 dark:border-white/10">{activity.description}</span>}
+                                        </div>
+                                    </div>
+                                    <div className="flex justify-end w-full md:w-auto pl-8 md:pl-0 mt-2 md:mt-0">
+                                        <Button variant="ghost" size="sm" className="h-8 w-8 text-slate-400 hover:text-red-500" onClick={() => handleDelete(activity.id)}>
+                                            <Trash2 size={16} />
+                                        </Button>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
                 </div>
-              ))}
-            </div>
-            <div className="grid grid-cols-7 gap-2">
-              {getCalendarDays().map((dayData, index) => {
-                const isCurrentMonth = dayData.date.getMonth() === calendarMonth.getMonth();
-                const isToday = dayData.date.toDateString() === new Date().toDateString();
-                return (
-                  <div
-                    key={index}
-                    className={`min-h-[100px] border rounded-lg p-2 cursor-pointer hover:bg-accent transition-colors ${
-                      !isCurrentMonth ? 'opacity-50' : ''
-                    } ${isToday ? 'bg-blue-500/20 border-blue-500' : 'bg-card border-border'}`}
-                    onClick={() => {
-                      const dateString = dayData.date.toISOString().split('T')[0];
-                      setSelectedDate(dateString);
-                      setFormOpen(true);
-                    }}
-                  >
-                    <div className={`text-sm font-medium mb-1 ${isToday ? 'text-blue-400' : 'text-foreground'}`}>
-                      {dayData.date.getDate()}
-                    </div>
-                    <div className="space-y-1">
-                      {dayData.activities.slice(0, 3).map((activity) => (
-                        <div
-                          key={activity.id}
-                          className="text-xs p-1 bg-purple-500/20 text-purple-300 rounded truncate cursor-pointer hover:bg-purple-500/30"
-                          title={activity.subject}
-                        >
-                          {activity.subject}
+            </TabsContent>
+
+            {/* --- TAKVİM GÖRÜNÜMÜ (Masaüstünde Grid, Mobilde Scroll) --- */}
+            <TabsContent value="calendar" className="mt-0">
+                <div className="bg-white/70 dark:bg-[#1a1025]/60 backdrop-blur-xl border border-white/60 dark:border-white/5 shadow-sm rounded-2xl p-4 md:p-6 overflow-hidden">
+                    {/* Header */}
+                    <div className="flex items-center justify-between mb-6">
+                        <div className="flex items-center gap-1 md:gap-2 bg-slate-100 dark:bg-white/5 rounded-lg p-1">
+                            <Button variant="ghost" size="icon" onClick={handlePreviousMonth} className="h-8 w-8 rounded-md hover:bg-white dark:hover:bg-white/10 shadow-sm"><ChevronLeft size={16} /></Button>
+                            <Button variant="ghost" size="sm" onClick={handleToday} className="h-8 text-xs font-semibold px-2 md:px-3 hover:bg-white dark:hover:bg-white/10 shadow-sm">{t('dailyTasks.today', 'Bugün')}</Button>
+                            <Button variant="ghost" size="icon" onClick={handleNextMonth} className="h-8 w-8 rounded-md hover:bg-white dark:hover:bg-white/10 shadow-sm"><ChevronRight size={16} /></Button>
                         </div>
-                      ))}
-                      {dayData.activities.length > 3 && (
-                        <div className="text-xs text-muted-foreground">
-                          +{dayData.activities.length - 3} {t('dailyTasks.more', 'daha fazla')}
-                        </div>
-                      )}
+                        <h2 className="text-base md:text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-slate-900 to-slate-600 dark:from-white dark:to-slate-400">
+                            {calendarMonth.toLocaleDateString(i18n.language, { month: 'long', year: 'numeric' })}
+                        </h2>
                     </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </TabsContent>
+
+                    {/* Responsive Scroll Wrapper for Calendar */}
+                    <div className="overflow-x-auto pb-2">
+                        <div className="min-w-[600px]">
+                            {/* Grid */}
+                            <div className="grid grid-cols-7 gap-2 md:gap-4">
+                                {/* Gün İsimleri */}
+                                {[t('dailyTasks.days.mon','Pzt'), t('dailyTasks.days.tue','Sal'), t('dailyTasks.days.wed','Çar'), t('dailyTasks.days.thu','Per'), t('dailyTasks.days.fri','Cum'), t('dailyTasks.days.sat','Cmt'), t('dailyTasks.days.sun','Paz')].map((day) => (
+                                    <div key={day} className="text-center text-xs font-bold text-slate-400 uppercase tracking-widest pb-4 border-b border-slate-100 dark:border-white/5">
+                                        {day}
+                                    </div>
+                                ))}
+                                
+                                {/* Günler */}
+                                {getCalendarDays().map((dayData, index) => {
+                                    const isCurrentMonth = dayData.date.getMonth() === calendarMonth.getMonth();
+                                    const isToday = dayData.date.toDateString() === new Date().toDateString();
+                                    
+                                    return (
+                                        <div
+                                            key={index}
+                                            onClick={() => {
+                                                const dateString = dayData.date.toISOString().split('T')[0];
+                                                setSelectedDate(dateString);
+                                                setFormOpen(true);
+                                            }}
+                                            className={`
+                                                min-h-[80px] md:min-h-[120px] rounded-xl md:rounded-2xl p-2 md:p-3 cursor-pointer transition-all duration-200 border group
+                                                ${!isCurrentMonth ? 'opacity-30 bg-transparent border-transparent' : 'bg-white/40 dark:bg-white/5 border-slate-100 dark:border-white/10 hover:border-pink-500/50 hover:bg-white/80 dark:hover:bg-white/10 hover:shadow-lg hover:-translate-y-1'}
+                                                ${isToday ? 'ring-2 ring-pink-500 ring-offset-2 dark:ring-offset-[#1a1025] bg-pink-50/50 dark:bg-pink-500/10' : ''}
+                                            `}
+                                        >
+                                            <div className="flex justify-between items-start mb-2">
+                                                <div className={`text-xs md:text-sm font-bold w-6 h-6 md:w-7 md:h-7 flex items-center justify-center rounded-full ${isToday ? 'bg-pink-600 text-white shadow-lg shadow-pink-500/30' : 'text-slate-600 dark:text-slate-400 group-hover:bg-slate-200 dark:group-hover:bg-white/20'}`}>
+                                                    {dayData.date.getDate()}
+                                                </div>
+                                                <Plus size={14} className="opacity-0 group-hover:opacity-100 text-slate-400 transition-opacity hidden md:block" />
+                                            </div>
+                                            
+                                            <div className="space-y-1 md:space-y-1.5 overflow-hidden">
+                                                {dayData.activities.slice(0, 3).map((activity) => (
+                                                    <div
+                                                        key={activity.id}
+                                                        className={`text-[9px] md:text-[10px] px-1 md:px-2 py-0.5 md:py-1 rounded-md truncate flex items-center gap-1 border font-medium transition-all
+                                                        ${activity.isCompleted 
+                                                            ? 'bg-green-50/50 text-green-700 border-green-200/50 line-through opacity-70' 
+                                                            : 'bg-indigo-50/80 dark:bg-indigo-500/20 text-indigo-700 dark:text-indigo-300 border-indigo-100 dark:border-indigo-500/20 hover:scale-105'}`}
+                                                        title={activity.subject}
+                                                    >
+                                                        <div className={`w-1 h-1 md:w-1.5 md:h-1.5 rounded-full shrink-0 ${activity.priority === 'High' ? 'bg-red-500' : activity.isCompleted ? 'bg-green-500' : 'bg-indigo-500'}`} />
+                                                        <span className="truncate">{activity.subject}</span>
+                                                    </div>
+                                                ))}
+                                                {dayData.activities.length > 3 && (
+                                                    <div className="text-[9px] md:text-[10px] font-semibold text-slate-400 pl-1">
+                                                        +{dayData.activities.length - 3} {t('dailyTasks.more', 'daha')}
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </TabsContent>
+        </div>
       </Tabs>
 
+      {/* Form Dialog */}
       <ActivityForm
         open={formOpen}
         onOpenChange={(open) => {
           setFormOpen(open);
-          if (!open) {
-            setSelectedDate(null);
-          }
+          if (!open) setSelectedDate(null);
         }}
         onSubmit={handleFormSubmit}
         activity={null}
