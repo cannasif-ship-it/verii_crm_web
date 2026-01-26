@@ -1,13 +1,13 @@
 {
   "buttons": {
-    "back": "Back",
-    "next": "Next",
-    "complete": "Save and Send for Approval"
+    "back": "Indietro",
+    "next": "Avanti",
+    "complete": "Salva e Invia per Approvazione"
   },
   "validation": {
-    "error": "Validation Error"
+    "error": "Errore di Validazione"
   },
   "step": {
-    "unknown": "Unknown step"
+    "unknown": "Passaggio sconosciuto"
   }
 }

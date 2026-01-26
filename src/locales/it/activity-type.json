@@ -1,7 +1,7 @@
 {
-  "menu": "Gestione Tipi Attività",
+  "menu": "Gestione Tipi di Attività",
   "description": "Gestisci e modifica i tipi di attività",
-  "addButton": "Aggiungi Nuovo Tipo Attività",
+  "addButton": "Aggiungi Nuovo Tipo di Attività",
   "loading": "Caricamento...",
   "noData": "Nessun dato trovato",
   "actions": "Azioni",
@@ -13,21 +13,21 @@
   "previous": "Precedente",
   "next": "Successivo",
   "form": {
-    "addTitle": "Aggiungi Nuovo Tipo Attività",
-    "editTitle": "Modifica Tipo Attività",
+    "addTitle": "Aggiungi Nuovo Tipo di Attività",
+    "editTitle": "Modifica Tipo di Attività",
     "addDescription": "Inserisci le informazioni del nuovo tipo di attività",
     "editDescription": "Modifica le informazioni del tipo di attività",
-    "name": "Nome Tipo Attività",
-    "namePlaceholder": "Inserisci nome tipo attività",
+    "name": "Nome Tipo di Attività",
+    "namePlaceholder": "Inserisci nome tipo di attività",
     "nameRequired": "Il nome del tipo di attività è obbligatorio",
-    "nameMaxLength": "Il nome del tipo di attività deve essere di massimo 100 caratteri",
+    "nameMaxLength": "Il nome del tipo di attività deve contenere al massimo 100 caratteri",
     "description": "Descrizione",
     "descriptionPlaceholder": "Inserisci descrizione (opzionale)",
-    "descriptionMaxLength": "La descrizione deve essere di massimo 500 caratteri"
+    "descriptionMaxLength": "La descrizione deve contenere al massimo 500 caratteri"
   },
   "table": {
     "id": "ID",
-    "name": "Nome Tipo Attività",
+    "name": "Nome Tipo di Attività",
     "description": "Descrizione",
     "createdDate": "Data Creazione",
     "createdBy": "Creato Da",
@@ -35,20 +35,20 @@
     "page": "Pagina {{current}} / {{total}}"
   },
   "stats": {
-    "totalActivityTypes": "Totale Tipi Attività",
-    "activeActivityTypes": "Tipi Attività Attivi",
+    "totalActivityTypes": "Totale Tipi di Attività",
+    "activeActivityTypes": "Tipi di Attività Attivi",
     "newThisMonth": "Nuovi Questo Mese"
   },
   "messages": {
-    "createSuccess": "Tipo attività creato con successo",
-    "createError": "Impossibile creare il tipo attività",
-    "updateSuccess": "Tipo attività aggiornato con successo",
-    "updateError": "Impossibile aggiornare il tipo attività",
-    "deleteSuccess": "Tipo attività eliminato con successo",
-    "deleteError": "Impossibile eliminare il tipo attività"
+    "createSuccess": "Tipo di attività creato con successo",
+    "createError": "Impossibile creare il tipo di attività",
+    "updateSuccess": "Tipo di attività aggiornato con successo",
+    "updateError": "Impossibile aggiornare il tipo di attività",
+    "deleteSuccess": "Tipo di attività eliminato con successo",
+    "deleteError": "Impossibile eliminare il tipo di attività"
   },
   "deleteConfirm": {
-    "confirmTitle": "Elimina Tipo Attività",
-    "confirmMessage": "Sei sicuro di voler eliminare il tipo attività {{name}}?"
+    "confirmTitle": "Elimina Tipo di Attività",
+    "confirmMessage": "Sei sicuro di voler eliminare il tipo di attività {{name}}?"
   }
 }

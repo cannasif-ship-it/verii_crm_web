@@ -1,8 +1,14 @@
 {
-  "title": "Notifications",
-  "loading": "Loading",
-  "noNotifications": "No notifications found",
-  "markAllAsRead": "Mark all as read",
-  "close": "Close",
-  "unread": "Unread"
+  "title": "Notifiche",
+  "markAllAsRead": "Segna tutte come lette",
+  "viewAll": "Vedi tutte",
+  "empty": "Non hai notifiche",
+  "new": "Nuova",
+  "ago": "{{time}} fa",
+  "types": {
+    "info": "Informazione",
+    "success": "Successo",
+    "warning": "Attenzione",
+    "error": "Errore"
+  }
 }

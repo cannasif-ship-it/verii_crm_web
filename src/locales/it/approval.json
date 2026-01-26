@@ -1,82 +1,82 @@
 {
   "list": {
-    "title": "Pending Approvals",
-    "description": "View and approve or reject quotations assigned to you",
-    "empty": "No pending approvals",
-    "error": "An error occurred while loading approvals"
+    "title": "Approvazioni in Sospeso",
+    "description": "Visualizza e approva o rifiuta i preventivi assegnati a te",
+    "empty": "Nessuna approvazione in sospeso",
+    "error": "Si è verificato un errore durante il caricamento delle approvazioni"
   },
-  "yes": "Yes",
+  "yes": "Sì",
   "no": "No",
-  "processing": "Processing...",
+  "processing": "Elaborazione...",
   "detail": {
-    "title": "Quotation Detail",
-    "subtitle": "View quotation details and perform actions",
+    "title": "Dettaglio Preventivo",
+    "subtitle": "Visualizza i dettagli del preventivo ed esegui azioni",
     "tabs": {
-      "detail": "Detail",
-      "history": "History",
-      "action": "Action"
+      "detail": "Dettaglio",
+      "history": "Cronologia",
+      "action": "Azione"
     },
-    "notFound": "Quotation not found",
-    "quotationInfo": "Quotation Information",
-    "offerNo": "Offer No",
-    "customer": "Customer",
-    "representative": "Representative",
-    "currency": "Currency",
-    "offerDate": "Offer Date",
-    "deliveryDate": "Delivery Date",
-    "total": "Total",
-    "grandTotal": "Grand Total",
-    "description": "Description",
-    "lines": "Quotation Lines",
-    "productCode": "Product Code",
-    "productName": "Product Name",
-    "quantity": "Quantity",
-    "unitPrice": "Unit Price",
-    "lineTotal": "Line Total",
-    "lineGrandTotal": "Line Grand Total",
-    "exchangeRates": "Exchange Rates",
-    "exchangeRate": "Rate",
-    "exchangeRateDate": "Rate Date",
-    "isOfficial": "Official Rate"
+    "notFound": "Preventivo non trovato",
+    "quotationInfo": "Informazioni Preventivo",
+    "offerNo": "N. Offerta",
+    "customer": "Cliente",
+    "representative": "Rappresentante",
+    "currency": "Valuta",
+    "offerDate": "Data Offerta",
+    "deliveryDate": "Data Consegna",
+    "total": "Totale",
+    "grandTotal": "Totale Complessivo",
+    "description": "Descrizione",
+    "lines": "Righe Preventivo",
+    "productCode": "Codice Prodotto",
+    "productName": "Nome Prodotto",
+    "quantity": "Quantità",
+    "unitPrice": "Prezzo Unitario",
+    "lineTotal": "Totale Riga",
+    "lineGrandTotal": "Totale Complessivo Riga",
+    "exchangeRates": "Tassi di Cambio",
+    "exchangeRate": "Tasso",
+    "exchangeRateDate": "Data Tasso",
+    "isOfficial": "Tasso Ufficiale"
   },
   "actions": {
-    "view": "View",
-    "approve": "Approve",
-    "reject": "Reject"
+    "view": "Visualizza",
+    "approve": "Approva",
+    "reject": "Rifiuta"
   },
   "status": {
-    "notRequired": "Not Required",
-    "waiting": "Waiting",
-    "approved": "Approved",
-    "rejected": "Rejected"
+    "notRequired": "Non Richiesto",
+    "waiting": "In Attesa",
+    "approved": "Approvato",
+    "rejected": "Rifiutato"
   },
   "level": {
-    "salesManager": "Sales Manager",
-    "regionalManager": "Regional Manager",
-    "finance": "Finance",
-    "generalManager": "General Manager",
-    "unknown": "Unknown"
+    "salesManager": "Responsabile Vendite",
+    "regionalManager": "Responsabile Regionale",
+    "finance": "Finanza",
+    "generalManager": "Direttore Generale",
+    "unknown": "Sconosciuto"
   },
   "note": {
-    "label": "Note",
-    "placeholder": "You can add an approval/rejection note (optional)",
-    "maxLength": "Note can be at most 500 characters"
+    "label": "Nota",
+    "placeholder": "Puoi aggiungere una nota di approvazione/rifiuto (opzionale)",
+    "maxLength": "La nota può contenere al massimo 500 caratteri"
   },
   "approve": {
-    "success": "Approved",
-    "successMessage": "Quotation approved successfully",
-    "error": "Approval Error",
-    "errorMessage": "An error occurred while approving the quotation"
+    "success": "Approvato",
+    "successMessage": "Preventivo approvato con successo",
+    "error": "Errore Approvazione",
+    "errorMessage": "Si è verificato un errore durante l'approvazione del preventivo"
   },
   "reject": {
-    "success": "Rejected",
-    "successMessage": "Quotation rejected",
-    "error": "Rejection Error",
-    "errorMessage": "An error occurred while rejecting the quotation"
+    "success": "Rifiutato",
+    "successMessage": "Preventivo rifiutato",
+    "error": "Errore Rifiuto",
+    "errorMessage": "Si è verificato un errore durante il rifiuto del preventivo"
   },
   "history": {
-    "empty": "No approval history",
-    "approvedBy": "Approved By"
+    "empty": "Nessuna cronologia approvazioni",
+    "approvedBy": "Approvato Da"
   },
-  "assignedTo": "Assigned User"
+  "assignedTo": "Utente Assegnato"
 }

@@ -6,9 +6,9 @@
   "loading": "Caricamento...",
   "noData": "Nessun dato trovato",
   "stats": {
-    "totalCities": "Totale Città",
+    "totalCities": "Città Totali",
     "activeCities": "Città Attive",
-    "newThisMonth": "Nuove Questo Mese"
+    "newThisMonth": "Nuove questo Mese"
   },
   "table": {
     "id": "ID",
@@ -17,14 +17,14 @@
     "countryName": "Nome Paese",
     "createdDate": "Data Creazione",
     "createdBy": "Creato Da",
-    "showing": "Visualizzazione {{from}}-{{to}} / {{total}}",
+    "showing": "Mostrando {{from}}-{{to}} / {{total}}",
     "page": "Pagina {{current}} / {{total}}"
   },
   "form": {
     "editCity": "Modifica Città",
     "addCity": "Aggiungi Nuova Città",
     "editDescription": "Modifica dettagli città",
-    "addDescription": "Inserisci nuovi dettagli città",
+    "addDescription": "Inserisci dettagli nuova città",
     "name": "Nome Città",
     "namePlaceholder": "Inserisci nome città",
     "country": "Paese",
@@ -35,8 +35,8 @@
     "save": "Salva",
     "saving": "Salvataggio...",
     "nameRequired": "Il nome della città è obbligatorio",
-    "nameMaxLength": "Il nome della città deve essere di massimo 100 caratteri",
-    "erpCodeMaxLength": "Il codice ERP deve essere di massimo 10 caratteri",
+    "nameMaxLength": "Il nome della città può essere al massimo 100 caratteri",
+    "erpCodeMaxLength": "Il codice ERP può essere al massimo 10 caratteri",
     "countryRequired": "La selezione del paese è obbligatoria"
   },
   "actions": "Azioni",

@@ -1,165 +1,165 @@
 {
-  "loading": "Loading...",
-  "saving": "Saving...",
-  "error": "Error",
-  "noData": "No data found",
-  "previous": "Previous",
-  "next": "Next",
-  "actions": "Actions",
-  "edit": "Edit",
-  "delete": "Delete",
-  "back": "Back",
-  "refresh": "Refresh",
-  "select": "Select",
-  "yes": "Yes",
-  "add": "Add",
-  "backToQuotations": "Back to Quotations",
-  "cancel": "Cancel",
-  "save": "Save",
-  "confirm": "Confirm",
-  "saveAndApply": "Save and Apply",
+  "loading": "Caricamento...",
+  "saving": "Salvataggio...",
+  "error": "Errore",
+  "noData": "Nessun dato trovato",
+  "previous": "Precedente",
+  "next": "Successivo",
+  "actions": "Azioni",
+  "edit": "Modifica",
+  "delete": "Elimina",
+  "back": "Indietro",
+  "refresh": "Aggiorna",
+  "select": "Seleziona",
+  "yes": "Sì",
+  "add": "Aggiungi",
+  "backToQuotations": "Torna ai Preventivi",
+  "cancel": "Annulla",
+  "save": "Salva",
+  "confirm": "Conferma",
+  "saveAndApply": "Salva e Applica",
   "list": {
-    "revise": "Revise",
-    "showing": "Showing {{from}}-{{to}} / {{total}}"
+    "revise": "Revisiona",
+    "showing": "Visualizzazione {{from}}-{{to}} di {{total}}"
   },
   "detail": {
-    "title": "Quotation Detail"
+    "title": "Dettaglio Preventivo"
   },
   "create": {
-    "title": "Create New Quotation",
-    "submit": "Save Quotation and Send for Approval",
-    "success": "Quotation Created Successfully",
-    "successMessage": "Quotation has been sent to the approval process.",
-    "error": "Quotation Could Not Be Created",
-    "errorMessage": "An error occurred while creating the quotation."
+    "title": "Crea Nuovo Preventivo",
+    "submit": "Salva Preventivo e Invia per Approvazione",
+    "success": "Preventivo Creato con Successo",
+    "successMessage": "Il preventivo è stato inviato al processo di approvazione.",
+    "error": "Impossibile Creare il Preventivo",
+    "errorMessage": "Si è verificato un errore durante la creazione del preventivo."
   },
   "header": {
-    "title": "Quotation Information",
-    "customer": "Customer",
-    "selectCustomer": "Select customer",
-    "shippingAddress": "Shipping Address",
-    "selectShippingAddress": "Select shipping address",
-    "representative": "Sales Representative",
-    "selectRepresentative": "Select representative",
-    "offerType": "Offer Type",
-    "selectOfferType": "Select offer type",
-    "currency": "Currency",
-    "selectCurrency": "Please select currency",
-    "showExchangeRates": "Show Exchange Rates",
-    "offerDate": "Offer Date",
-    "deliveryDate": "Delivery Date",
-    "paymentType": "Payment Type",
-    "selectPaymentType": "Select payment type",
-    "description": "Description",
-    "descriptionPlaceholder": "Enter description",
-    "offerNo": "Offer No",
-    "offerNoPlaceholder": "Offer number",
+    "title": "Informazioni Preventivo",
+    "customer": "Cliente",
+    "selectCustomer": "Seleziona cliente",
+    "shippingAddress": "Indirizzo di Spedizione",
+    "selectShippingAddress": "Seleziona indirizzo di spedizione",
+    "representative": "Rappresentante di Vendita",
+    "selectRepresentative": "Seleziona rappresentante",
+    "offerType": "Tipo Offerta",
+    "selectOfferType": "Seleziona tipo offerta",
+    "currency": "Valuta",
+    "selectCurrency": "Si prega di selezionare la valuta",
+    "showExchangeRates": "Mostra Tassi di Cambio",
+    "offerDate": "Data Offerta",
+    "deliveryDate": "Data Consegna",
+    "paymentType": "Tipo Pagamento",
+    "selectPaymentType": "Seleziona tipo pagamento",
+    "description": "Descrizione",
+    "descriptionPlaceholder": "Inserisci descrizione",
+    "offerNo": "N. Offerta",
+    "offerNoPlaceholder": "Numero offerta",
     "currencyChange": {
-      "title": "Currency Change",
-      "message": "When the currency changes, all existing lines will be recalculated according to the new currency. Do you approve this operation?"
+      "title": "Cambio Valuta",
+      "message": "Quando la valuta cambia, tutte le righe esistenti verranno ricalcolate in base alla nuova valuta. Approvi questa operazione?"
     }
   },
   "lines": {
-    "title": "Quotation Lines",
-    "add": "Add Line",
-    "empty": "No lines added yet",
-    "emptyDescription": "Use \"Select Stock\" or \"Add Line\" button to add quotation lines",
-    "itemCount": "line",
-    "editLine": "Edit Line",
-    "selectStock": "Select Stock",
-    "selectProduct": "Select Product",
-    "selectStockFirst": "Stock not selected",
+    "title": "Righe Preventivo",
+    "add": "Aggiungi Riga",
+    "empty": "Nessuna riga ancora aggiunta",
+    "emptyDescription": "Usa il pulsante \"Seleziona Stock\" o \"Aggiungi Riga\" per aggiungere righe al preventivo",
+    "itemCount": "riga",
+    "editLine": "Modifica Riga",
+    "selectStock": "Seleziona Stock",
+    "selectProduct": "Seleziona Prodotto",
+    "selectStockFirst": "Stock non selezionato",
     "stock": "Stock",
-    "productCode": "Stock Code",
-    "enterProductCode": "Enter product code or search",
-    "productName": "Stock Name",
-    "enterProductName": "Enter product name",
-    "quantity": "Quantity",
-    "unitPrice": "Unit Price",
-    "discount1": "Discount 1 %",
-    "discount2": "Discount 2 %",
-    "discount3": "Discount 3 %",
-    "discounts": "Discounts",
-    "discountAmount": "Discount Amount",
-    "netPrice": "Net Price",
-    "vatRate": "VAT Rate %",
-    "lineTotal": "Line Total (VAT Included)",
-    "calculations": "Calculations",
-    "required": "At least 1 line must be added",
-    "noProductsFound": "No products found",
+    "productCode": "Codice Stock",
+    "enterProductCode": "Inserisci codice prodotto o cerca",
+    "productName": "Nome Stock",
+    "enterProductName": "Inserisci nome prodotto",
+    "quantity": "Quantità",
+    "unitPrice": "Prezzo Unitario",
+    "discount1": "Sconto 1 %",
+    "discount2": "Sconto 2 %",
+    "discount3": "Sconto 3 %",
+    "discounts": "Sconti",
+    "discountAmount": "Importo Sconto",
+    "netPrice": "Prezzo Netto",
+    "vatRate": "Aliquota IVA %",
+    "lineTotal": "Totale Riga (IVA Inclusa)",
+    "calculations": "Calcoli",
+    "required": "Devi aggiungere almeno 1 riga",
+    "noProductsFound": "Nessun prodotto trovato",
     "delete": {
-      "confirmTitle": "Delete Line",
-      "confirmMessage": "Are you sure you want to delete this line?"
+      "confirmTitle": "Elimina Riga",
+      "confirmMessage": "Sei sicuro di voler eliminare questa riga?"
     }
   },
   "exchangeRates": {
-    "title": "Exchange Rates",
-    "currency": "Currency",
-    "rate": "Rate",
-    "date": "Rate Date",
-    "isOfficial": "Official Rate",
-    "official": "Official",
-    "custom": "Custom",
-    "empty": "No exchange rates found",
-    "status": "Status",
+    "title": "Tassi di Cambio",
+    "currency": "Valuta",
+    "rate": "Tasso",
+    "date": "Data Tasso",
+    "isOfficial": "Tasso Ufficiale",
+    "official": "Ufficiale",
+    "custom": "Personalizzato",
+    "empty": "Nessun tasso di cambio trovato",
+    "status": "Stato",
     "dialog": {
-      "title": "Exchange Rates",
-      "description": "View and edit exchange rate values if needed. Modified rates will not be marked as official rates."
+      "title": "Tassi di Cambio",
+      "description": "Visualizza e modifica i valori del tasso di cambio se necessario. I tassi modificati non verranno contrassegnati come tassi ufficiali."
     }
   },
   "summary": {
-    "title": "Summary",
-    "subtotal": "Subtotal",
-    "totalVat": "Total VAT",
-    "grandTotal": "Grand Total"
+    "title": "Riepilogo",
+    "subtotal": "Subtotale",
+    "totalVat": "Totale IVA",
+    "grandTotal": "Totale Generale"
   },
   "offerType": {
-    "domestic": "Domestic",
-    "export": "Export"
+    "domestic": "Nazionale",
+    "export": "Esportazione"
   },
   "wizard": {
-    "title": "Create New Quotation",
+    "title": "Crea Nuovo Preventivo",
     "step1": {
-      "title": "Step 1: Quotation Information",
-      "description": "Enter quotation header information and exchange rates",
+      "title": "Fase 1: Informazioni Preventivo",
+      "description": "Inserisci le informazioni dell'intestazione del preventivo e i tassi di cambio",
       "validation": {
-        "offerType": "Offer Type",
-        "currency": "Currency",
-        "exchangeRate": "Exchange Rate"
+        "offerType": "Tipo Offerta",
+        "currency": "Valuta",
+        "exchangeRate": "Tasso di Cambio"
       },
       "exchangeRate": {
-        "required": "At least one exchange rate must be added for non-TRY currencies"
+        "required": "È necessario aggiungere almeno un tasso di cambio per le valute diverse da TRY"
       },
       "currency": {
         "try": {
-          "info": "Exchange rate is not required when TRY is selected"
+          "info": "Il tasso di cambio non è richiesto quando è selezionato TRY"
         }
       }
     },
     "step2": {
-      "title": "Step 2: Quotation Lines",
-      "description": "Add product and price information",
-      "info": "You must add at least one line",
+      "title": "Fase 2: Righe Preventivo",
+      "description": "Aggiungi informazioni su prodotti e prezzi",
+      "info": "Devi aggiungere almeno una riga",
       "validation": {
-        "noLines": "At least one line must be added",
-        "invalidLines": "All lines must have valid information",
-        "allValid": "{{count}} lines successfully added"
+        "noLines": "Devi aggiungere almeno una riga",
+        "invalidLines": "Tutte le righe devono avere informazioni valide",
+        "allValid": "{{count}} righe aggiunte con successo"
       }
     },
     "step3": {
-      "title": "Step 3: Summary and Approval",
-      "description": "Review information and save quotation",
+      "title": "Fase 3: Riepilogo e Approvazione",
+      "description": "Rivedi le informazioni e salva il preventivo",
       "header": {
-        "title": "Quotation Information"
+        "title": "Informazioni Preventivo"
       },
       "lines": {
-        "title": "Quotation Lines"
+        "title": "Righe Preventivo"
       },
       "summary": {
-        "title": "Final Summary"
+        "title": "Riepilogo Finale"
       },
       "approval": {
-        "info": "The quotation will be automatically sent to the approval process after saving"
+        "info": "Il preventivo verrà inviato automaticamente al processo di approvazione dopo il salvataggio"
       }
     }
   }
