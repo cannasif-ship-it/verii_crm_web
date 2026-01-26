@@ -120,19 +120,19 @@ export function CityManagementPage(): ReactElement {
 
   const stats = [
     {
-      title: t('cityManagement.stats.totalCities', 'Toplam Şehir'),
+      title: t('cityManagement.stats.totalCities', 'Total Cities'),
       value: statsData?.totalCities || 0,
       icon: Map,
       iconContainerClass: 'bg-pink-50 text-pink-600 dark:bg-pink-500/10 dark:text-pink-400 border-pink-100 dark:border-pink-500/20',
     },
     {
-      title: t('cityManagement.stats.activeCities', 'Aktif Şehir'),
+      title: t('cityManagement.stats.activeCities', 'Active Cities'),
       value: statsData?.activeCities || 0,
       icon: Activity,
       iconContainerClass: 'bg-orange-50 text-orange-600 dark:bg-orange-500/10 dark:text-orange-400 border-orange-100 dark:border-orange-500/20',
     },
     {
-      title: t('cityManagement.stats.newThisMonth', 'Bu Ay Yeni'),
+      title: t('cityManagement.stats.newThisMonth', 'New This Month'),
       value: statsData?.newThisMonth || 0,
       icon: Calendar,
       iconContainerClass: 'bg-blue-50 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400 border-blue-100 dark:border-blue-500/20',
@@ -144,10 +144,10 @@ export function CityManagementPage(): ReactElement {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold">
-            {t('cityManagement.menu', 'Şehir Yönetimi')}
+            {t('cityManagement.menu', 'City Management')}
           </h1>
           <p className="text-muted-foreground mt-1 text-sm">
-            {t('cityManagement.description', 'Şehirleri yönetin ve düzenleyin')}
+            {t('cityManagement.description', 'Manage and organize cities')}
           </p>
         </div>
 
@@ -187,7 +187,7 @@ export function CityManagementPage(): ReactElement {
             className="w-full md:w-auto h-11 px-6 bg-gradient-to-r from-pink-600 to-orange-600 rounded-xl text-white text-sm font-bold shadow-lg shadow-pink-500/20 hover:scale-105 transition-transform border-0 hover:text-white"
           >
             <Plus size={18} className="mr-2" />
-            {t('cityManagement.addButton', 'Yeni Şehir Ekle')}
+            {t('cityManagement.addButton', 'Add New City')}
           </Button>
         </div>
       </div>

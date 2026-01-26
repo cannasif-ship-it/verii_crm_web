@@ -118,13 +118,13 @@ export function CityForm({
              <div>
                 <DialogTitle className="text-lg font-bold text-slate-900 dark:text-white">
                   {city
-                    ? t('cityManagement.form.editCity', 'Şehir Düzenle')
-                    : t('cityManagement.form.addCity', 'Yeni Şehir Ekle')}
+                    ? t('cityManagement.form.editCity', 'Edit City')
+                    : t('cityManagement.form.addCity', 'Add New City')}
                 </DialogTitle>
                 <DialogDescription className="text-slate-500 dark:text-slate-400 text-xs mt-0.5">
                   {city
-                    ? t('cityManagement.form.editDescription', 'Şehir bilgilerini düzenleyin')
-                    : t('cityManagement.form.addDescription', 'Yeni şehir bilgilerini girin')}
+                    ? t('cityManagement.form.editDescription', 'Edit city details')
+                    : t('cityManagement.form.addDescription', 'Enter new city details')}
                 </DialogDescription>
              </div>
           </div>
@@ -193,7 +193,7 @@ export function CityForm({
                 render={({ field }) => (
                   <FormItem className="space-y-0">
                     <FormLabel className={LABEL_STYLE}>
-                      {t('cityManagement.form.erpCode', 'ERP Kodu')}
+                      {t('cityManagement.form.erpCode', 'ERP Code')}
                     </FormLabel>
                     <FormControl>
                       <Input

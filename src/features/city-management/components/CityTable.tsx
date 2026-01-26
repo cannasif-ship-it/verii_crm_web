@@ -152,7 +152,7 @@ export function CityTable({
       <div className="flex items-center justify-center py-12">
         <div className="text-muted-foreground bg-slate-50 dark:bg-white/5 px-6 py-4 rounded-xl border border-dashed border-slate-200 dark:border-white/10 flex flex-col items-center gap-2">
           <Map size={40} className="opacity-20" />
-          <span>{t('cityManagement.noData', 'Veri bulunamadı')}</span>
+          <span>{t('cityManagement.noData', 'No data found')}</span>
         </div>
       </div>
     );
@@ -180,22 +180,22 @@ export function CityTable({
                 onClick={() => handleSort('Name')}
               >
                 <div className="flex items-center">
-                  {t('cityManagement.table.name', 'Şehir Adı')}
+                  {t('cityManagement.table.name', 'City Name')}
                   <SortIcon column="Name" />
                 </div>
               </TableHead>
               <TableHead className="text-slate-500 dark:text-slate-400 py-4">
-                {t('cityManagement.table.erpCode', 'ERP Kodu')}
+                {t('cityManagement.table.erpCode', 'ERP Code')}
               </TableHead>
               <TableHead className="text-slate-500 dark:text-slate-400 py-4">
-                {t('cityManagement.table.countryName', 'Ülke Adı')}
+                {t('cityManagement.table.countryName', 'Country Name')}
               </TableHead>
               <TableHead
                 className={headStyle}
                 onClick={() => handleSort('CreatedDate')}
               >
                 <div className="flex items-center">
-                  {t('cityManagement.table.createdDate', 'Oluşturulma Tarihi')}
+                  {t('cityManagement.table.createdDate', 'Created Date')}
                   <SortIcon column="CreatedDate" />
                 </div>
               </TableHead>
