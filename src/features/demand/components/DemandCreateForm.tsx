@@ -36,7 +36,7 @@ export function DemandCreateForm(): ReactElement {
   const { data: customerOptions = [] } = useCustomerOptions();
 
   useEffect(() => {
-    setPageTitle(t('demand.create.title', 'Yeni Talep Oluştur'));
+    setPageTitle(t('demand.create.title', 'Yeni Teklif Oluştur'));
     return () => {
       setPageTitle(null);
     };

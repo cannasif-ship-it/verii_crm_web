@@ -23,7 +23,7 @@ export function WaitingApprovalsSidebar(): ReactElement {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Clock className="h-5 w-5" />
-            {t('demand.waitingApprovals.title', 'Onay Bekleyen Talepler')}
+            {t('demand.waitingApprovals.title', 'Onay Bekleyen Teklifler')}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-2">
@@ -41,14 +41,14 @@ export function WaitingApprovalsSidebar(): ReactElement {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Clock className="h-5 w-5" />
-            {t('demand.waitingApprovals.title', 'Onay Bekleyen Talepler')}
+            {t('demand.waitingApprovals.title', 'Onay Bekleyen Teklifler')}
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex flex-col items-center justify-center py-8 text-muted-foreground">
             <FileText className="h-12 w-12 mb-2 opacity-50" />
             <p className="text-sm">
-              {t('demand.waitingApprovals.noApprovals', 'Onay bekleyen talep bulunmamaktadır')}
+              {t('demand.waitingApprovals.noApprovals', 'Onay bekleyen teklif bulunmamaktadır')}
             </p>
           </div>
         </CardContent>
@@ -61,7 +61,7 @@ export function WaitingApprovalsSidebar(): ReactElement {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Clock className="h-5 w-5" />
-          {t('demand.waitingApprovals.title', 'Onay Bekleyen Talepler')}
+          {t('demand.waitingApprovals.title', 'Onay Bekleyen Teklifler')}
           <Badge variant="secondary" className="ml-auto">
             {approvals.length}
           </Badge>

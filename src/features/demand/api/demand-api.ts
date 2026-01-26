@@ -61,7 +61,7 @@ export const demandApi = {
       
       return pagedData;
     }
-    throw new Error(response.message || 'Talep listesi yüklenemedi');
+    throw new Error(response.message || 'Teklif listesi yüklenemedi');
   },
 
   getById: async (id: number): Promise<DemandGetDto> => {
@@ -69,7 +69,7 @@ export const demandApi = {
     if (response.success && response.data) {
       return response.data;
     }
-    throw new Error(response.message || 'Talep detayı yüklenemedi');
+    throw new Error(response.message || 'Teklif detayı yüklenemedi');
   },
 
   canEdit: async (id: number): Promise<boolean> => {

@@ -66,12 +66,12 @@ export function DemandDetailPage(): ReactElement {
   useEffect(() => {
     if (demand) {
       setPageTitle(
-        t('demand.detail.title', 'Talep Detayı: {{offerNo}}', {
+        t('demand.detail.title', 'Teklif Detayı: {{offerNo}}', {
           offerNo: demand.offerNo || `#${demand.id}`,
         })
       );
     } else {
-      setPageTitle(t('demand.detail.title', 'Talep Detayı'));
+      setPageTitle(t('demand.detail.title', 'Teklif Detayı'));
     }
     return () => {
       setPageTitle(null);

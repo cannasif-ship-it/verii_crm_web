@@ -133,20 +133,6 @@ import frQuotation from '../locales/fr/quotation.json';
 import itQuotation from '../locales/it/quotation.json';
 import esQuotation from '../locales/es/quotation.json';
 import arQuotation from '../locales/ar/quotation.json';
-import trDemand from '../locales/tr/demand.json';
-import enDemand from '../locales/en/demand.json';
-import deDemand from '../locales/de/demand.json';
-import frDemand from '../locales/fr/demand.json';
-import itDemand from '../locales/it/demand.json';
-import esDemand from '../locales/es/demand.json';
-import arDemand from '../locales/ar/demand.json';
-import trOrder from '../locales/tr/order.json';
-import enOrder from '../locales/en/order.json';
-import deOrder from '../locales/de/order.json';
-import frOrder from '../locales/fr/order.json';
-import itOrder from '../locales/it/order.json';
-import esOrder from '../locales/es/order.json';
-import arOrder from '../locales/ar/order.json';
 import trWizard from '../locales/tr/wizard.json';
 import enWizard from '../locales/en/wizard.json';
 import deWizard from '../locales/de/wizard.json';
@@ -294,9 +280,7 @@ i18n
           productSelectDialog: trProductSelectDialog,
           approval: trApproval,
           quotation: trQuotation,
-      demand: trDemand,
-      order: trOrder,
-      wizard: trWizard,
+          wizard: trWizard,
           pricingRule: trPricingRule,
           documentSerialTypeManagement: trDocumentSerialTypeManagement,
           approvalRoleGroup: trApprovalRoleGroupManagement,
@@ -369,9 +353,7 @@ i18n
           productSelectDialog: enProductSelectDialog,
           approval: enApproval,
           quotation: enQuotation,
-      demand: enDemand,
-      order: enOrder,
-      wizard: enWizard,
+          wizard: enWizard,
           pricingRule: enPricingRule,
           documentSerialTypeManagement: enDocumentSerialTypeManagement,
           approvalRoleGroup: enApprovalRoleGroupManagement,
@@ -444,9 +426,7 @@ i18n
           productSelectDialog: deProductSelectDialog,
           approval: deApproval,
           quotation: deQuotation,
-      demand: deDemand,
-      order: deOrder,
-      wizard: deWizard,
+          wizard: deWizard,
           pricingRule: dePricingRule,
           documentSerialTypeManagement: deDocumentSerialTypeManagement,
           approvalRoleGroup: deApprovalRoleGroupManagement,
@@ -486,9 +466,7 @@ i18n
           productSelectDialog: frProductSelectDialog,
           approval: frApproval,
           quotation: frQuotation,
-      demand: frDemand,
-      order: frOrder,
-      wizard: frWizard,
+          wizard: frWizard,
           pricingRule: frPricingRule,
           documentSerialTypeManagement: frDocumentSerialTypeManagement,
           approvalRoleGroup: frApprovalRoleGroupManagement,
@@ -528,9 +506,7 @@ i18n
           productSelectDialog: itProductSelectDialog,
           approval: itApproval,
           quotation: itQuotation,
-      demand: itDemand,
-      order: itOrder,
-      wizard: itWizard,
+          wizard: itWizard,
           pricingRule: itPricingRule,
           documentSerialTypeManagement: itDocumentSerialTypeManagement,
           approvalRoleGroup: itApprovalRoleGroupManagement,
@@ -570,9 +546,7 @@ i18n
           productSelectDialog: esProductSelectDialog,
           approval: esApproval,
           quotation: esQuotation,
-      demand: esDemand,
-      order: esOrder,
-      wizard: esWizard,
+          wizard: esWizard,
           pricingRule: esPricingRule,
           documentSerialTypeManagement: esDocumentSerialTypeManagement,
           approvalRoleGroup: esApprovalRoleGroupManagement,
@@ -612,9 +586,7 @@ i18n
           productSelectDialog: arProductSelectDialog,
           approval: arApproval,
           quotation: arQuotation,
-      demand: arDemand,
-      order: arOrder,
-      wizard: arWizard,
+          wizard: arWizard,
           pricingRule: arPricingRule,
           documentSerialTypeManagement: arDocumentSerialTypeManagement,
           approvalRoleGroup: arApprovalRoleGroupManagement,

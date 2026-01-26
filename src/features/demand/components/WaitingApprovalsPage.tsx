@@ -42,7 +42,7 @@ export function WaitingApprovalsPage(): ReactElement {
   const [rejectReason, setRejectReason] = useState('');
 
   useEffect(() => {
-    setPageTitle(t('demand.waitingApprovals.title', 'Onay Bekleyen Talepler'));
+    setPageTitle(t('demand.waitingApprovals.title', 'Onay Bekleyen Teklifler'));
     return () => {
       setPageTitle(null);
     };
