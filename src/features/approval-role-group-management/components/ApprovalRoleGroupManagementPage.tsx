@@ -37,7 +37,6 @@ export function ApprovalRoleGroupManagementPage(): ReactElement {
     };
   }, [t, setPageTitle]);
 
-  // Search logic
   useEffect(() => {
     if (searchTerm) {
       setFilters((prev) => ({ ...prev, Search: searchTerm }));
@@ -94,13 +93,10 @@ export function ApprovalRoleGroupManagementPage(): ReactElement {
 
   return (
     <div className="relative min-h-screen space-y-6 p-4 md:p-8 overflow-hidden">
-      {/* Background Decorative Glows */}
       <div className="absolute top-0 left-1/4 w-96 h-96 bg-pink-500/10 blur-[120px] pointer-events-none dark:block hidden" />
       <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-orange-500/10 blur-[120px] pointer-events-none dark:block hidden" />
 
-      {/* Header & Search Bar Container */}
       <div className="relative z-10 flex flex-col md:flex-row md:items-end justify-between gap-6 pb-2">
-        {/* Left Side: Title and Description */}
         <div className="space-y-1">
           <h1 className="text-3xl font-extrabold tracking-tight text-zinc-900 dark:text-foreground">
             {t('approvalRoleGroup.menu', 'Onay Rol Grubu Yönetimi')}
@@ -113,15 +109,12 @@ export function ApprovalRoleGroupManagementPage(): ReactElement {
           </div>
         </div>
 
-        {/* Right Side: Search Box and Buttons */}
         <div className="w-full md:w-auto flex flex-col md:flex-row items-center gap-3">
           <div className="w-full md:w-auto flex items-center gap-2">
             <div className="relative group w-full md:w-[320px]">
-              {/* Search Icon */}
               <div className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-pink-600 dark:group-focus-within:text-pink-500 transition-colors pointer-events-none z-10">
                 <Search className="w-4 h-4" />
               </div>
-              {/* Input Field */}
               <Input
                 placeholder={t('approvalRoleGroup.searchPlaceholder', 'Ara...')}
                 value={searchTerm}
@@ -136,7 +129,6 @@ export function ApprovalRoleGroupManagementPage(): ReactElement {
                   text-sm font-medium
                 "
               />
-              {/* Clear Button */}
               {searchTerm && (
                 <button
                   onClick={clearSearch}
@@ -146,7 +138,6 @@ export function ApprovalRoleGroupManagementPage(): ReactElement {
                 </button>
               )}
             </div>
-            {/* Refresh Button */}
             <div 
               onClick={handleRefresh}
               className={`hidden md:flex items-center justify-center w-11 h-11 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 text-muted-foreground hover:text-pink-600 hover:border-pink-200 transition-all cursor-pointer ${isRefreshing ? 'animate-spin' : ''}`} 
@@ -155,7 +146,6 @@ export function ApprovalRoleGroupManagementPage(): ReactElement {
                <RefreshCw size={16} className="opacity-70" />
             </div>
           </div>
-          {/* Add Button */}
           <Button 
             onClick={handleAddClick}
             className="w-full md:w-auto px-6 py-2 bg-gradient-to-r from-pink-600 to-orange-600 rounded-lg text-white text-sm font-bold shadow-lg shadow-pink-500/20 hover:scale-105 transition-transform border-0 hover:text-white"

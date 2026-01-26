@@ -41,7 +41,6 @@ export function ErpCustomerTable({ customers, isLoading }: ErpCustomerTableProps
     );
   }
 
-  // GÜNCELLENDİ: Sütunlar arası çizgi eklendi (border-r)
   const headStyle = `
     text-slate-500 dark:text-slate-400 
     font-bold text-xs uppercase tracking-wider 
@@ -52,7 +51,6 @@ export function ErpCustomerTable({ customers, isLoading }: ErpCustomerTableProps
     whitespace-nowrap
   `;
 
-  // GÜNCELLENDİ: Hücreler arası çizgi eklendi (border-r)
   const cellStyle = `
     text-slate-600 dark:text-slate-400 
     px-4 py-3 
@@ -60,7 +58,6 @@ export function ErpCustomerTable({ customers, isLoading }: ErpCustomerTableProps
   `;
 
   return (
-    // GÜNCELLENDİ: min-h-[75vh] ile tablo aşağıya doğru uzatıldı
     <div className="rounded-xl border border-slate-200 dark:border-white/10 overflow-hidden bg-white/40 dark:bg-[#1a1025]/40 backdrop-blur-sm min-h-[75vh] flex flex-col">
       <div className="flex-1 overflow-auto custom-scrollbar">
         <Table>

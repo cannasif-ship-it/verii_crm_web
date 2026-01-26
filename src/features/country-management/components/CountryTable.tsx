@@ -144,7 +144,7 @@ export function CountryTable({
     );
   }
 
-  const countries = data?.data || (data as any)?.items || [];
+  const countries = data?.data || [];
 
   if (!data || countries.length === 0) {
     return (

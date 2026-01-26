@@ -1,11 +1,11 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient, type UseMutationResult } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { shippingAddressApi } from '../api/shipping-address-api';
 import { queryKeys, SHIPPING_ADDRESS_QUERY_KEYS } from '../utils/query-keys';
 import type { UpdateShippingAddressDto, ShippingAddressDto } from '../types/shipping-address-types';
 
-export const useUpdateShippingAddress = () => {
+export const useUpdateShippingAddress = (): UseMutationResult<ShippingAddressDto, Error, { id: number; data: UpdateShippingAddressDto }> => {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
 

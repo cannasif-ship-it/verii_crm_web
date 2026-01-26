@@ -144,7 +144,7 @@ export function UserDiscountLimitTable({
     );
   }
 
-  const userDiscountLimits = data?.data || (data as any)?.items || [];
+  const userDiscountLimits = data?.data || [];
 
   if (!data || userDiscountLimits.length === 0) {
     return (

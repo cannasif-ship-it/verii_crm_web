@@ -86,18 +86,15 @@ export function ApprovalUserRoleManagementPage(): ReactElement {
   const handleRefresh = async () => {
     setIsRefreshing(true);
     await queryClient.invalidateQueries({ queryKey: [APPROVAL_USER_ROLE_QUERY_KEYS.LIST] });
-    setTimeout(() => setIsRefreshing(false), 500); // Visual feedback
+    setTimeout(() => setIsRefreshing(false), 500);
   };
 
   return (
     <div className="relative min-h-screen space-y-6 p-4 md:p-8 overflow-hidden">
-      {/* Background Decorative Glows */}
       <div className="absolute top-0 left-1/4 w-96 h-96 bg-pink-500/10 blur-[120px] pointer-events-none dark:block hidden" />
       <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-orange-500/10 blur-[120px] pointer-events-none dark:block hidden" />
 
-      {/* Header & Search Bar Container */}
       <div className="relative z-10 flex flex-col md:flex-row md:items-end justify-between gap-6 pb-2">
-        {/* Sol Taraf: Başlık ve Açıklama */}
         <div className="space-y-1">
           <h1 className="text-3xl font-extrabold tracking-tight text-zinc-900 dark:text-foreground">
             {t('approvalUserRole.menu', 'Onay Kullanıcı Rolü Yönetimi')}
@@ -110,16 +107,13 @@ export function ApprovalUserRoleManagementPage(): ReactElement {
           </div>
         </div>
 
-        {/* Sağ Taraf: Gelişmiş Arama Kutusu ve Butonlar */}
         <div className="w-full md:w-auto flex flex-col md:flex-row items-center gap-3">
           <div className="w-full md:w-auto flex items-center gap-2">
             <div className="relative group w-full md:w-[320px]">
-              {/* Arama İkonu - Focus olunca pembe olur */}
               <div className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-pink-600 dark:group-focus-within:text-pink-500 transition-colors pointer-events-none z-10">
                 <Search className="w-4 h-4" />
               </div>
 
-              {/* Input Alanı */}
               <Input
                 placeholder={t('approvalUserRole.searchPlaceholder', 'Ara...')}
                 value={searchTerm}
@@ -135,7 +129,6 @@ export function ApprovalUserRoleManagementPage(): ReactElement {
                 "
               />
 
-              {/* Temizle (X) Butonu */}
               {searchTerm && (
                 <button
                   onClick={clearSearch}

@@ -17,10 +17,8 @@ export function ErpCustomerManagementPage(): ReactElement {
   }, [t, setPageTitle]);
 
   return (
-    // MAIN CONTAINER: Genişlik ve dikey boşluk ayarı
     <div className="w-full space-y-8 relative">
       
-      {/* HEADER: Modern Tipografi */}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-slate-900 dark:text-white mb-1 transition-colors">
@@ -32,7 +30,6 @@ export function ErpCustomerManagementPage(): ReactElement {
         </div>
       </div>
 
-      {/* TABLE WRAPPER: Glassmorphism (Buzlu Cam) Efekti */}
       <div className="bg-white/70 dark:bg-[#1a1025]/60 backdrop-blur-xl border border-white/60 dark:border-white/5 shadow-sm rounded-2xl p-6 transition-all duration-300">
         <ErpCustomerTable customers={customers || []} isLoading={isLoading} />
       </div>

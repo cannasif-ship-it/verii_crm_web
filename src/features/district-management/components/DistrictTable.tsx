@@ -140,7 +140,7 @@ export function DistrictTable({
     );
   }
 
-  const districts = data?.data || (data as any)?.items || [];
+  const districts = data?.data || [];
 
   if (!data || districts.length === 0) {
     return (

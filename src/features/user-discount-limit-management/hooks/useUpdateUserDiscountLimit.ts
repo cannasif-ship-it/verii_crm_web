@@ -1,11 +1,11 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient, type UseMutationResult } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { userDiscountLimitApi } from '../api/user-discount-limit-api';
 import { queryKeys, USER_DISCOUNT_LIMIT_QUERY_KEYS } from '../utils/query-keys';
 import type { UpdateUserDiscountLimitDto, UserDiscountLimitDto } from '../types/user-discount-limit-types';
 
-export const useUpdateUserDiscountLimit = () => {
+export const useUpdateUserDiscountLimit = (): UseMutationResult<UserDiscountLimitDto, Error, { id: number; data: UpdateUserDiscountLimitDto }> => {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
 

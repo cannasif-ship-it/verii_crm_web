@@ -105,7 +105,7 @@ export function ProductPricingGroupByTable({
     );
   }
 
-  const productPricingGroupBys = data?.data || (data as any)?.items || [];
+  const productPricingGroupBys = data?.data || [];
 
   if (!data || productPricingGroupBys.length === 0) {
     return (

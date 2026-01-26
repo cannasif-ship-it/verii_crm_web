@@ -1,8 +1,8 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 import { titleApi } from '../api/title-api';
 import type { TitleDto } from '../types/title-types';
 
-export const useTitleOptions = () => {
+export const useTitleOptions = (): UseQueryResult<TitleDto[], Error> => {
   return useQuery({
     queryKey: ['titleOptions'],
     queryFn: async (): Promise<TitleDto[]> => {

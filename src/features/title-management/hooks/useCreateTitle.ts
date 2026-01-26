@@ -1,11 +1,11 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient, type UseMutationResult } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { titleApi } from '../api/title-api';
 import { queryKeys, TITLE_MANAGEMENT_QUERY_KEYS } from '../utils/query-keys';
-import type { CreateTitleDto } from '../types/title-types';
+import type { CreateTitleDto, TitleDto } from '../types/title-types';
 
-export const useCreateTitle = () => {
+export const useCreateTitle = (): UseMutationResult<TitleDto, Error, CreateTitleDto> => {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
 

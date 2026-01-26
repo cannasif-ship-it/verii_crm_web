@@ -98,7 +98,7 @@ export function ApprovalRoleGroupTable({
     );
   }
 
-  const groups = data?.data || (data as any)?.items || [];
+  const groups = data?.data || [];
   
   if (!data || groups.length === 0) {
     return (

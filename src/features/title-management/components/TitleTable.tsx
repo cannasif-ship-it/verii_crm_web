@@ -145,7 +145,7 @@ export function TitleTable({
     );
   }
 
-  const titles = data?.data || (data as any)?.items || [];
+  const titles = data?.data || [];
   
   if (!data || titles.length === 0) {
     return (

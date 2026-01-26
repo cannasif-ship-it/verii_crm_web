@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { RichTextEditor } from '@/components/ui/rich-text-editor';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Save, FileText, Loader2 } from 'lucide-react'; // İkonlar
+import { Save, FileText, Loader2 } from 'lucide-react';
 import {
   Form,
   FormControl,
@@ -68,7 +68,6 @@ export function StockDetailForm({ stockId }: StockDetailFormProps): ReactElement
     }
   };
 
-  // Loading State - Skeleton
   if (isLoading) {
     return (
       <div className="space-y-6 p-1">
@@ -95,7 +94,6 @@ export function StockDetailForm({ stockId }: StockDetailFormProps): ReactElement
           name="htmlDescription"
           render={({ field }) => (
             <FormItem>
-              {/* Label ve Açıklama Alanı */}
               <div className="mb-3 space-y-1">
                   <FormLabel className="text-base font-semibold text-slate-900 dark:text-white flex items-center gap-2">
                     <FileText className="w-4 h-4 text-pink-600 dark:text-pink-500" />
@@ -106,7 +104,6 @@ export function StockDetailForm({ stockId }: StockDetailFormProps): ReactElement
                   </FormDescription>
               </div>
 
-              {/* Editör Container - Modern Border ve Focus Efekti */}
               <FormControl>
                 <div className="
                     min-h-[350px] 
@@ -131,7 +128,6 @@ export function StockDetailForm({ stockId }: StockDetailFormProps): ReactElement
           )}
         />
 
-        {/* Action Button - Header'daki Tasarımın Aynısı */}
         <div className="flex justify-end pt-2 border-t border-zinc-100 dark:border-white/5">
           <Button
             type="submit"

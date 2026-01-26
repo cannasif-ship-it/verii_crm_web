@@ -140,7 +140,7 @@ export function UserTable({
     );
   }
 
-  const users = data?.data || (data as any)?.items || [];
+  const users = data?.data || [];
   
   if (!data || users.length === 0) {
     return (

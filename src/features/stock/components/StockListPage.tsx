@@ -51,13 +51,10 @@ export function StockListPage(): ReactElement {
 
   return (
     <div className="relative min-h-screen space-y-6 p-4 md:p-8 overflow-hidden">
-      {/* Background Decorative Glows */}
       <div className="absolute top-0 left-1/4 w-96 h-96 bg-pink-500/10 blur-[120px] pointer-events-none dark:block hidden" />
       <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-orange-500/10 blur-[120px] pointer-events-none dark:block hidden" />
 
-      {/* Header & Search Bar Container */}
       <div className="relative z-10 flex flex-col md:flex-row md:items-end justify-between gap-6 pb-2">
-        {/* Sol Taraf: Başlık ve Açıklama */}
         <div className="space-y-1">
           <h1 className="text-3xl font-extrabold tracking-tight text-zinc-900 dark:text-foreground">
             {t('stock.list.title', 'Stok Yönetimi')}
@@ -70,15 +67,12 @@ export function StockListPage(): ReactElement {
           </div>
         </div>
 
-        {/* Sağ Taraf: Gelişmiş Arama Kutusu */}
         <div className="w-full md:w-auto flex items-center gap-2">
           <div className="relative group w-full md:w-[320px]">
-            {/* Arama İkonu - Focus olunca pembe olur */}
             <div className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-pink-600 dark:group-focus-within:text-pink-500 transition-colors pointer-events-none z-10">
               <Search className="w-4 h-4" />
             </div>
 
-            {/* Input Alanı */}
             <Input
               placeholder={t('stock.list.search', 'Stok adı veya ERP kodu ara...')}
               value={searchTerm}
@@ -88,15 +82,12 @@ export function StockListPage(): ReactElement {
                 bg-white dark:bg-zinc-900/50 
                 border-zinc-200 dark:border-zinc-800 
                 rounded-xl shadow-sm hover:shadow-md 
-                /* --- BURASI GÜNCELLENDİ: Pembe Focus Efekti --- */
                 focus-visible:border-pink-500 focus-visible:ring-4 focus-visible:ring-pink-500/20
-                /* Alternatif olarak sadece focus kullanıyorsanız: focus:border-pink-500 focus:ring-4 focus:ring-pink-500/20 */
                 transition-all duration-300 ease-out
                 text-sm font-medium
               "
             />
 
-            {/* Temizle (X) Butonu */}
             {searchTerm && (
               <button
                 onClick={clearSearch}
@@ -113,7 +104,6 @@ export function StockListPage(): ReactElement {
         </div>
       </div>
 
-      {/* Table Container */}
       <div className="relative z-10 bg-white/50 dark:bg-card/30 backdrop-blur-xl border border-white/20 dark:border-border/50 rounded-2xl shadow-sm dark:shadow-2xl overflow-hidden">
         <StockTable
           pageNumber={pageNumber}

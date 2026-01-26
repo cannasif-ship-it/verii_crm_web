@@ -16,17 +16,15 @@ export function StockImageUpload({ stockId }: StockImageUploadProps): ReactEleme
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [altTexts, setAltTexts] = useState<string[]>([]);
-  const [previews, setPreviews] = useState<string[]>([]); // Önizleme URL'leri için state
+  const [previews, setPreviews] = useState<string[]>([]);
   const [uploading, setUploading] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const uploadImages = useStockImageUpload();
 
-  // Seçilen dosyalar değiştiğinde önizleme URL'lerini oluştur
   useEffect(() => {
     const newPreviews = selectedFiles.map((file) => URL.createObjectURL(file));
     setPreviews(newPreviews);
 
-    // Cleanup function to avoid memory leaks
     return () => {
       newPreviews.forEach((url) => URL.revokeObjectURL(url));
     };
@@ -105,7 +103,6 @@ export function StockImageUpload({ stockId }: StockImageUploadProps): ReactEleme
   return (
     <div className="space-y-6">
       
-      {/* --- DROP ZONE --- */}
       <div
         className={cn(
             "relative group border-2 border-dashed rounded-xl p-10 text-center cursor-pointer transition-all duration-300",
@@ -147,7 +144,6 @@ export function StockImageUpload({ stockId }: StockImageUploadProps): ReactEleme
         />
       </div>
 
-      {/* --- SELECTED FILES LIST --- */}
       {selectedFiles.length > 0 && (
         <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-500">
           <div className="flex items-center justify-between">
@@ -169,7 +165,6 @@ export function StockImageUpload({ stockId }: StockImageUploadProps): ReactEleme
                     group
                 "
               >
-                {/* Image Preview */}
                 <div className="relative h-16 w-16 shrink-0 rounded-lg overflow-hidden border border-zinc-100 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-800">
                     <img 
                         src={previews[index]} 
@@ -178,7 +173,6 @@ export function StockImageUpload({ stockId }: StockImageUploadProps): ReactEleme
                     />
                 </div>
 
-                {/* Inputs */}
                 <div className="flex-1 min-w-0 space-y-2">
                   <div className="flex items-center justify-between gap-2">
                       <p className="text-sm font-medium text-zinc-900 dark:text-zinc-200 truncate" title={file.name}>
@@ -206,7 +200,6 @@ export function StockImageUpload({ stockId }: StockImageUploadProps): ReactEleme
                   </div>
                 </div>
 
-                {/* Remove Button */}
                 <Button
                   variant="ghost"
                   size="icon"
@@ -219,8 +212,7 @@ export function StockImageUpload({ stockId }: StockImageUploadProps): ReactEleme
             ))}
           </div>
 
-          {/* --- UPLOAD BUTTON --- */}
-          <div className="pt-2">
+          <div className="flex justify-end pt-2">
             <Button
                 onClick={handleUpload}
                 disabled={uploadImages.isPending || uploading}

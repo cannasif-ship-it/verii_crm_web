@@ -36,10 +36,11 @@ export const stockApi = {
 
     const pagedData = response.data;
     
-    if ((pagedData as any).items && !pagedData.data) {
+    const rawData = pagedData as unknown as { items?: StockGetWithMainImageDto[], data?: StockGetWithMainImageDto[] };
+    if (rawData.items && !rawData.data) {
       return {
         ...pagedData,
-        data: (pagedData as any).items,
+        data: rawData.items,
       };
     }
     
@@ -232,10 +233,12 @@ export const stockApi = {
 
     const pagedData = response.data;
     
-    if ((pagedData as any).items && !pagedData.data) {
+    const rawData = pagedData as unknown as { items?: StockGetWithMainImageDto[], data?: StockGetWithMainImageDto[] };
+    
+    if (rawData.items && !rawData.data) {
       return {
         ...pagedData,
-        data: (pagedData as any).items,
+        data: rawData.items,
       };
     }
     

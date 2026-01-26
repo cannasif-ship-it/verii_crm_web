@@ -15,6 +15,7 @@ import { useStockList } from '../hooks/useStockList';
 import { ChevronUp, ChevronDown, ChevronsUpDown, PackageOpen, Eye, ArrowRight, ArrowLeft } from 'lucide-react';
 import type { PagedFilter } from '@/types/api';
 import { cn } from '@/lib/utils';
+import type { StockGetDto } from '../types';
 
 interface StockTableProps {
   pageNumber: number;
@@ -59,18 +60,15 @@ export function StockTable({
       <ChevronDown className="ml-1.5 w-3.5 h-3.5 text-pink-600 dark:text-pink-500 animate-in fade-in zoom-in" />;
   };
 
-  // Loading State - Tabloya Özel Skeleton
   if (isLoading || isFetching) {
     return (
       <div className="rounded-xl border border-zinc-200 dark:border-white/10 overflow-hidden bg-white/40 dark:bg-zinc-900/40 backdrop-blur-sm">
         <div className="p-4 space-y-4">
-           {/* Header Skeleton */}
            <div className="flex justify-between px-4 pb-2 border-b border-zinc-100 dark:border-white/5">
               <Skeleton className="h-4 w-1/4" />
               <Skeleton className="h-4 w-1/4" />
               <Skeleton className="h-4 w-1/4" />
            </div>
-           {/* Rows Skeleton */}
            {[1, 2, 3, 4, 5].map((i) => (
               <div key={i} className="flex items-center space-x-4 px-4">
                  <Skeleton className="h-12 w-full rounded-lg" />
@@ -81,9 +79,8 @@ export function StockTable({
     );
   }
 
-  const stocks = data?.data || (data as any)?.items || [];
+  const stocks = data?.data || [];
 
-  // Empty State
   if (!data || stocks.length === 0) {
     return (
       <div className={cn(
@@ -126,7 +123,6 @@ export function StockTable({
               </TableHead>
             ))}
             
-            {/* Sıralanamayan Kolonlar */}
             <TableHead className="py-4 text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 text-center w-[100px]">
               {t('stock.list.unit', 'Birim')}
             </TableHead>
@@ -137,12 +133,12 @@ export function StockTable({
         </TableHeader>
         
         <TableBody>
-          {stocks.map((stock: any) => (
+          {stocks.map((stock: StockGetDto) => (
             <TableRow
               key={stock.id}
               className={cn(
                   "group cursor-pointer border-b border-zinc-100 dark:border-white/5 last:border-0",
-                  "hover:bg-pink-50/60 dark:hover:bg-pink-900/10", // İstenilen Pembe Hover
+                  "hover:bg-pink-50/60 dark:hover:bg-pink-900/10",
                   "transition-colors duration-200"
               )}
               onClick={() => onRowClick(stock.id)}
@@ -184,10 +180,9 @@ export function StockTable({
         </TableBody>
       </Table>
 
-      {/* --- PAGINATION FOOTER --- */}
       <div className="flex flex-col md:flex-row items-center justify-between px-6 py-4 bg-white/50 dark:bg-black/20 border-t border-zinc-200 dark:border-white/10 gap-4">
         <div className="text-xs text-zinc-500 dark:text-zinc-400 font-medium">
-            Toplam <span className="font-bold text-zinc-900 dark:text-white mx-1">{data.totalCount || 0}</span> kayıt listeleniyor.
+            {t('stock.list.total', 'Toplam')} <span className="font-bold text-zinc-900 dark:text-white mx-1">{data.totalCount || 0}</span> {t('stock.list.recordsListed', 'kayıt listeleniyor.')}
         </div>
         
         <div className="flex items-center gap-2">

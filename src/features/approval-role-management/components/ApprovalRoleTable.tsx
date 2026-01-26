@@ -95,7 +95,7 @@ export function ApprovalRoleTable({
     );
   }
 
-  const roles = data?.data || (data as any)?.items || [];
+  const roles = data?.data || [];
   
   if (!data || roles.length === 0) {
     return (

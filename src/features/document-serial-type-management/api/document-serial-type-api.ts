@@ -20,11 +20,12 @@ export const documentSerialTypeApi = {
     
     if (response.success && response.data) {
       const pagedData = response.data;
+      const rawData = pagedData as unknown as { items?: DocumentSerialTypeDto[], data?: DocumentSerialTypeDto[] };
       
-      if ((pagedData as any).items && !pagedData.data) {
+      if (rawData.items && !rawData.data) {
         return {
           ...pagedData,
-          data: (pagedData as any).items,
+          data: rawData.items,
         };
       }
       

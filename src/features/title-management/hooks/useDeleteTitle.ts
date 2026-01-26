@@ -1,10 +1,10 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient, type UseMutationResult } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { titleApi } from '../api/title-api';
 import { queryKeys, TITLE_MANAGEMENT_QUERY_KEYS } from '../utils/query-keys';
 
-export const useDeleteTitle = () => {
+export const useDeleteTitle = (): UseMutationResult<void, Error, number> => {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
 

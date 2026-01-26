@@ -103,7 +103,7 @@ export function PaymentTypeTable({
     );
   }
 
-  const paymentTypes = data?.data || (data as any)?.items || [];
+  const paymentTypes = data?.data || [];
 
   if (!data || paymentTypes.length === 0) {
     return (

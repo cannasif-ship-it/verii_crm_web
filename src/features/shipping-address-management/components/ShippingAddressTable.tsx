@@ -107,7 +107,7 @@ export function ShippingAddressTable({
     );
   }
 
-  const shippingAddresses = data?.data || (data as any)?.items || [];
+  const shippingAddresses = data?.data || [];
   const totalCount = data?.totalCount || 0;
   const totalPages = Math.ceil(totalCount / pageSize);
 

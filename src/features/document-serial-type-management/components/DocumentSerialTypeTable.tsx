@@ -105,7 +105,7 @@ export function DocumentSerialTypeTable({
     );
   }
 
-  const documentSerialTypes = data?.data || (data as any)?.items || [];
+  const documentSerialTypes = data?.data || [];
   
   if (!data || documentSerialTypes.length === 0) {
     return (

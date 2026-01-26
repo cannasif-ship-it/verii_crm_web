@@ -23,7 +23,6 @@ import {
 } from '@/components/ui/form';
 import { activityTypeFormSchema, type ActivityTypeFormSchema } from '../types/activity-type-types';
 import type { ActivityTypeDto } from '../types/activity-type-types';
-// İkonlar
 import { ListTodo, Type, FileText } from 'lucide-react';
 
 interface ActivityTypeFormProps {
@@ -34,7 +33,6 @@ interface ActivityTypeFormProps {
   isLoading?: boolean;
 }
 
-// --- TASARIM SABİTLERİ ---
 const INPUT_STYLE = `
   h-11 rounded-lg
   bg-slate-50 dark:bg-[#0c0516] 
@@ -44,12 +42,10 @@ const INPUT_STYLE = `
   
   focus-visible:ring-0 focus-visible:ring-offset-0 
   
-  /* LIGHT MODE FOCUS */
   focus:bg-white 
   focus:border-pink-500 
   focus:shadow-[0_0_0_3px_rgba(236,72,153,0.15)] 
 
-  /* DARK MODE FOCUS */
   dark:focus:bg-[#0c0516] 
   dark:focus:border-pink-500/60 
   dark:focus:shadow-[0_0_0_3px_rgba(236,72,153,0.1)]
@@ -102,10 +98,8 @@ export function ActivityTypeForm({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="bg-white dark:bg-[#130822] border border-slate-100 dark:border-white/10 text-slate-900 dark:text-white max-w-2xl shadow-2xl shadow-slate-200/50 dark:shadow-black/50 sm:rounded-2xl max-h-[90vh] h-full flex flex-col gap-0 p-0 overflow-hidden transition-colors duration-300">
         
-        {/* HEADER: Sabit */}
         <DialogHeader className="border-b border-slate-100 dark:border-white/5 px-6 py-5 bg-white/80 dark:bg-[#130822]/90 backdrop-blur-md shrink-0 flex-row items-center justify-between space-y-0">
           <div className="flex items-center gap-3">
-             {/* İkon: ListTodo */}
              <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-pink-500/20 to-orange-500/20 border border-pink-500/10 flex items-center justify-center text-pink-500 shrink-0">
                <ListTodo size={20} />
              </div>
@@ -192,7 +186,7 @@ export function ActivityTypeForm({
           </Button>
           <Button 
             type="submit" 
-            form="activity-type-form" // Form ID'si ile bağlantı
+            form="activity-type-form"
             disabled={isLoading}
             className="bg-gradient-to-r from-pink-600 to-orange-600 text-white font-bold border-0 hover:shadow-lg hover:shadow-pink-500/20 transition-all transform active:scale-95 px-8"
           >

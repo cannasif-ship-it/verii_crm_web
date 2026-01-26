@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Skeleton } from '@/components/ui/skeleton'; // Skeleton eklendi
+import { Skeleton } from '@/components/ui/skeleton';
 import {
   Dialog,
   DialogContent,
@@ -54,7 +54,6 @@ export function StockImageList({ stockId }: StockImageListProps): ReactElement {
     });
   };
 
-  // Loading Skeleton - Modern Grid
   if (isLoading || isFetching) {
     return (
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
@@ -74,7 +73,6 @@ export function StockImageList({ stockId }: StockImageListProps): ReactElement {
     );
   }
 
-  // Empty State - Şık Tasarım
   if (!images || images.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-16 px-4 border-2 border-dashed border-zinc-200 dark:border-white/10 rounded-2xl bg-zinc-50/50 dark:bg-white/5 transition-all hover:bg-zinc-50 dark:hover:bg-white/10">
@@ -105,9 +103,7 @@ export function StockImageList({ stockId }: StockImageListProps): ReactElement {
             key={image.id}
             className="group relative bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/10 rounded-xl shadow-sm hover:shadow-xl hover:border-pink-200 dark:hover:border-pink-900/30 transition-all duration-300 overflow-hidden flex flex-col"
           >
-            {/* Image Container */}
             <div className="relative aspect-square overflow-hidden bg-zinc-100 dark:bg-zinc-800">
-                {/* Primary Badge */}
                 {image.isPrimary && (
                   <Badge
                     className="absolute top-3 left-3 z-10 bg-gradient-to-r from-pink-600 to-orange-600 border-0 shadow-lg shadow-pink-500/30 text-white px-2 py-1"
@@ -127,11 +123,9 @@ export function StockImageList({ stockId }: StockImageListProps): ReactElement {
                   }}
                 />
                 
-                {/* Hover Overlay (Optional aesthetic) */}
                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-300" />
             </div>
 
-            {/* Content & Actions */}
             <div className="p-3 space-y-3 flex flex-col flex-1 bg-white/50 dark:bg-zinc-900/50 backdrop-blur-sm">
               <div className="relative">
                   <Input
@@ -189,7 +183,6 @@ export function StockImageList({ stockId }: StockImageListProps): ReactElement {
         ))}
       </div>
 
-      {/* Delete Confirmation Dialog */}
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>

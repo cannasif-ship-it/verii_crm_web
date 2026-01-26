@@ -85,7 +85,6 @@ export function StockRelationForm({ stockId }: StockRelationFormProps): ReactEle
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-500">
         
-        {/* --- 1. İLGİLİ STOK SEÇİMİ (Combobox) --- */}
         <FormField
           control={form.control}
           name="relatedStockId"
@@ -162,7 +161,6 @@ export function StockRelationForm({ stockId }: StockRelationFormProps): ReactEle
           )}
         />
 
-        {/* --- 2. MİKTAR (ADET YAZISI KALDIRILDI) --- */}
         <FormField
           control={form.control}
           name="quantity"
@@ -197,7 +195,6 @@ export function StockRelationForm({ stockId }: StockRelationFormProps): ReactEle
           )}
         />
 
-        {/* --- 3. AÇIKLAMA --- */}
         <FormField
           control={form.control}
           name="description"
@@ -227,7 +224,6 @@ export function StockRelationForm({ stockId }: StockRelationFormProps): ReactEle
           )}
         />
 
-        {/* --- 4. ZORUNLULUK KARTI (CHECKBOX) --- */}
         <FormField
           control={form.control}
           name="isMandatory"
@@ -260,7 +256,6 @@ export function StockRelationForm({ stockId }: StockRelationFormProps): ReactEle
           )}
         />
 
-        {/* --- 5. KAYDET BUTONU --- */}
         <Button
           type="submit"
           disabled={createRelation.isPending}

@@ -13,7 +13,6 @@ export function ActivityTypeStats(): ReactElement {
   const { t } = useTranslation();
   const { data: stats, isLoading } = useActivityTypeStats();
 
-  // Yükleme Durumu (Skeleton) - Tasarıma uygun
   if (isLoading) {
     return (
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -37,7 +36,6 @@ export function ActivityTypeStats(): ReactElement {
     return <></>;
   }
 
-  // ORTAK TASARIM DEĞİŞKENLERİ (Diğer sayfalarla birebir uyumlu)
   const cardStyle = `
     bg-white/60 dark:bg-[#1a1025]/40 
     hover:bg-white/90 dark:hover:bg-[#1a1025]/80
@@ -54,7 +52,6 @@ export function ActivityTypeStats(): ReactElement {
   return (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
       
-      {/* Kart 1: Toplam Aktivite Tipi (Mor/Violet Tema) */}
       <Card className={cardStyle}>
         <div className={glowStyle} />
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative z-10">
@@ -86,7 +83,6 @@ export function ActivityTypeStats(): ReactElement {
         </CardContent>
       </Card>
 
-      {/* Kart 3: Bu Ay Yeni (Turuncu Tema - Calendar İkonu) */}
       <Card className={cardStyle}>
         <div className={glowStyle} />
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative z-10">

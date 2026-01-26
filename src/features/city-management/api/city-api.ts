@@ -19,11 +19,12 @@ export const cityApi = {
     
     if (response.success && response.data) {
       const pagedData = response.data;
+      const rawData = pagedData as unknown as { items?: CityDto[], data?: CityDto[] };
       
-      if ((pagedData as any).items && !pagedData.data) {
+      if (rawData.items && !rawData.data) {
         return {
           ...pagedData,
-          data: (pagedData as any).items,
+          data: rawData.items,
         };
       }
       

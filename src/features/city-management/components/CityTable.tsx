@@ -145,7 +145,7 @@ export function CityTable({
     );
   }
 
-  const cities = data?.data || (data as any)?.items || [];
+  const cities = data?.data || [];
 
   if (!data || cities.length === 0) {
     return (

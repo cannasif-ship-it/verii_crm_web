@@ -103,7 +103,7 @@ export function ApprovalUserRoleTable({
     );
   }
 
-  const userRoles = data?.data || (data as any)?.items || [];
+  const userRoles = data?.data || [];
   
   if (!data || userRoles.length === 0) {
     return (

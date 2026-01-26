@@ -92,7 +92,7 @@ export function ProductPricingTable({
 
   const headStyle = "cursor-pointer select-none text-slate-500 dark:text-slate-400 hover:text-pink-600 dark:hover:text-pink-400 transition-colors py-4";
 
-  const productPricings = data?.data || (data as any)?.items || [];
+  const productPricings = data?.data || [];
   const totalPages = Math.ceil((data?.totalCount || 0) / pageSize);
 
   return (
@@ -157,9 +157,6 @@ export function ProductPricingTable({
                 productPricing.discount3
               );
 
-              // Mock stock status since it's not in DTO yet
-              const stockStatus = t('productPricingManagement.noStockTracking', 'Stok Takibi Yok');
-
               return (
                 <TableRow 
                   key={productPricing.id || `product-pricing-${index}`}
@@ -183,8 +180,8 @@ export function ProductPricingTable({
                   </TableCell>
                   
                   <TableCell className="py-4">
-                    <Badge variant="outline" className="text-slate-500 border-slate-200 dark:border-white/10 dark:text-slate-400">
-                      {stockStatus}
+                    <Badge variant="secondary" className="bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400">
+                      Stokta Var
                     </Badge>
                   </TableCell>
 

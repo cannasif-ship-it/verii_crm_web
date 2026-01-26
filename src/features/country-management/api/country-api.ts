@@ -14,28 +14,20 @@ export const countryApi = {
     }
 
     const url = `/api/Country?${queryParams.toString()}`;
-    console.log('countryApi.getList - Request URL:', url);
-    console.log('countryApi.getList - Request params:', params);
-
-    const response = await api.get<ApiResponse<PagedResponse<CountryDto>>>(url);
     
-    console.log('countryApi.getList - Response:', response);
-    console.log('countryApi.getList - Response.data:', response.data);
+    const response = await api.get<ApiResponse<PagedResponse<CountryDto>>>(url);
     
     if (response.success && response.data) {
       const pagedData = response.data;
       
-      if ((pagedData as any).items && !pagedData.data) {
-        console.log('countryApi.getList - Mapping items to data');
-        const mapped = {
+      const rawData = pagedData as unknown as { items?: CountryDto[], data?: CountryDto[] };
+      if (rawData.items && !rawData.data) {
+        return {
           ...pagedData,
-          data: (pagedData as any).items,
+          data: rawData.items,
         };
-        console.log('countryApi.getList - Mapped result:', mapped);
-        return mapped;
       }
       
-      console.log('countryApi.getList - Returning pagedData:', pagedData);
       return pagedData;
     }
     throw new Error(response.message || 'Ülke listesi yüklenemedi');

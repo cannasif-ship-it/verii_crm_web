@@ -52,7 +52,6 @@ export function StockRelationList({ stockId }: StockRelationListProps): ReactEle
     }
   };
 
-  // Loading State - Tablo Skeleton
   if (isLoading) {
     return (
       <div className="space-y-4">
@@ -69,7 +68,6 @@ export function StockRelationList({ stockId }: StockRelationListProps): ReactEle
     );
   }
 
-  // Empty State - Modern Tasarım
   if (!relations || relations.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-16 px-4 border-2 border-dashed border-zinc-200 dark:border-white/10 rounded-2xl bg-zinc-50/50 dark:bg-white/5 transition-all hover:bg-zinc-50 dark:hover:bg-white/10">
@@ -163,7 +161,6 @@ export function StockRelationList({ stockId }: StockRelationListProps): ReactEle
         </Table>
       </div>
 
-      {/* Delete Confirmation Dialog */}
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>

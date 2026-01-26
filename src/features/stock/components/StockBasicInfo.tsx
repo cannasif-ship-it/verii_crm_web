@@ -38,7 +38,6 @@ export function StockBasicInfo({ stock }: StockBasicInfoProps): ReactElement {
   return (
     <div className="space-y-8 animate-in fade-in duration-500 p-1">
       
-      {/* Bilgilendirme */}
       <Alert className="bg-zinc-50 border-zinc-200 text-zinc-800 dark:bg-white/5 dark:border-white/10 dark:text-zinc-300 shadow-sm">
         <Info className="h-4 w-4 text-zinc-500 dark:text-zinc-400" />
         <AlertDescription className="ml-2 text-xs font-medium">
@@ -46,39 +45,33 @@ export function StockBasicInfo({ stock }: StockBasicInfoProps): ReactElement {
         </AlertDescription>
       </Alert>
 
-      {/* 1. BÖLÜM: TEMEL VERİLER */}
       <div className="space-y-4">
         <SectionHeader icon={Box} title={t('stock.detail.mainInfo', 'Temel Veriler')} />
         
-        {/* Grid Düzeni */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             
-            {/* 1. SATIR: ERP Stok Kodu (TAM GENİŞLİK) */}
             <InfoItem 
                 label={t('stock.detail.erpStockCode', 'ERP Stok Kodu')} 
                 value={stock.erpStockCode} 
                 icon={Hash}
                 copyable
                 featured
-                className="md:col-span-2" // Tam genişlik
+                className="md:col-span-2"
             />
 
-            {/* 2. SATIR: Stok Adı (TAM GENİŞLİK) */}
             <InfoItem 
                 label={t('stock.detail.stockName', 'Stok Adı')} 
                 value={stock.stockName} 
                 icon={Tag}
                 featured
-                className="md:col-span-2" // Tam genişlik
+                className="md:col-span-2"
                 multiline={true} 
             />
 
-            {/* 3. SATIR: Birim ve Üretici Kodu (YAN YANA) */}
             <InfoItem 
                 label={t('stock.detail.unit', 'Birim')} 
                 value={stock.unit} 
                 icon={Box}
-                // Default olarak yarım genişlikte kalır
             />
 
              <InfoItem 
@@ -86,14 +79,12 @@ export function StockBasicInfo({ stock }: StockBasicInfoProps): ReactElement {
                 value={stock.ureticiKodu} 
                 icon={Building2}
                 copyable
-                // Default olarak yarım genişlikte kalır
             />
         </div>
       </div>
 
       <Separator className="bg-zinc-200 dark:bg-white/5" />
 
-      {/* 2. BÖLÜM: GRUPLAMA */}
       <div className="space-y-4">
         <SectionHeader icon={Layers} title={t('stock.detail.groupInfo', 'Gruplama ve Lokasyon')} />
 
@@ -113,7 +104,6 @@ export function StockBasicInfo({ stock }: StockBasicInfoProps): ReactElement {
 
       <Separator className="bg-zinc-200 dark:bg-white/5" />
 
-      {/* 3. BÖLÜM: ÖZEL KODLAR */}
       <div className="space-y-4">
          <SectionHeader icon={ListFilter} title={t('stock.detail.specialCodes', 'Özel Kodlar')} />
         
@@ -152,7 +142,6 @@ export function StockBasicInfo({ stock }: StockBasicInfoProps): ReactElement {
         </div>
       </div>
       
-      {/* 4. BÖLÜM: FOOTER */}
       <div className="flex flex-wrap gap-4 pt-2 border-t border-zinc-100 dark:border-white/5 mt-2">
          {stock.createdAt && (
             <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-zinc-50 dark:bg-white/5 text-xs text-zinc-500 border border-zinc-200 dark:border-white/5">
@@ -172,9 +161,7 @@ export function StockBasicInfo({ stock }: StockBasicInfoProps): ReactElement {
   );
 }
 
-// --- YARDIMCI BİLEŞENLER ---
-
-function SectionHeader({ icon: Icon, title }: { icon: any, title: string }) {
+function SectionHeader({ icon: Icon, title }: { icon: React.ElementType, title: string }) {
     return (
         <h4 className="text-sm font-bold text-zinc-800 dark:text-zinc-100 flex items-center gap-2 mb-2">
             <div className="p-1.5 rounded-md bg-zinc-100 dark:bg-white/5 text-zinc-500 dark:text-zinc-400">
@@ -196,7 +183,7 @@ function InfoItem({
 }: { 
     label: string, 
     value?: string | null, 
-    icon?: any,
+    icon?: React.ElementType,
     copyable?: boolean,
     featured?: boolean,
     className?: string,

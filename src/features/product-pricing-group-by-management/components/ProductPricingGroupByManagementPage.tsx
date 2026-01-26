@@ -107,10 +107,7 @@ export function ProductPricingGroupByManagementPage(): ReactElement {
   const handleRefresh = async () => {
     setIsRefreshing(true);
     await queryClient.invalidateQueries({ queryKey: queryKeys.list({ pageNumber, pageSize, sortBy, sortDirection, filters }) });
-    // Also invalidate without params to be safe, or use the base key if possible.
-    // However, the queryKey factory in this project usually includes params.
-    // A broader invalidation:
-    await queryClient.invalidateQueries({ queryKey: ['product-pricing-group-bys'] }); // Assuming base key
+    await queryClient.invalidateQueries({ queryKey: ['product-pricing-group-bys'] });
     setTimeout(() => setIsRefreshing(false), 500);
   };
 

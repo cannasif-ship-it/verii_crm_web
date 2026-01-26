@@ -21,7 +21,6 @@ import { useActivityTypeList } from '../hooks/useActivityTypeList';
 import { useDeleteActivityType } from '../hooks/useDeleteActivityType';
 import type { ActivityTypeDto } from '../types/activity-type-types';
 import type { PagedFilter } from '@/types/api';
-// Lucide İkonları
 import { 
   Edit2, 
   Trash2, 
@@ -88,7 +87,6 @@ export function ActivityTypeTable({
     onSortChange(column, newDirection);
   };
 
-  // Modern Sort İkonu
   const SortIcon = ({ column }: { column: string }): ReactElement => {
     if (sortBy !== column) {
       return <ArrowUpDown size={14} className="ml-2 inline-block text-slate-400 opacity-50" />;
@@ -100,7 +98,6 @@ export function ActivityTypeTable({
     );
   };
 
-  // Loading Durumu
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-12">
@@ -114,9 +111,8 @@ export function ActivityTypeTable({
     );
   }
 
-  const activityTypes = data?.data || (data as any)?.items || [];
+  const activityTypes = data?.data || [];
   
-  // Empty State
   if (!data || activityTypes.length === 0) {
     return (
       <div className="flex items-center justify-center py-12">
@@ -129,7 +125,6 @@ export function ActivityTypeTable({
 
   const totalPages = Math.ceil((data.totalCount || 0) / pageSize);
 
-  // Ortak Başlık Stili
   const headStyle = "cursor-pointer select-none text-slate-500 dark:text-slate-400 hover:text-pink-600 dark:hover:text-pink-400 transition-colors py-4";
 
   return (
@@ -177,7 +172,6 @@ export function ActivityTypeTable({
             {activityTypes.map((activityType: ActivityTypeDto, index: number) => (
               <TableRow 
                 key={activityType.id || `activity-${index}`}
-                // Hover Efekti ve Grup Class'ı
                 className="border-b border-slate-100 dark:border-white/5 transition-colors duration-200 hover:bg-pink-50/40 dark:hover:bg-pink-500/5 group"
               >
                 <TableCell className="font-medium text-slate-700 dark:text-slate-300 group-hover:text-pink-600 dark:group-hover:text-pink-400 transition-colors">
@@ -219,7 +213,6 @@ export function ActivityTypeTable({
                 </TableCell>
 
                 <TableCell className="text-right">
-                  {/* Butonlar varsayılan olarak gizli (opacity-0), hover yapınca görünür */}
                   <div className="flex justify-end gap-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
                     <Button
                       variant="ghost"
@@ -245,7 +238,6 @@ export function ActivityTypeTable({
         </Table>
       </div>
 
-      {/* Pagination */}
       <div className="flex flex-col sm:flex-row items-center justify-between py-4 gap-4">
         <div className="text-sm text-slate-500 dark:text-slate-400">
           {t('activityType.table.showing', '{{from}}-{{to}} / {{total}} gösteriliyor', {

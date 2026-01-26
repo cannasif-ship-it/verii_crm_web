@@ -42,7 +42,6 @@ interface ProductPricingGroupByFormProps {
   isLoading?: boolean;
 }
 
-// --- MODERN TASARIM SABİTLERİ (CustomerForm ile aynı tutarlılıkta) ---
 const INPUT_STYLE = `
   h-11 rounded-lg
   bg-slate-50 dark:bg-[#0c0516] 
@@ -52,12 +51,10 @@ const INPUT_STYLE = `
   
   focus-visible:ring-0 focus-visible:ring-offset-0 
   
-  /* LIGHT MODE FOCUS */
   focus:bg-white 
   focus:border-pink-500 
   focus:shadow-[0_0_0_3px_rgba(236,72,153,0.15)] 
 
-  /* DARK MODE FOCUS */
   dark:focus:bg-[#0c0516] 
   dark:focus:border-pink-500/60 
   dark:focus:shadow-[0_0_0_3px_rgba(236,72,153,0.1)]

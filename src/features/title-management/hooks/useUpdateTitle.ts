@@ -1,11 +1,11 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient, type UseMutationResult } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { titleApi } from '../api/title-api';
 import { queryKeys, TITLE_MANAGEMENT_QUERY_KEYS } from '../utils/query-keys';
 import type { UpdateTitleDto, TitleDto } from '../types/title-types';
 
-export const useUpdateTitle = () => {
+export const useUpdateTitle = (): UseMutationResult<TitleDto, Error, { id: number; data: UpdateTitleDto }> => {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
 

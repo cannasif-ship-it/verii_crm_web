@@ -77,7 +77,6 @@ export function CustomerTypeTable({
     onSortChange(column, newDirection);
   };
 
-  // Modern Sort İkonu Bileşeni (Diğer tablodakiyle aynı logic)
   const SortIcon = ({ column }: { column: string }): ReactElement => {
     if (sortBy !== column) {
       return <ArrowUpDown size={14} className="ml-2 inline-block text-slate-400 opacity-50" />;
@@ -102,7 +101,7 @@ export function CustomerTypeTable({
     );
   }
 
-  const customerTypes = data?.data || (data as any)?.items || [];
+  const customerTypes = data?.data || [];
 
   if (!data || customerTypes.length === 0) {
     return (
@@ -116,7 +115,6 @@ export function CustomerTypeTable({
 
   const totalPages = Math.ceil((data.totalCount || 0) / pageSize);
 
-  // Tablo Başlık Stili
   const headStyle = "cursor-pointer select-none text-slate-500 dark:text-slate-400 hover:text-pink-600 dark:hover:text-pink-400 transition-colors py-4";
 
   return (
@@ -201,7 +199,6 @@ export function CustomerTypeTable({
         </Table>
       </div>
 
-      {/* Pagination Alanı */}
       <div className="flex flex-col sm:flex-row items-center justify-between py-4 gap-4">
         <div className="text-sm text-slate-500 dark:text-slate-400">
           {t('customerTypeManagement.table.showing', '{{from}}-{{to}} / {{total}} gösteriliyor', {
