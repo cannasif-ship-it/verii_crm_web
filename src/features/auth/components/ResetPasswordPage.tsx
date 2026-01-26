@@ -15,6 +15,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { LanguageSwitcher } from '@/components/shared/LanguageSwitcher';
 import { LockKeyIcon, ViewIcon, ViewOffIcon } from 'hugeicons-react';
 import loginImage from '../../../../public/veriicrmlogo.png';
 
@@ -66,8 +67,11 @@ export function ResetPasswordPage(): React.JSX.Element {
 
       <div className="fixed inset-0 z-0 bg-[radial-gradient(circle_at_50%_50%,#1a0b2e_0%,#000000_100%)]" />
 
-      <div className="relative z-10 w-full h-full flex flex-col justify-center items-center px-4 py-8 overflow-y-auto">
-        <div className="w-full max-w-md p-10 rounded-3xl bg-[#140a1e]/70 backdrop-blur-xl border border-white/10 shadow-[0_20px_40px_rgba(0,0,0,0.4),_inset_0_0_20px_rgba(255,255,255,0.07)] animate-[fadeIn_0.8s_ease-out]">
+      <div className="relative z-10 w-full h-full flex flex-col items-center px-4 py-8 overflow-y-auto">
+        <div className="absolute top-6 right-6 z-20">
+          <LanguageSwitcher />
+        </div>
+        <div className="w-full max-w-md p-10 rounded-3xl bg-[#140a1e]/70 backdrop-blur-xl border border-white/10 shadow-[0_20px_40px_rgba(0,0,0,0.4),_inset_0_0_20px_rgba(255,255,255,0.07)] animate-[fadeIn_0.8s_ease-out] my-auto">
           <div className="text-center mb-8">
             <img
               src={loginImage}
