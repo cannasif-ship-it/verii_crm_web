@@ -296,7 +296,6 @@
       "isPlanned": "مخطط",
       "priorityLevel": "مستوى الأولوية",
       "statusInfo": "معلومات الحالة",
-      "status": "الحالة",
       "isCompleted": "مكتمل",
       "completionDate": "تاريخ الإكمال",
       "isPendingApproval": "بانتظار الموافقة",
@@ -1051,7 +1050,6 @@
       "yapKod": "رمز الهيكل",
       "quantity": "الكمية",
       "serialNo": "الرقم التسلسلي",
-      "barcode": "الباركود",
       "actions": "الإجراءات",
       "noLines": "لم يتم العثور على بنود",
       "notFound": "الطرد غير موجود",
@@ -1076,9 +1074,6 @@
       "packingNoRequired": "رقم التغليف مطلوب",
       "packingDate": "تاريخ التغليف",
       "warehouseCode": "رمز المستودع",
-      "sourceType": "نوع المصدر",
-      "selectSourceType": "اختر نوع المصدر",
-      "sourceHeaderId": "معرف الرأس المصدر",
       "customerCode": "رمز العميل",
       "customerAddress": "عنوان العميل",
       "status": "الحالة",
@@ -1112,7 +1107,10 @@
       "serialNo2": "الرقم التسلسلي 2",
       "serialNo3": "الرقم التسلسلي 3",
       "serialNo4": "الرقم التسلسلي 4",
-      "sourceRouteId": "معرف المسار المصدر"
+      "sourceRouteId": "معرف المسار المصدر",
+      "selectWarehouse": "اختر المستودع",
+      "selectCustomer": "اختر العميل",
+      "selectCarrier": "اختر الناقل"
     },
     "status": {
       "draft": "مسودة",
@@ -1120,17 +1118,6 @@
       "packed": "تم التغليف",
       "shipped": "تم الشحن",
       "cancelled": "ملغي"
-    },
-    "sourceType": {
-      "GR": "استلام بضائع",
-      "WT": "تحويل مستودع",
-      "SH": "شحن",
-      "PR": "إنتاج",
-      "PT": "تحويل إنتاج",
-      "SIT": "نقل للمقاول من الباطن",
-      "SRT": "استلام من المقاول من الباطن",
-      "WI": "مستودع وارد",
-      "WO": "مستودع صادر"
     },
     "packageStatus": {
       "open": "مفتوح",
@@ -1174,11 +1161,6 @@
       "Scotty": "Scotty",
       "KolayGelsin": "Kolay Gelsin",
       "BirGundeKargo": "Bir Günde Kargo"
-    },
-    "form": {
-      "selectWarehouse": "اختر المستودع",
-      "selectCustomer": "اختر العميل",
-      "selectCarrier": "اختر الناقل"
     }
   },
   "notification": {

@@ -296,7 +296,6 @@
       "isPlanned": "Planned",
       "priorityLevel": "Priority Level",
       "statusInfo": "Status Information",
-      "status": "Status",
       "isCompleted": "Completed",
       "completionDate": "Completion Date",
       "isPendingApproval": "Pending Approval",
@@ -1051,7 +1050,6 @@
       "yapKod": "Yap Code",
       "quantity": "Quantity",
       "serialNo": "Serial No",
-      "barcode": "Barcode",
       "actions": "Actions",
       "noLines": "No lines found",
       "notFound": "Package not found",
@@ -1076,9 +1074,6 @@
       "packingNoRequired": "Packing No is required",
       "packingDate": "Packing Date",
       "warehouseCode": "Warehouse Code",
-      "sourceType": "Source Type",
-      "selectSourceType": "Select Source Type",
-      "sourceHeaderId": "Source Header ID",
       "customerCode": "Customer Code",
       "customerAddress": "Customer Address",
       "status": "Status",
@@ -1120,17 +1115,6 @@
       "packed": "Packed",
       "shipped": "Shipped",
       "cancelled": "Cancelled"
-    },
-    "sourceType": {
-      "GR": "Good Receipt",
-      "WT": "Warehouse Transfer",
-      "SH": "Shipping",
-      "PR": "Production",
-      "PT": "Production Transfer",
-      "SIT": "Subcontracting Issue Transfer",
-      "SRT": "Subcontracting Receipt Transfer",
-      "WI": "Warehouse Inbound",
-      "WO": "Warehouse Outbound"
     },
     "packageStatus": {
       "open": "Open",

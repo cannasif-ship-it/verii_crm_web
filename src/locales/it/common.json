@@ -296,7 +296,6 @@
       "isPlanned": "Pianificato",
       "priorityLevel": "Livello Priorità",
       "statusInfo": "Informazioni Stato",
-      "status": "Stato",
       "isCompleted": "Completato",
       "completionDate": "Data Completamento",
       "isPendingApproval": "In Attesa di Approvazione",
@@ -664,13 +663,13 @@
       "selectSourceType": "Seleziona Tipo Origine",
       "noSourceType": "Tipo origine non trovato",
       "sourceHeaderId": "Intestazione da Mappare",
+      "sourceLineId": "Riga da Mappare",
       "selectSourceHeader": "Seleziona Intestazione da Mappare",
       "noAvailableHeaders": "Nessuna intestazione disponibile trovata",
       "selectSourceTypeFirst": "Seleziona prima il tipo di origine",
       "packingNoRequired": "Il N. Imballaggio è obbligatorio",
       "packingDate": "Data Imballaggio",
       "warehouseCode": "Codice Magazzino",
-      "sourceHeaderId": "ID Intestazione Origine",
       "customerCode": "Codice Cliente",
       "customerAddress": "Indirizzo Cliente",
       "status": "Stato",
@@ -704,7 +703,10 @@
       "serialNo2": "N. Serie 2",
       "serialNo3": "N. Serie 3",
       "serialNo4": "N. Serie 4",
-      "sourceRouteId": "ID Percorso Origine"
+      "sourceRouteId": "ID Percorso Origine",
+      "selectWarehouse": "Seleziona Magazzino",
+      "selectCustomer": "Seleziona Cliente",
+      "selectCarrier": "Seleziona Trasportatore"
     },
     "status": {
       "draft": "Bozza",
@@ -755,11 +757,6 @@
       "Scotty": "Scotty",
       "KolayGelsin": "Kolay Gelsin",
       "BirGundeKargo": "Bir Günde Kargo"
-    },
-    "form": {
-      "selectWarehouse": "Seleziona Magazzino",
-      "selectCustomer": "Seleziona Cliente",
-      "selectCarrier": "Seleziona Trasportatore"
     }
   },
   "notification": {
