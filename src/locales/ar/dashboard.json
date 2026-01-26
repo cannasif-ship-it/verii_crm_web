@@ -1,43 +1,43 @@
 {
-  "title": "Dashboard",
-  "loading": "Loading",
+  "title": "لوحة التحكم",
+  "loading": "جاري التحميل",
   "stats": {
-    "totalRevenue": "Total Revenue",
-    "activeOpportunities": "Active Opportunities",
-    "newLeads": "New Leads",
-    "pendingOrders": "Pending Orders"
+    "totalRevenue": "إجمالي الإيرادات",
+    "activeOpportunities": "الفرص النشطة",
+    "newLeads": "العملاء المحتملين الجدد",
+    "pendingOrders": "الطلبات المعلقة"
   },
-  "salesAnalysis": "Sales Analysis",
-  "targetVsActual": "Target vs Actual",
-  "latestActivities": "Latest Activities",
-  "viewAll": "View All",
-  "reportDownload": "Download Report",
-  "quickAction": "Quick Action",
+  "salesAnalysis": "تحليل المبيعات",
+  "targetVsActual": "الهدف مقابل الفعلي",
+  "latestActivities": "أحدث الأنشطة",
+  "viewAll": "عرض الكل",
+  "reportDownload": "تحميل التقرير",
+  "quickAction": "إجراء سريع",
   "activityType": {
-    "meeting": "Meeting",
-    "call": "Call",
-    "email": "Email"
+    "meeting": "اجتماع",
+    "call": "مكالمة",
+    "email": "بريد إلكتروني"
   },
   "monthsShort": {
-    "jan": "Jan",
-    "feb": "Feb",
-    "mar": "Mar",
-    "apr": "Apr",
-    "may": "May",
-    "jun": "Jun",
-    "jul": "Jul",
-    "aug": "Aug",
-    "sep": "Sep",
-    "oct": "Oct",
-    "nov": "Nov",
-    "dec": "Dec"
+    "jan": "يناير",
+    "feb": "فبراير",
+    "mar": "مارس",
+    "apr": "أبريل",
+    "may": "مايو",
+    "jun": "يونيو",
+    "jul": "يوليو",
+    "aug": "أغسطس",
+    "sep": "سبتمبر",
+    "oct": "أكتوبر",
+    "nov": "نوفمبر",
+    "dec": "ديسمبر"
   },
   "quickStats": {
-    "pendingTasks": "Pending Tasks",
-    "pendingTasksDescription": "12 tasks to complete",
-    "openQuotations": "Open Quotations",
-    "openQuotationsDescription": "5 quotations pending approval",
-    "criticalStock": "Critical Stock",
-    "criticalStockDescription": "3 products below critical level"
+    "pendingTasks": "المهام المعلقة",
+    "pendingTasksDescription": "12 مهمة للاكتمال",
+    "openQuotations": "عروض الأسعار المفتوحة",
+    "openQuotationsDescription": "5 عروض أسعار بانتظار الموافقة",
+    "criticalStock": "المخزون الحرج",
+    "criticalStockDescription": "3 منتجات أقل من المستوى الحرج"
   }
 }

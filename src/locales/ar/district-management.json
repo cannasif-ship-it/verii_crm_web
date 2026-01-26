@@ -4,7 +4,7 @@
   "addButton": "إضافة منطقة جديدة",
   "listTitle": "قائمة المناطق",
   "listDescription": "يمكنك إدارة جميع المناطق المسجلة في النظام هنا.",
-  "loading": "جاري التحميل...",
+  "loading": "جار التحميل...",
   "noData": "لا توجد بيانات",
   "actions": "إجراءات",
   "previous": "السابق",
@@ -12,35 +12,35 @@
   "cancel": "إلغاء",
   "delete": "حذف",
   "save": "حفظ",
-  "saving": "جاري الحفظ...",
+  "saving": "جار الحفظ...",
   "table": {
     "id": "المعرف",
     "name": "اسم المنطقة",
-    "erpCode": "رمز ERP",
+    "erpCode": "كود ERP",
     "cityName": "اسم المدينة",
     "createdDate": "تاريخ الإنشاء",
     "createdBy": "تم الإنشاء بواسطة",
-    "showing": "عرض {{from}}-{{to}} من {{total}}",
-    "page": "صفحة {{current}} من {{total}}"
+    "showing": "عرض {{from}}-{{to}} / {{total}}",
+    "page": "صفحة {{current}} / {{total}}"
   },
   "deleteConfirm": {
     "confirmTitle": "حذف المنطقة",
-    "confirmMessage": "هل أنت متأكد أنك تريد حذف المنطقة {{name}}؟"
+    "confirmMessage": "هل أنت متأكد من حذف المنطقة {{name}}؟"
   },
   "form": {
     "editDistrict": "تعديل المنطقة",
     "addDistrict": "إضافة منطقة جديدة",
     "editDescription": "تعديل معلومات المنطقة",
-    "addDescription": "أدخل معلومات المنطقة الجديدة",
+    "addDescription": "إدخال معلومات منطقة جديدة",
     "name": "اسم المنطقة",
     "namePlaceholder": "أدخل اسم المنطقة",
     "city": "المدينة",
     "selectCity": "اختر المدينة",
-    "erpCode": "رمز ERP",
-    "erpCodePlaceholder": "أدخل رمز ERP (اختياري)",
+    "erpCode": "كود ERP",
+    "erpCodePlaceholder": "أدخل كود ERP (اختياري)",
     "nameRequired": "اسم المنطقة مطلوب",
-    "nameMaxLength": "لا يمكن أن يتجاوز اسم المنطقة 100 حرف",
-    "erpCodeMaxLength": "لا يمكن أن يتجاوز رمز ERP 10 أحرف",
+    "nameMaxLength": "اسم المنطقة لا يمكن أن يتجاوز 100 حرف",
+    "erpCodeMaxLength": "كود ERP لا يمكن أن يتجاوز 10 أحرف",
     "cityRequired": "اختيار المدينة مطلوب"
   },
   "stats": {

@@ -1,8 +1,14 @@
 {
-  "title": "Notifications",
-  "loading": "Loading",
-  "noNotifications": "No notifications found",
-  "markAllAsRead": "Mark all as read",
-  "close": "Close",
-  "unread": "Unread"
+  "title": "الإشعارات",
+  "markAllAsRead": "تحديد الكل كمقروء",
+  "viewAll": "عرض الكل",
+  "empty": "ليس لديك إشعارات",
+  "new": "جديد",
+  "ago": "منذ {{time}}",
+  "types": {
+    "info": "معلومات",
+    "success": "نجاح",
+    "warning": "تحذير",
+    "error": "خطأ"
+  }
 }

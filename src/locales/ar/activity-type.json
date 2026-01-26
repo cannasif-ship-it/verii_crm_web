@@ -1,54 +1,54 @@
 {
-  "menu": "Activity Type Management",
-  "description": "Manage and edit activity types",
-  "addButton": "Add New Activity Type",
-  "loading": "Loading...",
-  "noData": "No data found",
-  "actions": "Actions",
-  "edit": "Edit",
-  "deleteButton": "Delete",
-  "cancel": "Cancel",
-  "save": "Save",
-  "saving": "Saving...",
-  "previous": "Previous",
-  "next": "Next",
+  "menu": "إدارة أنواع الأنشطة",
+  "description": "إدارة وتعديل أنواع الأنشطة",
+  "addButton": "إضافة نوع نشاط جديد",
+  "loading": "جاري التحميل...",
+  "noData": "لم يتم العثور على بيانات",
+  "actions": "إجراءات",
+  "edit": "تعديل",
+  "deleteButton": "حذف",
+  "cancel": "إلغاء",
+  "save": "حفظ",
+  "saving": "جاري الحفظ...",
+  "previous": "السابق",
+  "next": "التالي",
   "form": {
-    "addTitle": "Add New Activity Type",
-    "editTitle": "Edit Activity Type",
-    "addDescription": "Enter new activity type information",
-    "editDescription": "Edit activity type information",
-    "name": "Activity Type Name",
-    "namePlaceholder": "Enter activity type name",
-    "nameRequired": "Activity type name is required",
-    "nameMaxLength": "Activity type name can be at most 100 characters",
-    "description": "Description",
-    "descriptionPlaceholder": "Enter description (optional)",
-    "descriptionMaxLength": "Description can be at most 500 characters"
+    "addTitle": "إضافة نوع نشاط جديد",
+    "editTitle": "تعديل نوع النشاط",
+    "addDescription": "أدخل معلومات نوع النشاط الجديد",
+    "editDescription": "تعديل معلومات نوع النشاط",
+    "name": "اسم نوع النشاط",
+    "namePlaceholder": "أدخل اسم نوع النشاط",
+    "nameRequired": "اسم نوع النشاط مطلوب",
+    "nameMaxLength": "يجب أن يكون اسم نوع النشاط بحد أقصى 100 حرفًا",
+    "description": "الوصف",
+    "descriptionPlaceholder": "أدخل الوصف (اختياري)",
+    "descriptionMaxLength": "يجب أن يكون الوصف بحد أقصى 500 حرفًا"
   },
   "table": {
-    "id": "ID",
-    "name": "Activity Type Name",
-    "description": "Description",
-    "createdDate": "Created Date",
-    "createdBy": "Created By",
-    "showing": "Showing {{from}}-{{to}} / {{total}}",
-    "page": "Page {{current}} / {{total}}"
+    "id": "المعرف",
+    "name": "اسم نوع النشاط",
+    "description": "الوصف",
+    "createdDate": "تاريخ الإنشاء",
+    "createdBy": "تم الإنشاء بواسطة",
+    "showing": "عرض {{from}}-{{to}} / {{total}}",
+    "page": "صفحة {{current}} / {{total}}"
   },
   "stats": {
-    "totalActivityTypes": "Total Activity Types",
-    "activeActivityTypes": "Active Activity Types",
-    "newThisMonth": "New This Month"
+    "totalActivityTypes": "إجمالي أنواع الأنشطة",
+    "activeActivityTypes": "أنواع الأنشطة النشطة",
+    "newThisMonth": "جديد هذا الشهر"
   },
   "messages": {
-    "createSuccess": "Activity type created successfully",
-    "createError": "Failed to create activity type",
-    "updateSuccess": "Activity type updated successfully",
-    "updateError": "Failed to update activity type",
-    "deleteSuccess": "Activity type deleted successfully",
-    "deleteError": "Failed to delete activity type"
+    "createSuccess": "تم إنشاء نوع النشاط بنجاح",
+    "createError": "فشل في إنشاء نوع النشاط",
+    "updateSuccess": "تم تحديث نوع النشاط بنجاح",
+    "updateError": "فشل في تحديث نوع النشاط",
+    "deleteSuccess": "تم حذف نوع النشاط بنجاح",
+    "deleteError": "فشل في حذف نوع النشاط"
   },
   "deleteConfirm": {
-    "confirmTitle": "Delete Activity Type",
-    "confirmMessage": "Are you sure you want to delete {{name}} activity type?"
+    "confirmTitle": "حذف نوع النشاط",
+    "confirmMessage": "هل أنت متأكد أنك تريد حذف نوع النشاط {{name}}؟"
   }
 }

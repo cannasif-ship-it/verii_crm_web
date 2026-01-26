@@ -1,13 +1,13 @@
 {
   "buttons": {
-    "back": "Back",
-    "next": "Next",
-    "complete": "Save and Send for Approval"
+    "back": "السابق",
+    "next": "التالي",
+    "complete": "حفظ وإرسال للموافقة"
   },
   "validation": {
-    "error": "Validation Error"
+    "error": "خطأ في التحقق"
   },
   "step": {
-    "unknown": "Unknown step"
+    "unknown": "خطوة غير معروفة"
   }
 }

@@ -1,13 +1,15 @@
 {
-  "title": "Select Related Stocks",
-  "description": "Select the related stocks you want to add along with the main stock. Mandatory stocks are selected automatically.",
-  "mandatoryStocks": "Mandatory Stocks",
-  "optionalStocks": "Optional Stocks",
-  "unknownStock": "Unknown Stock",
-  "quantity": "Quantity",
-  "mandatory": "Mandatory",
-  "noRelatedStocks": "No related stocks found",
-  "cancel": "Cancel",
-  "add": "Add",
-  "calculating": "Calculating..."
+  "title": "اختيار المخزونات ذات الصلة",
+  "description": "اختر المخزونات ذات الصلة للمنتج",
+  "searchPlaceholder": "بحث عن مخزونات ذات صلة...",
+  "select": "اختيار",
+  "cancel": "إلغاء",
+  "table": {
+    "code": "الرمز",
+    "name": "الاسم",
+    "relationType": "نوع العلاقة",
+    "quantity": "الكمية"
+  },
+  "noData": "لم يتم العثور على مخزونات ذات صلة",
+  "loading": "جاري التحميل..."
 }

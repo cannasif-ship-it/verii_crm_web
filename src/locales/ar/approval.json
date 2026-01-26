@@ -1,82 +1,82 @@
 {
   "list": {
-    "title": "Pending Approvals",
-    "description": "View and approve or reject quotations assigned to you",
-    "empty": "No pending approvals",
-    "error": "An error occurred while loading approvals"
+    "title": "الموافقات المعلقة",
+    "description": "عرض والموافقة أو رفض عروض الأسعار المسندة إليك",
+    "empty": "لا توجد موافقات معلقة",
+    "error": "حدث خطأ أثناء تحميل الموافقات"
   },
-  "yes": "Yes",
-  "no": "No",
-  "processing": "Processing...",
+  "yes": "نعم",
+  "no": "لا",
+  "processing": "جاري المعالجة...",
   "detail": {
-    "title": "Quotation Detail",
-    "subtitle": "View quotation details and perform actions",
+    "title": "تفاصيل عرض السعر",
+    "subtitle": "عرض تفاصيل عرض السعر واتخاذ الإجراءات",
     "tabs": {
-      "detail": "Detail",
-      "history": "History",
-      "action": "Action"
+      "detail": "التفاصيل",
+      "history": "السجل",
+      "action": "إجراء"
     },
-    "notFound": "Quotation not found",
-    "quotationInfo": "Quotation Information",
-    "offerNo": "Offer No",
-    "customer": "Customer",
-    "representative": "Representative",
-    "currency": "Currency",
-    "offerDate": "Offer Date",
-    "deliveryDate": "Delivery Date",
-    "total": "Total",
-    "grandTotal": "Grand Total",
-    "description": "Description",
-    "lines": "Quotation Lines",
-    "productCode": "Product Code",
-    "productName": "Product Name",
-    "quantity": "Quantity",
-    "unitPrice": "Unit Price",
-    "lineTotal": "Line Total",
-    "lineGrandTotal": "Line Grand Total",
-    "exchangeRates": "Exchange Rates",
-    "exchangeRate": "Rate",
-    "exchangeRateDate": "Rate Date",
-    "isOfficial": "Official Rate"
+    "notFound": "عرض السعر غير موجود",
+    "quotationInfo": "معلومات عرض السعر",
+    "offerNo": "رقم العرض",
+    "customer": "العميل",
+    "representative": "المندوب",
+    "currency": "العملة",
+    "offerDate": "تاريخ العرض",
+    "deliveryDate": "تاريخ التسليم",
+    "total": "الإجمالي",
+    "grandTotal": "الإجمالي الكلي",
+    "description": "الوصف",
+    "lines": "بنود عرض السعر",
+    "productCode": "كود المنتج",
+    "productName": "اسم المنتج",
+    "quantity": "الكمية",
+    "unitPrice": "سعر الوحدة",
+    "lineTotal": "إجمالي البند",
+    "lineGrandTotal": "الإجمالي الكلي للبند",
+    "exchangeRates": "أسعار الصرف",
+    "exchangeRate": "السعر",
+    "exchangeRateDate": "تاريخ السعر",
+    "isOfficial": "سعر رسمي"
   },
   "actions": {
-    "view": "View",
-    "approve": "Approve",
-    "reject": "Reject"
+    "view": "عرض",
+    "approve": "موافقة",
+    "reject": "رفض"
   },
   "status": {
-    "notRequired": "Not Required",
-    "waiting": "Waiting",
-    "approved": "Approved",
-    "rejected": "Rejected"
+    "notRequired": "غير مطلوب",
+    "waiting": "في الانتظار",
+    "approved": "تمت الموافقة",
+    "rejected": "مرفوض"
   },
   "level": {
-    "salesManager": "Sales Manager",
-    "regionalManager": "Regional Manager",
-    "finance": "Finance",
-    "generalManager": "General Manager",
-    "unknown": "Unknown"
+    "salesManager": "مدير المبيعات",
+    "regionalManager": "المدير الإقليمي",
+    "finance": "المالية",
+    "generalManager": "المدير العام",
+    "unknown": "غير معروف"
   },
   "note": {
-    "label": "Note",
-    "placeholder": "You can add an approval/rejection note (optional)",
-    "maxLength": "Note can be at most 500 characters"
+    "label": "ملاحظة",
+    "placeholder": "يمكنك إضافة ملاحظة موافقة/رفض (اختياري)",
+    "maxLength": "الملاحظة يمكن أن تكون بحد أقصى 500 حرف"
   },
   "approve": {
-    "success": "Approved",
-    "successMessage": "Quotation approved successfully",
-    "error": "Approval Error",
-    "errorMessage": "An error occurred while approving the quotation"
+    "success": "تمت الموافقة",
+    "successMessage": "تمت الموافقة على عرض السعر بنجاح",
+    "error": "خطأ في الموافقة",
+    "errorMessage": "حدث خطأ أثناء الموافقة على عرض السعر"
   },
   "reject": {
-    "success": "Rejected",
-    "successMessage": "Quotation rejected",
-    "error": "Rejection Error",
-    "errorMessage": "An error occurred while rejecting the quotation"
+    "success": "تم الرفض",
+    "successMessage": "تم رفض عرض السعر",
+    "error": "خطأ في الرفض",
+    "errorMessage": "حدث خطأ أثناء رفض عرض السعر"
   },
   "history": {
-    "empty": "No approval history",
-    "approvedBy": "Approved By"
+    "empty": "لا يوجد سجل موافقات",
+    "approvedBy": "تمت الموافقة بواسطة"
   },
-  "assignedTo": "Assigned User"
+  "assignedTo": "المستخدم المسند إليه"
 }
