@@ -1,165 +1,165 @@
 {
-  "loading": "Loading...",
-  "saving": "Saving...",
+  "loading": "Cargando...",
+  "saving": "Guardando...",
   "error": "Error",
-  "noData": "No data found",
-  "previous": "Previous",
-  "next": "Next",
-  "actions": "Actions",
-  "edit": "Edit",
-  "delete": "Delete",
-  "back": "Back",
-  "refresh": "Refresh",
-  "select": "Select",
-  "yes": "Yes",
-  "add": "Add",
-  "backToQuotations": "Back to Quotations",
-  "cancel": "Cancel",
-  "save": "Save",
-  "confirm": "Confirm",
-  "saveAndApply": "Save and Apply",
+  "noData": "No se encontraron datos",
+  "previous": "Anterior",
+  "next": "Siguiente",
+  "actions": "Acciones",
+  "edit": "Editar",
+  "delete": "Eliminar",
+  "back": "Atrás",
+  "refresh": "Actualizar",
+  "select": "Seleccionar",
+  "yes": "Sí",
+  "add": "Agregar",
+  "backToQuotations": "Volver a Cotizaciones",
+  "cancel": "Cancelar",
+  "save": "Guardar",
+  "confirm": "Confirmar",
+  "saveAndApply": "Guardar y Aplicar",
   "list": {
-    "revise": "Revise",
-    "showing": "Showing {{from}}-{{to}} / {{total}}"
+    "revise": "Revisar",
+    "showing": "Mostrando {{from}}-{{to}} de {{total}}"
   },
   "detail": {
-    "title": "Quotation Detail"
+    "title": "Detalle de Cotización"
   },
   "create": {
-    "title": "Create New Quotation",
-    "submit": "Save Quotation and Send for Approval",
-    "success": "Quotation Created Successfully",
-    "successMessage": "Quotation has been sent to the approval process.",
-    "error": "Quotation Could Not Be Created",
-    "errorMessage": "An error occurred while creating the quotation."
+    "title": "Crear Nueva Cotización",
+    "submit": "Guardar Cotización y Enviar para Aprobación",
+    "success": "Cotización Creada Exitosamente",
+    "successMessage": "La cotización ha sido enviada al proceso de aprobación.",
+    "error": "No se Pudo Crear la Cotización",
+    "errorMessage": "Ocurrió un error al crear la cotización."
   },
   "header": {
-    "title": "Quotation Information",
-    "customer": "Customer",
-    "selectCustomer": "Select customer",
-    "shippingAddress": "Shipping Address",
-    "selectShippingAddress": "Select shipping address",
-    "representative": "Sales Representative",
-    "selectRepresentative": "Select representative",
-    "offerType": "Offer Type",
-    "selectOfferType": "Select offer type",
-    "currency": "Currency",
-    "selectCurrency": "Please select currency",
-    "showExchangeRates": "Show Exchange Rates",
-    "offerDate": "Offer Date",
-    "deliveryDate": "Delivery Date",
-    "paymentType": "Payment Type",
-    "selectPaymentType": "Select payment type",
-    "description": "Description",
-    "descriptionPlaceholder": "Enter description",
-    "offerNo": "Offer No",
-    "offerNoPlaceholder": "Offer number",
+    "title": "Información de Cotización",
+    "customer": "Cliente",
+    "selectCustomer": "Seleccionar cliente",
+    "shippingAddress": "Dirección de Envío",
+    "selectShippingAddress": "Seleccionar dirección de envío",
+    "representative": "Representante de Ventas",
+    "selectRepresentative": "Seleccionar representante",
+    "offerType": "Tipo de Oferta",
+    "selectOfferType": "Seleccionar tipo de oferta",
+    "currency": "Moneda",
+    "selectCurrency": "Por favor seleccione moneda",
+    "showExchangeRates": "Mostrar Tasas de Cambio",
+    "offerDate": "Fecha de Oferta",
+    "deliveryDate": "Fecha de Entrega",
+    "paymentType": "Tipo de Pago",
+    "selectPaymentType": "Seleccionar tipo de pago",
+    "description": "Descripción",
+    "descriptionPlaceholder": "Ingresar descripción",
+    "offerNo": "Nº de Oferta",
+    "offerNoPlaceholder": "Número de oferta",
     "currencyChange": {
-      "title": "Currency Change",
-      "message": "When the currency changes, all existing lines will be recalculated according to the new currency. Do you approve this operation?"
+      "title": "Cambio de Moneda",
+      "message": "Cuando cambia la moneda, todas las líneas existentes se recalcularán según la nueva moneda. ¿Aprueba esta operación?"
     }
   },
   "lines": {
-    "title": "Quotation Lines",
-    "add": "Add Line",
-    "empty": "No lines added yet",
-    "emptyDescription": "Use \"Select Stock\" or \"Add Line\" button to add quotation lines",
-    "itemCount": "line",
-    "editLine": "Edit Line",
-    "selectStock": "Select Stock",
-    "selectProduct": "Select Product",
-    "selectStockFirst": "Stock not selected",
+    "title": "Líneas de Cotización",
+    "add": "Agregar Línea",
+    "empty": "Aún no hay líneas agregadas",
+    "emptyDescription": "Use el botón \"Seleccionar Stock\" o \"Agregar Línea\" para agregar líneas de cotización",
+    "itemCount": "línea",
+    "editLine": "Editar Línea",
+    "selectStock": "Seleccionar Stock",
+    "selectProduct": "Seleccionar Producto",
+    "selectStockFirst": "Stock no seleccionado",
     "stock": "Stock",
-    "productCode": "Stock Code",
-    "enterProductCode": "Enter product code or search",
-    "productName": "Stock Name",
-    "enterProductName": "Enter product name",
-    "quantity": "Quantity",
-    "unitPrice": "Unit Price",
-    "discount1": "Discount 1 %",
-    "discount2": "Discount 2 %",
-    "discount3": "Discount 3 %",
-    "discounts": "Discounts",
-    "discountAmount": "Discount Amount",
-    "netPrice": "Net Price",
-    "vatRate": "VAT Rate %",
-    "lineTotal": "Line Total (VAT Included)",
-    "calculations": "Calculations",
-    "required": "At least 1 line must be added",
-    "noProductsFound": "No products found",
+    "productCode": "Código de Stock",
+    "enterProductCode": "Ingresar código de producto o buscar",
+    "productName": "Nombre de Stock",
+    "enterProductName": "Ingresar nombre de producto",
+    "quantity": "Cantidad",
+    "unitPrice": "Precio Unitario",
+    "discount1": "Descuento 1 %",
+    "discount2": "Descuento 2 %",
+    "discount3": "Descuento 3 %",
+    "discounts": "Descuentos",
+    "discountAmount": "Monto de Descuento",
+    "netPrice": "Precio Neto",
+    "vatRate": "Tasa de IVA %",
+    "lineTotal": "Total de Línea (IVA Incluido)",
+    "calculations": "Cálculos",
+    "required": "Debe agregar al menos 1 línea",
+    "noProductsFound": "No se encontraron productos",
     "delete": {
-      "confirmTitle": "Delete Line",
-      "confirmMessage": "Are you sure you want to delete this line?"
+      "confirmTitle": "Eliminar Línea",
+      "confirmMessage": "¿Está seguro de que desea eliminar esta línea?"
     }
   },
   "exchangeRates": {
-    "title": "Exchange Rates",
-    "currency": "Currency",
-    "rate": "Rate",
-    "date": "Rate Date",
-    "isOfficial": "Official Rate",
-    "official": "Official",
-    "custom": "Custom",
-    "empty": "No exchange rates found",
-    "status": "Status",
+    "title": "Tasas de Cambio",
+    "currency": "Moneda",
+    "rate": "Tasa",
+    "date": "Fecha de Tasa",
+    "isOfficial": "Tasa Oficial",
+    "official": "Oficial",
+    "custom": "Personalizada",
+    "empty": "No se encontraron tasas de cambio",
+    "status": "Estado",
     "dialog": {
-      "title": "Exchange Rates",
-      "description": "View and edit exchange rate values if needed. Modified rates will not be marked as official rates."
+      "title": "Tasas de Cambio",
+      "description": "Ver y editar valores de tasa de cambio si es necesario. Las tasas modificadas no se marcarán como tasas oficiales."
     }
   },
   "summary": {
-    "title": "Summary",
+    "title": "Resumen",
     "subtotal": "Subtotal",
-    "totalVat": "Total VAT",
-    "grandTotal": "Grand Total"
+    "totalVat": "IVA Total",
+    "grandTotal": "Gran Total"
   },
   "offerType": {
-    "domestic": "Domestic",
-    "export": "Export"
+    "domestic": "Nacional",
+    "export": "Exportación"
   },
   "wizard": {
-    "title": "Create New Quotation",
+    "title": "Crear Nueva Cotización",
     "step1": {
-      "title": "Step 1: Quotation Information",
-      "description": "Enter quotation header information and exchange rates",
+      "title": "Paso 1: Información de Cotización",
+      "description": "Ingresar información de encabezado de cotización y tasas de cambio",
       "validation": {
-        "offerType": "Offer Type",
-        "currency": "Currency",
-        "exchangeRate": "Exchange Rate"
+        "offerType": "Tipo de Oferta",
+        "currency": "Moneda",
+        "exchangeRate": "Tasa de Cambio"
       },
       "exchangeRate": {
-        "required": "At least one exchange rate must be added for non-TRY currencies"
+        "required": "Debe agregar al menos una tasa de cambio para monedas que no sean TRY"
       },
       "currency": {
         "try": {
-          "info": "Exchange rate is not required when TRY is selected"
+          "info": "La tasa de cambio no es requerida cuando se selecciona TRY"
         }
       }
     },
     "step2": {
-      "title": "Step 2: Quotation Lines",
-      "description": "Add product and price information",
-      "info": "You must add at least one line",
+      "title": "Paso 2: Líneas de Cotización",
+      "description": "Agregar información de producto y precio",
+      "info": "Debe agregar al menos una línea",
       "validation": {
-        "noLines": "At least one line must be added",
-        "invalidLines": "All lines must have valid information",
-        "allValid": "{{count}} lines successfully added"
+        "noLines": "Debe agregar al menos una línea",
+        "invalidLines": "Todas las líneas deben tener información válida",
+        "allValid": "{{count}} líneas agregadas exitosamente"
       }
     },
     "step3": {
-      "title": "Step 3: Summary and Approval",
-      "description": "Review information and save quotation",
+      "title": "Paso 3: Resumen y Aprobación",
+      "description": "Revisar información y guardar cotización",
       "header": {
-        "title": "Quotation Information"
+        "title": "Información de Cotización"
       },
       "lines": {
-        "title": "Quotation Lines"
+        "title": "Líneas de Cotización"
       },
       "summary": {
-        "title": "Final Summary"
+        "title": "Resumen Final"
       },
       "approval": {
-        "info": "The quotation will be automatically sent to the approval process after saving"
+        "info": "La cotización se enviará automáticamente al proceso de aprobación después de guardar"
       }
     }
   }

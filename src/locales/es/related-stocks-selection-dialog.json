@@ -1,13 +1,15 @@
 {
-  "title": "Select Related Stocks",
-  "description": "Select the related stocks you want to add along with the main stock. Mandatory stocks are selected automatically.",
-  "mandatoryStocks": "Mandatory Stocks",
-  "optionalStocks": "Optional Stocks",
-  "unknownStock": "Unknown Stock",
-  "quantity": "Quantity",
-  "mandatory": "Mandatory",
-  "noRelatedStocks": "No related stocks found",
-  "cancel": "Cancel",
-  "add": "Add",
-  "calculating": "Calculating..."
+  "title": "Selección de Stocks Relacionados",
+  "description": "Seleccionar stocks relacionados para el producto",
+  "searchPlaceholder": "Buscar stocks relacionados...",
+  "select": "Seleccionar",
+  "cancel": "Cancelar",
+  "table": {
+    "code": "Código",
+    "name": "Nombre",
+    "relationType": "Tipo de Relación",
+    "quantity": "Cantidad"
+  },
+  "noData": "No se encontraron stocks relacionados",
+  "loading": "Cargando..."
 }

@@ -1,82 +1,82 @@
 {
   "list": {
-    "title": "Pending Approvals",
-    "description": "View and approve or reject quotations assigned to you",
-    "empty": "No pending approvals",
-    "error": "An error occurred while loading approvals"
+    "title": "Aprobaciones Pendientes",
+    "description": "Ver y aprobar o rechazar cotizaciones asignadas a usted",
+    "empty": "No hay aprobaciones pendientes",
+    "error": "Ocurrió un error al cargar las aprobaciones"
   },
-  "yes": "Yes",
+  "yes": "Sí",
   "no": "No",
-  "processing": "Processing...",
+  "processing": "Procesando...",
   "detail": {
-    "title": "Quotation Detail",
-    "subtitle": "View quotation details and perform actions",
+    "title": "Detalle de Cotización",
+    "subtitle": "Ver detalles de la cotización y realizar acciones",
     "tabs": {
-      "detail": "Detail",
-      "history": "History",
-      "action": "Action"
+      "detail": "Detalle",
+      "history": "Historial",
+      "action": "Acción"
     },
-    "notFound": "Quotation not found",
-    "quotationInfo": "Quotation Information",
-    "offerNo": "Offer No",
-    "customer": "Customer",
-    "representative": "Representative",
-    "currency": "Currency",
-    "offerDate": "Offer Date",
-    "deliveryDate": "Delivery Date",
+    "notFound": "Cotización no encontrada",
+    "quotationInfo": "Información de la Cotización",
+    "offerNo": "Nº Oferta",
+    "customer": "Cliente",
+    "representative": "Representante",
+    "currency": "Moneda",
+    "offerDate": "Fecha Oferta",
+    "deliveryDate": "Fecha Entrega",
     "total": "Total",
-    "grandTotal": "Grand Total",
-    "description": "Description",
-    "lines": "Quotation Lines",
-    "productCode": "Product Code",
-    "productName": "Product Name",
-    "quantity": "Quantity",
-    "unitPrice": "Unit Price",
-    "lineTotal": "Line Total",
-    "lineGrandTotal": "Line Grand Total",
-    "exchangeRates": "Exchange Rates",
-    "exchangeRate": "Rate",
-    "exchangeRateDate": "Rate Date",
-    "isOfficial": "Official Rate"
+    "grandTotal": "Gran Total",
+    "description": "Descripción",
+    "lines": "Líneas de Cotización",
+    "productCode": "Código Producto",
+    "productName": "Nombre Producto",
+    "quantity": "Cantidad",
+    "unitPrice": "Precio Unitario",
+    "lineTotal": "Total Línea",
+    "lineGrandTotal": "Gran Total Línea",
+    "exchangeRates": "Tipos de Cambio",
+    "exchangeRate": "Tasa",
+    "exchangeRateDate": "Fecha Tasa",
+    "isOfficial": "Tasa Oficial"
   },
   "actions": {
-    "view": "View",
-    "approve": "Approve",
-    "reject": "Reject"
+    "view": "Ver",
+    "approve": "Aprobar",
+    "reject": "Rechazar"
   },
   "status": {
-    "notRequired": "Not Required",
-    "waiting": "Waiting",
-    "approved": "Approved",
-    "rejected": "Rejected"
+    "notRequired": "No Requerido",
+    "waiting": "Esperando",
+    "approved": "Aprobado",
+    "rejected": "Rechazado"
   },
   "level": {
-    "salesManager": "Sales Manager",
-    "regionalManager": "Regional Manager",
-    "finance": "Finance",
-    "generalManager": "General Manager",
-    "unknown": "Unknown"
+    "salesManager": "Gerente de Ventas",
+    "regionalManager": "Gerente Regional",
+    "finance": "Finanzas",
+    "generalManager": "Gerente General",
+    "unknown": "Desconocido"
   },
   "note": {
-    "label": "Note",
-    "placeholder": "You can add an approval/rejection note (optional)",
-    "maxLength": "Note can be at most 500 characters"
+    "label": "Nota",
+    "placeholder": "Puede agregar una nota de aprobación/rechazo (opcional)",
+    "maxLength": "La nota puede tener como máximo 500 caracteres"
   },
   "approve": {
-    "success": "Approved",
-    "successMessage": "Quotation approved successfully",
-    "error": "Approval Error",
-    "errorMessage": "An error occurred while approving the quotation"
+    "success": "Aprobado",
+    "successMessage": "Cotización aprobada exitosamente",
+    "error": "Error de Aprobación",
+    "errorMessage": "Ocurrió un error al aprobar la cotización"
   },
   "reject": {
-    "success": "Rejected",
-    "successMessage": "Quotation rejected",
-    "error": "Rejection Error",
-    "errorMessage": "An error occurred while rejecting the quotation"
+    "success": "Rechazado",
+    "successMessage": "Cotización rechazada",
+    "error": "Error de Rechazo",
+    "errorMessage": "Ocurrió un error al rechazar la cotización"
   },
   "history": {
-    "empty": "No approval history",
-    "approvedBy": "Approved By"
+    "empty": "Sin historial de aprobaciones",
+    "approvedBy": "Aprobado Por"
   },
-  "assignedTo": "Assigned User"
+  "assignedTo": "Usuario Asignado"
 }
