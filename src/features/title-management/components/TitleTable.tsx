@@ -44,7 +44,7 @@ export function TitleTable({
   onPageChange,
   onSortChange,
 }: TitleTableProps): ReactElement {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedTitle, setSelectedTitle] = useState<TitleDto | null>(null);
 
@@ -138,14 +138,14 @@ export function TitleTable({
         <div className="flex flex-col items-center gap-2">
           <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-current text-pink-500" />
           <div className="text-sm text-muted-foreground animate-pulse">
-            {t('titleManagement.loading', 'Yükleniyor...')}
+            {t('common.loading', 'Yükleniyor...')}
           </div>
         </div>
       </div>
     );
   }
 
-  const titles = data?.data || [];
+  const titles = data?.data || (data as any)?.items || [];
   
   if (!data || titles.length === 0) {
     return (
@@ -200,7 +200,7 @@ export function TitleTable({
                 {t('titleManagement.table.createdBy', 'Oluşturan Kullanıcı')}
               </TableHead>
               <TableHead className="text-right text-slate-500 dark:text-slate-400 py-4">
-                {t('titleManagement.actions', 'İşlemler')}
+                {t('common.actions', 'İşlemler')}
               </TableHead>
             </TableRow>
           </TableHeader>
@@ -222,7 +222,7 @@ export function TitleTable({
                   </div>
                 </TableCell>
                 <TableCell className="text-slate-600 dark:text-slate-400">
-                  {new Date(title.createdDate).toLocaleDateString(i18n.language)}
+                  {new Date(title.createdDate).toLocaleDateString('tr-TR')}
                 </TableCell>
                 <TableCell className="text-slate-600 dark:text-slate-400">
                   <div className="flex items-center gap-2">
@@ -235,7 +235,7 @@ export function TitleTable({
                   </div>
                 </TableCell>
                 <TableCell className="text-right">
-                  <div className="flex justify-end gap-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
+                  <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                     <Button
                       variant="ghost"
                       size="icon"
@@ -276,7 +276,7 @@ export function TitleTable({
             disabled={pageNumber <= 1}
             className="bg-white dark:bg-transparent border-slate-200 dark:border-white/10 hover:bg-slate-50 dark:hover:bg-white/5"
           >
-            {t('titleManagement.previous', 'Önceki')}
+            {t('common.previous', 'Önceki')}
           </Button>
           <div className="flex items-center px-4 text-sm font-medium text-slate-700 dark:text-slate-200">
             {t('titleManagement.table.page', 'Sayfa {{current}} / {{total}}', {
@@ -291,7 +291,7 @@ export function TitleTable({
             disabled={pageNumber >= totalPages}
             className="bg-white dark:bg-transparent border-slate-200 dark:border-white/10 hover:bg-slate-50 dark:hover:bg-white/5"
           >
-            {t('titleManagement.next', 'Sonraki')}
+            {t('common.next', 'Sonraki')}
           </Button>
         </div>
       </div>
@@ -315,7 +315,7 @@ export function TitleTable({
               disabled={deleteTitle.isPending}
               className="bg-white dark:bg-transparent border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/5"
             >
-              {t('titleManagement.cancel', 'İptal')}
+              {t('common.cancel', 'İptal')}
             </Button>
             <Button
               variant="destructive"
@@ -324,8 +324,8 @@ export function TitleTable({
               className="bg-red-600 hover:bg-red-700 dark:bg-red-900/50 dark:hover:bg-red-900/70 border border-transparent dark:border-red-500/20 text-white"
             >
               {deleteTitle.isPending
-                ? t('titleManagement.deleting', 'Siliniyor...')
-                : t('titleManagement.delete.button', 'Sil')}
+                ? t('common.loading', 'Yükleniyor...')
+                : t('common.delete', 'Sil')}
             </Button>
           </DialogFooter>
         </DialogContent>

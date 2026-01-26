@@ -4,7 +4,10 @@ import { useNavigate } from 'react-router-dom';
 import { useUIStore } from '@/stores/ui-store';
 import { Input } from '@/components/ui/input';
 import { StockTable } from './StockTable';
-import { Search, RefreshCw, X } from 'lucide-react';
+import { StockCardList } from './StockCardList';
+import { Search, RefreshCw, X, LayoutGrid, List } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 import type { PagedFilter } from '@/types/api';
 
 export function StockListPage(): ReactElement {
@@ -17,6 +20,7 @@ export function StockListPage(): ReactElement {
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
   const [searchTerm, setSearchTerm] = useState('');
   const [filters, setFilters] = useState<Record<string, unknown>>({});
+  const [viewMode, setViewMode] = useState<'table' | 'card'>('table');
 
   useEffect(() => {
     setPageTitle(t('stock.list.title', 'Stok Yönetimi'));
@@ -98,23 +102,70 @@ export function StockListPage(): ReactElement {
             )}
           </div>
           
+          <div className="flex items-center gap-1 bg-white dark:bg-zinc-900/50 p-1 rounded-xl border border-zinc-200 dark:border-zinc-800">
+            <Button
+              variant="ghost"
+              size="icon"
+              className={cn(
+                "h-9 w-9 rounded-lg transition-all",
+                viewMode === 'table' 
+                  ? "bg-zinc-100 dark:bg-zinc-800 text-pink-600 dark:text-pink-400 shadow-sm" 
+                  : "text-muted-foreground hover:text-foreground"
+              )}
+              onClick={() => setViewMode('table')}
+              title={t('common.listView', 'Liste Görünümü')}
+            >
+              <List className="w-4 h-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              className={cn(
+                "h-9 w-9 rounded-lg transition-all",
+                viewMode === 'card' 
+                  ? "bg-zinc-100 dark:bg-zinc-800 text-pink-600 dark:text-pink-400 shadow-sm" 
+                  : "text-muted-foreground hover:text-foreground"
+              )}
+              onClick={() => setViewMode('card')}
+              title={t('common.cardView', 'Kart Görünümü')}
+            >
+              <LayoutGrid className="w-4 h-4" />
+            </Button>
+          </div>
+
           <div className="hidden md:flex items-center justify-center w-11 h-11 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 text-muted-foreground" title={t('stock.list.syncedFromErp', 'ERP Senkronizasyonu Aktif')}>
              <RefreshCw size={16} className="opacity-70" />
           </div>
         </div>
       </div>
 
-      <div className="relative z-10 bg-white/50 dark:bg-card/30 backdrop-blur-xl border border-white/20 dark:border-border/50 rounded-2xl shadow-sm dark:shadow-2xl overflow-hidden">
-        <StockTable
-          pageNumber={pageNumber}
-          pageSize={pageSize}
-          sortBy={sortBy}
-          sortDirection={sortDirection}
-          filters={filters}
-          onPageChange={setPageNumber}
-          onSortChange={handleSortChange}
-          onRowClick={handleRowClick}
-        />
+      <div className={cn(
+        "relative z-10 transition-all duration-300",
+        viewMode === 'table' && "bg-white/50 dark:bg-card/30 backdrop-blur-xl border border-white/20 dark:border-border/50 rounded-2xl shadow-sm dark:shadow-2xl overflow-hidden"
+      )}>
+        {viewMode === 'table' ? (
+          <StockTable
+            pageNumber={pageNumber}
+            pageSize={pageSize}
+            sortBy={sortBy}
+            sortDirection={sortDirection}
+            filters={filters}
+            onPageChange={setPageNumber}
+            onSortChange={handleSortChange}
+            onRowClick={handleRowClick}
+          />
+        ) : (
+          <StockCardList
+            pageNumber={pageNumber}
+            pageSize={pageSize}
+            sortBy={sortBy}
+            sortDirection={sortDirection}
+            filters={filters}
+            onPageChange={setPageNumber}
+            onSortChange={handleSortChange}
+            onRowClick={handleRowClick}
+          />
+        )}
       </div>
     </div>
   );
