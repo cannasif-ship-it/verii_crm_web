@@ -1,6 +1,6 @@
 {
   "title": "Payment Type Management",
-  "description": "Manage and edit payment types",
+  "headerDescription": "Manage and edit payment types",
   "create": "New Payment Type",
   "edit": "Edit Payment Type",
   "editDescription": "Edit payment type information",

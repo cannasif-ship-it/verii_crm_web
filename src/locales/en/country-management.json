@@ -46,7 +46,7 @@
     "codeMaxLength": "Country code cannot exceed 5 characters",
     "erpCodeMaxLength": "ERP code cannot exceed 10 characters"
   },
-  "delete": {
+  "deleteConfirm": {
     "confirmMessage": "Are you sure you want to delete {{name}}?"
   }
 }

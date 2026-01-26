@@ -1,6 +1,6 @@
 {
   "title": "Ödeme Tipi Yönetimi",
-  "description": "Ödeme tiplerini yönetin ve düzenleyin",
+  "headerDescription": "Ödeme tiplerini yönetin ve düzenleyin",
   "create": "Yeni Ödeme Tipi",
   "edit": "Ödeme Tipi Düzenle",
   "editDescription": "Ödeme tipi bilgilerini düzenleyin",

@@ -46,7 +46,7 @@
     "codeMaxLength": "Ülke kodu en fazla 5 karakter olabilir",
     "erpCodeMaxLength": "ERP kodu en fazla 10 karakter olabilir"
   },
-  "delete": {
+  "deleteConfirm": {
     "confirmMessage": "{{name}} ülkesini silmek istediğinizden emin misiniz?"
   }
 }

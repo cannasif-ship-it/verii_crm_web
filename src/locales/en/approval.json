@@ -10,7 +10,7 @@
   "processing": "Processing...",
   "detail": {
     "title": "Quotation Detail",
-    "description": "View quotation details and perform actions",
+    "subtitle": "View quotation details and perform actions",
     "tabs": {
       "detail": "Detail",
       "history": "History",
