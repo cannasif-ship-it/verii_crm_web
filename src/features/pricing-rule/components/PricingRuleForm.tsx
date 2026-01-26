@@ -19,6 +19,16 @@ import { PricingRuleLineTable } from './PricingRuleLineTable';
 import { PricingRuleSalesmanTable } from './PricingRuleSalesmanTable';
 import { PricingRuleType, type PricingRuleHeaderCreateDto, type PricingRuleLineFormState, type PricingRuleSalesmanFormState } from '../types/pricing-rule-types';
 import type { PricingRuleHeaderGetDto } from '../types/pricing-rule-types';
+// İkonlar
+import { 
+  FileText, 
+  List, 
+  Users, 
+  Save, 
+  X, 
+  Loader2,
+  Tag
+} from 'lucide-react';
 
 interface PricingRuleFormProps {
   open: boolean;
@@ -231,15 +241,16 @@ export function PricingRuleForm({ open, onOpenChange, header }: PricingRuleFormP
   if (isLoading && header?.id) {
     return (
       <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>
-              {t('pricingRule.loading', 'Yükleniyor...')}
-            </DialogTitle>
-            <DialogDescription>
-              {t('pricingRule.loadingDescription', 'Veriler yükleniyor, lütfen bekleyin')}
-            </DialogDescription>
-          </DialogHeader>
+        <DialogContent className="max-w-6xl max-h-[90vh] flex items-center justify-center bg-white dark:bg-[#130822] border border-slate-100 dark:border-white/10">
+           <div className="flex flex-col items-center gap-4">
+             <div className="relative">
+               <div className="h-12 w-12 animate-spin rounded-full border-b-4 border-pink-500" />
+               <div className="absolute inset-0 h-12 w-12 animate-ping rounded-full border-pink-500 opacity-20" />
+             </div>
+             <div className="text-sm font-medium text-slate-500 animate-pulse">
+               {t('pricingRule.loadingDescription', 'Veriler yükleniyor...')}
+             </div>
+          </div>
         </DialogContent>
       </Dialog>
     );
@@ -247,43 +258,63 @@ export function PricingRuleForm({ open, onOpenChange, header }: PricingRuleFormP
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-6xl max-h-[90vh] flex flex-col p-0">
-        <DialogHeader className="px-6 pt-6 pb-4 flex-shrink-0">
-          <DialogTitle>
-            {header?.id
-              ? t('pricingRule.form.edit', 'Fiyat Kuralı Düzenle')
-              : t('pricingRule.form.create', 'Yeni Fiyat Kuralı')}
-          </DialogTitle>
-          <DialogDescription>
-            {header?.id
-              ? t('pricingRule.form.editDescription', 'Fiyat kuralı bilgilerini düzenleyin')
-              : t('pricingRule.form.createDescription', 'Yeni fiyat kuralı bilgilerini girin')}
-          </DialogDescription>
+      <DialogContent className="max-w-6xl max-h-[90vh] flex flex-col p-0 bg-white dark:bg-[#130822] border border-slate-100 dark:border-white/10 text-slate-900 dark:text-white shadow-2xl shadow-slate-200/50 dark:shadow-black/50 sm:rounded-2xl overflow-hidden transition-colors duration-300">
+        
+        {/* HEADER: Sabit */}
+        <DialogHeader className="px-6 py-5 bg-white/80 dark:bg-[#130822]/90 backdrop-blur-md border-b border-slate-100 dark:border-white/5 flex-shrink-0 flex-row items-center justify-between space-y-0">
+          <div className="flex items-center gap-3">
+             <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-pink-500/20 to-orange-500/20 border border-pink-500/10 flex items-center justify-center text-pink-500 shrink-0">
+               <Tag size={20} />
+             </div>
+             <div>
+                <DialogTitle className="text-lg font-bold text-slate-900 dark:text-white">
+                  {header?.id
+                    ? t('pricingRule.form.edit', 'Fiyat Kuralı Düzenle')
+                    : t('pricingRule.form.create', 'Yeni Fiyat Kuralı')}
+                </DialogTitle>
+                <DialogDescription className="text-slate-500 dark:text-slate-400 text-xs mt-0.5">
+                  {header?.id
+                    ? t('pricingRule.form.editDescription', 'Fiyat kuralı bilgilerini düzenleyin')
+                    : t('pricingRule.form.createDescription', 'Yeni fiyat kuralı bilgilerini girin')}
+                </DialogDescription>
+             </div>
+          </div>
         </DialogHeader>
 
-        <div className="flex-1 min-h-0 flex flex-col px-6 pb-6">
+        {/* BODY: İçerik Alanı */}
+        <div className="flex-1 min-h-0 flex flex-col">
           <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as 'header' | 'lines' | 'salesmen')} className="w-full flex-1 flex flex-col min-h-0">
-            <TabsList className="grid w-full grid-cols-3 mb-4 flex-shrink-0">
-              <TabsTrigger value="header">
-                {t('pricingRule.form.tabs.header', 'Genel Bilgiler')}
-              </TabsTrigger>
-              <TabsTrigger value="lines">
-                {t('pricingRule.form.tabs.lines', 'Satırlar')} ({lines.length})
-              </TabsTrigger>
-              <TabsTrigger value="salesmen">
-                {t('pricingRule.form.tabs.salesmen', 'Satışçılar')} ({salesmen.length})
-              </TabsTrigger>
-            </TabsList>
+            
+            {/* Tabs Listesi - Sabit */}
+            <div className="px-6 pt-4 pb-2 bg-slate-50/50 dark:bg-white/5 border-b border-slate-100 dark:border-white/5">
+                <TabsList className="bg-slate-200/50 dark:bg-white/10 p-1 rounded-lg h-auto grid grid-cols-3 w-full max-w-md">
+                  <TabsTrigger value="header" className="rounded-md data-[state=active]:bg-white dark:data-[state=active]:bg-[#1a1025] data-[state=active]:text-pink-600 dark:data-[state=active]:text-pink-400 data-[state=active]:shadow-sm py-2 text-xs font-medium transition-all">
+                    <FileText size={14} className="mr-2" />
+                    {t('pricingRule.form.tabs.header', 'Genel Bilgiler')}
+                  </TabsTrigger>
+                  <TabsTrigger value="lines" className="rounded-md data-[state=active]:bg-white dark:data-[state=active]:bg-[#1a1025] data-[state=active]:text-pink-600 dark:data-[state=active]:text-pink-400 data-[state=active]:shadow-sm py-2 text-xs font-medium transition-all">
+                    <List size={14} className="mr-2" />
+                    {t('pricingRule.form.tabs.lines', 'Satırlar')} 
+                    <span className="ml-1.5 px-1.5 py-0.5 rounded-full bg-slate-100 dark:bg-white/10 text-[10px]">{lines.length}</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="salesmen" className="rounded-md data-[state=active]:bg-white dark:data-[state=active]:bg-[#1a1025] data-[state=active]:text-pink-600 dark:data-[state=active]:text-pink-400 data-[state=active]:shadow-sm py-2 text-xs font-medium transition-all">
+                    <Users size={14} className="mr-2" />
+                    {t('pricingRule.form.tabs.salesmen', 'Satışçılar')}
+                    <span className="ml-1.5 px-1.5 py-0.5 rounded-full bg-slate-100 dark:bg-white/10 text-[10px]">{salesmen.length}</span>
+                  </TabsTrigger>
+                </TabsList>
+            </div>
 
-            <div className="flex-1 overflow-y-auto min-h-0">
-              <TabsContent value="header" className="mt-0">
+            {/* Tab İçerikleri - Kaydırılabilir */}
+            <div className="flex-1 overflow-y-auto min-h-0 p-6 custom-scrollbar bg-slate-50/30 dark:bg-transparent">
+              <TabsContent value="header" className="mt-0 h-full">
                 <PricingRuleHeaderForm
                   header={headerData}
                   setHeader={setHeaderData}
                 />
               </TabsContent>
 
-              <TabsContent value="lines" className="mt-0">
+              <TabsContent value="lines" className="mt-0 h-full">
                 <PricingRuleLineTable
                   lines={lines}
                   setLines={setLines}
@@ -291,7 +322,7 @@ export function PricingRuleForm({ open, onOpenChange, header }: PricingRuleFormP
                 />
               </TabsContent>
 
-              <TabsContent value="salesmen" className="mt-0">
+              <TabsContent value="salesmen" className="mt-0 h-full">
                 <PricingRuleSalesmanTable
                   salesmen={salesmen}
                   setSalesmen={setSalesmen}
@@ -302,25 +333,35 @@ export function PricingRuleForm({ open, onOpenChange, header }: PricingRuleFormP
           </Tabs>
         </div>
 
-        <DialogFooter className="px-6 pb-6 pt-4 border-t flex-shrink-0">
+        {/* FOOTER: Sabit */}
+        <DialogFooter className="px-6 py-4 bg-white/80 dark:bg-[#130822]/90 backdrop-blur-md border-t border-slate-100 dark:border-white/5 flex-shrink-0 gap-3">
           <Button
             type="button"
             variant="outline"
             onClick={() => onOpenChange(false)}
             disabled={createMutation.isPending || updateMutation.isPending}
+            className="bg-white dark:bg-transparent border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white"
           >
+            <X size={16} className="mr-2" />
             {t('pricingRule.form.cancel', 'İptal')}
           </Button>
           <Button
             type="button"
             onClick={handleSubmit}
             disabled={createMutation.isPending || updateMutation.isPending}
+            className="bg-gradient-to-r from-pink-600 to-orange-600 text-white font-bold border-0 hover:shadow-lg hover:shadow-pink-500/20 transition-all transform active:scale-95 px-6"
           >
-            {createMutation.isPending || updateMutation.isPending
-              ? t('pricingRule.form.saving', 'Kaydediliyor...')
-              : header?.id
-                ? t('pricingRule.form.update', 'Güncelle')
-                : t('pricingRule.form.createButton', 'Oluştur')}
+            {createMutation.isPending || updateMutation.isPending ? (
+                <>
+                    <Loader2 size={16} className="mr-2 animate-spin" />
+                    {t('pricingRule.form.saving', 'Kaydediliyor...')}
+                </>
+            ) : (
+                <>
+                    <Save size={16} className="mr-2" />
+                    {header?.id ? t('pricingRule.form.update', 'Güncelle') : t('pricingRule.form.createButton', 'Oluştur')}
+                </>
+            )}
           </Button>
         </DialogFooter>
       </DialogContent>

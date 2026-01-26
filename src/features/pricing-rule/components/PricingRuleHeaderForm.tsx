@@ -1,4 +1,4 @@
-import { type ReactElement } from 'react';
+import { type ReactElement, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -13,14 +13,49 @@ import {
 import { useCustomersForPricingRule } from '../hooks/useCustomersForPricingRule';
 import { CustomerSelectDialog, type CustomerSelectionResult } from '@/components/shared';
 import { PricingRuleType, type PricingRuleHeaderCreateDto } from '../types/pricing-rule-types';
-import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Search, X } from 'lucide-react';
+// İkonlar
+import { 
+  Search, 
+  X, 
+  List, 
+  Hash, 
+  Type, 
+  Calendar, 
+  Building2, 
+  Percent, 
+  Activity 
+} from 'lucide-react';
 
 interface PricingRuleHeaderFormProps {
   header: PricingRuleHeaderCreateDto;
   setHeader: (header: PricingRuleHeaderCreateDto) => void;
 }
+
+// --- TASARIM SABİTLERİ (Diğer formlarla uyumlu) ---
+const INPUT_STYLE = `
+  h-11 rounded-lg
+  bg-slate-50 dark:bg-[#0c0516] 
+  border border-slate-200 dark:border-white/10 
+  text-slate-900 dark:text-white text-sm
+  placeholder:text-slate-400 dark:placeholder:text-slate-600 
+  
+  focus-visible:ring-0 focus-visible:ring-offset-0 
+  
+  /* LIGHT MODE FOCUS */
+  focus:bg-white 
+  focus:border-pink-500 
+  focus:shadow-[0_0_0_3px_rgba(236,72,153,0.15)] 
+
+  /* DARK MODE FOCUS */
+  dark:focus:bg-[#0c0516] 
+  dark:focus:border-pink-500/60 
+  dark:focus:shadow-[0_0_0_3px_rgba(236,72,153,0.1)]
+
+  transition-all duration-200
+`;
+
+const LABEL_STYLE = "text-[11px] text-slate-500 dark:text-slate-400 uppercase tracking-wider font-bold ml-1 mb-1.5 block flex items-center gap-1.5";
 
 export function PricingRuleHeaderForm({ header, setHeader }: PricingRuleHeaderFormProps): ReactElement {
   const { t } = useTranslation();
@@ -41,7 +76,7 @@ export function PricingRuleHeaderForm({ header, setHeader }: PricingRuleHeaderFo
     }
   };
 
-  const selectedCustomer = customers.find((c) => c.id === header.customerId);
+  const selectedCustomer = customers?.find((c) => c.id === header.customerId);
   const displayValue = selectedCustomer
     ? selectedCustomer.name
     : header.erpCustomerCode
@@ -49,20 +84,23 @@ export function PricingRuleHeaderForm({ header, setHeader }: PricingRuleHeaderFo
       : '';
 
   return (
-    <div className="space-y-4">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label htmlFor="ruleType">
+    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+      
+      {/* 1. Kural Temel Bilgileri */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div className="space-y-0">
+          <Label htmlFor="ruleType" className={LABEL_STYLE}>
+            <List size={12} className="text-pink-500" />
             {t('pricingRule.header.ruleType', 'Kural Tipi')} *
           </Label>
           <Select
             value={header.ruleType?.toString()}
             onValueChange={(value) => handleChange('ruleType', parseInt(value) as PricingRuleType)}
           >
-            <SelectTrigger id="ruleType">
+            <SelectTrigger id="ruleType" className={INPUT_STYLE}>
               <SelectValue placeholder={t('pricingRule.header.ruleTypePlaceholder', 'Kural tipi seçin')} />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="bg-white dark:bg-[#1a1025] border border-slate-100 dark:border-white/10 text-slate-900 dark:text-white shadow-xl">
               <SelectItem value={PricingRuleType.Demand.toString()}>
                 {t('pricingRule.ruleType.demand', 'Talep')}
               </SelectItem>
@@ -76,8 +114,9 @@ export function PricingRuleHeaderForm({ header, setHeader }: PricingRuleHeaderFo
           </Select>
         </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="ruleCode">
+        <div className="space-y-0">
+          <Label htmlFor="ruleCode" className={LABEL_STYLE}>
+            <Hash size={12} className="text-pink-500" />
             {t('pricingRule.header.ruleCode', 'Kural Kodu')} *
           </Label>
           <Input
@@ -86,11 +125,13 @@ export function PricingRuleHeaderForm({ header, setHeader }: PricingRuleHeaderFo
             onChange={(e) => handleChange('ruleCode', e.target.value)}
             placeholder={t('pricingRule.header.ruleCodePlaceholder', 'Kural kodu girin')}
             maxLength={50}
+            className={INPUT_STYLE}
           />
         </div>
 
-        <div className="space-y-2 md:col-span-2">
-          <Label htmlFor="ruleName">
+        <div className="space-y-0 md:col-span-2">
+          <Label htmlFor="ruleName" className={LABEL_STYLE}>
+            <Type size={12} className="text-pink-500" />
             {t('pricingRule.header.ruleName', 'Kural Adı')} *
           </Label>
           <Input
@@ -99,11 +140,16 @@ export function PricingRuleHeaderForm({ header, setHeader }: PricingRuleHeaderFo
             onChange={(e) => handleChange('ruleName', e.target.value)}
             placeholder={t('pricingRule.header.ruleNamePlaceholder', 'Kural adı girin')}
             maxLength={250}
+            className={INPUT_STYLE}
           />
         </div>
+      </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="validFrom">
+      {/* 2. Tarih ve Müşteri */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div className="space-y-0">
+          <Label htmlFor="validFrom" className={LABEL_STYLE}>
+            <Calendar size={12} className="text-pink-500" />
             {t('pricingRule.header.validFrom', 'Geçerlilik Başlangıç')} *
           </Label>
           <Input
@@ -111,11 +157,13 @@ export function PricingRuleHeaderForm({ header, setHeader }: PricingRuleHeaderFo
             type="date"
             value={header.validFrom}
             onChange={(e) => handleChange('validFrom', e.target.value)}
+            className={INPUT_STYLE}
           />
         </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="validTo">
+        <div className="space-y-0">
+          <Label htmlFor="validTo" className={LABEL_STYLE}>
+            <Calendar size={12} className="text-pink-500" />
             {t('pricingRule.header.validTo', 'Geçerlilik Bitiş')} *
           </Label>
           <Input
@@ -123,11 +171,13 @@ export function PricingRuleHeaderForm({ header, setHeader }: PricingRuleHeaderFo
             type="date"
             value={header.validTo}
             onChange={(e) => handleChange('validTo', e.target.value)}
+            className={INPUT_STYLE}
           />
         </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="customerId">
+        <div className="space-y-0 md:col-span-2">
+          <Label htmlFor="customerId" className={LABEL_STYLE}>
+            <Building2 size={12} className="text-pink-500" />
             {t('pricingRule.header.customer', 'Müşteri')}
           </Label>
           <div className="flex gap-2">
@@ -136,12 +186,13 @@ export function PricingRuleHeaderForm({ header, setHeader }: PricingRuleHeaderFo
               readOnly
               value={displayValue}
               placeholder={t('pricingRule.header.customerPlaceholder', 'Müşteri seçin (Opsiyonel)')}
-              className="flex-1"
+              className={`${INPUT_STYLE} flex-1`}
             />
             <Button
               type="button"
               variant="outline"
               size="icon"
+              className="h-11 w-11 border-slate-200 dark:border-white/10 hover:bg-slate-50 dark:hover:bg-white/5"
               onClick={() => setCustomerDialogOpen(true)}
               title={t('pricingRule.header.selectCustomer', 'Müşteri Seç')}
             >
@@ -152,6 +203,7 @@ export function PricingRuleHeaderForm({ header, setHeader }: PricingRuleHeaderFo
                 type="button"
                 variant="ghost"
                 size="icon"
+                className="h-11 w-11 text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
                 onClick={() => {
                   handleChange('customerId', null);
                   handleChange('erpCustomerCode', null);
@@ -162,9 +214,13 @@ export function PricingRuleHeaderForm({ header, setHeader }: PricingRuleHeaderFo
             )}
           </div>
         </div>
+      </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="branchCode">
+      {/* 3. Diğer Ayarlar */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div className="space-y-0">
+          <Label htmlFor="branchCode" className={LABEL_STYLE}>
+            <Building2 size={12} className="text-pink-500" />
             {t('pricingRule.header.branchCode', 'Şube Kodu')}
           </Label>
           <Input
@@ -173,33 +229,34 @@ export function PricingRuleHeaderForm({ header, setHeader }: PricingRuleHeaderFo
             value={header.branchCode || ''}
             onChange={(e) => handleChange('branchCode', e.target.value ? parseInt(e.target.value) : null)}
             placeholder={t('pricingRule.header.branchCodePlaceholder', 'Şube kodu (Opsiyonel)')}
+            className={INPUT_STYLE}
           />
         </div>
 
-        <div className="space-y-2">
-          <div className="flex items-center justify-between">
-            <Label htmlFor="priceIncludesVat">
-              {t('pricingRule.header.priceIncludesVat', 'KDV Dahil')}
-            </Label>
-            <Switch
-              id="priceIncludesVat"
-              checked={header.priceIncludesVat}
-              onCheckedChange={(checked) => handleChange('priceIncludesVat', checked)}
-            />
-          </div>
+        <div className="flex items-center justify-between p-4 rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50/50 dark:bg-[#0c0516] transition-colors h-full">
+          <Label htmlFor="priceIncludesVat" className="cursor-pointer flex items-center gap-2 font-semibold text-sm text-slate-700 dark:text-slate-300">
+            <Percent size={16} className="text-pink-500" />
+            {t('pricingRule.header.priceIncludesVat', 'KDV Dahil')}
+          </Label>
+          <Switch
+            id="priceIncludesVat"
+            checked={header.priceIncludesVat}
+            onCheckedChange={(checked) => handleChange('priceIncludesVat', checked)}
+            className="data-[state=checked]:bg-pink-600"
+          />
         </div>
 
-        <div className="space-y-2">
-          <div className="flex items-center justify-between">
-            <Label htmlFor="isActive">
-              {t('pricingRule.header.isActive', 'Aktif')}
-            </Label>
-            <Switch
-              id="isActive"
-              checked={header.isActive}
-              onCheckedChange={(checked) => handleChange('isActive', checked)}
-            />
-          </div>
+        <div className="flex items-center justify-between p-4 rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50/50 dark:bg-[#0c0516] transition-colors h-full">
+          <Label htmlFor="isActive" className="cursor-pointer flex items-center gap-2 font-semibold text-sm text-slate-700 dark:text-slate-300">
+            <Activity size={16} className="text-pink-500" />
+            {t('pricingRule.header.isActive', 'Aktif')}
+          </Label>
+          <Switch
+            id="isActive"
+            checked={header.isActive}
+            onCheckedChange={(checked) => handleChange('isActive', checked)}
+            className="data-[state=checked]:bg-green-500"
+          />
         </div>
       </div>
 
