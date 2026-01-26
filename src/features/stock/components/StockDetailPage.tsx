@@ -7,7 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ArrowLeft, Box, Image as ImageIcon, Layers, Info, PackageOpen, ShieldCheck } from 'lucide-react';
-import { cn } from '@/lib/utils'; // Tailwind merge utility
+import { cn } from '@/lib/utils';
 import { useStockDetail } from '../hooks/useStockDetail';
 import { StockBasicInfo } from './StockBasicInfo';
 import { StockDetailForm } from './StockDetailForm';
@@ -33,7 +33,6 @@ export function StockDetailPage(): ReactElement {
     return () => setPageTitle(null);
   }, [stock, t, setPageTitle]);
 
-  // Loading Skeleton
   if (isLoading) {
     return (
       <div className="w-full space-y-6 animate-pulse">
@@ -49,7 +48,6 @@ export function StockDetailPage(): ReactElement {
     );
   }
 
-  // Not Found State
   if (!stock) {
     return (
       <div className="flex flex-col items-center justify-center h-[60vh] text-center space-y-6">
@@ -78,10 +76,8 @@ export function StockDetailPage(): ReactElement {
   return (
     <div className="w-full space-y-8 pb-10">
       
-      {/* --- HEADER ALANI --- */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="flex items-center gap-5">
-            {/* Özel Tasarım Geri Butonu */}
             <Button
                 variant="outline"
                 size="icon"
@@ -94,7 +90,6 @@ export function StockDetailPage(): ReactElement {
             <div className="space-y-1">
                 <h1 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-white flex items-center gap-3">
                     {stock.stockName}
-                    {/* Durum Rozeti (Örnek) */}
                     <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400 border border-green-200 dark:border-green-800">
                         <ShieldCheck className="w-3 h-3 mr-1" />
                         Aktif
@@ -109,21 +104,16 @@ export function StockDetailPage(): ReactElement {
             </div>
         </div>
 
-        {/* Aksiyon Alanı (Opsiyonel) */}
         <div className="hidden md:flex gap-3">
-             {/* Buraya 'Rapor Al', 'Sil' gibi butonlar eklenebilir */}
         </div>
       </div>
 
-      {/* --- ANA CAM KART --- */}
       <div className="relative group">
-        {/* Dekoratif Gradient Border Efekti (Arka planda hafif taşan renk) */}
         <div className="absolute -inset-0.5 bg-gradient-to-r from-pink-500 via-purple-500 to-orange-500 rounded-[20px] opacity-20 group-hover:opacity-40 blur transition duration-500"></div>
         
         <div className="relative bg-white/80 dark:bg-[#1a1025]/80 backdrop-blur-xl border border-white/60 dark:border-white/5 rounded-2xl shadow-xl overflow-hidden">
             
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                {/* Tab Başlıkları - Modern Underline Stil */}
                 <div className="border-b border-zinc-200/50 dark:border-white/5 px-6 pt-4">
                     <TabsList className="bg-transparent h-auto p-0 w-full justify-start gap-8">
                         <TabItem value="basic" icon={Info} label={t('stock.detail.basicInfo', 'Temel Bilgiler')} active={activeTab === 'basic'} />
@@ -132,13 +122,10 @@ export function StockDetailPage(): ReactElement {
                     </TabsList>
                 </div>
 
-                {/* İçerik Alanı */}
                 <div className="p-6 md:p-8 min-h-[500px]">
                     
-                    {/* TAB 1: Temel Bilgiler */}
                     <TabsContent value="basic" className="mt-0 focus-visible:outline-none animate-in fade-in slide-in-from-bottom-2 duration-500">
                         <div className="grid gap-8 lg:grid-cols-12">
-                            {/* Sol: Bilgi Paneli */}
                             <div className="lg:col-span-4 space-y-6">
                                 <div className="bg-zinc-50/80 dark:bg-white/5 rounded-xl p-6 border border-zinc-100 dark:border-white/5">
                                     <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
@@ -153,7 +140,6 @@ export function StockDetailPage(): ReactElement {
                                 </div>
                             </div>
                             
-                            {/* Sağ: Form */}
                             <div className="lg:col-span-8">
                                 <Card className="border-none shadow-none bg-transparent">
                                     <CardContent className="p-0">
@@ -164,7 +150,6 @@ export function StockDetailPage(): ReactElement {
                         </div>
                     </TabsContent>
 
-                    {/* TAB 2: Görseller */}
                     <TabsContent value="images" className="mt-0 focus-visible:outline-none animate-in fade-in slide-in-from-bottom-2 duration-500">
                         <div className="space-y-8">
                             <div className="bg-zinc-50/50 dark:bg-white/5 border-2 border-dashed border-zinc-200 dark:border-white/10 rounded-xl p-8 hover:bg-zinc-50 dark:hover:bg-white/10 transition-colors">
@@ -182,7 +167,6 @@ export function StockDetailPage(): ReactElement {
                         </div>
                     </TabsContent>
 
-                    {/* TAB 3: İlişkiler */}
                     <TabsContent value="relations" className="mt-0 focus-visible:outline-none animate-in fade-in slide-in-from-bottom-2 duration-500">
                         <div className="grid gap-8 lg:grid-cols-12">
                              <div className="lg:col-span-4">
@@ -205,8 +189,7 @@ export function StockDetailPage(): ReactElement {
   );
 }
 
-// Özel Tab Item Bileşeni (Kod tekrarını önlemek ve stili yönetmek için)
-function TabItem({ value, icon: Icon, label, active }: { value: string, icon: any, label: string, active: boolean }) {
+function TabItem({ value, icon: Icon, label, active }: { value: string, icon: React.ElementType, label: string, active: boolean }) {
     return (
         <TabsTrigger 
             value={value} 
@@ -220,7 +203,6 @@ function TabItem({ value, icon: Icon, label, active }: { value: string, icon: an
                 <Icon className={cn("w-4 h-4 transition-transform duration-300", active ? "scale-110" : "")} />
                 <span>{label}</span>
             </div>
-            {/* Active Glow Effect */}
             {active && (
                 <div className="absolute bottom-[-2px] left-0 right-0 h-[2px] bg-pink-600 dark:bg-pink-500 shadow-[0_0_10px_rgba(219,39,119,0.5)]" />
             )}

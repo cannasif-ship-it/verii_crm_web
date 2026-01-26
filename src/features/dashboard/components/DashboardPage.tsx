@@ -15,7 +15,6 @@ import {
   TrendingUp,
   Users,
   Wallet,
-  Sparkles,
   Zap,
   MoreHorizontal,
   CalendarDays,

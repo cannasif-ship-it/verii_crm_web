@@ -297,7 +297,7 @@ export function PricingRuleLineTable({
                     </TableCell>
                 </TableRow>
                 ) : (
-                lines.map((line, index) => (
+                lines.map((line) => (
                     <TableRow 
                         key={line.id} 
                         className={`group border-b border-slate-100 dark:border-white/5 transition-colors ${editingLineId === line.id ? 'bg-blue-50/50 dark:bg-blue-900/10' : 'hover:bg-slate-50/80 dark:hover:bg-white/5'}`}
