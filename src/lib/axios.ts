@@ -25,7 +25,7 @@ export const loadConfig = async (): Promise<string> => {
     } catch (error) {
       console.warn('Failed to load config.json, using default API URL:', error);
     }
-    return 'http://localhost:5000';
+    return 'https://crmapi.v3rii.com';
   })();
 
   return configPromise;
