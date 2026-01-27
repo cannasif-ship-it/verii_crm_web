@@ -5,6 +5,7 @@ export const USER_MANAGEMENT_QUERY_KEYS = {
 } as const;
 
 export const queryKeys = {
+  all: () => [USER_MANAGEMENT_QUERY_KEYS.LIST] as const,
   list: (params?: {
     pageNumber?: number;
     pageSize?: number;

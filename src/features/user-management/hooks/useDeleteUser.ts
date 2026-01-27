@@ -11,7 +11,7 @@ export const useDeleteUser = (): UseMutationResult<void, Error, number> => {
   return useMutation({
     mutationFn: (id: number) => userApi.delete(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.list() });
+      queryClient.invalidateQueries({ queryKey: queryKeys.all() });
       queryClient.invalidateQueries({ queryKey: queryKeys.stats() });
       toast.success(t('userManagement.messages.deleteSuccess', 'Kullanıcı başarıyla silindi'));
     },

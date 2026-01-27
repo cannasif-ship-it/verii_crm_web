@@ -13,7 +13,7 @@ export const useUpdateUser = (): UseMutationResult<UserDto, Error, { id: number;
     mutationFn: ({ id, data }: { id: number; data: UpdateUserDto }) =>
       userApi.update(id, data),
     onSuccess: (updatedUser: UserDto) => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.list() });
+      queryClient.invalidateQueries({ queryKey: queryKeys.all() });
       queryClient.invalidateQueries({ queryKey: queryKeys.detail(updatedUser.id) });
       queryClient.invalidateQueries({ queryKey: queryKeys.stats() });
       toast.success(t('userManagement.messages.updateSuccess', 'Kullanıcı başarıyla güncellendi'));

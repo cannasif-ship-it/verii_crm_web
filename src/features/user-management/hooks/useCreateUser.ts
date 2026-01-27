@@ -12,7 +12,7 @@ export const useCreateUser = (): UseMutationResult<UserDto, Error, CreateUserDto
   return useMutation({
     mutationFn: (data: CreateUserDto) => userApi.create(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.list() });
+      queryClient.invalidateQueries({ queryKey: queryKeys.all() });
       queryClient.invalidateQueries({ queryKey: queryKeys.stats() });
       toast.success(t('userManagement.messages.createSuccess', 'Kullanıcı başarıyla oluşturuldu'));
     },
