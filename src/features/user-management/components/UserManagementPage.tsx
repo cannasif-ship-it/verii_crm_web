@@ -36,11 +36,6 @@ export function UserManagementPage(): ReactElement {
     setFormOpen(true);
   };
 
-  const handleEdit = (user: UserDto): void => {
-    setEditingUser(user);
-    setFormOpen(true);
-  };
-
   const handleFormSubmit = async (data: UserFormSchema | UserUpdateFormSchema): Promise<void> => {
     if (editingUser) {
       await updateUser.mutateAsync({
@@ -80,7 +75,6 @@ export function UserManagementPage(): ReactElement {
 
       <div className="space-y-4">
         <UserTable
-          onEdit={handleEdit}
           pageNumber={pageNumber}
           pageSize={pageSize}
           sortBy={sortBy}

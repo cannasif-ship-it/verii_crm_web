@@ -12,7 +12,6 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Switch } from '@/components/ui/switch';
 import {
   Form,
   FormControl,
@@ -154,29 +153,6 @@ export function UserForm({
               />
             </div>
 
-            {!isEditMode && (
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      {t('userManagement.form.password', 'Şifre')}
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        type="password"
-                        placeholder={t('userManagement.form.passwordPlaceholder', 'Şifre girin (min 8 karakter)')}
-                        maxLength={100}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            )}
-
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <FormField
                 control={form.control}
@@ -259,29 +235,6 @@ export function UserForm({
                 )}
               />
             </div>
-
-            <FormField
-              control={form.control}
-              name="isActive"
-              render={({ field }) => (
-                <FormItem className="flex items-center justify-between rounded-lg border p-4">
-                  <div className="space-y-0.5">
-                    <FormLabel>
-                      {t('userManagement.form.isActive', 'Aktif')}
-                    </FormLabel>
-                    <div className="text-sm text-muted-foreground">
-                      {t('userManagement.form.isActiveDescription', 'Kullanıcının aktif durumu')}
-                    </div>
-                  </div>
-                  <FormControl>
-                    <Switch
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
 
             <DialogFooter>
               <Button

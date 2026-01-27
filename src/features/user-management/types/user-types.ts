@@ -19,7 +19,7 @@ export interface UserDto {
 export interface CreateUserDto {
   username: string;
   email: string;
-  password: string;
+  password?: string;
   firstName?: string;
   lastName?: string;
   phoneNumber?: string;
@@ -67,7 +67,9 @@ export const userFormSchema = z.object({
   password: z
     .string()
     .min(8, 'userManagement.form.password.minLength')
-    .max(100, 'userManagement.form.password.maxLength'),
+    .max(100, 'userManagement.form.password.maxLength')
+    .optional()
+    .or(z.literal('')),
   firstName: z.string().max(50, 'userManagement.form.firstName.maxLength').optional(),
   lastName: z.string().max(50, 'userManagement.form.lastName.maxLength').optional(),
   phoneNumber: z.string().max(20, 'userManagement.form.phoneNumber.maxLength').optional(),

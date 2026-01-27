@@ -1,4 +1,4 @@
-import { type ReactElement, useState } from 'react';
+import { type ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Table,
@@ -10,21 +10,13 @@ import {
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
+import { Switch } from '@/components/ui/switch';
 import { useUserList } from '../hooks/useUserList';
-import { useDeleteUser } from '../hooks/useDeleteUser';
+import { useUpdateUser } from '../hooks/useUpdateUser';
 import type { UserDto } from '../types/user-types';
 import type { PagedFilter } from '@/types/api';
 
 interface UserTableProps {
-  onEdit: (user: UserDto) => void;
   pageNumber: number;
   pageSize: number;
   sortBy?: string;
@@ -35,7 +27,6 @@ interface UserTableProps {
 }
 
 export function UserTable({
-  onEdit,
   pageNumber,
   pageSize,
   sortBy = 'Id',
@@ -45,8 +36,6 @@ export function UserTable({
   onSortChange,
 }: UserTableProps): ReactElement {
   const { t, i18n } = useTranslation();
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [selectedUser, setSelectedUser] = useState<UserDto | null>(null);
 
   const { data, isLoading } = useUserList({
     pageNumber,
@@ -56,19 +45,13 @@ export function UserTable({
     filters: Array.isArray(filters) ? filters : undefined,
   });
 
-  const deleteUser = useDeleteUser();
+  const updateUser = useUpdateUser();
 
-  const handleDeleteClick = (user: UserDto): void => {
-    setSelectedUser(user);
-    setDeleteDialogOpen(true);
-  };
-
-  const handleDeleteConfirm = async (): Promise<void> => {
-    if (selectedUser) {
-      await deleteUser.mutateAsync(selectedUser.id);
-      setDeleteDialogOpen(false);
-      setSelectedUser(null);
-    }
+  const handleStatusChange = async (user: UserDto, checked: boolean): Promise<void> => {
+    await updateUser.mutateAsync({
+      id: user.id,
+      data: { isActive: checked },
+    });
   };
 
   const handleSort = (column: string): void => {
@@ -199,9 +182,6 @@ export function UserTable({
               <TableHead>
                 {t('userManagement.table.createdDate', 'Oluşturulma Tarihi')}
               </TableHead>
-              <TableHead className="text-right">
-                {t('userManagement.table.actions', 'İşlemler')}
-              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -216,11 +196,16 @@ export function UserTable({
                 </TableCell>
                 <TableCell>
                   <div className="flex items-center gap-2">
-                    <Badge variant={user.isActive ? 'default' : 'secondary'}>
-                      {user.isActive
-                        ? t('userManagement.table.active', 'Aktif')
-                        : t('userManagement.table.inactive', 'Pasif')}
-                    </Badge>
+                    <Switch
+                      checked={user.isActive}
+                      onCheckedChange={(checked) => handleStatusChange(user, checked)}
+                      disabled={updateUser.isPending}
+                    />
+                    <span className="text-sm text-muted-foreground">
+                        {user.isActive
+                            ? t('userManagement.table.active', 'Aktif')
+                            : t('userManagement.table.inactive', 'Pasif')}
+                    </span>
                     {user.isEmailConfirmed && (
                       <Badge variant="outline" className="text-xs">
                         {t('userManagement.table.confirmed', 'Onaylı')}
@@ -232,24 +217,6 @@ export function UserTable({
                   {user.creationTime
                     ? new Date(user.creationTime).toLocaleDateString(i18n.language)
                     : '-'}
-                </TableCell>
-                <TableCell className="text-right">
-                  <div className="flex justify-end gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => onEdit(user)}
-                    >
-                      {t('userManagement.table.edit', 'Düzenle')}
-                    </Button>
-                    <Button
-                      variant="destructive"
-                      size="sm"
-                      onClick={() => handleDeleteClick(user)}
-                    >
-                      {t('userManagement.table.delete', 'Sil')}
-                    </Button>
-                  </div>
                 </TableCell>
               </TableRow>
             ))}
@@ -290,39 +257,6 @@ export function UserTable({
           </Button>
         </div>
       </div>
-
-      <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>
-              {t('userManagement.delete.confirmTitle', 'Kullanıcıyı Sil')}
-            </DialogTitle>
-            <DialogDescription>
-              {t('userManagement.delete.confirmMessage', '{{username}} kullanıcısını silmek istediğinizden emin misiniz?', {
-                username: selectedUser?.username || '',
-              })}
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-              <Button
-                variant="outline"
-                onClick={() => setDeleteDialogOpen(false)}
-                disabled={deleteUser.isPending}
-              >
-                {t('userManagement.form.cancel', 'İptal')}
-              </Button>
-              <Button
-                variant="destructive"
-                onClick={handleDeleteConfirm}
-                disabled={deleteUser.isPending}
-              >
-                {deleteUser.isPending
-                  ? t('userManagement.table.loading', 'Yükleniyor...')
-                  : t('userManagement.table.delete', 'Sil')}
-              </Button>
-            </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </>
   );
 }
