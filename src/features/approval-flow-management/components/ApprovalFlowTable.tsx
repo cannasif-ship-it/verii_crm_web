@@ -22,7 +22,6 @@ import { useApprovalFlowList } from '../hooks/useApprovalFlowList';
 import { useDeleteApprovalFlow } from '../hooks/useDeleteApprovalFlow';
 import type { ApprovalFlowDto } from '../types/approval-flow-types';
 import type { PagedFilter } from '@/types/api';
-import { DocumentTypeEnum } from '../types/approval-flow-types';
 import { Edit2, Trash2, ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
 
 interface ApprovalFlowTableProps {
@@ -81,11 +80,11 @@ export function ApprovalFlowTable({
 
   const getDocumentTypeLabel = (type: number): string => {
     switch (type) {
-      case DocumentTypeEnum.Offer:
-        return t('approvalFlow.documentType.offer', 'Teklif');
-      case DocumentTypeEnum.Request:
-        return t('approvalFlow.documentType.request', 'Talep');
-      case DocumentTypeEnum.Order:
+      case 1:
+        return t('approvalFlow.documentType.demand', 'Talep');
+      case 2:
+        return t('approvalFlow.documentType.quotation', 'Teklif');
+      case 3:
         return t('approvalFlow.documentType.order', 'Sipariş');
       default:
         return '-';

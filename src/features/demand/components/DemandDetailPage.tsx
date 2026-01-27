@@ -14,7 +14,7 @@ import { useUserDiscountLimitsBySalesperson } from '../hooks/useUserDiscountLimi
 import { useCustomerOptions } from '@/features/customer-management/hooks/useCustomerOptions';
 import { useUIStore } from '@/stores/ui-store';
 import { Button } from '@/components/ui/button';
-import { Send, Save, Calculator, Layers, X } from 'lucide-react'; // İkonlar güncellendi
+import { Send, Save, Calculator, Layers, X, Loader2 } from 'lucide-react';
 import { createDemandSchema, type CreateDemandSchema } from '../schemas/demand-schema';
 import type { DemandLineFormState, DemandExchangeRateFormState, DemandBulkCreateDto, CreateDemandDto, PricingRuleLineGetDto, UserDiscountLimitDto } from '../types/demand-types';
 import { DemandHeaderForm } from './DemandHeaderForm';
@@ -458,8 +458,17 @@ export function DemandDetailPage(): ReactElement {
                   disabled={startApprovalFlow.isPending || !demand}
                   className="h-10"
                 >
-                  <Send className="h-4 w-4 mr-2" />
-                  {t('demand.approval.sendForApproval', 'Onaya Gönder')}
+                  {startApprovalFlow.isPending ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      {t('demand.approval.sending', 'Gönderiliyor...')}
+                    </>
+                  ) : (
+                    <>
+                      <Send className="h-4 w-4 mr-2" />
+                      {t('demand.approval.sendForApproval', 'Onaya Gönder')}
+                    </>
+                  )}
                 </Button>
               )}
               <Button type="submit" disabled={updateMutation.isPending} className="group bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-700 hover:to-purple-700 text-white min-w-[140px]">

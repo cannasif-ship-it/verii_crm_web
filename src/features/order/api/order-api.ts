@@ -210,11 +210,33 @@ export const orderApi = {
   },
 
   startApprovalFlow: async (data: { entityId: number; documentType: number; totalAmount: number }): Promise<ApiResponse<boolean>> => {
-    const response = await api.post<ApiResponse<boolean>>('/api/order/start-approval-flow', data);
-    if (!response.success) {
-      throw new Error(response.message || 'Onay akışı başlatılamadı');
+    try {
+      const response = await api.post<ApiResponse<boolean>>('/api/order/start-approval-flow', data);
+      if (!response.success) {
+        const errorMessage = response.message || response.exceptionMessage || 'Onay akışı başlatılamadı';
+        const errorData = {
+          message: errorMessage,
+          exceptionMessage: response.exceptionMessage,
+          errors: response.errors,
+        };
+        throw new Error(JSON.stringify(errorData));
+      }
+      return response;
+    } catch (error: unknown) {
+      if (error && typeof error === 'object' && 'response' in error) {
+        const axiosError = error as { response?: { data?: ApiResponse<boolean> } };
+        if (axiosError.response?.data) {
+          const apiError = axiosError.response.data;
+          const errorData = {
+            message: apiError.message || apiError.exceptionMessage || 'Onay akışı başlatılamadı',
+            exceptionMessage: apiError.exceptionMessage,
+            errors: apiError.errors,
+          };
+          throw new Error(JSON.stringify(errorData));
+        }
+      }
+      throw error;
     }
-    return response;
   },
 
   getWaitingApprovals: async (): Promise<ApprovalActionGetDto[]> => {
@@ -226,19 +248,63 @@ export const orderApi = {
   },
 
   approve: async (data: ApproveActionDto): Promise<ApiResponse<boolean>> => {
-    const response = await api.post<ApiResponse<boolean>>('/api/order/approve', data);
-    if (!response.success) {
-      throw new Error(response.message || 'Onay işlemi gerçekleştirilemedi');
+    try {
+      const response = await api.post<ApiResponse<boolean>>('/api/order/approve', data);
+      if (!response.success) {
+        const errorMessage = response.message || response.exceptionMessage || 'Onay işlemi gerçekleştirilemedi';
+        const errorData = {
+          message: errorMessage,
+          exceptionMessage: response.exceptionMessage,
+          errors: response.errors,
+        };
+        throw new Error(JSON.stringify(errorData));
+      }
+      return response;
+    } catch (error: unknown) {
+      if (error && typeof error === 'object' && 'response' in error) {
+        const axiosError = error as { response?: { data?: ApiResponse<boolean> } };
+        if (axiosError.response?.data) {
+          const apiError = axiosError.response.data;
+          const errorData = {
+            message: apiError.message || apiError.exceptionMessage || 'Onay işlemi gerçekleştirilemedi',
+            exceptionMessage: apiError.exceptionMessage,
+            errors: apiError.errors,
+          };
+          throw new Error(JSON.stringify(errorData));
+        }
+      }
+      throw error;
     }
-    return response;
   },
 
   reject: async (data: RejectActionDto): Promise<ApiResponse<boolean>> => {
-    const response = await api.post<ApiResponse<boolean>>('/api/order/reject', data);
-    if (!response.success) {
-      throw new Error(response.message || 'Red işlemi gerçekleştirilemedi');
+    try {
+      const response = await api.post<ApiResponse<boolean>>('/api/order/reject', data);
+      if (!response.success) {
+        const errorMessage = response.message || response.exceptionMessage || 'Red işlemi gerçekleştirilemedi';
+        const errorData = {
+          message: errorMessage,
+          exceptionMessage: response.exceptionMessage,
+          errors: response.errors,
+        };
+        throw new Error(JSON.stringify(errorData));
+      }
+      return response;
+    } catch (error: unknown) {
+      if (error && typeof error === 'object' && 'response' in error) {
+        const axiosError = error as { response?: { data?: ApiResponse<boolean> } };
+        if (axiosError.response?.data) {
+          const apiError = axiosError.response.data;
+          const errorData = {
+            message: apiError.message || apiError.exceptionMessage || 'Red işlemi gerçekleştirilemedi',
+            exceptionMessage: apiError.exceptionMessage,
+            errors: apiError.errors,
+          };
+          throw new Error(JSON.stringify(errorData));
+        }
+      }
+      throw error;
     }
-    return response;
   },
 
   getOrderExchangeRatesByOrderId: async (orderId: number): Promise<OrderExchangeRateGetDto[]> => {

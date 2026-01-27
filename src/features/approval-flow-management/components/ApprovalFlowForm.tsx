@@ -108,9 +108,9 @@ export function ApprovalFlowForm({
   const getDocumentTypeLabel = (type: number): string => {
     switch (type) {
       case PricingRuleType.Demand:
-        return t('approvalFlow.documentType.request', 'Talep');
+        return t('approvalFlow.documentType.demand', 'Talep');
       case PricingRuleType.Quotation:
-        return t('approvalFlow.documentType.offer', 'Teklif');
+        return t('approvalFlow.documentType.quotation', 'Teklif');
       case PricingRuleType.Order:
         return t('approvalFlow.documentType.order', 'Sipariş');
       default:

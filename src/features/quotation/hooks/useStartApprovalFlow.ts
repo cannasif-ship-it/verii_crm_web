@@ -12,13 +12,36 @@ export const useStartApprovalFlow = (): UseMutationResult<ApiResponse<boolean>, 
   return useMutation({
     mutationFn: (data: { entityId: number; documentType: number; totalAmount: number }) => 
       quotationApi.startApprovalFlow(data),
-    onSuccess: () => {
+    onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: queryKeys.quotations() });
+      queryClient.invalidateQueries({ 
+        queryKey: queryKeys.quotation(variables.entityId),
+        refetchType: 'active',
+      });
       queryClient.invalidateQueries({ queryKey: queryKeys.waitingApprovals() });
       toast.success(t('quotation.approval.startSuccess', 'Onay akışı başarıyla başlatıldı'));
     },
     onError: (error: Error) => {
-      toast.error(error.message || t('quotation.approval.startError', 'Onay akışı başlatılamadı'));
+      let errorMessage = t('quotation.approval.startError', 'Onay akışı başlatılamadı');
+      
+      if (error.message) {
+        try {
+          const parsedError = JSON.parse(error.message);
+          if (parsedError?.errors && Array.isArray(parsedError.errors) && parsedError.errors.length > 0) {
+            errorMessage = parsedError.errors.join(', ');
+          } else if (parsedError?.message) {
+            errorMessage = parsedError.message;
+          } else if (parsedError?.exceptionMessage) {
+            errorMessage = parsedError.exceptionMessage;
+          } else {
+            errorMessage = error.message;
+          }
+        } catch {
+          errorMessage = error.message;
+        }
+      }
+      
+      toast.error(errorMessage);
     },
   });
 };

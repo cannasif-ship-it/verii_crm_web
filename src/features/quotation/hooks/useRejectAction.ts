@@ -18,7 +18,26 @@ export const useRejectAction = (): UseMutationResult<ApiResponse<boolean>, Error
       toast.success(t('quotation.approval.rejectSuccess', 'Red işlemi başarıyla gerçekleştirildi'));
     },
     onError: (error: Error) => {
-      toast.error(error.message || t('quotation.approval.rejectError', 'Red işlemi gerçekleştirilemedi'));
+      let errorMessage = t('quotation.approval.rejectError', 'Red işlemi gerçekleştirilemedi');
+      
+      if (error.message) {
+        try {
+          const parsedError = JSON.parse(error.message);
+          if (parsedError?.errors && Array.isArray(parsedError.errors) && parsedError.errors.length > 0) {
+            errorMessage = parsedError.errors.join(', ');
+          } else if (parsedError?.message) {
+            errorMessage = parsedError.message;
+          } else if (parsedError?.exceptionMessage) {
+            errorMessage = parsedError.exceptionMessage;
+          } else {
+            errorMessage = error.message;
+          }
+        } catch {
+          errorMessage = error.message;
+        }
+      }
+      
+      toast.error(errorMessage);
     },
   });
 };
