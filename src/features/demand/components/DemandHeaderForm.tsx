@@ -28,7 +28,7 @@ import {
 } from '@/components/ui/dialog';
 import { CustomerSelectDialog } from '@/components/shared/CustomerSelectDialog';
 import { useShippingAddresses } from '../hooks/useShippingAddresses';
-import { useUsers } from '../hooks/useUsers';
+import { useDemandRelatedUsers } from '../hooks/useDemandRelatedUsers';
 import { usePaymentTypes } from '../hooks/usePaymentTypes';
 import { useExchangeRate } from '@/services/hooks/useExchangeRate';
 import { useErpCustomers } from '@/services/hooks/useErpCustomers';
@@ -83,7 +83,7 @@ export function DemandHeaderForm({
   const watchedRepresentativeId = form.watch('demand.representativeId');
 
   const { data: shippingAddresses } = useShippingAddresses(watchedCustomerId || undefined);
-  const { data: users } = useUsers();
+  const { data: relatedUsers = [] } = useDemandRelatedUsers(user?.id);
   const { data: paymentTypes } = usePaymentTypes();
   const { data: customerOptions = [] } = useCustomerOptions();
   const { data: erpCustomers = [] } = useErpCustomers();
@@ -287,8 +287,10 @@ export function DemandHeaderForm({
                         </div>
                       </FormControl>
                       <SelectContent>
-                        {users.map((user) => (
-                          <SelectItem key={user.id} value={user.id.toString()}>{user.fullName}</SelectItem>
+                        {relatedUsers.map((u) => (
+                          <SelectItem key={u.userId} value={u.userId.toString()}>
+                            {[u.firstName, u.lastName].filter(Boolean).join(' ')}
+                          </SelectItem>
                         ))}
                       </SelectContent>
                     </Select>

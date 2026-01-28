@@ -13,6 +13,7 @@ import type {
   DemandExchangeRateGetDto,
   DemandLineGetDto,
   ApprovalStatus,
+  ApprovalScopeUserDto,
 } from '../types/demand-types';
 
 export const demandApi = {
@@ -45,7 +46,7 @@ export const demandApi = {
     }
 
     const response = await api.get<ApiResponse<PagedResponse<DemandGetDto>>>(
-      `/api/demand?${queryParams.toString()}`
+      `/api/Demand/related?${queryParams.toString()}`
     );
     
     if (response.success && response.data) {
@@ -343,6 +344,26 @@ export const demandApi = {
       }
       throw error;
     }
+  },
+
+  getDemandRelatedUsers: async (userId: number): Promise<ApprovalScopeUserDto[]> => {
+    const response = await api.get<ApiResponse<ApprovalScopeUserDto[]>>(
+      `/api/Demand/related-users/${userId}`
+    );
+    if (!response.success || !response.data || !Array.isArray(response.data)) {
+      return [];
+    }
+    return response.data.map((item: unknown) => {
+      const r = item as Record<string, unknown>;
+      return {
+        flowId: (r.flowId as number) ?? (r.FlowId as number) ?? 0,
+        userId: (r.userId as number) ?? (r.UserId as number) ?? 0,
+        firstName: (r.firstName as string) ?? (r.FirstName as string) ?? '',
+        lastName: (r.lastName as string) ?? (r.LastName as string) ?? '',
+        roleGroupName: (r.roleGroupName as string) ?? (r.RoleGroupName as string) ?? '',
+        stepOrder: (r.stepOrder as number) ?? (r.StepOrder as number) ?? 0,
+      };
+    });
   },
 
   createRevisionOfDemand: async (demandId: number): Promise<ApiResponse<DemandGetDto>> => {
