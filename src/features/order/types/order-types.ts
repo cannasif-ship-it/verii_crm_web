@@ -303,3 +303,12 @@ export interface RejectActionDto {
   approvalActionId: number;
   rejectReason?: string | null;
 }
+
+export interface ApprovalScopeUserDto {
+  flowId: number;
+  userId: number;
+  firstName: string;
+  lastName: string;
+  roleGroupName: string;
+  stepOrder: number;
+}
