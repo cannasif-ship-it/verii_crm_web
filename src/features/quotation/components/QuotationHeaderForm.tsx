@@ -28,7 +28,7 @@ import {
 } from '@/components/ui/dialog';
 import { CustomerSelectDialog } from '@/components/shared/CustomerSelectDialog';
 import { useShippingAddresses } from '../hooks/useShippingAddresses';
-import { useUsers } from '../hooks/useUsers';
+import { useQuotationRelatedUsers } from '../hooks/useQuotationRelatedUsers';
 import { usePaymentTypes } from '../hooks/usePaymentTypes';
 import { useExchangeRate } from '@/services/hooks/useExchangeRate';
 import { useErpCustomers } from '@/services/hooks/useErpCustomers';
@@ -83,7 +83,7 @@ export function QuotationHeaderForm({
   const watchedRepresentativeId = form.watch('quotation.representativeId');
 
   const { data: shippingAddresses } = useShippingAddresses(watchedCustomerId || undefined);
-  const { data: users } = useUsers();
+  const { data: relatedUsers = [] } = useQuotationRelatedUsers(user?.id);
   const { data: paymentTypes } = usePaymentTypes();
   const { data: customerOptions = [] } = useCustomerOptions();
   const { data: erpCustomers = [] } = useErpCustomers();
@@ -287,8 +287,10 @@ export function QuotationHeaderForm({
                         </div>
                       </FormControl>
                       <SelectContent>
-                        {users.map((user) => (
-                          <SelectItem key={user.id} value={user.id.toString()}>{user.fullName}</SelectItem>
+                        {relatedUsers.map((u) => (
+                          <SelectItem key={u.userId} value={u.userId.toString()}>
+                            {[u.firstName, u.lastName].filter(Boolean).join(' ')}
+                          </SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
