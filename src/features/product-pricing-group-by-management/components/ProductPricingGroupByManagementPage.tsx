@@ -30,6 +30,7 @@ export function ProductPricingGroupByManagementPage(): ReactElement {
   const [sortBy, setSortBy] = useState('Id');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
   const [searchTerm, setSearchTerm] = useState('');
+  const [activeFilter, setActiveFilter] = useState('all');
   const [filters, setFilters] = useState<Record<string, unknown>>({});
   const [isRefreshing, setIsRefreshing] = useState(false);
 
@@ -147,7 +148,7 @@ export function ProductPricingGroupByManagementPage(): ReactElement {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold">
             {t('productPricingGroupByManagement.title', 'Ürün Fiyatlandırma Grubu Yönetimi')}
@@ -156,45 +157,62 @@ export function ProductPricingGroupByManagementPage(): ReactElement {
             {t('productPricingGroupByManagement.description', 'Ürün fiyatlandırma gruplarını yönetin ve düzenleyin')}
           </p>
         </div>
+        <Button 
+          onClick={handleAddClick}
+          className="px-6 py-2 bg-gradient-to-r from-pink-600 to-orange-600 rounded-lg text-white text-sm font-bold shadow-lg shadow-pink-500/20 hover:scale-105 transition-transform border-0 hover:text-white"
+        >
+          <Plus size={18} className="mr-2" />
+          {t('productPricingGroupByManagement.create', 'Yeni Fiyatlandırma Grubu')}
+        </Button>
+      </div>
 
-        <div className="flex flex-col md:flex-row gap-4 w-full md:w-auto">
-          <div className="flex gap-2 w-full md:w-auto">
-            <div className="relative group w-full md:w-[280px]">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-pink-500 transition-colors" />
-              <Input
-                placeholder={t('productPricingGroupByManagement.search', 'Ara...')}
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 h-11 bg-white/50 dark:bg-card/50 border-slate-200 dark:border-white/10 focus:border-pink-500/50 focus:ring-pink-500/20 rounded-xl transition-all"
-              />
-              {searchTerm && (
-                <button
-                  onClick={clearSearch}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 p-1 hover:bg-slate-100 dark:hover:bg-white/10 rounded-full transition-colors"
-                >
-                  <X size={14} className="text-slate-400" />
-                </button>
-              )}
-            </div>
-            
-            <div 
-              className="h-11 w-11 flex items-center justify-center bg-white/50 dark:bg-card/50 border border-slate-200 dark:border-white/10 rounded-xl cursor-pointer hover:border-pink-500/30 hover:bg-pink-50/50 dark:hover:bg-pink-500/10 transition-all group"
-              onClick={handleRefresh}
-            >
-              <RefreshCw 
-                size={20} 
-                className={`text-slate-500 dark:text-slate-400 group-hover:text-pink-600 dark:group-hover:text-pink-400 transition-colors ${isRefreshing ? 'animate-spin' : ''}`} 
-              />
-            </div>
+      <div className="bg-white/70 dark:bg-[#1a1025]/60 backdrop-blur-xl border border-white/60 dark:border-white/5 shadow-sm rounded-2xl p-4 flex flex-col md:flex-row items-center justify-between gap-4 transition-all duration-300">
+        <div className="flex items-center gap-2 w-full md:w-auto">
+          <div className="relative group w-full md:w-96">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-pink-500 transition-colors" />
+            <Input
+              placeholder={t('productPricingGroupByManagement.search', 'Ara...')}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10 h-10 bg-white/50 dark:bg-card/50 border-slate-200 dark:border-white/10 focus:border-pink-500/50 focus:ring-pink-500/20 rounded-xl transition-all"
+            />
+            {searchTerm && (
+              <button
+                onClick={clearSearch}
+                className="absolute right-3 top-1/2 -translate-y-1/2 p-1 hover:bg-slate-100 dark:hover:bg-white/10 rounded-full transition-colors"
+              >
+                <X size={14} className="text-slate-400" />
+              </button>
+            )}
           </div>
-
-          <Button 
-            onClick={handleAddClick}
-            className="w-full md:w-auto h-11 px-6 bg-gradient-to-r from-pink-600 to-orange-600 rounded-xl text-white text-sm font-bold shadow-lg shadow-pink-500/20 hover:scale-105 transition-transform border-0 hover:text-white"
+          
+          <div 
+            className="h-10 w-10 flex items-center justify-center bg-white/50 dark:bg-card/50 border border-slate-200 dark:border-white/10 rounded-xl cursor-pointer hover:border-pink-500/30 hover:bg-pink-50/50 dark:hover:bg-pink-500/10 transition-all group"
+            onClick={handleRefresh}
           >
-            <Plus size={18} className="mr-2" />
-            {t('productPricingGroupByManagement.create', 'Yeni Fiyatlandırma Grubu')}
-          </Button>
+            <RefreshCw 
+              size={18} 
+              className={`text-slate-500 dark:text-slate-400 group-hover:text-pink-600 dark:group-hover:text-pink-400 transition-colors ${isRefreshing ? 'animate-spin' : ''}`} 
+            />
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2 overflow-x-auto w-full md:w-auto pb-2 md:pb-0 scrollbar-hide">
+           {['all', 'active', 'critical', 'archive'].map((filter) => (
+             <Button
+               key={filter}
+               variant="ghost"
+               onClick={() => setActiveFilter(filter)}
+               className={`
+                 rounded-lg px-4 h-9 text-xs font-bold uppercase tracking-wider transition-all
+                 ${activeFilter === filter 
+                   ? 'bg-pink-500/10 text-pink-600 dark:text-pink-400 border border-pink-500/20' 
+                   : 'text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white border border-transparent'}
+               `}
+             >
+               {filter === 'all' ? 'Tümü' : filter === 'active' ? 'Aktif' : filter === 'critical' ? 'Kritik Stok' : 'Arşiv'}
+             </Button>
+           ))}
         </div>
       </div>
 

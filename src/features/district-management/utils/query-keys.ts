@@ -10,7 +10,7 @@ export const queryKeys = {
     pageSize?: number;
     sortBy?: string;
     sortDirection?: string;
-    filters?: Record<string, unknown>;
+    filters?: unknown;
   }) => [DISTRICT_MANAGEMENT_QUERY_KEYS.LIST, params] as const,
   detail: (id: number) => [DISTRICT_MANAGEMENT_QUERY_KEYS.DETAIL, id] as const,
   stats: () => [DISTRICT_MANAGEMENT_QUERY_KEYS.STATS] as const,

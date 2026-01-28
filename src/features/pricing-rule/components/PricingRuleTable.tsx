@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { usePricingRuleHeaders } from '../hooks/usePricingRuleHeaders';
 import { PricingRuleType, type PricingRuleHeaderGetDto } from '../types/pricing-rule-types';
+import type { PagedFilter } from '@/types/api';
 // İkonlar
 import { 
   Edit2, 
@@ -27,11 +28,31 @@ import {
 
 interface PricingRuleTableProps {
   onEdit: (header: PricingRuleHeaderGetDto) => void;
+  pageNumber?: number;
+  pageSize?: number;
+  sortBy?: string;
+  sortDirection?: 'asc' | 'desc';
+  filters?: PagedFilter[];
+  onPageChange?: (page: number) => void;
+  onSortChange?: (sortBy: string, sortDirection: 'asc' | 'desc') => void;
 }
 
-export function PricingRuleTable({ onEdit }: PricingRuleTableProps): ReactElement {
+export function PricingRuleTable({ 
+  onEdit,
+  pageNumber = 1,
+  pageSize = 20,
+  sortBy,
+  sortDirection,
+  filters
+}: PricingRuleTableProps): ReactElement {
   const { t, i18n } = useTranslation();
-  const { data, isLoading } = usePricingRuleHeaders();
+  const { data, isLoading } = usePricingRuleHeaders({
+    pageNumber,
+    pageSize,
+    sortBy,
+    sortDirection,
+    filters
+  });
 
   // Kural Tipi Etiketi ve İkonu
   const getRuleTypeConfig = (type: PricingRuleType) => {
