@@ -1,33 +1,61 @@
 import type { ApiResponse, PagedResponse, PagedParams } from '@/types/api';
 
+export const NotificationType = {
+  DemandDetail: 'DemandDetail',
+  DemandApproval: 'DemandApproval',
+  QuotationDetail: 'QuotationDetail',
+  QuotationApproval: 'QuotationApproval',
+  OrderDetail: 'OrderDetail',
+  OrderApproval: 'OrderApproval',
+} as const;
+
 export type NotificationChannel = 'Terminal' | 'Web';
 
 export type NotificationSeverity = 'info' | 'warning' | 'error';
 
 export interface NotificationDto {
   id: number;
+  titleKey: string;
+  titleArgs: string | null;
   title: string;
+  messageKey: string;
+  messageArgs: string | null;
   message: string;
-  channel: NotificationChannel;
-  severity: NotificationSeverity;
   isRead: boolean;
-  readDate: string | null;
-  timestamp: string;
-  recipientUserId: number | null;
-  recipientTerminalUserId: number | null;
-  relatedEntityType: string | null;
+  userId: number;
+  relatedEntityName: string | null;
   relatedEntityId: number | null;
-  actionUrl: string | null;
-  terminalActionCode: string | null;
+  notificationType: keyof typeof NotificationType;
+  createdDate: string;
+  updatedDate?: string | null;
+  createdBy?: number | null;
+  updatedBy?: number | null;
+  channel?: NotificationChannel;
+  severity?: NotificationSeverity;
+  readDate?: string | null;
+  timestamp?: string;
+  recipientUserId?: number | null;
+  recipientTerminalUserId?: number | null;
+  relatedEntityType?: string | null;
+  actionUrl?: string | null;
+  terminalActionCode?: string | null;
 }
 
 export interface SignalRNotificationPayload {
   id: number;
+  titleKey: string;
+  titleArgs: string | null;
   title: string;
+  messageKey: string;
+  messageArgs: string | null;
   message: string;
-  type: NotificationSeverity;
+  notificationType: keyof typeof NotificationType;
+  relatedEntityName: string | null;
+  relatedEntityId: number | null;
+  userId: number;
   timestamp: string;
-  channel: NotificationChannel;
+  channel?: NotificationChannel;
+  type?: NotificationSeverity;
   recipientUserId?: number;
   recipientTerminalUserId?: number;
 }
