@@ -55,15 +55,19 @@ interface QuotationHeaderFormProps {
   onLinesChange?: (lines: Array<{ productCode?: string | null; productName?: string | null }>) => void;
   initialCurrency?: string | number | null;
   revisionNo?: string | null;
+  quotationId?: number | null;
+  quotationOfferNo?: string | null;
 }
 
-export function QuotationHeaderForm({ 
+export function QuotationHeaderForm({
   exchangeRates = [],
   onExchangeRatesChange,
   lines = [],
   onLinesChange,
   initialCurrency,
   revisionNo,
+  quotationId,
+  quotationOfferNo,
 }: QuotationHeaderFormProps = {}): ReactElement {
   const { t } = useTranslation();
   const form = useFormContext<CreateQuotationSchema>();
@@ -613,6 +617,8 @@ export function QuotationHeaderForm({
           onSave={handleExchangeRatesSave}
           lines={lines}
           currentCurrency={watchedCurrency ? (typeof watchedCurrency === 'string' ? Number(watchedCurrency) : watchedCurrency) : undefined}
+          quotationId={quotationId}
+          quotationOfferNo={quotationOfferNo}
         />
       )}
 
