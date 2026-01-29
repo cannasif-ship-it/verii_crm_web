@@ -19,13 +19,7 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { VoiceSearchCombobox, type ComboboxOption } from '@/components/shared/VoiceSearchCombobox';
 import { districtFormSchema, type DistrictFormSchema } from '../types/district-types';
 import type { DistrictDto } from '../types/district-types';
 import { useCityOptions } from '@/features/city-management/hooks/useCityOptions';
@@ -70,6 +64,11 @@ export function DistrictForm({
 }: DistrictFormProps): ReactElement {
   const { t } = useTranslation();
   const { data: cities, isLoading: citiesLoading } = useCityOptions();
+
+  const cityOptions: ComboboxOption[] = cities?.map(city => ({
+    value: city.id.toString(),
+    label: city.name,
+  })) || [];
 
   const form = useForm<DistrictFormSchema>({
     resolver: zodResolver(districtFormSchema),
@@ -159,24 +158,16 @@ export function DistrictForm({
                     <FormLabel className={LABEL_STYLE}>
                       {t('districtManagement.form.city', 'Şehir')} *
                     </FormLabel>
-                    <Select
-                      onValueChange={(value) => field.onChange(Number(value))}
-                      value={field.value?.toString() || ''}
+                    <VoiceSearchCombobox
+                      options={cityOptions}
+                      value={field.value?.toString()}
+                      onSelect={(value) => field.onChange(value ? Number(value) : 0)}
+                      placeholder={t('districtManagement.form.selectCity', 'Şehir seçin')}
+                      searchPlaceholder={t('districtManagement.form.searchCity', 'Şehir ara...')}
+                      className={INPUT_STYLE}
+                      modal={true}
                       disabled={citiesLoading}
-                    >
-                      <FormControl>
-                        <SelectTrigger className={INPUT_STYLE}>
-                          <SelectValue placeholder={t('districtManagement.form.selectCity', 'Şehir seçin')} />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {cities?.map((city) => (
-                          <SelectItem key={city.id} value={city.id.toString()}>
-                            {city.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    />
                     <FormMessage className="text-red-500 text-[10px] mt-1" />
                   </FormItem>
                 )}
