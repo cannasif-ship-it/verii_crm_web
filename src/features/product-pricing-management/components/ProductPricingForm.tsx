@@ -20,19 +20,13 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { productPricingFormSchema, type ProductPricingFormSchema, calculateFinalPrice, calculateProfitMargin, formatPrice } from '../types/product-pricing-types';
 import { useExchangeRate } from '@/services/hooks/useExchangeRate';
-import type { KurDto } from '@/services/erp-types';
 import { ProductSelectDialog } from '@/components/shared/ProductSelectDialog';
-import { Search, X, Package, Trash2 } from 'lucide-react';
+import { CurrencySelectDialog } from '@/components/shared/CurrencySelectDialog';
+import { X, Package, Trash2, ChevronDown } from 'lucide-react';
 import type { ProductPricingGetDto } from '../types/product-pricing-types';
+import { cn } from '@/lib/utils';
 
 interface ProductPricingFormProps {
   open: boolean;
@@ -74,8 +68,9 @@ export function ProductPricingForm({
   isLoading = false,
 }: ProductPricingFormProps): ReactElement {
   const { t } = useTranslation();
-  const { data: exchangeRates = [], isLoading: isLoadingCurrencies } = useExchangeRate();
+  const { data: exchangeRates = [] } = useExchangeRate();
   const [productDialogOpen, setProductDialogOpen] = useState(false);
+  const [currencySelectDialogOpen, setCurrencySelectDialogOpen] = useState(false);
 
   const form = useForm<ProductPricingFormSchema>({
     resolver: zodResolver(productPricingFormSchema),
@@ -184,41 +179,36 @@ export function ProductPricingForm({
                       <FormLabel className={LABEL_STYLE}>
                         {t('productPricingManagement.erpProductCode', 'Stok Kodu')} *
                       </FormLabel>
-                      <div className="flex gap-2">
-                        <FormControl>
-                          <Input
-                            {...field}
-                            readOnly
-                            placeholder={t('productPricingManagement.selectStokCode', 'Stok seçin')}
-                            maxLength={50}
-                            className={INPUT_STYLE}
-                          />
-                        </FormControl>
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="icon"
-                          onClick={() => setProductDialogOpen(true)}
-                          title={t('productPricingManagement.selectStok', 'Stok Seç')}
-                          className="h-11 w-11 shrink-0 bg-white/50 dark:bg-transparent border-slate-200 dark:border-white/5 hover:border-pink-500/50 hover:bg-pink-50 dark:hover:bg-pink-500/10 hover:text-pink-600 dark:hover:text-pink-400 transition-all rounded-xl"
-                        >
-                          <Search className="h-4 w-4" />
-                        </Button>
-                        {field.value && (
+                      <FormControl>
+                        <div className="relative">
                           <Button
                             type="button"
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => {
-                              field.onChange('');
-                              form.setValue('erpGroupCode', '');
-                            }}
-                            className="h-11 w-11 shrink-0 text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-xl"
+                            variant="outline"
+                            role="combobox"
+                            className={cn(INPUT_STYLE, "w-full justify-between px-3 font-normal")}
+                            onClick={() => setProductDialogOpen(true)}
                           >
-                            <X className="h-4 w-4" />
+                            {field.value ? (
+                              <span className="truncate">{field.value}</span>
+                            ) : (
+                              <span className="text-slate-400 dark:text-slate-600">{t('productPricingManagement.selectStokCode', 'Stok seçin')}</span>
+                            )}
+                            <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                           </Button>
-                        )}
-                      </div>
+                          {field.value && (
+                            <div 
+                              className="absolute right-8 top-1/2 -translate-y-1/2 p-1 cursor-pointer hover:bg-slate-100 dark:hover:bg-white/10 rounded-full"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                field.onChange('');
+                                form.setValue('erpGroupCode', '');
+                              }}
+                            >
+                              <X className="h-3 w-3 text-slate-400" />
+                            </div>
+                          )}
+                        </div>
+                      </FormControl>
                       <FormMessage className="text-red-500 text-[10px] mt-1" />
                     </FormItem>
                   )}
@@ -255,27 +245,36 @@ export function ProductPricingForm({
                     <FormLabel className={LABEL_STYLE}>
                       {t('productPricingManagement.currency', 'Para Birimi')} *
                     </FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      value={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger className={INPUT_STYLE}>
-                          <SelectValue placeholder={t('productPricingManagement.selectCurrency', 'Lütfen para birimi seçin')} />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {isLoadingCurrencies ? (
-                          <SelectItem value="0" disabled>Yükleniyor...</SelectItem>
+                    <FormControl>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        role="combobox"
+                        className={cn(INPUT_STYLE, "w-full justify-between px-3 font-normal")}
+                        onClick={() => setCurrencySelectDialogOpen(true)}
+                      >
+                        {field.value ? (
+                          <span className="truncate">
+                            {(() => {
+                              const curr = exchangeRates.find((c) => String(c.dovizTipi) === field.value);
+                              if (!curr) return field.value;
+                              return curr.dovizIsmi || `Döviz ${curr.dovizTipi}`;
+                            })()}
+                          </span>
                         ) : (
-                          exchangeRates.map((currency: KurDto) => (
-                            <SelectItem key={currency.dovizTipi} value={String(currency.dovizTipi)}>
-                              {currency.dovizIsmi || `Döviz ${currency.dovizTipi}`}
-                            </SelectItem>
-                          ))
+                          <span className="text-slate-400 dark:text-slate-600">{t('productPricingManagement.selectCurrency', 'Lütfen para birimi seçin')}</span>
                         )}
-                      </SelectContent>
-                    </Select>
+                        <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                      </Button>
+                    </FormControl>
+                    <CurrencySelectDialog
+                      open={currencySelectDialogOpen}
+                      onOpenChange={setCurrencySelectDialogOpen}
+                      selectedCurrencyCode={field.value}
+                      onSelect={(currency) => {
+                        field.onChange(String(currency.dovizTipi));
+                      }}
+                    />
                     <FormMessage className="text-red-500 text-[10px] mt-1" />
                   </FormItem>
                 )}
