@@ -44,9 +44,9 @@ interface ProductPricingFormProps {
 }
 
 const INPUT_STYLE = `
-  h-11 rounded-lg
-  bg-slate-50 dark:bg-[#0c0516] 
-  border border-slate-200 dark:border-white/10 
+  h-11 rounded-xl
+  bg-white/50 dark:bg-[#0c0516]/50 
+  border border-slate-200 dark:border-white/5 
   text-slate-900 dark:text-white text-sm
   placeholder:text-slate-400 dark:placeholder:text-slate-600 
   
@@ -150,15 +150,15 @@ export function ProductPricingForm({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-white dark:bg-[#130822] border border-slate-100 dark:border-white/10 text-slate-900 dark:text-white max-w-4xl shadow-2xl shadow-slate-200/50 dark:shadow-black/50 sm:rounded-2xl max-h-[90vh] h-auto flex flex-col gap-0 p-0 overflow-hidden transition-colors duration-300">
+      <DialogContent className="bg-white/95 dark:bg-[#1a1025]/95 backdrop-blur-xl border border-white/60 dark:border-white/5 text-slate-900 dark:text-white max-w-4xl shadow-2xl sm:rounded-2xl max-h-[90vh] h-auto flex flex-col gap-0 p-0 overflow-hidden transition-all duration-300">
         
-        <DialogHeader className="border-b border-slate-100 dark:border-white/5 px-6 py-5 bg-white/80 dark:bg-[#130822]/90 backdrop-blur-md shrink-0 flex-row items-center justify-between space-y-0">
+        <DialogHeader className="border-b border-slate-200/50 dark:border-white/5 px-6 py-5 shrink-0 flex-row items-center justify-between space-y-0">
           <div className="flex items-center gap-3">
-             <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-pink-500/20 to-orange-500/20 border border-pink-500/10 flex items-center justify-center text-pink-500 shrink-0">
+             <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-pink-500/20 to-orange-500/20 border border-pink-500/10 flex items-center justify-center text-pink-600 dark:text-pink-400 shrink-0">
                <Package size={20} />
              </div>
              <div>
-                <DialogTitle className="text-lg font-bold text-slate-900 dark:text-white">
+                <DialogTitle className="text-lg font-bold bg-clip-text text-transparent bg-gradient-to-r from-pink-600 to-orange-600">
                   {productPricing
                     ? t('productPricingManagement.edit', 'Fiyatlandırma Düzenle')
                     : t('productPricingManagement.create', 'Yeni Fiyatlandırma')}
@@ -200,7 +200,7 @@ export function ProductPricingForm({
                           size="icon"
                           onClick={() => setProductDialogOpen(true)}
                           title={t('productPricingManagement.selectStok', 'Stok Seç')}
-                          className="h-11 w-11 shrink-0 bg-white dark:bg-transparent border-slate-200 dark:border-white/10 hover:bg-slate-50 dark:hover:bg-white/5 text-slate-500 dark:text-slate-400"
+                          className="h-11 w-11 shrink-0 bg-white/50 dark:bg-transparent border-slate-200 dark:border-white/5 hover:border-pink-500/50 hover:bg-pink-50 dark:hover:bg-pink-500/10 hover:text-pink-600 dark:hover:text-pink-400 transition-all rounded-xl"
                         >
                           <Search className="h-4 w-4" />
                         </Button>
@@ -213,7 +213,7 @@ export function ProductPricingForm({
                               field.onChange('');
                               form.setValue('erpGroupCode', '');
                             }}
-                            className="h-11 w-11 shrink-0 text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-500/10"
+                            className="h-11 w-11 shrink-0 text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-xl"
                           >
                             <X className="h-4 w-4" />
                           </Button>
@@ -414,39 +414,42 @@ export function ProductPricingForm({
               </div>
 
               {(watchedValues[0] > 0 || watchedValues[1] > 0) && (
-                <div className="rounded-xl border border-pink-100 dark:border-pink-500/10 bg-pink-50/50 dark:bg-pink-500/5 p-4 space-y-3">
-                  <div className="text-xs font-bold text-pink-600 dark:text-pink-400 uppercase tracking-wider mb-1">
-                    {t('productPricingManagement.priceCalculation', 'Fiyat Hesaplama')}
+                <div className="rounded-2xl border border-pink-100 dark:border-pink-500/10 bg-gradient-to-br from-pink-50/50 to-orange-50/50 dark:from-pink-900/10 dark:to-orange-900/10 p-5 space-y-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="h-1.5 w-1.5 rounded-full bg-pink-500 animate-pulse" />
+                    <div className="text-xs font-bold text-pink-600 dark:text-pink-400 uppercase tracking-wider">
+                      {t('productPricingManagement.priceCalculation', 'Fiyat Hesaplama')}
+                    </div>
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
-                    <div className="flex justify-between items-center p-2 rounded-lg bg-white/50 dark:bg-white/5 border border-pink-100/50 dark:border-pink-500/5">
-                      <span className="text-slate-500 dark:text-slate-400">{t('productPricingManagement.listPrice', 'Liste Fiyatı')}:</span>
+                    <div className="flex justify-between items-center p-3 rounded-xl bg-white/60 dark:bg-white/5 border border-white/50 dark:border-white/5 shadow-sm">
+                      <span className="text-slate-500 dark:text-slate-400 font-medium">{t('productPricingManagement.listPrice', 'Liste Fiyatı')}:</span>
                       <span className="font-bold text-slate-700 dark:text-slate-200">
                         {formatPrice(watchedValues[0] || 0, calculations.currency, exchangeRates)}
                       </span>
                     </div>
-                    <div className="flex justify-between items-center p-2 rounded-lg bg-white/50 dark:bg-white/5 border border-pink-100/50 dark:border-pink-500/5">
-                      <span className="text-slate-500 dark:text-slate-400">{t('productPricingManagement.costPrice', 'Maliyet Fiyatı')}:</span>
+                    <div className="flex justify-between items-center p-3 rounded-xl bg-white/60 dark:bg-white/5 border border-white/50 dark:border-white/5 shadow-sm">
+                      <span className="text-slate-500 dark:text-slate-400 font-medium">{t('productPricingManagement.costPrice', 'Maliyet Fiyatı')}:</span>
                       <span className="font-bold text-slate-700 dark:text-slate-200">
                         {formatPrice(watchedValues[1] || 0, calculations.currency, exchangeRates)}
                       </span>
                     </div>
-                    <div className="flex justify-between items-center p-2 rounded-lg bg-white/50 dark:bg-white/5 border border-pink-100/50 dark:border-pink-500/5">
-                      <span className="text-slate-500 dark:text-slate-400">{t('productPricingManagement.profitAmount', 'Kar Tutarı')}:</span>
+                    <div className="flex justify-between items-center p-3 rounded-xl bg-white/60 dark:bg-white/5 border border-white/50 dark:border-white/5 shadow-sm">
+                      <span className="text-slate-500 dark:text-slate-400 font-medium">{t('productPricingManagement.profitAmount', 'Kar Tutarı')}:</span>
                       <span className={`font-bold ${getProfitMarginColor(calculations.profitMargin.percentage)}`}>
                         {formatPrice(calculations.profitMargin.amount, calculations.currency, exchangeRates)}
                       </span>
                     </div>
-                    <div className="flex justify-between items-center p-2 rounded-lg bg-white/50 dark:bg-white/5 border border-pink-100/50 dark:border-pink-500/5">
-                      <span className="text-slate-500 dark:text-slate-400">{t('productPricingManagement.profitPercentage', 'Kar Yüzdesi')}:</span>
+                    <div className="flex justify-between items-center p-3 rounded-xl bg-white/60 dark:bg-white/5 border border-white/50 dark:border-white/5 shadow-sm">
+                      <span className="text-slate-500 dark:text-slate-400 font-medium">{t('productPricingManagement.profitPercentage', 'Kar Yüzdesi')}:</span>
                       <span className={`font-bold ${getProfitMarginColor(calculations.profitMargin.percentage)}`}>
                         {calculations.profitMargin.percentage.toFixed(2)}%
                       </span>
                     </div>
                   </div>
-                  <div className="flex justify-between items-center pt-2 border-t border-pink-200 dark:border-pink-500/20">
-                    <span className="font-bold text-slate-900 dark:text-white">{t('productPricingManagement.finalPriceAfterDiscounts', 'İndirimler Sonrası Son Fiyat')}:</span>
-                    <span className="text-lg font-bold text-pink-600 dark:text-pink-400">
+                  <div className="flex justify-between items-center pt-3 border-t border-pink-200/50 dark:border-pink-500/10">
+                    <span className="font-bold text-slate-700 dark:text-slate-300">{t('productPricingManagement.finalPriceAfterDiscounts', 'İndirimler Sonrası Son Fiyat')}:</span>
+                    <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-pink-600 to-orange-600">
                       {formatPrice(calculations.finalPrice, calculations.currency, exchangeRates)}
                     </span>
                   </div>
@@ -468,7 +471,7 @@ export function ProductPricingForm({
           />
         </div>
 
-        <DialogFooter className="border-t border-slate-100 dark:border-white/5 px-6 py-4 bg-white/80 dark:bg-[#130822]/90 backdrop-blur-md shrink-0 gap-3 justify-between sm:justify-between">
+        <DialogFooter className="border-t border-slate-200/50 dark:border-white/5 px-6 py-4 bg-slate-50/50 dark:bg-white/5 backdrop-blur-md shrink-0 gap-3 justify-between sm:justify-between">
           <div className="flex gap-2">
             {productPricing && onDelete && (
               <Button
@@ -476,7 +479,7 @@ export function ProductPricingForm({
                 variant="ghost"
                 onClick={() => onDelete(productPricing.id)}
                 disabled={isLoading}
-                className="text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-500/10"
+                className="text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-xl"
               >
                 <Trash2 size={18} className="mr-2" />
                 {t('productPricingManagement.delete', 'Sil')}
@@ -489,7 +492,7 @@ export function ProductPricingForm({
               variant="outline"
               onClick={() => onOpenChange(false)}
               disabled={isLoading}
-              className="bg-white dark:bg-transparent border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white"
+              className="bg-white/50 dark:bg-transparent border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white rounded-xl"
             >
               {t('productPricingManagement.cancel', 'İptal')}
             </Button>
@@ -497,7 +500,7 @@ export function ProductPricingForm({
               type="submit" 
               form="product-pricing-form"
               disabled={isLoading}
-              className="bg-gradient-to-r from-pink-600 to-orange-600 text-white font-bold border-0 hover:shadow-lg hover:shadow-pink-500/20 transition-all transform active:scale-95 px-8"
+              className="bg-gradient-to-r from-pink-600 to-orange-600 text-white font-bold border-0 hover:shadow-lg hover:shadow-pink-500/20 transition-all transform active:scale-95 px-8 rounded-xl"
             >
               {isLoading
                 ? t('productPricingManagement.saving', 'Kaydediliyor...')
