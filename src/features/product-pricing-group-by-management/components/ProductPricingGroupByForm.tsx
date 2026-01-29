@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Package, ChevronDown, Layers, Coins } from 'lucide-react';
+import { Package, ChevronDown } from 'lucide-react';
 import {
   Form,
   FormControl,
@@ -24,7 +24,6 @@ import {
 import { cn } from '@/lib/utils';
 import { productPricingGroupByFormSchema, type ProductPricingGroupByFormSchema, calculateFinalPrice, formatPrice } from '../types/product-pricing-group-by-types';
 import { useExchangeRate } from '@/services/hooks/useExchangeRate';
-import type { KurDto } from '@/services/erp-types';
 import { useStokGroup } from '@/services/hooks/useStokGroup';
 import type { ProductPricingGroupByDto } from '../types/product-pricing-group-by-types';
 import { StockGroupSelectDialog } from '@/components/shared/StockGroupSelectDialog';
@@ -68,8 +67,8 @@ export function ProductPricingGroupByForm({
   isLoading = false,
 }: ProductPricingGroupByFormProps): ReactElement {
   const { t } = useTranslation();
-  const { data: exchangeRates = [], isLoading: isLoadingCurrencies } = useExchangeRate();
-  const { data: stokGroups = [], isLoading: isLoadingGroups } = useStokGroup();
+  const { data: exchangeRates = [] } = useExchangeRate();
+  const { data: stokGroups = [] } = useStokGroup();
   
   const [groupSelectDialogOpen, setGroupSelectDialogOpen] = useState(false);
   const [currencySelectDialogOpen, setCurrencySelectDialogOpen] = useState(false);

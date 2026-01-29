@@ -1,4 +1,4 @@
-import { type ReactElement, useState, useMemo, useRef, useEffect } from 'react';
+import { type ReactElement, useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Dialog,
@@ -7,7 +7,6 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
 import { Search, Layers, Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useStokGroup } from '@/services/hooks/useStokGroup';
