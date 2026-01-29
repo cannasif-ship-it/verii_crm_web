@@ -12,6 +12,7 @@ import type {
   RejectActionDto,
   QuotationExchangeRateGetDto,
   QuotationLineGetDto,
+  CreateQuotationLineDto,
   ApprovalStatus,
   ApprovalScopeUserDto,
 } from '../types/quotation-types';
@@ -318,14 +319,47 @@ export const quotationApi = {
     return [];
   },
 
+  updateExchangeRateInQuotation: async (updateDtos: QuotationExchangeRateGetDto[]): Promise<ApiResponse<boolean>> => {
+    const response = await api.put<ApiResponse<boolean>>(
+      '/api/QuotationExchangeRate/update-exchange-rate-in-quotation',
+      updateDtos
+    );
+    if (!response.success) {
+      throw new Error(response.message ?? 'Döviz kurları güncellenemedi');
+    }
+    return response;
+  },
+
   getQuotationLinesByQuotationId: async (quotationId: number): Promise<QuotationLineGetDto[]> => {
     const response = await api.get<ApiResponse<QuotationLineGetDto[]>>(
       `/api/QuotationLine/by-quotation/${quotationId}`
     );
     if (response.success && response.data) {
-      return response.data;
+      const raw = response.data as Array<QuotationLineGetDto & { Id?: number }>;
+      return raw.map((line) => ({
+        ...line,
+        id: line.id ?? line.Id ?? 0,
+      })) as QuotationLineGetDto[];
     }
     return [];
+  },
+
+  createQuotationLines: async (dtos: CreateQuotationLineDto[]): Promise<QuotationLineGetDto[]> => {
+    const response = await api.post<ApiResponse<QuotationLineGetDto[]>>(
+      '/api/QuotationLine/create-multiple',
+      dtos
+    );
+    if (!response.success || !response.data) {
+      throw new Error(response.message ?? 'Satırlar eklenemedi');
+    }
+    return response.data;
+  },
+
+  deleteQuotationLine: async (id: number): Promise<void> => {
+    const response = await api.delete<ApiResponse<unknown> | undefined>(`/api/QuotationLine/${id}`);
+    if (response != null && response.success === false) {
+      throw new Error(response.message ?? 'Satır silinemedi');
+    }
   },
 
   updateBulk: async (id: number, data: QuotationBulkCreateDto): Promise<ApiResponse<QuotationGetDto>> => {
