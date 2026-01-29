@@ -20,13 +20,7 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { VoiceSearchCombobox, type ComboboxOption } from '@/components/shared/VoiceSearchCombobox';
 import { shippingAddressFormSchema, type ShippingAddressFormSchema } from '../types/shipping-address-types';
 import type { ShippingAddressDto } from '../types/shipping-address-types';
 import { useCustomerOptions } from '@/features/customer-management/hooks/useCustomerOptions';
@@ -96,6 +90,11 @@ export function ShippingAddressForm({
 
   const { data: cityOptions = [] } = useCityOptions();
   const { data: districtOptions = [] } = useDistrictOptions(watchedCityId ?? undefined);
+
+  const customerComboboxOptions: ComboboxOption[] = customerOptions.map(c => ({ value: c.id.toString(), label: c.name }));
+  const countryComboboxOptions: ComboboxOption[] = countryOptions.map(c => ({ value: c.id.toString(), label: c.name }));
+  const cityComboboxOptions: ComboboxOption[] = cityOptions.map(c => ({ value: c.id.toString(), label: c.name }));
+  const districtComboboxOptions: ComboboxOption[] = districtOptions.map(c => ({ value: c.id.toString(), label: c.name }));
 
   useEffect(() => {
     if (shippingAddress) {
@@ -181,23 +180,15 @@ export function ShippingAddressForm({
                     <FormLabel className={LABEL_STYLE}>
                       {t('shippingAddressManagement.customerId', 'Müşteri')} *
                     </FormLabel>
-                    <Select
-                      onValueChange={(value) => field.onChange(value && value !== '' ? parseInt(value) : undefined)}
+                    <VoiceSearchCombobox
+                      options={customerComboboxOptions}
                       value={field.value && field.value !== 0 ? field.value.toString() : ''}
-                    >
-                      <FormControl>
-                        <SelectTrigger className={INPUT_STYLE}>
-                          <SelectValue placeholder={t('shippingAddressManagement.selectCustomer', 'Müşteri Seçin')} />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {customerOptions.map((customer) => (
-                          <SelectItem key={customer.id} value={customer.id.toString()}>
-                            {customer.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                      onSelect={(value) => field.onChange(value && value !== '' ? parseInt(value) : undefined)}
+                      placeholder={t('shippingAddressManagement.selectCustomer', 'Müşteri Seçin')}
+                      searchPlaceholder={t('shippingAddressManagement.searchCustomer', 'Müşteri Ara...')}
+                      className={INPUT_STYLE}
+                      modal={true}
+                    />
                     <FormMessage className="text-red-500 text-[10px] mt-1" />
                   </FormItem>
                 )}
@@ -298,26 +289,15 @@ export function ShippingAddressForm({
                       <FormLabel className={LABEL_STYLE}>
                         {t('shippingAddressManagement.countryId', 'Ülke')}
                       </FormLabel>
-                      <Select
-                        onValueChange={(value) => field.onChange(value && value !== 'none' ? parseInt(value) : undefined)}
-                        value={field.value && field.value !== 0 ? field.value.toString() : 'none'}
-                      >
-                        <FormControl>
-                          <SelectTrigger className={INPUT_STYLE}>
-                            <SelectValue placeholder={t('shippingAddressManagement.selectCountry', 'Ülke Seçin')} />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="none">
-                            {t('shippingAddressManagement.noCountrySelected', 'Ülke seçilmedi')}
-                          </SelectItem>
-                          {countryOptions.map((country) => (
-                            <SelectItem key={country.id} value={country.id.toString()}>
-                              {country.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                      <VoiceSearchCombobox
+                        options={countryComboboxOptions}
+                        value={field.value && field.value !== 0 ? field.value.toString() : ''}
+                        onSelect={(value) => field.onChange(value && value !== '' ? parseInt(value) : undefined)}
+                        placeholder={t('shippingAddressManagement.selectCountry', 'Ülke Seçin')}
+                        searchPlaceholder={t('shippingAddressManagement.searchCountry', 'Ülke Ara...')}
+                        className={INPUT_STYLE}
+                        modal={true}
+                      />
                       <FormMessage className="text-red-500 text-[10px] mt-1" />
                     </FormItem>
                   )}
@@ -331,27 +311,16 @@ export function ShippingAddressForm({
                       <FormLabel className={LABEL_STYLE}>
                         {t('shippingAddressManagement.cityId', 'Şehir')}
                       </FormLabel>
-                      <Select
-                        onValueChange={(value) => field.onChange(value && value !== 'none' ? parseInt(value) : undefined)}
-                        value={field.value && field.value !== 0 ? field.value.toString() : 'none'}
+                      <VoiceSearchCombobox
+                        options={cityComboboxOptions}
+                        value={field.value && field.value !== 0 ? field.value.toString() : ''}
+                        onSelect={(value) => field.onChange(value && value !== '' ? parseInt(value) : undefined)}
+                        placeholder={watchedCountryId ? t('shippingAddressManagement.selectCity', 'Şehir Seçin') : t('shippingAddressManagement.selectCountryFirst', 'Önce ülke seçin')}
+                        searchPlaceholder={t('shippingAddressManagement.searchCity', 'Şehir Ara...')}
+                        className={INPUT_STYLE}
+                        modal={true}
                         disabled={!watchedCountryId}
-                      >
-                        <FormControl>
-                          <SelectTrigger className={INPUT_STYLE}>
-                            <SelectValue placeholder={watchedCountryId ? t('shippingAddressManagement.selectCity', 'Şehir Seçin') : t('shippingAddressManagement.selectCountryFirst', 'Önce ülke seçin')} />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="none">
-                            {t('shippingAddressManagement.noCitySelected', 'Şehir seçilmedi')}
-                          </SelectItem>
-                          {cityOptions.map((city) => (
-                            <SelectItem key={city.id} value={city.id.toString()}>
-                              {city.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                      />
                       <FormMessage className="text-red-500 text-[10px] mt-1" />
                     </FormItem>
                   )}
@@ -365,27 +334,16 @@ export function ShippingAddressForm({
                       <FormLabel className={LABEL_STYLE}>
                         {t('shippingAddressManagement.districtId', 'İlçe')}
                       </FormLabel>
-                      <Select
-                        onValueChange={(value) => field.onChange(value && value !== 'none' ? parseInt(value) : undefined)}
-                        value={field.value && field.value !== 0 ? field.value.toString() : 'none'}
+                      <VoiceSearchCombobox
+                        options={districtComboboxOptions}
+                        value={field.value && field.value !== 0 ? field.value.toString() : ''}
+                        onSelect={(value) => field.onChange(value && value !== '' ? parseInt(value) : undefined)}
+                        placeholder={watchedCityId ? t('shippingAddressManagement.selectDistrict', 'İlçe Seçin') : t('shippingAddressManagement.selectCityFirst', 'Önce şehir seçin')}
+                        searchPlaceholder={t('shippingAddressManagement.searchDistrict', 'İlçe Ara...')}
+                        className={INPUT_STYLE}
+                        modal={true}
                         disabled={!watchedCityId}
-                      >
-                        <FormControl>
-                          <SelectTrigger className={INPUT_STYLE}>
-                            <SelectValue placeholder={watchedCityId ? t('shippingAddressManagement.selectDistrict', 'İlçe Seçin') : t('shippingAddressManagement.selectCityFirst', 'Önce şehir seçin')} />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="none">
-                            {t('shippingAddressManagement.noDistrictSelected', 'İlçe seçilmedi')}
-                          </SelectItem>
-                          {districtOptions.map((district) => (
-                            <SelectItem key={district.id} value={district.id.toString()}>
-                              {district.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                      />
                       <FormMessage className="text-red-500 text-[10px] mt-1" />
                     </FormItem>
                   )}
