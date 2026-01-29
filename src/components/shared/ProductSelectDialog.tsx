@@ -1,5 +1,6 @@
 import { type ReactElement, useState, useMemo, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import { LayoutGrid, List as ListIcon } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -382,6 +383,295 @@ function StockWithImageCard({
   );
 }
 
+function StockListItem({
+  stock,
+  onClick,
+  onRelatedStockSelect,
+}: StockCardProps): ReactElement {
+  const { t } = useTranslation();
+  const hasRelatedStocks = stock.parentRelations && stock.parentRelations.length > 0;
+
+  const handleRelatedStockClick = async (e: React.MouseEvent, relatedStock: StockRelationDto): Promise<void> => {
+    e.stopPropagation();
+    if (onRelatedStockSelect) {
+      try {
+        const relatedStockData = await stockApi.getById(relatedStock.relatedStockId);
+        if (relatedStockData) {
+          onRelatedStockSelect(relatedStockData);
+        }
+      } catch (error) {
+        console.error('Related stock bilgisi alınamadı:', error);
+      }
+    }
+  };
+
+  return (
+    <div
+      className={cn(
+        'group flex items-center gap-4 p-3 rounded-xl cursor-pointer transition-all duration-300',
+        'bg-white/50 dark:bg-[#1a1025]/40 border-slate-200 dark:border-white/5',
+        'hover:border-pink-500/50 dark:hover:border-pink-500/50 hover:bg-pink-50/30 dark:hover:bg-pink-500/5 hover:shadow-md hover:shadow-pink-500/5',
+        'active:scale-[0.99] touch-manipulation'
+      )}
+      onClick={onClick}
+    >
+      <div className="flex-1 min-w-0 grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
+         <div className="md:col-span-5 flex flex-col justify-center">
+            <div className="flex items-center gap-2 mb-1">
+               <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-300 border border-pink-200 dark:border-pink-800/50 uppercase tracking-wider">
+                  {t('productSelectDialog.stock', 'STOK')}
+               </span>
+               <span className="text-xs font-mono text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-white/5 px-1.5 py-0.5 rounded">
+                 {stock.erpStockCode}
+               </span>
+            </div>
+            <span className="font-semibold text-sm text-slate-900 dark:text-white truncate group-hover:text-pink-600 dark:group-hover:text-pink-400 transition-colors">
+              {stock.stockName}
+            </span>
+         </div>
+
+         <div className="md:col-span-4 flex flex-col justify-center text-sm text-slate-500 dark:text-slate-400">
+            {(stock.grupKodu || stock.grupAdi) && (
+              <span className="truncate text-xs">
+                <span className="font-medium text-slate-700 dark:text-slate-300">{stock.grupKodu}</span>
+                {stock.grupKodu && stock.grupAdi && ' - '}
+                {stock.grupAdi}
+              </span>
+            )}
+            {stock.unit && (
+              <span className="text-xs opacity-80 mt-0.5">
+                {t('productSelectDialog.unit', 'Birim')}: {stock.unit}
+              </span>
+            )}
+         </div>
+
+         <div className="md:col-span-3 flex justify-end items-center gap-2">
+            {hasRelatedStocks && (
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="h-8 text-xs border-slate-200 dark:border-white/10 hover:border-pink-500/50 hover:bg-pink-50 dark:hover:bg-pink-500/10 hover:text-pink-600 dark:hover:text-pink-400 transition-all rounded-lg shrink-0"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    {t('productSelectDialog.relatedStocks', 'Bağlı Stoklar')} 
+                    <span className="ml-1 px-1.5 py-0.5 bg-pink-100 dark:bg-pink-900/50 text-pink-700 dark:text-pink-300 rounded text-[10px] font-bold">
+                      {stock.parentRelations?.length || 0}
+                    </span>
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-80 p-0 overflow-hidden bg-white/95 dark:bg-[#1a1025]/95 backdrop-blur-xl border border-white/20 dark:border-white/10" onClick={(e) => e.stopPropagation()}>
+                    <div className="flex flex-col max-h-[300px]">
+                    <div className="p-3 border-b border-slate-200 dark:border-white/5 bg-slate-50/50 dark:bg-white/5">
+                        <h4 className="font-semibold text-sm text-slate-900 dark:text-white">
+                        {t('productSelectDialog.relatedStocks', 'Bağlı Stoklar')}
+                        </h4>
+                    </div>
+                    <div className="overflow-y-auto p-2 space-y-2">
+                        {stock.parentRelations?.map((relation) => (
+                        <div
+                            key={relation.id}
+                            className="group/item flex items-center justify-between p-2 rounded-lg border border-transparent hover:border-pink-500/30 hover:bg-pink-50/50 dark:hover:bg-pink-500/10 cursor-pointer transition-all"
+                            onClick={(e) => handleRelatedStockClick(e, relation)}
+                        >
+                            <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 mb-1">
+                                <div className="font-medium text-sm truncate text-slate-700 dark:text-slate-200 group-hover/item:text-pink-700 dark:group-hover/item:text-pink-300 transition-colors">
+                                {relation.relatedStockName || t('productSelectDialog.unknownStock', 'Bilinmeyen Stok')}
+                                </div>
+                                {relation.relatedStockCode && (
+                                <span className="text-xs text-slate-400 font-mono">
+                                    ({relation.relatedStockCode})
+                                </span>
+                                )}
+                            </div>
+                            <div className="text-xs text-slate-500 dark:text-slate-400">
+                                {t('productSelectDialog.quantity', 'Miktar')}: <span className="font-medium text-slate-700 dark:text-slate-300">{relation.quantity}</span>
+                                {relation.isMandatory && (
+                                <span className="ml-2 text-orange-600 dark:text-orange-400 font-medium bg-orange-50 dark:bg-orange-900/20 px-1.5 py-0.5 rounded">
+                                    {t('productSelectDialog.mandatory', 'Zorunlu')}
+                                </span>
+                                )}
+                            </div>
+                            {relation.description && (
+                                <div className="text-xs text-slate-400 mt-1 italic">
+                                {relation.description}
+                                </div>
+                            )}
+                            </div>
+                        </div>
+                        ))}
+                    </div>
+                    </div>
+                </PopoverContent>
+              </Popover>
+            )}
+            
+            <div className="shrink-0 text-slate-300 dark:text-slate-600 group-hover:text-pink-500 dark:group-hover:text-pink-400 transition-colors">
+               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                 <path d="m9 18 6-6-6-6" />
+               </svg>
+            </div>
+         </div>
+      </div>
+    </div>
+  );
+}
+
+function StockWithImageListItem({
+  stock,
+  onClick,
+  onRelatedStockSelect,
+}: StockWithImageCardProps): ReactElement {
+  const { t } = useTranslation();
+  const imageUrl = stock.mainImage ? getImageUrl(stock.mainImage.filePath) : null;
+  const hasRelatedStocks = stock.parentRelations && stock.parentRelations.length > 0;
+
+  const handleRelatedStockClick = async (e: React.MouseEvent, relatedStock: StockRelationDto): Promise<void> => {
+    e.stopPropagation();
+    if (onRelatedStockSelect) {
+      try {
+        const relatedStockData = await stockApi.getById(relatedStock.relatedStockId);
+        if (relatedStockData) {
+          onRelatedStockSelect(relatedStockData);
+        }
+      } catch (error) {
+        console.error('Related stock bilgisi alınamadı:', error);
+      }
+    }
+  };
+
+  return (
+    <div
+      className={cn(
+        'group flex items-center gap-4 p-2 rounded-xl cursor-pointer transition-all duration-300',
+        'bg-white/50 dark:bg-[#1a1025]/40 border-slate-200 dark:border-white/5',
+        'hover:border-pink-500/50 dark:hover:border-pink-500/50 hover:bg-pink-50/30 dark:hover:bg-pink-500/5 hover:shadow-md hover:shadow-pink-500/5',
+        'active:scale-[0.99] touch-manipulation'
+      )}
+      onClick={onClick}
+    >
+      <div className="shrink-0 w-16 h-16 rounded-lg bg-slate-100 dark:bg-white/5 overflow-hidden border border-slate-200 dark:border-white/5">
+        {imageUrl ? (
+          <img
+            src={imageUrl}
+            alt={stock.mainImage?.altText || stock.stockName}
+            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center text-slate-300 dark:text-slate-600">
+             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+          </div>
+        )}
+      </div>
+
+      <div className="flex-1 min-w-0 grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
+         <div className="md:col-span-5 flex flex-col justify-center">
+            <div className="flex items-center gap-2 mb-1">
+               <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-300 border border-pink-200 dark:border-pink-800/50 uppercase tracking-wider">
+                  {t('productSelectDialog.stock', 'STOK')}
+               </span>
+               <span className="text-xs font-mono text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-white/5 px-1.5 py-0.5 rounded">
+                 {stock.erpStockCode}
+               </span>
+            </div>
+            <span className="font-semibold text-sm text-slate-900 dark:text-white truncate group-hover:text-pink-600 dark:group-hover:text-pink-400 transition-colors">
+              {stock.stockName}
+            </span>
+         </div>
+
+         <div className="md:col-span-4 flex flex-col justify-center text-sm text-slate-500 dark:text-slate-400">
+            {(stock.grupKodu || stock.grupAdi) && (
+              <span className="truncate text-xs">
+                <span className="font-medium text-slate-700 dark:text-slate-300">{stock.grupKodu}</span>
+                {stock.grupKodu && stock.grupAdi && ' - '}
+                {stock.grupAdi}
+              </span>
+            )}
+            {stock.unit && (
+              <span className="text-xs opacity-80 mt-0.5">
+                {t('productSelectDialog.unit', 'Birim')}: {stock.unit}
+              </span>
+            )}
+         </div>
+
+         <div className="md:col-span-3 flex justify-end items-center gap-2">
+            {hasRelatedStocks && (
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="h-8 text-xs border-slate-200 dark:border-white/10 hover:border-pink-500/50 hover:bg-pink-50 dark:hover:bg-pink-500/10 hover:text-pink-600 dark:hover:text-pink-400 transition-all rounded-lg shrink-0"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    {t('productSelectDialog.relatedStocks', 'Bağlı Stoklar')} 
+                    <span className="ml-1 px-1.5 py-0.5 bg-pink-100 dark:bg-pink-900/50 text-pink-700 dark:text-pink-300 rounded text-[10px] font-bold">
+                      {stock.parentRelations?.length || 0}
+                    </span>
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-80 p-0 overflow-hidden bg-white/95 dark:bg-[#1a1025]/95 backdrop-blur-xl border border-white/20 dark:border-white/10" onClick={(e) => e.stopPropagation()}>
+                    <div className="flex flex-col max-h-[300px]">
+                    <div className="p-3 border-b border-slate-200 dark:border-white/5 bg-slate-50/50 dark:bg-white/5">
+                        <h4 className="font-semibold text-sm text-slate-900 dark:text-white">
+                        {t('productSelectDialog.relatedStocks', 'Bağlı Stoklar')}
+                        </h4>
+                    </div>
+                    <div className="overflow-y-auto p-2 space-y-2">
+                        {stock.parentRelations?.map((relation) => (
+                        <div
+                            key={relation.id}
+                            className="group/item flex items-center justify-between p-2 rounded-lg border border-transparent hover:border-pink-500/30 hover:bg-pink-50/50 dark:hover:bg-pink-500/10 cursor-pointer transition-all"
+                            onClick={(e) => handleRelatedStockClick(e, relation)}
+                        >
+                            <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 mb-1">
+                                <div className="font-medium text-sm truncate text-slate-700 dark:text-slate-200 group-hover/item:text-pink-700 dark:group-hover/item:text-pink-300 transition-colors">
+                                {relation.relatedStockName || t('productSelectDialog.unknownStock', 'Bilinmeyen Stok')}
+                                </div>
+                                {relation.relatedStockCode && (
+                                <span className="text-xs text-slate-400 font-mono">
+                                    ({relation.relatedStockCode})
+                                </span>
+                                )}
+                            </div>
+                            <div className="text-xs text-slate-500 dark:text-slate-400">
+                                {t('productSelectDialog.quantity', 'Miktar')}: <span className="font-medium text-slate-700 dark:text-slate-300">{relation.quantity}</span>
+                                {relation.isMandatory && (
+                                <span className="ml-2 text-orange-600 dark:text-orange-400 font-medium bg-orange-50 dark:bg-orange-900/20 px-1.5 py-0.5 rounded">
+                                    {t('productSelectDialog.mandatory', 'Zorunlu')}
+                                </span>
+                                )}
+                            </div>
+                            {relation.description && (
+                                <div className="text-xs text-slate-400 mt-1 italic">
+                                {relation.description}
+                                </div>
+                            )}
+                            </div>
+                        </div>
+                        ))}
+                    </div>
+                    </div>
+                </PopoverContent>
+              </Popover>
+            )}
+            
+            <div className="shrink-0 text-slate-300 dark:text-slate-600 group-hover:text-pink-500 dark:group-hover:text-pink-400 transition-colors">
+               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                 <path d="m9 18 6-6-6-6" />
+               </svg>
+            </div>
+         </div>
+      </div>
+    </div>
+  );
+}
+
 export function ProductSelectDialog({
   open,
   onOpenChange,
@@ -389,6 +679,7 @@ export function ProductSelectDialog({
   disableRelatedStocks = false,
 }: ProductSelectDialogProps): ReactElement {
   const { t, i18n } = useTranslation();
+  const [viewMode, setViewMode] = useState<'card' | 'list'>('card');
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState('stocks');
   const [isListening, setIsListening] = useState(false);
@@ -592,6 +883,21 @@ export function ProductSelectDialog({
       );
     }
 
+    if (viewMode === 'list') {
+      return (
+        <div className="flex flex-col gap-2">
+          {filteredStocks.map((stock) => (
+            <StockListItem
+              key={stock.id}
+              stock={stock}
+              onClick={() => handleStockSelect(stock)}
+              onRelatedStockSelect={handleStockSelect}
+            />
+          ))}
+        </div>
+      );
+    }
+
     return (
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {filteredStocks.map((stock) => (
@@ -629,6 +935,21 @@ export function ProductSelectDialog({
       );
     }
 
+    if (viewMode === 'list') {
+      return (
+        <div className="flex flex-col gap-2">
+          {filteredStocksWithImages.map((stock) => (
+            <StockWithImageListItem
+              key={stock.id}
+              stock={stock}
+              onClick={() => handleStockSelect(stock)}
+              onRelatedStockSelect={handleStockSelect}
+            />
+          ))}
+        </div>
+      );
+    }
+
     return (
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {filteredStocksWithImages.map((stock) => (
@@ -656,81 +977,115 @@ export function ProductSelectDialog({
         </DialogHeader>
 
         <div className="px-6 py-4 flex-shrink-0 bg-slate-50/50 dark:bg-white/5 border-b border-slate-200/50 dark:border-white/5">
-          <div className="relative flex gap-2">
-            <div className="relative flex-1 group">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-pink-500 transition-colors"
-              >
-                <circle cx="11" cy="11" r="8" />
-                <path d="m21 21-4.3-4.3" />
-              </svg>
-              <Input
-                type="text"
-                placeholder={t('productSelectDialog.searchPlaceholder', 'Stok kodu veya adı ile ara...')}
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 h-11 bg-white dark:bg-[#0c0516] border-slate-200 dark:border-white/10 focus:border-pink-500/50 dark:focus:border-pink-500/50 focus:ring-pink-500/20 rounded-xl transition-all shadow-sm"
-              />
+          <div className="flex flex-col sm:flex-row gap-3">
+            <div className="relative flex-1 flex gap-2">
+              <div className="relative flex-1 group">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-pink-500 transition-colors"
+                >
+                  <circle cx="11" cy="11" r="8" />
+                  <path d="m21 21-4.3-4.3" />
+                </svg>
+                <Input
+                  type="text"
+                  placeholder={t('productSelectDialog.searchPlaceholder', 'Stok kodu veya adı ile ara...')}
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-10 h-11 bg-white dark:bg-[#0c0516] border-slate-200 dark:border-white/10 focus:border-pink-500/50 dark:focus:border-pink-500/50 focus:ring-pink-500/20 rounded-xl transition-all shadow-sm"
+                />
+              </div>
+              {recognitionRef.current && (
+                <Button
+                  type="button"
+                  variant={isListening ? 'default' : 'outline'}
+                  size="icon"
+                  onClick={handleVoiceSearch}
+                  className={cn(
+                    'shrink-0 h-11 w-11 rounded-xl transition-all',
+                    isListening 
+                      ? 'animate-pulse bg-red-500 hover:bg-red-600 border-red-500 shadow-lg shadow-red-500/30' 
+                      : 'bg-white dark:bg-[#0c0516] border-slate-200 dark:border-white/10 hover:border-pink-500/50 hover:bg-pink-50 dark:hover:bg-pink-500/10 text-slate-500 dark:text-slate-400 hover:text-pink-600 dark:hover:text-pink-400'
+                  )}
+                  title={t('productSelectDialog.voiceSearch', 'Sesli arama')}
+                >
+                  {isListening ? (
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <rect width="18" height="18" x="3" y="3" rx="2" />
+                      <path d="M12 8v8" />
+                      <path d="M8 12h8" />
+                    </svg>
+                  ) : (
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
+                      <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+                      <line x1="12" x2="12" y1="19" y2="23" />
+                      <line x1="8" x2="16" y1="23" y2="23" />
+                    </svg>
+                  )}
+                </Button>
+              )}
             </div>
-            {recognitionRef.current && (
-              <Button
-                type="button"
-                variant={isListening ? 'default' : 'outline'}
-                size="icon"
-                onClick={handleVoiceSearch}
-                className={cn(
-                  'shrink-0 h-11 w-11 rounded-xl transition-all',
-                  isListening 
-                    ? 'animate-pulse bg-red-500 hover:bg-red-600 border-red-500 shadow-lg shadow-red-500/30' 
-                    : 'bg-white dark:bg-[#0c0516] border-slate-200 dark:border-white/10 hover:border-pink-500/50 hover:bg-pink-50 dark:hover:bg-pink-500/10 text-slate-500 dark:text-slate-400 hover:text-pink-600 dark:hover:text-pink-400'
-                )}
-                title={t('productSelectDialog.voiceSearch', 'Sesli arama')}
-              >
-                {isListening ? (
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <rect width="18" height="18" x="3" y="3" rx="2" />
-                    <path d="M12 8v8" />
-                    <path d="M8 12h8" />
-                  </svg>
-                ) : (
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
-                    <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
-                    <line x1="12" x2="12" y1="19" y2="23" />
-                    <line x1="8" x2="16" y1="23" y2="23" />
-                  </svg>
-                )}
-              </Button>
-            )}
+
+            <div className="flex items-center gap-2 self-end sm:self-auto shrink-0">
+              <div className="bg-white dark:bg-[#1a1025] p-1 rounded-xl flex items-center gap-1 border border-slate-200 dark:border-white/5 shadow-sm">
+                <button
+                  type="button"
+                  onClick={() => setViewMode('card')}
+                  className={cn(
+                    "p-2 rounded-lg transition-all",
+                    viewMode === 'card' 
+                      ? "bg-pink-50 dark:bg-pink-900/20 text-pink-600 dark:text-pink-400 shadow-sm" 
+                      : "text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/5"
+                  )}
+                  title={t('productSelectDialog.cardView', 'Kart Görünümü')}
+                >
+                  <LayoutGrid size={18} />
+                </button>
+                <div className="w-px h-4 bg-slate-200 dark:bg-white/10 mx-0.5" />
+                <button
+                  type="button"
+                  onClick={() => setViewMode('list')}
+                  className={cn(
+                    "p-2 rounded-lg transition-all",
+                    viewMode === 'list' 
+                      ? "bg-pink-50 dark:bg-pink-900/20 text-pink-600 dark:text-pink-400 shadow-sm" 
+                      : "text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/5"
+                  )}
+                  title={t('productSelectDialog.listView', 'Liste Görünümü')}
+                >
+                  <ListIcon size={18} />
+                </button>
+              </div>
+            </div>
           </div>
         </div>
 
