@@ -1,4 +1,4 @@
-import { type ReactElement, useEffect, useMemo } from 'react';
+import { type ReactElement, useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslation } from 'react-i18next';
@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Package } from 'lucide-react';
+import { Package, ChevronDown, Layers, Coins } from 'lucide-react';
 import {
   Form,
   FormControl,
@@ -21,18 +21,14 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { cn } from '@/lib/utils';
 import { productPricingGroupByFormSchema, type ProductPricingGroupByFormSchema, calculateFinalPrice, formatPrice } from '../types/product-pricing-group-by-types';
 import { useExchangeRate } from '@/services/hooks/useExchangeRate';
 import type { KurDto } from '@/services/erp-types';
 import { useStokGroup } from '@/services/hooks/useStokGroup';
 import type { ProductPricingGroupByDto } from '../types/product-pricing-group-by-types';
+import { StockGroupSelectDialog } from '@/components/shared/StockGroupSelectDialog';
+import { CurrencySelectDialog } from '@/components/shared/CurrencySelectDialog';
 
 interface ProductPricingGroupByFormProps {
   open: boolean;
@@ -74,6 +70,9 @@ export function ProductPricingGroupByForm({
   const { t } = useTranslation();
   const { data: exchangeRates = [], isLoading: isLoadingCurrencies } = useExchangeRate();
   const { data: stokGroups = [], isLoading: isLoadingGroups } = useStokGroup();
+  
+  const [groupSelectDialogOpen, setGroupSelectDialogOpen] = useState(false);
+  const [currencySelectDialogOpen, setCurrencySelectDialogOpen] = useState(false);
 
   const form = useForm<ProductPricingGroupByFormSchema>({
     resolver: zodResolver(productPricingGroupByFormSchema),
@@ -166,33 +165,45 @@ export function ProductPricingGroupByForm({
                     <FormLabel className={LABEL_STYLE}>
                       {t('productPricingGroupByManagement.erpGroupCode', 'ERP Ürün Grubu Kodu')} *
                     </FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      value={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger className={INPUT_STYLE}>
-                          <SelectValue placeholder={t('productPricingGroupByManagement.selectErpGroupCode', 'Grup Seçin')} />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {isLoadingGroups ? (
-                          <SelectItem value="__loading__" disabled>{t('productPricingGroupByManagement.loading', 'Yükleniyor...')}</SelectItem>
-                        ) : (
-                          stokGroups.map((group) => {
-                            const groupCode = group.grupKodu || `__group_${group.isletmeKodu}_${group.subeKodu}`;
-                            const displayText = group.grupKodu && group.grupAdi 
-                              ? `${group.grupKodu} - ${group.grupAdi}`
-                              : group.grupAdi || group.grupKodu || groupCode;
-                            return (
-                              <SelectItem key={groupCode} value={groupCode}>
-                                {displayText}
-                              </SelectItem>
-                            );
-                          })
+                    <FormControl>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        role="combobox"
+                        className={cn(
+                          INPUT_STYLE,
+                          "w-full justify-between px-3 font-normal",
+                          !field.value && "text-slate-400 dark:text-slate-600"
                         )}
-                      </SelectContent>
-                    </Select>
+                        onClick={() => setGroupSelectDialogOpen(true)}
+                      >
+                        {field.value ? (
+                          <span className="truncate">
+                            {(() => {
+                              const group = stokGroups.find(
+                                (g) => (g.grupKodu || `__group_${g.isletmeKodu}_${g.subeKodu}`) === field.value
+                              );
+                              if (!group) return field.value;
+                              return group.grupKodu && group.grupAdi 
+                                ? `${group.grupKodu} - ${group.grupAdi}`
+                                : group.grupAdi || group.grupKodu || field.value;
+                            })()}
+                          </span>
+                        ) : (
+                          t('productPricingGroupByManagement.selectErpGroupCode', 'Grup Seçin')
+                        )}
+                        <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                      </Button>
+                    </FormControl>
+                    <StockGroupSelectDialog
+                      open={groupSelectDialogOpen}
+                      onOpenChange={setGroupSelectDialogOpen}
+                      selectedGroupCode={field.value}
+                      onSelect={(group) => {
+                        const code = group.grupKodu || `__group_${group.isletmeKodu}_${group.subeKodu}`;
+                        field.onChange(code);
+                      }}
+                    />
                     <FormMessage className="text-red-500 text-[10px] mt-1" />
                   </FormItem>
                 )}
@@ -206,27 +217,42 @@ export function ProductPricingGroupByForm({
                     <FormLabel className={LABEL_STYLE}>
                       {t('productPricingGroupByManagement.currency', 'Para Birimi')} *
                     </FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      value={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger className={INPUT_STYLE}>
-                          <SelectValue placeholder={t('productPricingGroupByManagement.selectCurrency', 'Lütfen para birimi seçin')} />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {isLoadingCurrencies ? (
-                          <SelectItem value="0" disabled>{t('productPricingGroupByManagement.loading', 'Yükleniyor...')}</SelectItem>
-                        ) : (
-                          exchangeRates.map((currency: KurDto) => (
-                            <SelectItem key={currency.dovizTipi} value={String(currency.dovizTipi)}>
-                              {currency.dovizIsmi || `Döviz ${currency.dovizTipi}`}
-                            </SelectItem>
-                          ))
+                    <FormControl>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        role="combobox"
+                        className={cn(
+                          INPUT_STYLE,
+                          "w-full justify-between px-3 font-normal",
+                          !field.value && "text-slate-400 dark:text-slate-600"
                         )}
-                      </SelectContent>
-                    </Select>
+                        onClick={() => setCurrencySelectDialogOpen(true)}
+                      >
+                        {field.value ? (
+                          <span className="truncate">
+                            {(() => {
+                              const curr = exchangeRates.find(
+                                (c) => String(c.dovizTipi) === field.value
+                              );
+                              if (!curr) return field.value;
+                              return curr.dovizIsmi || `Döviz ${curr.dovizTipi}`;
+                            })()}
+                          </span>
+                        ) : (
+                          t('productPricingGroupByManagement.selectCurrency', 'Lütfen para birimi seçin')
+                        )}
+                        <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                      </Button>
+                    </FormControl>
+                    <CurrencySelectDialog
+                      open={currencySelectDialogOpen}
+                      onOpenChange={setCurrencySelectDialogOpen}
+                      selectedCurrencyCode={field.value}
+                      onSelect={(currency) => {
+                        field.onChange(String(currency.dovizTipi));
+                      }}
+                    />
                     <FormMessage className="text-red-500 text-[10px] mt-1" />
                   </FormItem>
                 )}

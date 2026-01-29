@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useUIStore } from '@/stores/ui-store';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { VoiceSearchButton } from '@/components/ui/voice-search-button';
 import { Package, TriangleAlert, Layers, Plus, Search, RefreshCw, X } from 'lucide-react';
 import {
   Card,
@@ -186,6 +187,11 @@ export function ProductPricingGroupByManagementPage(): ReactElement {
             )}
           </div>
           
+          <VoiceSearchButton 
+            onResult={setSearchTerm}
+            className="h-10 w-10 bg-white/50 dark:bg-card/50 border border-slate-200 dark:border-white/10 hover:bg-pink-50/50 dark:hover:bg-pink-500/10 hover:border-pink-500/30 rounded-xl transition-all"
+          />
+
           <div 
             className="h-10 w-10 flex items-center justify-center bg-white/50 dark:bg-card/50 border border-slate-200 dark:border-white/10 rounded-xl cursor-pointer hover:border-pink-500/30 hover:bg-pink-50/50 dark:hover:bg-pink-500/10 transition-all group"
             onClick={handleRefresh}
