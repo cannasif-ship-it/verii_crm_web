@@ -8,13 +8,7 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { VoiceSearchCombobox } from '@/components/shared/VoiceSearchCombobox';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
@@ -274,26 +268,20 @@ export function QuotationHeaderForm({
                     <FormLabel className={styles.label}>
                       {t('quotation.header.representative', 'Satış Temsilcisi')}
                     </FormLabel>
-                    <Select
-                      onValueChange={(value) => field.onChange(value ? Number(value) : null)}
-                      value={field.value?.toString() || ''}
-                    >
-                      <FormControl>
-                        <div className="relative">
-                           <div className={styles.iconWrapper}><Briefcase className="h-4 w-4" /></div>
-                           <SelectTrigger className={styles.inputBase}>
-                             <SelectValue placeholder={t('quotation.select', 'Seçiniz')} />
-                           </SelectTrigger>
-                        </div>
-                      </FormControl>
-                      <SelectContent>
-                        {relatedUsers.map((u) => (
-                          <SelectItem key={u.userId} value={u.userId.toString()}>
-                            {[u.firstName, u.lastName].filter(Boolean).join(' ')}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <div className="relative">
+                       <div className={styles.iconWrapper}><Briefcase className="h-4 w-4" /></div>
+                       <VoiceSearchCombobox
+                         className={styles.inputBase}
+                         value={field.value?.toString() || ''}
+                         onSelect={(value) => field.onChange(value ? Number(value) : null)}
+                         options={relatedUsers.map((u) => ({
+                           value: u.userId.toString(),
+                           label: [u.firstName, u.lastName].filter(Boolean).join(' ')
+                         }))}
+                         placeholder={t('quotation.select', 'Seçiniz')}
+                         searchPlaceholder={t('common.search', 'Ara...')}
+                       />
+                    </div>
                     <FormMessage className="mt-1.5" />
                   </FormItem>
                 )}
@@ -311,26 +299,20 @@ export function QuotationHeaderForm({
                          <Truck className="h-3.5 w-3.5 text-orange-500" />
                         {t('quotation.header.shippingAddress', 'Sevk Adresi')}
                       </FormLabel>
-                      <Select
-                        onValueChange={(value) => field.onChange(value ? Number(value) : null)}
-                        value={field.value?.toString() || ''}
-                      >
-                        <FormControl>
-                          <div className="relative">
-                             <div className={styles.iconWrapper}><Truck className="h-4 w-4" /></div>
-                             <SelectTrigger className={cn(styles.inputBase, "bg-orange-50/30 dark:bg-orange-950/10 border-orange-100 dark:border-orange-900/30")}>
-                               <SelectValue placeholder={t('quotation.header.selectShippingAddress', 'Sevk adresi seçin')} />
-                             </SelectTrigger>
-                          </div>
-                        </FormControl>
-                        <SelectContent>
-                          {shippingAddresses.map((address) => (
-                            <SelectItem key={address.id} value={address.id.toString()}>
-                              {address.addressText}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                      <div className="relative">
+                         <div className={styles.iconWrapper}><Truck className="h-4 w-4" /></div>
+                         <VoiceSearchCombobox
+                           className={cn(styles.inputBase, "bg-orange-50/30 dark:bg-orange-950/10 border-orange-100 dark:border-orange-900/30")}
+                           value={field.value?.toString() || ''}
+                           onSelect={(value) => field.onChange(value ? Number(value) : null)}
+                           options={shippingAddresses.map((address) => ({
+                             value: address.id.toString(),
+                             label: address.addressText
+                           }))}
+                           placeholder={t('quotation.header.selectShippingAddress', 'Sevk adresi seçin')}
+                           searchPlaceholder={t('common.search', 'Ara...')}
+                         />
+                      </div>
                       <FormMessage className="mt-1.5" />
                     </FormItem>
                   )}
@@ -375,26 +357,20 @@ export function QuotationHeaderForm({
                 render={({ field }) => (
                   <FormItem className="space-y-0 relative group">
                     <FormLabel className={styles.label}>Para Birimi</FormLabel>
-                    <Select
-                      onValueChange={(value) => handleCurrencyChange(value)}
-                      value={field.value ? String(field.value) : ''}
-                    >
-                      <FormControl>
-                        <div className="relative">
-                          <div className={styles.iconWrapper}><DollarSign className="h-4 w-4 text-emerald-600" /></div>
-                          <SelectTrigger className={cn(styles.inputBase, "font-bold tracking-wide text-emerald-700 dark:text-emerald-400 bg-emerald-50/50 dark:bg-emerald-950/20 border-emerald-100 dark:border-emerald-900/30")}>
-                            <SelectValue placeholder={t('quotation.select', 'Seçiniz')} />
-                          </SelectTrigger>
-                        </div>
-                      </FormControl>
-                      <SelectContent>
-                        {erpRates.map((currency: KurDto) => (
-                          <SelectItem key={currency.dovizTipi} value={String(currency.dovizTipi)}>
-                            {currency.dovizIsmi || `Döviz ${currency.dovizTipi}`}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <div className="relative">
+                      <div className={styles.iconWrapper}><DollarSign className="h-4 w-4 text-emerald-600" /></div>
+                      <VoiceSearchCombobox
+                        className={cn(styles.inputBase, "font-bold tracking-wide text-emerald-700 dark:text-emerald-400 bg-emerald-50/50 dark:bg-emerald-950/20 border-emerald-100 dark:border-emerald-900/30")}
+                        value={field.value ? String(field.value) : ''}
+                        onSelect={(value) => value && handleCurrencyChange(value)}
+                        options={erpRates.map((currency: KurDto) => ({
+                          value: String(currency.dovizTipi),
+                          label: currency.dovizIsmi || `Döviz ${currency.dovizTipi}`
+                        }))}
+                        placeholder={t('quotation.select', 'Seçiniz')}
+                        searchPlaceholder={t('common.search', 'Ara...')}
+                      />
+                    </div>
                     <FormMessage className="mt-1" />
                   </FormItem>
                 )}
@@ -406,24 +382,20 @@ export function QuotationHeaderForm({
                 render={({ field }) => (
                   <FormItem className="space-y-0 relative group">
                     <FormLabel className={styles.label}>Ödeme Planı</FormLabel>
-                    <Select
-                      onValueChange={(value) => field.onChange(value ? Number(value) : null)}
-                      value={field.value?.toString() || ''}
-                    >
-                      <FormControl>
-                        <div className="relative">
-                           <div className={styles.iconWrapper}><CreditCard className="h-4 w-4" /></div>
-                           <SelectTrigger className={styles.inputBase}>
-                             <SelectValue placeholder={t('quotation.select', 'Seçiniz')} />
-                           </SelectTrigger>
-                        </div>
-                      </FormControl>
-                      <SelectContent>
-                        {paymentTypes.map((pt) => (
-                          <SelectItem key={pt.id} value={pt.id.toString()}>{pt.name}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <div className="relative">
+                       <div className={styles.iconWrapper}><CreditCard className="h-4 w-4" /></div>
+                       <VoiceSearchCombobox
+                         className={styles.inputBase}
+                         value={field.value?.toString() || ''}
+                         onSelect={(value) => field.onChange(value ? Number(value) : null)}
+                         options={paymentTypes.map((pt) => ({
+                           value: pt.id.toString(),
+                           label: pt.name
+                         }))}
+                         placeholder={t('quotation.select', 'Seçiniz')}
+                         searchPlaceholder={t('common.search', 'Ara...')}
+                       />
+                    </div>
                     <FormMessage className="mt-1" />
                   </FormItem>
                 )}
@@ -450,20 +422,20 @@ export function QuotationHeaderForm({
                     <FormLabel className={styles.label}>
                       Teklif Tipi <span className="text-pink-500 ml-0.5">*</span>
                     </FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value || ''}>
-                      <FormControl>
-                         <div className="relative">
-                            <div className={styles.iconWrapper}><Layers className="h-4 w-4" /></div>
-                            <SelectTrigger className={styles.inputBase}>
-                              <SelectValue placeholder="Seçiniz" />
-                            </SelectTrigger>
-                         </div>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="Domestic">{t('quotation.offerType.domestic', 'Yurtiçi')}</SelectItem>
-                        <SelectItem value="Export">{t('quotation.offerType.export', 'Yurtdışı')}</SelectItem>
-                      </SelectContent>
-                    </Select>
+                    <div className="relative">
+                       <div className={styles.iconWrapper}><Layers className="h-4 w-4" /></div>
+                       <VoiceSearchCombobox
+                         className={styles.inputBase}
+                         value={field.value || ''}
+                         onSelect={(value) => field.onChange(value)}
+                         options={[
+                           { value: 'Domestic', label: t('quotation.offerType.domestic', 'Yurtiçi') },
+                           { value: 'Export', label: t('quotation.offerType.export', 'Yurtdışı') }
+                         ]}
+                         placeholder={t('quotation.select', 'Seçiniz')}
+                         searchPlaceholder={t('common.search', 'Ara...')}
+                       />
+                    </div>
                     <FormMessage className="mt-1" />
                   </FormItem>
                 )}
@@ -536,31 +508,23 @@ export function QuotationHeaderForm({
                   render={({ field }) => (
                     <FormItem className="space-y-0 relative group">
                       <FormLabel className={styles.label}>Seri No</FormLabel>
-                      <Select
-                        onValueChange={(value) => field.onChange(value ? Number(value) : null)}
-                        value={field.value?.toString() || ''}
-                        disabled={customerTypeId === undefined || !watchedRepresentativeId}
-                      >
-                        <FormControl>
-                          <div className="relative">
-                            <div className={styles.iconWrapper}><Hash className="h-4 w-4" /></div>
-                            <SelectTrigger className={styles.inputBase}>
-                      <SelectValue placeholder={t('quotation.select', 'Seç')} />
-                    </SelectTrigger>
-                          </div>
-                        </FormControl>
-                        <SelectContent>
-                          {availableDocumentSerialTypes.length === 0 ? (
-                            <div className="p-3 text-center text-xs text-muted-foreground">Uygun seri yok</div>
-                          ) : (
-                            availableDocumentSerialTypes
-                              .filter((d) => d.serialPrefix?.trim() !== '')
-                              .map((d) => (
-                                <SelectItem key={d.id} value={d.id.toString()}>{d.serialPrefix}</SelectItem>
-                              ))
-                          )}
-                        </SelectContent>
-                      </Select>
+                      <div className="relative">
+                        <div className={styles.iconWrapper}><Hash className="h-4 w-4" /></div>
+                        <VoiceSearchCombobox
+                          className={styles.inputBase}
+                          value={field.value?.toString() || ''}
+                          onSelect={(value) => field.onChange(value ? Number(value) : null)}
+                          options={availableDocumentSerialTypes
+                            .filter((d) => d.serialPrefix?.trim() !== '')
+                            .map((d) => ({
+                              value: d.id.toString(),
+                              label: d.serialPrefix || ''
+                            }))}
+                          placeholder={t('quotation.select', 'Seç')}
+                          searchPlaceholder={t('common.search', 'Ara...')}
+                          disabled={customerTypeId === undefined || !watchedRepresentativeId}
+                        />
+                      </div>
                       <FormMessage className="mt-1" />
                     </FormItem>
                   )}
