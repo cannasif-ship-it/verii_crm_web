@@ -104,9 +104,18 @@ export function OrderDetailPage(): ReactElement {
   }, [order, form]);
 
   useEffect(() => {
-    if (linesData && linesData.length > 0 && !linesInitializedRef.current) {
-      const formattedLines: OrderLineFormState[] = linesData.map((line, index) => ({
-        id: line.id && line.id > 0 ? `line-${line.id}-${index}` : `line-temp-${index}`,
+    linesInitializedRef.current = false;
+  }, [orderId]);
+
+  useEffect(() => {
+    if (!orderId || orderId < 1) return;
+    if (!linesData || linesData.length === 0) return;
+    if (linesInitializedRef.current) return;
+    const backendId = (line: { id?: number }): number => Number((line as { id?: number; Id?: number }).id ?? (line as { id?: number; Id?: number }).Id ?? 0);
+    const formattedLines: OrderLineFormState[] = linesData.map((line, index) => {
+      const idNum = backendId(line);
+      return {
+        id: idNum > 0 ? `line-${idNum}-${index}` : `line-temp-${index}`,
         isEditing: false,
         productCode: line.productCode || '',
         productName: line.productName,
@@ -129,11 +138,11 @@ export function OrderDetailPage(): ReactElement {
         relatedProductKey: line.relatedProductKey || null,
         isMainRelatedProduct: line.isMainRelatedProduct || false,
         approvalStatus: line.approvalStatus,
-      }));
-      setLines(formattedLines);
-      linesInitializedRef.current = true;
-    }
-  }, [linesData]);
+      };
+    });
+    setLines(formattedLines);
+    linesInitializedRef.current = true;
+  }, [orderId, linesData]);
 
   const { calculateLineTotals } = useOrderCalculations();
   const { data: erpRates = [] } = useExchangeRate();
@@ -404,6 +413,7 @@ export function OrderDetailPage(): ReactElement {
                     }}
                     initialCurrency={order?.currency}
                     revisionNo={order?.revisionNo}
+                    orderId={orderId}
                 />
             </div>
 
@@ -418,6 +428,7 @@ export function OrderDetailPage(): ReactElement {
                 customerId={watchedCustomerId}
                 erpCustomerCode={watchedErpCustomerCode}
                 representativeId={watchedRepresentativeId}
+                orderId={orderId}
               />
             </div>
 

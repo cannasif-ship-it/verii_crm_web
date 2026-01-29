@@ -1,4 +1,4 @@
-import { type ReactElement, useState, useMemo } from 'react';
+import { type ReactElement, useState, useMemo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import {
@@ -24,10 +24,70 @@ import { ProductSelectDialog, type ProductSelectionResult } from '@/components/s
 import { useCurrencyOptions } from '@/services/hooks/useCurrencyOptions';
 import { useProductSelection } from '../hooks/useProductSelection';
 import { useOrderCalculations } from '../hooks/useOrderCalculations';
+import { useCreateOrderLines } from '../hooks/useCreateOrderLines';
+import { useDeleteOrderLine } from '../hooks/useDeleteOrderLine';
+import { orderApi } from '../api/order-api';
 import { formatCurrency } from '../utils/format-currency';
-import { Trash2, Edit, Plus, ShoppingCart, Box, AlertTriangle, Layers } from 'lucide-react';
-import type { OrderLineFormState, OrderExchangeRateFormState, PricingRuleLineGetDto, UserDiscountLimitDto } from '../types/order-types';
+import { Trash2, Edit, Plus, ShoppingCart, Box, AlertTriangle, Layers, Loader2 } from 'lucide-react';
+import type { OrderLineFormState, OrderExchangeRateFormState, PricingRuleLineGetDto, UserDiscountLimitDto, CreateOrderLineDto, OrderLineGetDto } from '../types/order-types';
 import { cn } from '@/lib/utils';
+
+function parseLineId(formId: string | number | undefined): number | null {
+  if (formId == null) return null;
+  if (typeof formId === 'number' && Number.isFinite(formId) && formId > 0) return formId;
+  const s = String(formId).trim();
+  const prefixed = s.match(/^line-(\d+)(?:-|$)/);
+  if (prefixed) {
+    const n = parseInt(prefixed[1], 10);
+    return Number.isNaN(n) ? null : n;
+  }
+  if (/^\d+$/.test(s)) {
+    const n = parseInt(s, 10);
+    return Number.isNaN(n) ? null : n;
+  }
+  return null;
+}
+
+function toCreateDto(line: OrderLineFormState, orderId: number): CreateOrderLineDto {
+  const { id, isEditing, relatedLines, ...rest } = line;
+  return {
+    ...rest,
+    orderId,
+    productId: line.productId ?? 0,
+    productCode: line.productCode ?? '',
+    productName: line.productName ?? '',
+    approvalStatus: line.approvalStatus ?? 0,
+  };
+}
+
+function dtoToFormState(dto: OrderLineGetDto, index: number): OrderLineFormState {
+  return {
+    id: dto.id && dto.id > 0 ? `line-${dto.id}-${index}` : `line-temp-${index}`,
+    isEditing: false,
+    productId: dto.productId ?? null,
+    productCode: dto.productCode ?? '',
+    productName: dto.productName,
+    groupCode: dto.groupCode ?? null,
+    quantity: dto.quantity,
+    unitPrice: dto.unitPrice,
+    discountRate1: dto.discountRate1,
+    discountAmount1: dto.discountAmount1,
+    discountRate2: dto.discountRate2,
+    discountAmount2: dto.discountAmount2,
+    discountRate3: dto.discountRate3,
+    discountAmount3: dto.discountAmount3,
+    vatRate: dto.vatRate,
+    vatAmount: dto.vatAmount,
+    lineTotal: dto.lineTotal,
+    lineGrandTotal: dto.lineGrandTotal,
+    description: dto.description ?? null,
+    pricingRuleHeaderId: dto.pricingRuleHeaderId ?? null,
+    relatedStockId: dto.relatedStockId ?? null,
+    relatedProductKey: dto.relatedProductKey ?? null,
+    isMainRelatedProduct: dto.isMainRelatedProduct ?? false,
+    approvalStatus: dto.approvalStatus ?? 0,
+  };
+}
 
 interface OrderLineTableProps {
   lines: OrderLineFormState[];
@@ -39,6 +99,7 @@ interface OrderLineTableProps {
   customerId?: number | null;
   erpCustomerCode?: string | null;
   representativeId?: number | null;
+  orderId?: number | null;
 }
 
 export function OrderLineTable({
@@ -51,7 +112,12 @@ export function OrderLineTable({
   customerId,
   erpCustomerCode,
   representativeId,
+  orderId,
 }: OrderLineTableProps): ReactElement {
+  const isExistingOrder = orderId != null && Number(orderId) > 0;
+  const createMutation = useCreateOrderLines(orderId ?? 0);
+  const deleteMutation = useDeleteOrderLine(orderId ?? 0);
+  const isDeleting = deleteMutation.isPending;
   const { t } = useTranslation();
   const [productDialogOpen, setProductDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -114,19 +180,49 @@ export function OrderLineTable({
     setAddLineDialogOpen(true);
   };
 
-  const handleSaveNewLine = (line: OrderLineFormState): void => {
-    const lineToAdd = { ...line, isEditing: false };
-    setLines([...lines, lineToAdd]);
-    setAddLineDialogOpen(false);
-    setNewLine(null);
-  };
+  const handleSaveNewLine = useCallback(
+    async (line: OrderLineFormState): Promise<void> => {
+      const lineToAdd = { ...line, isEditing: false };
+      if (isExistingOrder) {
+        try {
+          const dtos: CreateOrderLineDto[] = [toCreateDto(lineToAdd, orderId!)];
+          const created = await createMutation.mutateAsync(dtos);
+          const mapped = created.map((dto, i) => dtoToFormState(dto, lines.length + i));
+          setLines([...lines, ...mapped]);
+          setAddLineDialogOpen(false);
+          setNewLine(null);
+        } catch {
+        }
+        return;
+      }
+      setLines([...lines, lineToAdd]);
+      setAddLineDialogOpen(false);
+      setNewLine(null);
+    },
+    [isExistingOrder, orderId, createMutation, lines, setLines]
+  );
 
-  const handleSaveMultipleLines = (newLines: OrderLineFormState[]): void => {
-    const linesToAdd = newLines.map((line) => ({ ...line, isEditing: false }));
-    setLines([...lines, ...linesToAdd]);
-    setAddLineDialogOpen(false);
-    setNewLine(null);
-  };
+  const handleSaveMultipleLines = useCallback(
+    async (newLines: OrderLineFormState[]): Promise<void> => {
+      const linesToAdd = newLines.map((l) => ({ ...l, isEditing: false }));
+      if (isExistingOrder) {
+        try {
+          const dtos: CreateOrderLineDto[] = linesToAdd.map((l) => toCreateDto(l, orderId!));
+          const created = await createMutation.mutateAsync(dtos);
+          const mapped = created.map((dto, i) => dtoToFormState(dto, lines.length + i));
+          setLines([...lines, ...mapped]);
+          setAddLineDialogOpen(false);
+          setNewLine(null);
+        } catch {
+        }
+        return;
+      }
+      setLines([...lines, ...linesToAdd]);
+      setAddLineDialogOpen(false);
+      setNewLine(null);
+    },
+    [isExistingOrder, orderId, createMutation, lines, setLines]
+  );
 
   const handleCancelNewLine = (): void => {
     setAddLineDialogOpen(false);
@@ -230,17 +326,47 @@ export function OrderLineTable({
     setDeleteDialogOpen(true);
   };
 
-  const handleDeleteConfirm = (): void => {
-    if (lineToDelete) {
-      const lineToDeleteObj = lines.find((line) => line.id === lineToDelete);
-      if (lineToDeleteObj?.relatedProductKey) {
-        setLines(lines.filter((line) => line.relatedProductKey !== lineToDeleteObj.relatedProductKey));
+  const handleDeleteConfirm = async (): Promise<void> => {
+    if (!lineToDelete) return;
+    const lineToDeleteObj = lines.find((line) => line.id === lineToDelete);
+    if (!lineToDeleteObj) {
+      setLineToDelete(null);
+      setDeleteDialogOpen(false);
+      return;
+    }
+    const removeFromList = (): void => {
+      if (lineToDeleteObj.relatedProductKey) {
+        setLines(lines.filter((l) => l.relatedProductKey !== lineToDeleteObj.relatedProductKey));
       } else {
-        setLines(lines.filter((line) => line.id !== lineToDelete));
+        setLines(lines.filter((l) => l.id !== lineToDelete));
       }
       setLineToDelete(null);
       setDeleteDialogOpen(false);
+    };
+    if (isExistingOrder) {
+      const lineBackendId = parseLineId(lineToDeleteObj.id);
+      if (lineBackendId == null) {
+        removeFromList();
+        return;
+      }
+      const oid = Number(orderId);
+      if (!Number.isFinite(oid) || oid < 1) {
+        removeFromList();
+        return;
+      }
+      deleteMutation.mutate(lineBackendId, {
+        onSuccess: async (): Promise<void> => {
+          const fresh = await orderApi.getOrderLinesByOrderId(oid);
+          const mapped = fresh.map((dto, index) => dtoToFormState(dto, index));
+          setLines(mapped);
+          setLineToDelete(null);
+          setRelatedLinesCount(0);
+          setDeleteDialogOpen(false);
+        },
+      });
+      return;
     }
+    removeFromList();
   };
 
   const handleDeleteCancel = (): void => {
@@ -480,7 +606,17 @@ export function OrderLineTable({
         </DialogContent>
       </Dialog>
 
-      <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+      <Dialog
+        open={deleteDialogOpen}
+        onOpenChange={(open) => {
+          if (!open && isDeleting) return;
+          setDeleteDialogOpen(open);
+          if (!open) {
+            setLineToDelete(null);
+            setRelatedLinesCount(0);
+          }
+        }}
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-rose-600">
@@ -497,8 +633,28 @@ export function OrderLineTable({
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="gap-2 sm:gap-0">
-            <Button variant="outline" onClick={handleDeleteCancel}>{t('order.cancel', 'İptal')}</Button>
-            <Button variant="destructive" onClick={handleDeleteConfirm}>{t('order.delete', 'Sil')}</Button>
+            <Button type="button" variant="outline" onClick={handleDeleteCancel} disabled={isDeleting}>
+              {t('order.cancel', 'İptal')}
+            </Button>
+            <Button
+              type="button"
+              variant="destructive"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                void handleDeleteConfirm();
+              }}
+              disabled={isDeleting}
+            >
+              {isDeleting ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                  {t('order.saving', 'Siliniyor...')}
+                </>
+              ) : (
+                t('order.delete', 'Sil')
+              )}
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
