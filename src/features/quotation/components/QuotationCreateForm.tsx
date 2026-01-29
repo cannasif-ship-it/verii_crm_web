@@ -245,9 +245,6 @@ export function QuotationCreateForm(): ReactElement {
             </Button>
             <div>
               <h2 className="text-2xl font-bold tracking-tight">{t('quotation.create.title', 'Yeni Teklif Oluştur')}</h2>
-              <p className="text-muted-foreground text-sm">
-                {t('quotation.create.subtitle', 'Müşteri için yeni bir satış teklifi oluşturun.')}
-              </p>
             </div>
           </div>
 

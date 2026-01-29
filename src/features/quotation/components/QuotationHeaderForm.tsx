@@ -207,10 +207,6 @@ export function QuotationHeaderForm({
               </span>
             )}
           </h2>
-          <p className="text-xs text-zinc-500 font-medium flex items-center gap-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-pink-500 animate-pulse shadow-[0_0_6px_rgba(236,72,153,0.8)]" />
-            {t('quotation.header.subtitle', 'Müşteri ve finansal bilgileri buradan yönetebilirsiniz.')}
-          </p>
         </div>
       </div>
 
