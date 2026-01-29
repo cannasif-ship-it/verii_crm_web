@@ -37,28 +37,6 @@ interface ProductPricingFormProps {
   isLoading?: boolean;
 }
 
-const INPUT_STYLE = `
-  h-11 rounded-xl
-  bg-white/50 dark:bg-[#0c0516]/50 
-  border border-slate-200 dark:border-white/5 
-  text-slate-900 dark:text-white text-sm
-  placeholder:text-slate-400 dark:placeholder:text-slate-600 
-  
-  focus-visible:ring-0 focus-visible:ring-offset-0 
-  
-  focus:bg-white 
-  focus:border-pink-500 
-  focus:shadow-[0_0_0_3px_rgba(236,72,153,0.15)] 
-
-  dark:focus:bg-[#0c0516] 
-  dark:focus:border-pink-500/60 
-  dark:focus:shadow-[0_0_0_3px_rgba(236,72,153,0.1)]
-
-  transition-all duration-200
-`;
-
-const LABEL_STYLE = "text-[11px] text-slate-500 dark:text-slate-400 uppercase tracking-wider font-bold ml-1 mb-1.5 block";
-
 export function ProductPricingForm({
   open,
   onOpenChange,
@@ -77,7 +55,7 @@ export function ProductPricingForm({
     defaultValues: {
       erpProductCode: '',
       erpGroupCode: '',
-      currency: '1',
+      currency: '',
       listPrice: 0,
       costPrice: 0,
       discount1: undefined,
@@ -85,22 +63,6 @@ export function ProductPricingForm({
       discount3: undefined,
     },
   });
-
-  const watchedValues = form.watch(['listPrice', 'costPrice', 'discount1', 'discount2', 'discount3', 'currency']);
-
-  const calculations = useMemo(() => {
-    const listPrice = watchedValues[0] || 0;
-    const costPrice = watchedValues[1] || 0;
-    const discount1 = watchedValues[2];
-    const discount2 = watchedValues[3];
-    const discount3 = watchedValues[4];
-    const currency = watchedValues[5] || '1';
-
-    const finalPrice = calculateFinalPrice(listPrice, discount1, discount2, discount3);
-    const profitMargin = calculateProfitMargin(listPrice, costPrice, discount1, discount2, discount3);
-
-    return { finalPrice, profitMargin, currency };
-  }, [watchedValues]);
 
   useEffect(() => {
     if (productPricing) {
@@ -110,15 +72,15 @@ export function ProductPricingForm({
         currency: productPricing.currency,
         listPrice: productPricing.listPrice,
         costPrice: productPricing.costPrice,
-        discount1: productPricing.discount1 || undefined,
-        discount2: productPricing.discount2 || undefined,
-        discount3: productPricing.discount3 || undefined,
+        discount1: productPricing.discount1,
+        discount2: productPricing.discount2,
+        discount3: productPricing.discount3,
       });
     } else {
       form.reset({
         erpProductCode: '',
         erpGroupCode: '',
-        currency: '1',
+        currency: '',
         listPrice: 0,
         costPrice: 0,
         discount1: undefined,
@@ -128,7 +90,17 @@ export function ProductPricingForm({
     }
   }, [productPricing, form]);
 
-  const handleSubmit = async (data: ProductPricingFormSchema): Promise<void> => {
+  const watchedValues = form.watch(['listPrice', 'costPrice', 'discount1', 'discount2', 'discount3']);
+  const watchedCurrency = form.watch('currency');
+
+  const calculations = useMemo(() => {
+    const [listPrice, costPrice, d1, d2, d3] = watchedValues;
+    const finalPrice = calculateFinalPrice(listPrice || 0, d1, d2, d3);
+    const profitMargin = calculateProfitMargin(finalPrice, costPrice || 0);
+    return { finalPrice, profitMargin, currency: watchedCurrency };
+  }, [watchedValues, watchedCurrency]);
+
+  const handleSubmit = async (data: ProductPricingFormSchema) => {
     await onSubmit(data);
     if (!isLoading) {
       form.reset();
@@ -136,29 +108,31 @@ export function ProductPricingForm({
     }
   };
 
-  const getProfitMarginColor = (percentage: number): string => {
-    if (percentage < 0) return 'text-red-600';
-    if (percentage < 10) return 'text-orange-600';
-    if (percentage < 25) return 'text-yellow-600';
-    return 'text-green-600';
+  const getProfitMarginColor = (percentage: number) => {
+    if (percentage < 0) return 'text-red-500';
+    if (percentage < 10) return 'text-yellow-500';
+    return 'text-green-500';
   };
+
+  const inputClass = "h-11 bg-white dark:bg-zinc-900/50 border-zinc-200 dark:border-zinc-800 rounded-xl shadow-sm focus-visible:border-pink-500 focus-visible:ring-4 focus-visible:ring-pink-500/20 transition-all duration-300";
+  const labelClass = "text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-2 block";
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-white/95 dark:bg-[#1a1025]/95 backdrop-blur-xl border border-white/60 dark:border-white/5 text-slate-900 dark:text-white max-w-4xl shadow-2xl sm:rounded-2xl max-h-[90vh] h-auto flex flex-col gap-0 p-0 overflow-hidden transition-all duration-300">
+      <DialogContent className="bg-white/95 dark:bg-zinc-900/95 backdrop-blur-xl border-0 shadow-2xl sm:rounded-2xl ring-1 ring-zinc-200 dark:ring-zinc-800 max-w-4xl max-h-[90vh] h-auto flex flex-col gap-0 p-0 overflow-hidden transition-all duration-300">
         
-        <DialogHeader className="border-b border-slate-200/50 dark:border-white/5 px-6 py-5 shrink-0 flex-row items-center justify-between space-y-0">
+        <DialogHeader className="p-6 pb-2 space-y-1">
           <div className="flex items-center gap-3">
              <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-pink-500/20 to-orange-500/20 border border-pink-500/10 flex items-center justify-center text-pink-600 dark:text-pink-400 shrink-0">
                <Package size={20} />
              </div>
-             <div>
-                <DialogTitle className="text-lg font-bold bg-clip-text text-transparent bg-gradient-to-r from-pink-600 to-orange-600">
+             <div className="space-y-1">
+                <DialogTitle className="text-2xl font-bold tracking-tight text-zinc-900 dark:text-foreground">
                   {productPricing
                     ? t('productPricingManagement.edit', 'Fiyatlandırma Düzenle')
                     : t('productPricingManagement.create', 'Yeni Fiyatlandırma')}
                 </DialogTitle>
-                <DialogDescription className="text-slate-500 dark:text-slate-400 text-xs mt-0.5">
+                <DialogDescription className="text-zinc-500 dark:text-muted-foreground text-base mt-0.5">
                   {productPricing
                     ? t('productPricingManagement.editDescription', 'Fiyatlandırma bilgilerini düzenleyin')
                     : t('productPricingManagement.createDescription', 'Yeni fiyatlandırma bilgilerini girin')}
@@ -169,14 +143,14 @@ export function ProductPricingForm({
 
         <div className="flex-1 overflow-y-auto p-6 custom-scrollbar">
           <Form {...form}>
-            <form id="product-pricing-form" onSubmit={form.handleSubmit(handleSubmit)} className="space-y-5">
+            <form id="product-pricing-form" onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <FormField
                   control={form.control}
                   name="erpProductCode"
                   render={({ field }) => (
                     <FormItem className="space-y-0">
-                      <FormLabel className={LABEL_STYLE}>
+                      <FormLabel className={labelClass}>
                         {t('productPricingManagement.erpProductCode', 'Stok Kodu')} *
                       </FormLabel>
                       <FormControl>
@@ -185,26 +159,26 @@ export function ProductPricingForm({
                             type="button"
                             variant="outline"
                             role="combobox"
-                            className={cn(INPUT_STYLE, "w-full justify-between px-3 font-normal")}
+                            className={cn(inputClass, "w-full justify-between px-3 font-normal")}
                             onClick={() => setProductDialogOpen(true)}
                           >
                             {field.value ? (
                               <span className="truncate">{field.value}</span>
                             ) : (
-                              <span className="text-slate-400 dark:text-slate-600">{t('productPricingManagement.selectStokCode', 'Stok seçin')}</span>
+                              <span className="text-zinc-500 dark:text-zinc-400">{t('productPricingManagement.selectStokCode', 'Stok seçin')}</span>
                             )}
                             <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                           </Button>
                           {field.value && (
                             <div 
-                              className="absolute right-8 top-1/2 -translate-y-1/2 p-1 cursor-pointer hover:bg-slate-100 dark:hover:bg-white/10 rounded-full"
+                              className="absolute right-8 top-1/2 -translate-y-1/2 p-1 cursor-pointer hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-full"
                               onClick={(e) => {
                                 e.stopPropagation();
                                 field.onChange('');
                                 form.setValue('erpGroupCode', '');
                               }}
                             >
-                              <X className="h-3 w-3 text-slate-400" />
+                              <X className="h-3 w-3 text-zinc-400" />
                             </div>
                           )}
                         </div>
@@ -219,7 +193,7 @@ export function ProductPricingForm({
                   name="erpGroupCode"
                   render={({ field }) => (
                     <FormItem className="space-y-0">
-                      <FormLabel className={LABEL_STYLE}>
+                      <FormLabel className={labelClass}>
                         {t('productPricingManagement.erpGroupCode', 'Grup Kodu')} *
                       </FormLabel>
                       <FormControl>
@@ -228,7 +202,7 @@ export function ProductPricingForm({
                           readOnly
                           placeholder={t('productPricingManagement.erpGroupCodePlaceholder', 'Stok seçildiğinde otomatik doldurulur')}
                           maxLength={50}
-                          className={INPUT_STYLE}
+                          className={inputClass}
                         />
                       </FormControl>
                       <FormMessage className="text-red-500 text-[10px] mt-1" />
@@ -242,7 +216,7 @@ export function ProductPricingForm({
                 name="currency"
                 render={({ field }) => (
                   <FormItem className="space-y-0">
-                    <FormLabel className={LABEL_STYLE}>
+                    <FormLabel className={labelClass}>
                       {t('productPricingManagement.currency', 'Para Birimi')} *
                     </FormLabel>
                     <FormControl>
@@ -250,7 +224,7 @@ export function ProductPricingForm({
                         type="button"
                         variant="outline"
                         role="combobox"
-                        className={cn(INPUT_STYLE, "w-full justify-between px-3 font-normal")}
+                        className={cn(inputClass, "w-full justify-between px-3 font-normal")}
                         onClick={() => setCurrencySelectDialogOpen(true)}
                       >
                         {field.value ? (
@@ -262,7 +236,7 @@ export function ProductPricingForm({
                             })()}
                           </span>
                         ) : (
-                          <span className="text-slate-400 dark:text-slate-600">{t('productPricingManagement.selectCurrency', 'Lütfen para birimi seçin')}</span>
+                          <span className="text-zinc-500 dark:text-zinc-400">{t('productPricingManagement.selectCurrency', 'Lütfen para birimi seçin')}</span>
                         )}
                         <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                       </Button>
@@ -286,7 +260,7 @@ export function ProductPricingForm({
                   name="listPrice"
                   render={({ field }) => (
                     <FormItem className="space-y-0">
-                      <FormLabel className={LABEL_STYLE}>
+                      <FormLabel className={labelClass}>
                         {t('productPricingManagement.listPrice', 'Liste Fiyatı')} *
                       </FormLabel>
                       <FormControl>
@@ -298,7 +272,7 @@ export function ProductPricingForm({
                           onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
                           value={field.value || ''}
                           placeholder={t('productPricingManagement.enterListPrice', 'Liste Fiyatı Girin')}
-                          className={INPUT_STYLE}
+                          className={inputClass}
                         />
                       </FormControl>
                       <FormMessage className="text-red-500 text-[10px] mt-1" />
@@ -311,7 +285,7 @@ export function ProductPricingForm({
                   name="costPrice"
                   render={({ field }) => (
                     <FormItem className="space-y-0">
-                      <FormLabel className={LABEL_STYLE}>
+                      <FormLabel className={labelClass}>
                         {t('productPricingManagement.costPrice', 'Maliyet Fiyatı')} *
                       </FormLabel>
                       <FormControl>
@@ -323,7 +297,7 @@ export function ProductPricingForm({
                           onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
                           value={field.value || ''}
                           placeholder={t('productPricingManagement.enterCostPrice', 'Maliyet Fiyatı Girin')}
-                          className={INPUT_STYLE}
+                          className={inputClass}
                         />
                       </FormControl>
                       <FormMessage className="text-red-500 text-[10px] mt-1" />
@@ -338,7 +312,7 @@ export function ProductPricingForm({
                   name="discount1"
                   render={({ field }) => (
                     <FormItem className="space-y-0">
-                      <FormLabel className={LABEL_STYLE}>
+                      <FormLabel className={labelClass}>
                         {t('productPricingManagement.discount1', 'İskonto 1')}
                       </FormLabel>
                       <FormControl>
@@ -351,7 +325,7 @@ export function ProductPricingForm({
                           onChange={(e) => field.onChange(e.target.value ? parseFloat(e.target.value) : undefined)}
                           value={field.value || ''}
                           placeholder={t('productPricingManagement.enterDiscount1', 'İskonto 1 (Ops.)')}
-                          className={INPUT_STYLE}
+                          className={inputClass}
                         />
                       </FormControl>
                       <FormMessage className="text-red-500 text-[10px] mt-1" />
@@ -364,7 +338,7 @@ export function ProductPricingForm({
                   name="discount2"
                   render={({ field }) => (
                     <FormItem className="space-y-0">
-                      <FormLabel className={LABEL_STYLE}>
+                      <FormLabel className={labelClass}>
                         {t('productPricingManagement.discount2', 'İskonto 2')}
                       </FormLabel>
                       <FormControl>
@@ -377,7 +351,7 @@ export function ProductPricingForm({
                           onChange={(e) => field.onChange(e.target.value ? parseFloat(e.target.value) : undefined)}
                           value={field.value || ''}
                           placeholder={t('productPricingManagement.enterDiscount2', 'İskonto 2 (Ops.)')}
-                          className={INPUT_STYLE}
+                          className={inputClass}
                         />
                       </FormControl>
                       <FormMessage className="text-red-500 text-[10px] mt-1" />
@@ -390,7 +364,7 @@ export function ProductPricingForm({
                   name="discount3"
                   render={({ field }) => (
                     <FormItem className="space-y-0">
-                      <FormLabel className={LABEL_STYLE}>
+                      <FormLabel className={labelClass}>
                         {t('productPricingManagement.discount3', 'İskonto 3')}
                       </FormLabel>
                       <FormControl>
@@ -403,7 +377,7 @@ export function ProductPricingForm({
                           onChange={(e) => field.onChange(e.target.value ? parseFloat(e.target.value) : undefined)}
                           value={field.value || ''}
                           placeholder={t('productPricingManagement.enterDiscount3', 'İskonto 3 (Ops.)')}
-                          className={INPUT_STYLE}
+                          className={inputClass}
                         />
                       </FormControl>
                       <FormMessage className="text-red-500 text-[10px] mt-1" />

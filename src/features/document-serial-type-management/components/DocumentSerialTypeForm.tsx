@@ -1,4 +1,4 @@
-import { type ReactElement, useEffect } from 'react';
+import { type ReactElement, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslation } from 'react-i18next';
@@ -27,11 +27,26 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from '@/components/ui/command';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
 import { documentSerialTypeFormSchema, type DocumentSerialTypeFormSchema } from '../types/document-serial-type-types';
 import type { DocumentSerialTypeDto } from '../types/document-serial-type-types';
 import { PricingRuleType } from '@/features/pricing-rule/types/pricing-rule-types';
 import { useCustomerTypeOptions } from '../hooks/useCustomerTypeOptions';
 import { useSalesRepOptions } from '../hooks/useSalesRepOptions';
+import { FileText, Check, ChevronsUpDown, Mic, X } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface DocumentSerialTypeFormProps {
   open: boolean;
@@ -39,6 +54,129 @@ interface DocumentSerialTypeFormProps {
   onSubmit: (data: DocumentSerialTypeFormSchema) => void | Promise<void>;
   documentSerialType?: DocumentSerialTypeDto | null;
   isLoading?: boolean;
+}
+
+interface SearchableSelectProps {
+  value: number | null;
+  onChange: (value: number | null) => void;
+  options: { id: number; name: string }[];
+  placeholder: string;
+  searchPlaceholder: string;
+  emptyMessage: string;
+}
+
+function SearchableSelect({
+  value,
+  onChange,
+  options,
+  placeholder,
+  searchPlaceholder,
+  emptyMessage,
+}: SearchableSelectProps) {
+  const [open, setOpen] = useState(false);
+  const [search, setSearch] = useState("");
+  const [isListening, setIsListening] = useState(false);
+
+  const startListening = () => {
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+      const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+      const recognition = new SpeechRecognition();
+      recognition.lang = 'tr-TR';
+      recognition.continuous = false;
+      recognition.interimResults = false;
+
+      recognition.onstart = () => setIsListening(true);
+      recognition.onend = () => setIsListening(false);
+      
+      recognition.onresult = (event: any) => {
+        const transcript = event.results[0][0].transcript;
+        setSearch(transcript);
+      };
+
+      recognition.start();
+    } else {
+      alert('Tarayıcınız sesli aramayı desteklemiyor.');
+    }
+  };
+
+  const selectedLabel = options.find((opt) => opt.id === value)?.name;
+
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <Button
+          variant="outline"
+          role="combobox"
+          aria-expanded={open}
+          className={cn(
+            "w-full justify-between h-11 bg-white dark:bg-zinc-900/50 border-zinc-200 dark:border-zinc-800 rounded-xl shadow-sm hover:bg-zinc-50 dark:hover:bg-zinc-800",
+            !value && "text-muted-foreground"
+          )}
+        >
+          <span className="truncate">{selectedLabel || placeholder}</span>
+          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-[400px] p-0" align="start">
+        <Command>
+          <CommandInput 
+            placeholder={searchPlaceholder} 
+            value={search}
+            onValueChange={setSearch}
+          >
+            <button
+              type="button"
+              onClick={(e) => {
+                e.preventDefault();
+                startListening();
+              }}
+              className={cn(
+                "p-2 rounded-full transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-800",
+                isListening ? "text-red-500 animate-pulse" : "text-zinc-500"
+              )}
+              title="Sesli Arama"
+            >
+              <Mic className="h-4 w-4" />
+            </button>
+          </CommandInput>
+          <CommandList>
+            <CommandEmpty>{emptyMessage}</CommandEmpty>
+            <CommandGroup>
+              <CommandItem
+                value="sys_clear_selection"
+                onSelect={() => {
+                  onChange(null);
+                  setOpen(false);
+                }}
+                className="text-muted-foreground italic"
+              >
+                <X className="mr-2 h-4 w-4" />
+                Sechimi Temizle
+              </CommandItem>
+              {options.map((option) => (
+                <CommandItem
+                  key={option.id}
+                  value={option.name}
+                  onSelect={() => {
+                    onChange(option.id);
+                    setOpen(false);
+                  }}
+                >
+                  <Check
+                    className={cn(
+                      "mr-2 h-4 w-4",
+                      value === option.id ? "opacity-100" : "opacity-0"
+                    )}
+                  />
+                  {option.name}
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          </CommandList>
+        </Command>
+      </PopoverContent>
+    </Popover>
+  );
 }
 
 export function DocumentSerialTypeForm({
@@ -104,245 +242,240 @@ export function DocumentSerialTypeForm({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px] p-0 overflow-hidden border-0 shadow-2xl bg-white/95 dark:bg-zinc-900/95 backdrop-blur-xl ring-1 ring-zinc-200 dark:ring-zinc-800">
+      <DialogContent className="sm:max-w-[600px] p-0 overflow-hidden border-0 shadow-2xl bg-white/95 dark:bg-zinc-900/95 backdrop-blur-xl ring-1 ring-zinc-200 dark:ring-zinc-800">
         <DialogHeader className="p-6 pb-2 space-y-1">
-          <DialogTitle className="text-2xl font-bold tracking-tight text-zinc-900 dark:text-foreground">
-            {documentSerialType
-              ? t('documentSerialTypeManagement.form.editTitle', 'Dosya Tipi Düzenle')
-              : t('documentSerialTypeManagement.form.addTitle', 'Yeni Dosya Tipi Ekle')}
-          </DialogTitle>
-          <DialogDescription className="text-zinc-500 dark:text-muted-foreground text-base">
-            {documentSerialType
-              ? t('documentSerialTypeManagement.form.editDescription', 'Dosya tipi bilgilerini düzenleyin')
-              : t('documentSerialTypeManagement.form.addDescription', 'Yeni dosya tipi bilgilerini girin')}
-          </DialogDescription>
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-pink-500/20 to-orange-500/20 flex items-center justify-center border border-pink-500/20">
+              <FileText className="w-5 h-5 text-pink-600 dark:text-pink-400" />
+            </div>
+            <div className="space-y-1">
+              <DialogTitle className="text-2xl font-bold tracking-tight text-zinc-900 dark:text-foreground">
+                {documentSerialType
+                  ? t('documentSerialTypeManagement.form.editTitle', 'Dosya Tipi Düzenle')
+                  : t('documentSerialTypeManagement.form.addTitle', 'Yeni Dosya Tipi Ekle')}
+              </DialogTitle>
+              <DialogDescription className="text-zinc-500 dark:text-muted-foreground text-base">
+                {documentSerialType
+                  ? t('documentSerialTypeManagement.form.editDescription', 'Dosya tipi bilgilerini düzenleyin')
+                  : t('documentSerialTypeManagement.form.addDescription', 'Yeni dosya tipi bilgilerini girin')}
+              </DialogDescription>
+            </div>
+          </div>
         </DialogHeader>
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6 p-6 pt-2">
-            <FormField
-              control={form.control}
-              name="ruleType"
-              render={({ field }) => (
-                <FormItem className="space-y-2">
-                  <FormLabel className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">
-                    {t('documentSerialTypeManagement.form.ruleType', 'Kural Tipi')} *
-                  </FormLabel>
-                  <Select
-                    onValueChange={(value) => field.onChange(parseInt(value))}
-                    value={field.value?.toString()}
-                  >
-                    <FormControl>
-                      <SelectTrigger className={inputClass}>
-                        <SelectValue placeholder={t('documentSerialTypeManagement.form.selectRuleType', 'Kural tipi seçin')} />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value={PricingRuleType.Demand.toString()}>
-                        {t('pricingRule.ruleType.demand', 'Talep')}
-                      </SelectItem>
-                      <SelectItem value={PricingRuleType.Quotation.toString()}>
-                        {t('pricingRule.ruleType.quotation', 'Teklif')}
-                      </SelectItem>
-                      <SelectItem value={PricingRuleType.Order.toString()}>
-                        {t('pricingRule.ruleType.order', 'Sipariş')}
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="customerTypeId"
-              render={({ field }) => (
-                <FormItem className="space-y-2">
-                  <FormLabel className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">
-                    {t('documentSerialTypeManagement.form.customerType', 'Müşteri Tipi')}
-                  </FormLabel>
-                  <Select
-                    onValueChange={(value) => field.onChange(value && value !== '0' ? parseInt(value) : null)}
-                    value={field.value && field.value !== null ? field.value.toString() : '0'}
-                  >
-                    <FormControl>
-                      <SelectTrigger className={inputClass}>
-                        <SelectValue placeholder={t('documentSerialTypeManagement.form.selectCustomerType', 'Müşteri tipi seçin (opsiyonel)')} />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="0">
-                        {t('documentSerialTypeManagement.form.noCustomerTypeSelected', 'Müşteri tipi seçilmedi')}
-                      </SelectItem>
-                      {customerTypeOptions.map((customerType) => (
-                        <SelectItem key={customerType.id} value={customerType.id.toString()}>
-                          {customerType.name}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="ruleType"
+                render={({ field }) => (
+                  <FormItem className="space-y-2">
+                    <FormLabel className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">
+                      {t('documentSerialTypeManagement.form.ruleType', 'Kural Tipi')} *
+                    </FormLabel>
+                    <Select
+                      onValueChange={(value) => field.onChange(parseInt(value))}
+                      value={field.value?.toString()}
+                    >
+                      <FormControl>
+                        <SelectTrigger className={inputClass}>
+                          <SelectValue placeholder={t('documentSerialTypeManagement.form.selectRuleType', 'Kural tipi seçin')} />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value={PricingRuleType.Demand.toString()}>
+                          {t('pricingRule.ruleType.demand', 'Talep')}
                         </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="salesRepId"
-              render={({ field }) => (
-                <FormItem className="space-y-2">
-                  <FormLabel className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">
-                    {t('documentSerialTypeManagement.form.salesRep', 'Satış Temsilcisi')}
-                  </FormLabel>
-                  <Select
-                    onValueChange={(value) => field.onChange(value && value !== '0' ? parseInt(value) : null)}
-                    value={field.value && field.value !== null ? field.value.toString() : '0'}
-                  >
-                    <FormControl>
-                      <SelectTrigger className={inputClass}>
-                        <SelectValue placeholder={t('documentSerialTypeManagement.form.selectSalesRep', 'Satış temsilcisi seçin (opsiyonel)')} />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="0">
-                        {t('documentSerialTypeManagement.form.noSalesRepSelected', 'Satış temsilcisi seçilmedi')}
-                      </SelectItem>
-                      {salesRepOptions.map((salesRep) => (
-                        <SelectItem key={salesRep.id} value={salesRep.id.toString()}>
-                          {salesRep.fullName}
+                        <SelectItem value={PricingRuleType.Quotation.toString()}>
+                          {t('pricingRule.ruleType.quotation', 'Teklif')}
                         </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                        <SelectItem value={PricingRuleType.Order.toString()}>
+                          {t('pricingRule.ruleType.order', 'Sipariş')}
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            <FormField
-              control={form.control}
-              name="serialPrefix"
-              render={({ field }) => (
-                <FormItem className="space-y-2">
-                  <FormLabel className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">
-                    {t('documentSerialTypeManagement.form.serialPrefix', 'Seri Öneki')} *
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      {...field}
-                      value={field.value}
-                      className={inputClass}
-                      placeholder={t('documentSerialTypeManagement.form.serialPrefixPlaceholder', 'Seri önekini girin')}
-                      maxLength={50}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+              <FormField
+                control={form.control}
+                name="customerTypeId"
+                render={({ field }) => (
+                  <FormItem className="space-y-2">
+                    <FormLabel className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">
+                      {t('documentSerialTypeManagement.form.customerType', 'Müşteri Tipi')}
+                    </FormLabel>
+                    <FormControl>
+                      <SearchableSelect
+                        value={field.value ?? null}
+                        onChange={field.onChange}
+                        options={customerTypeOptions.map(ct => ({ id: ct.id, name: ct.name }))}
+                        placeholder={t('documentSerialTypeManagement.form.selectCustomerType', 'Müşteri tipi seçin (opsiyonel)')}
+                        searchPlaceholder={t('documentSerialTypeManagement.form.searchCustomerType', 'Müşteri tipi ara...')}
+                        emptyMessage={t('documentSerialTypeManagement.form.noCustomerTypeFound', 'Müşteri tipi bulunamadı.')}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
 
-            <FormField
-              control={form.control}
-              name="serialLength"
-              render={({ field }) => (
-                <FormItem className="space-y-2">
-                  <FormLabel className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">
-                    {t('documentSerialTypeManagement.form.serialLength', 'Seri Uzunluğu')} *
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      step="1"
-                      {...field}
-                      value={field.value}
-                      onChange={(e) => field.onChange(e.target.value ? parseInt(e.target.value) : 1)}
-                      placeholder={t('documentSerialTypeManagement.form.serialLengthPlaceholder', 'Seri uzunluğunu girin')}
-                      className={inputClass}
-                      min={1}
-                      max={100}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="salesRepId"
+                render={({ field }) => (
+                  <FormItem className="space-y-2">
+                    <FormLabel className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">
+                      {t('documentSerialTypeManagement.form.salesRep', 'Satış Temsilcisi')}
+                    </FormLabel>
+                    <FormControl>
+                      <SearchableSelect
+                        value={field.value ?? null}
+                        onChange={field.onChange}
+                        options={salesRepOptions.map(sr => ({ id: sr.id, name: sr.fullName }))}
+                        placeholder={t('documentSerialTypeManagement.form.selectSalesRep', 'Satış temsilcisi seçin (opsiyonel)')}
+                        searchPlaceholder={t('documentSerialTypeManagement.form.searchSalesRep', 'Satış temsilcisi ara...')}
+                        emptyMessage={t('documentSerialTypeManagement.form.noSalesRepFound', 'Satış temsilcisi bulunamadı.')}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            <FormField
-              control={form.control}
-              name="serialStart"
-              render={({ field }) => (
-                <FormItem className="space-y-2">
-                  <FormLabel className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">
-                    {t('documentSerialTypeManagement.form.serialStart', 'Seri Başlangıç')} *
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      step="1"
-                      {...field}
-                      value={field.value}
-                      onChange={(e) => field.onChange(e.target.value ? parseInt(e.target.value) : 0)}
-                      placeholder={t('documentSerialTypeManagement.form.serialStartPlaceholder', 'Seri başlangıç değerini girin')}
-                      className={inputClass}
-                      min={0}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+              <FormField
+                control={form.control}
+                name="serialPrefix"
+                render={({ field }) => (
+                  <FormItem className="space-y-2">
+                    <FormLabel className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">
+                      {t('documentSerialTypeManagement.form.serialPrefix', 'Seri Öneki')} *
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        value={field.value}
+                        className={inputClass}
+                        placeholder={t('documentSerialTypeManagement.form.serialPrefixPlaceholder', 'Seri önekini girin')}
+                        maxLength={50}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
 
-            <FormField
-              control={form.control}
-              name="serialCurrent"
-              render={({ field }) => (
-                <FormItem className="space-y-2">
-                  <FormLabel className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">
-                    {t('documentSerialType.form.serialCurrent', 'Seri Mevcut')} *
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      step="1"
-                      {...field}
-                      value={field.value}
-                      onChange={(e) => field.onChange(e.target.value ? parseInt(e.target.value) : 0)}
-                      placeholder={t('documentSerialType.form.serialCurrentPlaceholder', 'Mevcut seri değerini girin')}
-                      className={inputClass}
-                      min={0}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <div className="grid grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="serialLength"
+                render={({ field }) => (
+                  <FormItem className="space-y-2">
+                    <FormLabel className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">
+                      {t('documentSerialTypeManagement.form.serialLength', 'Seri Uzunluğu')} *
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        step="1"
+                        {...field}
+                        value={field.value}
+                        onChange={(e) => field.onChange(e.target.value ? parseInt(e.target.value) : 1)}
+                        placeholder={t('documentSerialTypeManagement.form.serialLengthPlaceholder', 'Seri uzunluğunu girin')}
+                        className={inputClass}
+                        min={1}
+                        max={100}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            <FormField
-              control={form.control}
-              name="serialIncrement"
-              render={({ field }) => (
-                <FormItem className="space-y-2">
-                  <FormLabel className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">
-                    {t('documentSerialTypeManagement.form.serialIncrement', 'Seri Artış')} *
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      step="1"
-                      {...field}
-                      value={field.value}
-                      onChange={(e) => field.onChange(e.target.value ? parseInt(e.target.value) : 1)}
-                      placeholder={t('documentSerialTypeManagement.form.serialIncrementPlaceholder', 'Seri artış değerini girin')}
-                      className={inputClass}
-                      min={1}
-                      max={100}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+              <FormField
+                control={form.control}
+                name="serialIncrement"
+                render={({ field }) => (
+                  <FormItem className="space-y-2">
+                    <FormLabel className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">
+                      {t('documentSerialTypeManagement.form.serialIncrement', 'Seri Artış')} *
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        step="1"
+                        {...field}
+                        value={field.value}
+                        onChange={(e) => field.onChange(e.target.value ? parseInt(e.target.value) : 1)}
+                        placeholder={t('documentSerialTypeManagement.form.serialIncrementPlaceholder', 'Seri artış değerini girin')}
+                        className={inputClass}
+                        min={1}
+                        max={100}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="serialStart"
+                render={({ field }) => (
+                  <FormItem className="space-y-2">
+                    <FormLabel className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">
+                      {t('documentSerialTypeManagement.form.serialStart', 'Seri Başlangıç')} *
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        step="1"
+                        {...field}
+                        value={field.value}
+                        onChange={(e) => field.onChange(e.target.value ? parseInt(e.target.value) : 0)}
+                        placeholder={t('documentSerialTypeManagement.form.serialStartPlaceholder', 'Seri başlangıç değerini girin')}
+                        className={inputClass}
+                        min={0}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="serialCurrent"
+                render={({ field }) => (
+                  <FormItem className="space-y-2">
+                    <FormLabel className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">
+                      {t('documentSerialType.form.serialCurrent', 'Seri Mevcut')} *
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        step="1"
+                        {...field}
+                        value={field.value}
+                        onChange={(e) => field.onChange(e.target.value ? parseInt(e.target.value) : 0)}
+                        placeholder={t('documentSerialType.form.serialCurrentPlaceholder', 'Mevcut seri değerini girin')}
+                        className={inputClass}
+                        min={0}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
 
             <DialogFooter className="gap-2 sm:gap-0 pt-2">
               <Button
