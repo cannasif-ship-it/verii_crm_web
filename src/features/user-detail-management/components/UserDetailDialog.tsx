@@ -5,9 +5,6 @@ import { useTranslation } from 'react-i18next';
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -44,7 +41,23 @@ import { toast } from 'sonner';
 import { getImageUrl } from '../utils/image-url';
 import { useChangePassword } from '@/features/auth/hooks/useChangePassword';
 import { changePasswordSchema, type ChangePasswordRequest } from '@/features/auth/types/auth';
-import { ViewIcon, ViewOffIcon } from 'hugeicons-react';
+import { 
+  User, 
+  Shield, 
+  Camera, 
+  Save, 
+  Ruler, 
+  Weight, 
+  FileText, 
+  X,
+  Lock,
+  Eye,
+  EyeOff,
+  Mail,
+  LogOut,
+  Loader2 // Yükleme ikonu eklendi
+} from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface UserDetailDialogProps {
   open: boolean;
@@ -108,8 +121,7 @@ export function UserDetailDialog({
         gender: userDetail.gender || undefined,
       });
       if (userDetail.profilePictureUrl) {
-        const imageUrl = getImageUrl(userDetail.profilePictureUrl);
-        setPreviewUrl(imageUrl);
+        setPreviewUrl(getImageUrl(userDetail.profilePictureUrl));
       } else {
         setPreviewUrl(null);
       }
@@ -210,301 +222,345 @@ export function UserDetailDialog({
   };
 
   if (isLoadingDetail) {
-    return (
-      <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>
-              {t('userDetailManagement.loading', 'Yükleniyor...')}
-            </DialogTitle>
-            <DialogDescription>
-              {t('userDetailManagement.loadingDescription', 'Veriler yükleniyor, lütfen bekleyin')}
-            </DialogDescription>
-          </DialogHeader>
-          <div className="flex items-center justify-center py-8">
-            <div className="text-muted-foreground">
-              {t('userDetailManagement.loading', 'Yükleniyor...')}
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
-    );
+    return <></>;
   }
+
+  const isSaving = createUserDetail.isPending || updateUserDetail.isPending;
+  const isChangingPassword = changePassword.isPending;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[90vh] overflow-y-auto max-w-2xl">
-        <DialogHeader>
-          <DialogTitle>
-            {t('userDetailManagement.title', 'Kullanıcı Detayları')}
-          </DialogTitle>
-          <DialogDescription>
-            {t('userDetailManagement.description', 'Profil bilgilerinizi düzenleyin')}
-          </DialogDescription>
-        </DialogHeader>
+      <DialogContent 
+        className="sm:max-w-[95vw] md:max-w-6xl lg:max-w-5xl w-full h-[90vh] md:h-[700px] p-0 overflow-hidden bg-white dark:bg-[#1a1025] border-none text-zinc-900 dark:text-slate-300 shadow-2xl rounded-2xl flex flex-col focus:outline-none [&>button]:hidden"
+      >
+        <DialogTitle className="sr-only">Kullanıcı Detayları</DialogTitle>
 
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
-            <div className="flex flex-col items-center gap-4">
-              <div className="relative">
-                {previewUrl ? (
-                  <img
-                    src={previewUrl}
-                    alt={t('userDetailManagement.profilePicture', 'Profil Resmi')}
-                    className="w-32 h-32 rounded-full object-cover border-4 border-primary"
-                    onError={() => {
-                      console.error('Image load error:', previewUrl);
-                      setPreviewUrl(null);
-                    }}
-                  />
-                ) : (
-                  <div className="w-32 h-32 rounded-full bg-primary/10 flex items-center justify-center border-4 border-primary">
-                    <span className="text-4xl font-medium text-primary">
-                      {user?.name?.[0]?.toUpperCase() || user?.email[0]?.toUpperCase() || 'U'}
-                    </span>
-                  </div>
-                )}
+        {/* --- ÜST KAPATMA BUTONU --- */}
+        <div className="absolute top-4 right-4 z-50">
+            <Button 
+                variant="ghost" 
+                size="icon" 
+                onClick={() => onOpenChange(false)} 
+                className="bg-zinc-100/50 hover:bg-zinc-200 dark:bg-white/10 dark:hover:bg-white/20 text-zinc-500 dark:text-white rounded-full h-8 w-8 backdrop-blur-sm transition-all"
+            >
+                <X size={16} />
+            </Button>
+        </div>
+
+        <div className="flex flex-col md:flex-row h-full overflow-hidden">
+          
+          {/* --- SOL TARAFLAR (SIDEBAR) --- */}
+          <div className="w-full md:w-80 bg-zinc-50/80 dark:bg-[#150a1f]/90 backdrop-blur-md border-b md:border-b-0 md:border-r border-zinc-100 dark:border-white/5 p-8 flex flex-col flex-shrink-0 gap-8 relative">
+            
+            {/* Profil Resmi ve İsim */}
+            <div className="flex flex-col items-center md:items-start text-center md:text-left">
+              <div className="relative group cursor-pointer mb-5" onClick={() => fileInputRef.current?.click()}>
+                <div className="w-28 h-28 rounded-full border-[4px] border-white dark:border-[#2a1d35] bg-zinc-200 dark:bg-slate-800 overflow-hidden relative shadow-lg">
+                    {previewUrl ? (
+                      <img src={previewUrl} alt="Profile" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-4xl font-bold text-white bg-gradient-to-br from-pink-500 to-orange-500">
+                         {user?.name?.[0]?.toUpperCase() || 'U'}
+                      </div>
+                    )}
+                    {/* Hover Overlay */}
+                    <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300">
+                      <Camera size={26} className="text-white drop-shadow-md" />
+                    </div>
+                </div>
               </div>
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/*"
-                onChange={handleFileChange}
-                className="hidden"
-              />
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={() => fileInputRef.current?.click()}
-                disabled={uploadProfilePicture.isPending}
-              >
-                {uploadProfilePicture.isPending
-                  ? t('userDetailManagement.uploading', 'Yükleniyor...')
-                  : t('userDetailManagement.changeProfilePicture', 'Profil Resmini Değiştir')}
-              </Button>
+              
+              <div className="w-full space-y-1">
+                 <h2 className="text-2xl font-bold text-zinc-900 dark:text-white break-words tracking-tight">{user?.name || 'Kullanıcı'}</h2>
+                 <div className="flex items-center justify-center md:justify-start gap-2">
+                    <Mail size={14} className="text-zinc-400 dark:text-slate-500" />
+                    <p className="text-sm text-zinc-500 dark:text-slate-400 font-medium break-all">{user?.email}</p>
+                 </div>
+              </div>
+              
+              <input ref={fileInputRef} type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
             </div>
-
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-              <FormField
-                control={form.control}
-                name="height"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      {t('userDetailManagement.height', 'Boy (cm)')}
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        type="number"
-                        step="0.01"
-                        min="0"
-                        max="300"
-                        {...field}
-                        onChange={(e) => field.onChange(e.target.value ? parseFloat(e.target.value) : undefined)}
-                        value={field.value || ''}
-                        placeholder={t('userDetailManagement.enterHeight', 'Boy Girin (cm)')}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="weight"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      {t('userDetailManagement.weight', 'Kilo (kg)')}
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        type="number"
-                        step="0.01"
-                        min="0"
-                        max="500"
-                        {...field}
-                        onChange={(e) => field.onChange(e.target.value ? parseFloat(e.target.value) : undefined)}
-                        value={field.value || ''}
-                        placeholder={t('userDetailManagement.enterWeight', 'Kilo Girin (kg)')}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-
-            <FormField
-              control={form.control}
-              name="gender"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>
-                    {t('userDetailManagement.gender', 'Cinsiyet')}
-                  </FormLabel>
-                  <Select
-                    onValueChange={(value) => field.onChange(value && value !== 'none' ? parseInt(value) as Gender : undefined)}
-                    value={field.value !== undefined && field.value !== null ? field.value.toString() : undefined}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder={t('userDetailManagement.selectGender', 'Cinsiyet Seçin')} />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="none">
-                        {t('userDetailManagement.noGenderSelected', 'Belirtilmemiş')}
-                      </SelectItem>
-                      {GENDER_OPTIONS.map((option) => (
-                        <SelectItem key={option.value} value={option.value.toString()}>
-                          {t(`userDetailManagement.gender${option.label}`, option.label)}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="description"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>
-                    {t('userDetailManagement.description', 'Açıklama')}
-                  </FormLabel>
-                  <FormControl>
-                    <Textarea
-                      {...field}
-                      value={field.value || ''}
-                      placeholder={t('userDetailManagement.enterDescription', 'Açıklama Girin')}
-                      rows={4}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <DialogFooter>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => onOpenChange(false)}
-                disabled={createUserDetail.isPending || updateUserDetail.isPending}
-              >
-                {t('userDetailManagement.cancel', 'İptal')}
-              </Button>
-              <Button type="submit" disabled={createUserDetail.isPending || updateUserDetail.isPending}>
-                {createUserDetail.isPending || updateUserDetail.isPending
-                  ? t('userDetailManagement.saving', 'Kaydediliyor...')
-                  : t('userDetailManagement.save', 'Kaydet')}
-              </Button>
-            </DialogFooter>
-          </form>
-        </Form>
-
-        <Accordion type="single" collapsible className="w-full mt-4">
-          <AccordionItem value="change-password">
-            <AccordionTrigger>
-              {t('userDetailManagement.changePassword', 'Şifre Değiştir')}
-            </AccordionTrigger>
-            <AccordionContent>
-              <Form {...changePasswordForm}>
-                <form 
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    changePasswordForm.handleSubmit(handleChangePasswordSubmit)(e);
-                  }} 
-                  className="space-y-4"
+            
+            {/* Masaüstünde Alt "Vazgeç" Butonu */}
+            <div className="mt-auto hidden md:block w-full">
+                <Button 
+                    variant="ghost" 
+                    className="w-full text-zinc-500 hover:text-zinc-900 hover:bg-zinc-200/50 dark:text-slate-400 dark:hover:text-white dark:hover:bg-white/5 gap-2 justify-start h-12 rounded-xl transition-colors"
+                    onClick={() => onOpenChange(false)}
                 >
-                  <FormField
-                    control={changePasswordForm.control}
-                    name="currentPassword"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>
-                          {t('userDetailManagement.currentPassword', 'Mevcut Şifre')}
-                        </FormLabel>
-                        <FormControl>
-                          <div className="relative">
-                            <Input
-                              {...field}
-                              type={isCurrentPasswordVisible ? 'text' : 'password'}
-                              placeholder={t('userDetailManagement.enterCurrentPassword', 'Mevcut şifrenizi girin')}
-                            />
-                            <button
-                              type="button"
-                              onClick={() => setIsCurrentPasswordVisible((v) => !v)}
-                              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                            >
-                              {isCurrentPasswordVisible ? (
-                                <ViewOffIcon size={18} />
-                              ) : (
-                                <ViewIcon size={18} />
-                              )}
-                            </button>
-                          </div>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                    <LogOut size={18} />
+                    {t('userDetailManagement.cancel', 'Vazgeç ve Kapat')}
+                </Button>
+            </div>
+          </div>
 
-                  <FormField
-                    control={changePasswordForm.control}
-                    name="newPassword"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>
-                          {t('userDetailManagement.newPassword', 'Yeni Şifre')}
-                        </FormLabel>
-                        <FormControl>
-                          <div className="relative">
-                            <Input
-                              {...field}
-                              type={isNewPasswordVisible ? 'text' : 'password'}
-                              placeholder={t('userDetailManagement.enterNewPassword', 'Yeni şifrenizi girin (min 6 karakter)')}
-                              maxLength={100}
-                            />
-                            <button
-                              type="button"
-                              onClick={() => setIsNewPasswordVisible((v) => !v)}
-                              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                            >
-                              {isNewPasswordVisible ? (
-                                <ViewOffIcon size={18} />
-                              ) : (
-                                <ViewIcon size={18} />
-                              )}
-                            </button>
-                          </div>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+          {/* --- SAĞ TARAFLAR (İÇERİK ALANI) --- */}
+          <div className="flex-1 overflow-y-auto p-5 md:p-10 bg-white dark:bg-[#1a1025] relative">
+            
+            <div className="space-y-8 animate-in fade-in slide-in-from-bottom-3 duration-500 max-w-2xl mx-auto pb-6 pt-2">
+                
+                {/* Başlık Alanı */}
+                <div className="border-b border-zinc-100 dark:border-white/5 pb-6 pr-8">
+                  <h3 className="text-2xl font-bold text-zinc-900 dark:text-white mb-2">Profil Düzenle</h3>
+                  <p className="text-sm text-zinc-500 dark:text-slate-400 leading-relaxed">
+                    Kişisel bilgilerinizi ve hesap ayarlarınızı buradan yönetebilirsiniz.
+                  </p>
+                </div>
 
-                  <Button
-                    type="submit"
-                    variant="outline"
-                    disabled={changePassword.isPending}
-                    className="w-full"
-                  >
-                    {changePassword.isPending
-                      ? t('userDetailManagement.changingPassword', 'Değiştiriliyor...')
-                      : t('userDetailManagement.changePasswordButton', 'Şifreyi Değiştir')}
-                  </Button>
-                </form>
-              </Form>
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
+                {/* --- PROFİL FORMU --- */}
+                <Form {...form}>
+                  <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <FormField
+                        control={form.control}
+                        name="height"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-xs font-semibold text-zinc-500 dark:text-slate-400 ml-1 uppercase tracking-wide">
+                                {t('userDetailManagement.height', 'Boy (cm)')}
+                            </FormLabel>
+                            <FormControl>
+                              <div className="relative group">
+                                {/* İkon Titreme Animasyonu (Mikro-Etkileşim) */}
+                                <Ruler className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400 dark:text-slate-600 group-focus-within:text-pink-600 dark:group-focus-within:text-pink-500 group-focus-within:animate-[wiggle_0.3s_ease-in-out] transition-colors" size={18} />
+                                {/* Pembe Border Geri Döndü */}
+                                <Input
+                                  type="number"
+                                  step="0.01"
+                                  {...field}
+                                  onChange={(e) => field.onChange(e.target.value ? parseFloat(e.target.value) : undefined)}
+                                  value={field.value || ''}
+                                  className="pl-12 bg-zinc-50/50 dark:bg-[#150a1f] border-zinc-200 dark:border-white/10 text-zinc-900 dark:text-slate-200 focus:border-pink-500 dark:focus:border-pink-500 focus:ring-4 focus:ring-pink-500/10 rounded-xl h-12 shadow-sm transition-all"
+                                  placeholder="Örn: 175"
+                                />
+                              </div>
+                            </FormControl>
+                            <FormMessage className="text-red-500 text-xs" />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="weight"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-xs font-semibold text-zinc-500 dark:text-slate-400 ml-1 uppercase tracking-wide">
+                                {t('userDetailManagement.weight', 'Kilo (kg)')}
+                            </FormLabel>
+                            <FormControl>
+                                <div className="relative group">
+                                    <Weight className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400 dark:text-slate-600 group-focus-within:text-pink-600 dark:group-focus-within:text-pink-500 group-focus-within:animate-[wiggle_0.3s_ease-in-out] transition-colors" size={18} />
+                                    <Input
+                                        type="number"
+                                        step="0.01"
+                                        {...field}
+                                        onChange={(e) => field.onChange(e.target.value ? parseFloat(e.target.value) : undefined)}
+                                        value={field.value || ''}
+                                        className="pl-12 bg-zinc-50/50 dark:bg-[#150a1f] border-zinc-200 dark:border-white/10 text-zinc-900 dark:text-slate-200 focus:border-pink-500 dark:focus:border-pink-500 focus:ring-4 focus:ring-pink-500/10 rounded-xl h-12 shadow-sm transition-all"
+                                        placeholder="Örn: 70.5"
+                                    />
+                                </div>
+                            </FormControl>
+                            <FormMessage className="text-red-500 text-xs" />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+
+                    <FormField
+                      control={form.control}
+                      name="gender"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-xs font-semibold text-zinc-500 dark:text-slate-400 ml-1 uppercase tracking-wide">
+                              {t('userDetailManagement.gender', 'Cinsiyet')}
+                          </FormLabel>
+                          <div className="relative group">
+                            <User className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400 dark:text-slate-600 z-10 group-focus-within:text-pink-600 dark:group-focus-within:text-pink-500 group-focus-within:animate-[wiggle_0.3s_ease-in-out] transition-colors" size={18} />
+                            <Select
+                                onValueChange={(value) => field.onChange(value && value !== 'none' ? parseInt(value) as Gender : undefined)}
+                                value={field.value !== undefined && field.value !== null ? field.value.toString() : undefined}
+                            >
+                                <FormControl>
+                                <SelectTrigger className="pl-12 bg-zinc-50/50 dark:bg-[#150a1f] border-zinc-200 dark:border-white/10 text-zinc-900 dark:text-slate-200 focus:border-pink-500 dark:focus:border-pink-500 focus:ring-4 focus:ring-pink-500/10 rounded-xl h-12 w-full shadow-sm transition-all">
+                                    <SelectValue placeholder={t('userDetailManagement.selectGender', 'Seçiniz')} />
+                                </SelectTrigger>
+                                </FormControl>
+                                <SelectContent className="bg-white dark:bg-[#1e1235] border-zinc-100 dark:border-white/10 text-zinc-900 dark:text-slate-300 shadow-xl">
+                                <SelectItem value="none" className="focus:bg-zinc-50 dark:focus:bg-white/5 cursor-pointer">
+                                    {t('userDetailManagement.noGenderSelected', 'Belirtilmemiş')}
+                                </SelectItem>
+                                {GENDER_OPTIONS.map((option) => (
+                                    <SelectItem key={option.value} value={option.value.toString()} className="focus:bg-zinc-50 dark:focus:bg-white/5 cursor-pointer">
+                                    {t(`userDetailManagement.gender${option.label}`, option.label)}
+                                    </SelectItem>
+                                ))}
+                                </SelectContent>
+                            </Select>
+                          </div>
+                          <FormMessage className="text-red-500 text-xs" />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="description"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-xs font-semibold text-zinc-500 dark:text-slate-400 ml-1 uppercase tracking-wide">
+                              {t('userDetailManagement.description', 'Biyografi')}
+                          </FormLabel>
+                          <FormControl>
+                            <div className="relative group">
+                                <FileText className="absolute left-4 top-4 text-zinc-400 dark:text-slate-600 group-focus-within:text-pink-600 dark:group-focus-within:text-pink-500 group-focus-within:animate-[wiggle_0.3s_ease-in-out] transition-colors" size={18} />
+                                <Textarea
+                                {...field}
+                                value={field.value || ''}
+                                placeholder={t('userDetailManagement.enterDescription', 'Kendinizden kısaca bahsedin...')}
+                                rows={4}
+                                className="pl-12 bg-zinc-50/50 dark:bg-[#150a1f] border-zinc-200 dark:border-white/10 text-zinc-900 dark:text-slate-200 focus:border-pink-500 dark:focus:border-pink-500 focus:ring-4 focus:ring-pink-500/10 rounded-xl py-3.5 min-h-[120px] resize-none shadow-sm transition-all"
+                                />
+                            </div>
+                          </FormControl>
+                          <FormMessage className="text-red-500 text-xs" />
+                        </FormItem>
+                      )}
+                    />
+
+                    <div className="pt-2 flex justify-end">
+                      <Button 
+                        type="submit" 
+                        disabled={isSaving}
+                        className="w-full md:w-auto bg-gradient-to-r from-pink-600 to-orange-600 hover:from-pink-500 hover:to-orange-500 text-white font-medium px-8 py-3 h-12 rounded-xl shadow-lg shadow-pink-600/20 active:scale-95 transition-all duration-200"
+                      >
+                        {isSaving ? (
+                             <div className="flex items-center gap-2">
+                                 <Loader2 size={18} className="animate-spin" />
+                                 {t('userDetailManagement.saving', 'Kaydediliyor...')}
+                             </div>
+                        ) : (
+                            <div className="flex items-center justify-center gap-2">
+                                <Save size={18} />
+                                {t('userDetailManagement.save', 'Kaydet')}
+                            </div>
+                        )}
+                      </Button>
+                    </div>
+                  </form>
+                </Form>
+
+                {/* --- ŞİFRE DEĞİŞTİR (Modern Accordion) --- */}
+                <div className="pt-2">
+                    <Accordion type="single" collapsible className="w-full border border-zinc-200 dark:border-white/5 bg-zinc-50/50 dark:bg-[#150a1f]/50 rounded-xl overflow-hidden shadow-sm hover:border-zinc-300 dark:hover:border-white/10 transition-colors group">
+                    <AccordionItem value="change-password" className="border-none">
+                        <AccordionTrigger className="px-6 py-4 hover:no-underline hover:bg-white dark:hover:bg-white/5 text-zinc-700 dark:text-slate-300 font-medium transition-all group">
+                        <div className="flex items-center gap-3">
+                            <div className="p-2 bg-white dark:bg-white/5 rounded-lg border border-zinc-100 dark:border-white/5 group-hover:border-pink-200 dark:group-hover:border-pink-900 transition-colors">
+                                <Shield size={18} className="text-zinc-400 dark:text-slate-500 group-hover:text-pink-600 dark:group-hover:text-pink-500 group-hover:animate-[wiggle_0.3s_ease-in-out] transition-colors" />
+                            </div>
+                            <span className="group-hover:text-zinc-900 dark:group-hover:text-white transition-colors">{t('userDetailManagement.changePassword', 'Şifre Değiştir')}</span>
+                        </div>
+                        </AccordionTrigger>
+                        <AccordionContent className="px-6 py-6 bg-white dark:bg-[#1a1025] border-t border-zinc-100 dark:border-white/5">
+                            <Form {...changePasswordForm}>
+                                <form 
+                                    onSubmit={(e) => {
+                                    e.preventDefault();
+                                    changePasswordForm.handleSubmit(handleChangePasswordSubmit)(e);
+                                    }} 
+                                    className="space-y-5"
+                                >
+                                    <div className="grid gap-5">
+                                        <FormField
+                                            control={changePasswordForm.control}
+                                            name="currentPassword"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                <FormLabel className="text-xs font-semibold text-zinc-500 dark:text-slate-400 ml-1">{t('userDetailManagement.currentPassword', 'Mevcut Şifre')}</FormLabel>
+                                                <FormControl>
+                                                    <div className="relative group focus-within:text-pink-600 dark:focus-within:text-pink-500">
+                                                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400 dark:text-slate-600 group-focus-within:animate-[wiggle_0.3s_ease-in-out] transition-colors" size={18} />
+                                                    <Input
+                                                        {...field}
+                                                        type={isCurrentPasswordVisible ? 'text' : 'password'}
+                                                        className="pl-12 pr-12 bg-zinc-50 dark:bg-[#150a1f] border-zinc-200 dark:border-white/10 text-zinc-900 dark:text-slate-200 focus:border-pink-500 dark:focus:border-pink-500 focus:ring-4 focus:ring-pink-500/10 rounded-xl h-11 transition-all"
+                                                        placeholder="••••••••"
+                                                    />
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => setIsCurrentPasswordVisible((v) => !v)}
+                                                        className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600 dark:text-slate-500 dark:hover:text-white transition-colors"
+                                                    >
+                                                        {isCurrentPasswordVisible ? <EyeOff size={18} /> : <Eye size={18} />}
+                                                    </button>
+                                                    </div>
+                                                </FormControl>
+                                                </FormItem>
+                                            )}
+                                        />
+
+                                        <FormField
+                                            control={changePasswordForm.control}
+                                            name="newPassword"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                <FormLabel className="text-xs font-semibold text-zinc-500 dark:text-slate-400 ml-1">{t('userDetailManagement.newPassword', 'Yeni Şifre')}</FormLabel>
+                                                <FormControl>
+                                                    <div className="relative group focus-within:text-pink-600 dark:focus-within:text-pink-500">
+                                                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400 dark:text-slate-600 group-focus-within:animate-[wiggle_0.3s_ease-in-out] transition-colors" size={18} />
+                                                    <Input
+                                                        {...field}
+                                                        type={isNewPasswordVisible ? 'text' : 'password'}
+                                                        className="pl-12 pr-12 bg-zinc-50 dark:bg-[#150a1f] border-zinc-200 dark:border-white/10 text-zinc-900 dark:text-slate-200 focus:border-pink-500 dark:focus:border-pink-500 focus:ring-4 focus:ring-pink-500/10 rounded-xl h-11 transition-all"
+                                                        placeholder="Yeni şifreniz"
+                                                    />
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => setIsNewPasswordVisible((v) => !v)}
+                                                        className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600 dark:text-slate-500 dark:hover:text-white transition-colors"
+                                                    >
+                                                        {isNewPasswordVisible ? <EyeOff size={18} /> : <Eye size={18} />}
+                                                    </button>
+                                                    </div>
+                                                </FormControl>
+                                                </FormItem>
+                                            )}
+                                        />
+                                    </div>
+
+                                    <div className="flex justify-end">
+                                        <Button
+                                        type="submit"
+                                        disabled={isChangingPassword}
+                                        variant="outline"
+                                        className="border-zinc-200 dark:border-white/10 text-zinc-700 dark:text-slate-200 hover:bg-zinc-50 dark:hover:bg-white/5 rounded-xl transition-all h-11"
+                                        >
+                                        {isChangingPassword ? (
+                                            <div className="flex items-center gap-2">
+                                                 <Loader2 size={16} className="animate-spin" />
+                                                 {t('userDetailManagement.changingPassword', 'İşleniyor...')}
+                                            </div>
+                                        ) : (
+                                            <div className="flex items-center gap-2">
+                                                <Shield size={16} />
+                                                {t('userDetailManagement.changePasswordButton', 'Şifreyi Güncelle')}
+                                            </div>
+                                        )}
+                                        </Button>
+                                    </div>
+                                </form>
+                            </Form>
+                        </AccordionContent>
+                    </AccordionItem>
+                    </Accordion>
+                </div>
+                
+            </div>
+          </div>
+        </div>
       </DialogContent>
     </Dialog>
   );
