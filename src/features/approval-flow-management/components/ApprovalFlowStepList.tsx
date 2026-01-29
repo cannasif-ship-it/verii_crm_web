@@ -11,19 +11,12 @@ import {
 } from '@/components/ui/dialog';
 import {
   Form,
-  FormControl,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { VoiceSearchCombobox } from '@/components/shared/VoiceSearchCombobox';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -325,28 +318,17 @@ export function ApprovalFlowStepList({ approvalFlowId }: ApprovalFlowStepListPro
                       <FormLabel className={LABEL_STYLE}>
                         {t('approvalFlowStep.form.approvalRoleGroup', 'Rol Grubu')} *
                       </FormLabel>
-                      <Select
-                        onValueChange={(value) => field.onChange(Number(value))}
-                        value={field.value && field.value !== 0 ? field.value.toString() : '0'}
-                      >
-                        <FormControl>
-                          <SelectTrigger className={INPUT_STYLE}>
-                            <SelectValue
-                              placeholder={t('approvalFlowStep.form.selectRoleGroup', 'Rol grubu seçin')}
-                            />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="0">
-                            {t('approvalFlowStep.form.noRoleGroupSelected', 'Rol grubu seçilmedi')}
-                          </SelectItem>
-                          {availableRoleGroups.map((group) => (
-                            <SelectItem key={group.id} value={group.id.toString()}>
-                              {group.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                      <VoiceSearchCombobox
+                        value={field.value && field.value !== 0 ? field.value.toString() : ''}
+                        onSelect={(value) => field.onChange(value ? Number(value) : 0)}
+                        options={availableRoleGroups.map((group) => ({
+                          value: group.id.toString(),
+                          label: group.name,
+                        }))}
+                        placeholder={t('approvalFlowStep.form.selectRoleGroup', 'Rol grubu seçin')}
+                        searchPlaceholder={t('common.search', 'Ara...')}
+                        className={INPUT_STYLE}
+                      />
                       <FormMessage className="text-red-500 text-[10px] mt-1" />
                     </FormItem>
                   )}

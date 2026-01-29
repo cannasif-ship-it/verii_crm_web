@@ -19,13 +19,7 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { VoiceSearchCombobox } from '@/components/shared/VoiceSearchCombobox';
 import { Switch } from '@/components/ui/switch';
 import { approvalFlowFormSchema, type ApprovalFlowFormSchema } from '../types/approval-flow-types';
 import type { ApprovalFlowDto } from '../types/approval-flow-types';
@@ -153,30 +147,21 @@ export function ApprovalFlowForm({
                     <FormLabel className={LABEL_STYLE}>
                       {t('approvalFlow.form.documentType', 'Belge Tipi')} *
                     </FormLabel>
-                    <Select
-                      onValueChange={(value) => field.onChange(Number(value))}
-                      value={field.value && field.value !== 0 ? field.value.toString() : '0'}
-                    >
-                      <FormControl>
-                        <SelectTrigger className={INPUT_STYLE}>
-                          <SelectValue placeholder={t('approvalFlow.form.selectDocumentType', 'Belge tipi seçin')} />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="0">
-                          {t('approvalFlow.form.noDocumentTypeSelected', 'Belge tipi seçilmedi')}
-                        </SelectItem>
-                        {[
-                          PricingRuleType.Demand,
-                          PricingRuleType.Quotation,
-                          PricingRuleType.Order,
-                        ].map((type) => (
-                          <SelectItem key={type} value={type.toString()}>
-                            {getDocumentTypeLabel(type)}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <VoiceSearchCombobox
+                      value={field.value && field.value !== 0 ? field.value.toString() : ''}
+                      onSelect={(value) => field.onChange(value ? Number(value) : 0)}
+                      options={[
+                        PricingRuleType.Demand,
+                        PricingRuleType.Quotation,
+                        PricingRuleType.Order,
+                      ].map((type) => ({
+                        value: type.toString(),
+                        label: getDocumentTypeLabel(type),
+                      }))}
+                      placeholder={t('approvalFlow.form.selectDocumentType', 'Belge tipi seçin')}
+                      searchPlaceholder={t('common.search', 'Ara...')}
+                      className={INPUT_STYLE}
+                    />
                     <FormMessage className="text-red-500 text-[10px] mt-1" />
                   </FormItem>
                 )}
