@@ -12,19 +12,12 @@ import {
 import { Button } from '@/components/ui/button';
 import {
   Form,
-  FormControl,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { VoiceSearchCombobox } from '@/components/shared/VoiceSearchCombobox';
 import { approvalUserRoleFormSchema, type ApprovalUserRoleFormSchema } from '../types/approval-user-role-types';
 import type { ApprovalUserRoleDto } from '../types/approval-user-role-types';
 import { useUserOptions } from '@/features/user-discount-limit-management/hooks/useUserOptions';
@@ -136,26 +129,17 @@ export function ApprovalUserRoleForm({
                     <FormLabel className={LABEL_STYLE}>
                       {t('approvalUserRole.form.userId', 'Kullanıcı')} *
                     </FormLabel>
-                    <Select
-                      onValueChange={(value) => field.onChange(value && value !== '0' ? parseInt(value) : 0)}
-                      value={field.value && field.value !== 0 ? field.value.toString() : '0'}
-                    >
-                      <FormControl>
-                        <SelectTrigger className={INPUT_STYLE}>
-                          <SelectValue placeholder={t('approvalUserRole.form.selectUser', 'Kullanıcı Seçin')} />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="0">
-                          {t('approvalUserRole.form.noUserSelected', 'Kullanıcı seçilmedi')}
-                        </SelectItem>
-                        {userOptions.map((user) => (
-                          <SelectItem key={user.id} value={user.id.toString()}>
-                            {user.fullName || user.username}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <VoiceSearchCombobox
+                      value={field.value && field.value !== 0 ? field.value.toString() : ''}
+                      onSelect={(value) => field.onChange(value ? parseInt(value) : 0)}
+                      options={userOptions.map((user) => ({
+                        value: user.id.toString(),
+                        label: user.fullName || user.username || ''
+                      }))}
+                      placeholder={t('approvalUserRole.form.selectUser', 'Kullanıcı Seçin')}
+                      searchPlaceholder={t('common.search', 'Ara...')}
+                      className={INPUT_STYLE}
+                    />
                     <FormMessage className="text-red-500 text-[10px] mt-1" />
                   </FormItem>
                 )}
@@ -169,26 +153,17 @@ export function ApprovalUserRoleForm({
                     <FormLabel className={LABEL_STYLE}>
                       {t('approvalUserRole.form.approvalRoleId', 'Onay Rolü')} *
                     </FormLabel>
-                    <Select
-                      onValueChange={(value) => field.onChange(value && value !== '0' ? parseInt(value) : 0)}
-                      value={field.value && field.value !== 0 ? field.value.toString() : '0'}
-                    >
-                      <FormControl>
-                        <SelectTrigger className={INPUT_STYLE}>
-                          <SelectValue placeholder={t('approvalUserRole.form.selectApprovalRole', 'Onay Rolü Seçin')} />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="0">
-                          {t('approvalUserRole.form.noApprovalRoleSelected', 'Onay rolü seçilmedi')}
-                        </SelectItem>
-                        {approvalRoleOptions.map((role) => (
-                          <SelectItem key={role.id} value={role.id.toString()}>
-                            {role.name} {role.approvalRoleGroupName ? `(${role.approvalRoleGroupName})` : ''}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <VoiceSearchCombobox
+                      value={field.value && field.value !== 0 ? field.value.toString() : ''}
+                      onSelect={(value) => field.onChange(value ? parseInt(value) : 0)}
+                      options={approvalRoleOptions.map((role) => ({
+                        value: role.id.toString(),
+                        label: `${role.name} ${role.approvalRoleGroupName ? `(${role.approvalRoleGroupName})` : ''}`
+                      }))}
+                      placeholder={t('approvalUserRole.form.selectApprovalRole', 'Onay Rolü Seçin')}
+                      searchPlaceholder={t('common.search', 'Ara...')}
+                      className={INPUT_STYLE}
+                    />
                     <FormMessage className="text-red-500 text-[10px] mt-1" />
                   </FormItem>
                 )}
