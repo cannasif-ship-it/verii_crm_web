@@ -20,19 +20,24 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { VoiceSearchCombobox, type ComboboxOption } from '@/components/shared/VoiceSearchCombobox';
 import { userDiscountLimitFormSchema, type UserDiscountLimitFormSchema } from '../types/user-discount-limit-types';
 import type { UserDiscountLimitDto } from '../types/user-discount-limit-types';
 import { useUserOptions } from '../hooks/useUserOptions';
 import { useStokGroup } from '@/services/hooks/useStokGroup';
 import { toast } from 'sonner';
 import { userDiscountLimitApi } from '../api/user-discount-limit-api';
+
+const INPUT_STYLE = `
+  h-11 rounded-lg
+  border-gray-200 bg-white
+  focus:border-pink-500 focus:ring-2 focus:ring-pink-100
+  hover:border-pink-200 hover:bg-pink-50/30
+  transition-all duration-200
+  text-gray-700 font-medium
+`;
+
+const LABEL_STYLE = "text-sm font-semibold text-gray-700 mb-1.5 ml-1";
 
 interface UserDiscountLimitFormProps {
   open: boolean;
@@ -102,6 +107,22 @@ export function UserDiscountLimitForm({
     }
   };
 
+  const userComboboxOptions: ComboboxOption[] = users?.map(user => ({
+    value: user.id.toString(),
+    label: user.fullName || `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.username
+  })) || [];
+
+  const groupComboboxOptions: ComboboxOption[] = stokGroups.map(group => {
+    const groupCode = group.grupKodu || `__group_${group.isletmeKodu}_${group.subeKodu}`;
+    const displayText = group.grupKodu && group.grupAdi 
+      ? `${group.grupKodu} - ${group.grupAdi}`
+      : group.grupAdi || group.grupKodu || groupCode;
+    return {
+      value: groupCode,
+      label: displayText
+    };
+  });
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-h-[90vh] overflow-y-auto">
@@ -125,30 +146,21 @@ export function UserDiscountLimitForm({
               name="salespersonId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>
+                  <FormLabel className={LABEL_STYLE}>
                     {t('userDiscountLimitManagement.salesperson', 'Satış Temsilcisi')} *
                   </FormLabel>
-                  <Select
-                    onValueChange={(value) => {
-                      const numValue = Number(value);
-                      field.onChange(numValue);
+                  <VoiceSearchCombobox
+                    options={userComboboxOptions}
+                    value={field.value && field.value > 0 ? field.value.toString() : ''}
+                    onSelect={(value) => {
+                      field.onChange(value ? Number(value) : 0);
                     }}
-                    value={field.value && field.value > 0 ? field.value.toString() : undefined}
+                    placeholder={t('userDiscountLimitManagement.selectSalesperson', 'Satış Temsilcisi Seçin')}
+                    searchPlaceholder={t('userDiscountLimitManagement.searchSalesperson', 'Satış Temsilcisi Ara...')}
+                    className={INPUT_STYLE}
+                    modal={true}
                     disabled={usersLoading}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder={t('userDiscountLimitManagement.selectSalesperson', 'Satış Temsilcisi Seçin')} />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {users?.map((user) => (
-                        <SelectItem key={user.id} value={user.id.toString()}>
-                          {user.fullName || `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.username}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  />
                   <FormMessage />
                 </FormItem>
               )}
@@ -159,36 +171,21 @@ export function UserDiscountLimitForm({
               name="erpProductGroupCode"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>
+                  <FormLabel className={LABEL_STYLE}>
                     {t('userDiscountLimitManagement.erpProductGroupCode', 'ERP Ürün Grubu Kodu')} *
                   </FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    value={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder={t('userDiscountLimitManagement.selectErpProductGroupCode', 'Grup Seçin')} />
-                      </SelectTrigger>
-                    </FormControl>
-                      <SelectContent>
-                        {isLoadingGroups ? (
-                          <SelectItem value="__loading__" disabled>Yükleniyor...</SelectItem>
-                        ) : (
-                          stokGroups.map((group) => {
-                            const groupCode = group.grupKodu || `__group_${group.isletmeKodu}_${group.subeKodu}`;
-                            const displayText = group.grupKodu && group.grupAdi 
-                              ? `${group.grupKodu} - ${group.grupAdi}`
-                              : group.grupAdi || group.grupKodu || groupCode;
-                            return (
-                              <SelectItem key={groupCode} value={groupCode}>
-                                {displayText}
-                              </SelectItem>
-                            );
-                          })
-                        )}
-                      </SelectContent>
-                  </Select>
+                  <VoiceSearchCombobox
+                    options={groupComboboxOptions}
+                    value={field.value || ''}
+                    onSelect={(value) => {
+                      field.onChange(value);
+                    }}
+                    placeholder={t('userDiscountLimitManagement.selectErpProductGroupCode', 'Grup Seçin')}
+                    searchPlaceholder={t('userDiscountLimitManagement.searchGroup', 'Grup Ara...')}
+                    className={INPUT_STYLE}
+                    modal={true}
+                    disabled={isLoadingGroups}
+                  />
                   <FormMessage />
                 </FormItem>
               )}
@@ -199,11 +196,12 @@ export function UserDiscountLimitForm({
               name="maxDiscount1"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>
+                  <FormLabel className={LABEL_STYLE}>
                     {t('userDiscountLimitManagement.maxDiscount1', 'Maksimum İskonto 1')} *
                   </FormLabel>
                   <FormControl>
                     <Input
+                      className={INPUT_STYLE}
                       type="number"
                       step="0.01"
                       min="0"
@@ -224,11 +222,12 @@ export function UserDiscountLimitForm({
               name="maxDiscount2"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>
+                  <FormLabel className={LABEL_STYLE}>
                     {t('userDiscountLimitManagement.maxDiscount2', 'Maksimum İskonto 2')}
                   </FormLabel>
                   <FormControl>
                     <Input
+                      className={INPUT_STYLE}
                       type="number"
                       step="0.01"
                       min="0"
@@ -249,11 +248,12 @@ export function UserDiscountLimitForm({
               name="maxDiscount3"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>
+                  <FormLabel className={LABEL_STYLE}>
                     {t('userDiscountLimitManagement.maxDiscount3', 'Maksimum İskonto 3')}
                   </FormLabel>
                   <FormControl>
                     <Input
+                      className={INPUT_STYLE}
                       type="number"
                       step="0.01"
                       min="0"
