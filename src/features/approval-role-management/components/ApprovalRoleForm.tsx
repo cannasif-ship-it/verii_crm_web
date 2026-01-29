@@ -20,13 +20,7 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { VoiceSearchCombobox } from '@/components/shared/VoiceSearchCombobox';
 import { approvalRoleFormSchema, type ApprovalRoleFormSchema } from '../types/approval-role-types';
 import type { ApprovalRoleDto } from '../types/approval-role-types';
 import { useApprovalRoleGroupOptions } from '../hooks/useApprovalRoleGroupOptions';
@@ -110,26 +104,17 @@ export function ApprovalRoleForm({
                   <FormLabel className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">
                     {t('approvalRole.form.approvalRoleGroupId', 'Onay Rol Grubu')}
                   </FormLabel>
-                  <Select
-                    onValueChange={(value) => field.onChange(value && value !== '0' ? parseInt(value) : 0)}
-                    value={field.value && field.value !== 0 ? field.value.toString() : '0'}
-                  >
-                    <FormControl>
-                      <SelectTrigger className={inputClass}>
-                        <SelectValue placeholder={t('approvalRole.form.selectApprovalRoleGroup', 'Onay Rol Grubu Seçin')} />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="0">
-                        {t('approvalRole.form.noApprovalRoleGroupSelected', 'Onay rol grubu seçilmedi')}
-                      </SelectItem>
-                      {approvalRoleGroupOptions.map((group) => (
-                        <SelectItem key={group.id} value={group.id.toString()}>
-                          {group.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <VoiceSearchCombobox
+                    value={field.value && field.value !== 0 ? field.value.toString() : ''}
+                    onSelect={(value) => field.onChange(value ? parseInt(value) : 0)}
+                    options={approvalRoleGroupOptions.map((group) => ({
+                      value: group.id.toString(),
+                      label: group.name,
+                    }))}
+                    placeholder={t('approvalRole.form.selectApprovalRoleGroup', 'Onay Rol Grubu Seçin')}
+                    searchPlaceholder={t('common.search', 'Ara...')}
+                    className={inputClass}
+                  />
                   <FormMessage />
                 </FormItem>
               )}
