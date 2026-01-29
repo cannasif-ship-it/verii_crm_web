@@ -104,9 +104,18 @@ export function DemandDetailPage(): ReactElement {
   }, [demand, form]);
 
   useEffect(() => {
-    if (linesData && linesData.length > 0 && !linesInitializedRef.current) {
-      const formattedLines: DemandLineFormState[] = linesData.map((line, index) => ({
-        id: line.id && line.id > 0 ? `line-${line.id}-${index}` : `line-temp-${index}`,
+    linesInitializedRef.current = false;
+  }, [demandId]);
+
+  useEffect(() => {
+    if (!demandId || demandId < 1) return;
+    if (!linesData || linesData.length === 0) return;
+    if (linesInitializedRef.current) return;
+    const backendId = (line: { id?: number }): number => Number((line as { id?: number; Id?: number }).id ?? (line as { id?: number; Id?: number }).Id ?? 0);
+    const formattedLines: DemandLineFormState[] = linesData.map((line, index) => {
+      const idNum = backendId(line);
+      return {
+        id: idNum > 0 ? `line-${idNum}-${index}` : `line-temp-${index}`,
         isEditing: false,
         productCode: line.productCode || '',
         productName: line.productName,
@@ -129,11 +138,11 @@ export function DemandDetailPage(): ReactElement {
         relatedProductKey: line.relatedProductKey || null,
         isMainRelatedProduct: line.isMainRelatedProduct || false,
         approvalStatus: line.approvalStatus,
-      }));
-      setLines(formattedLines);
-      linesInitializedRef.current = true;
-    }
-  }, [linesData]);
+      };
+    });
+    setLines(formattedLines);
+    linesInitializedRef.current = true;
+  }, [demandId, linesData]);
 
   const { calculateLineTotals } = useDemandCalculations();
   const { data: erpRates = [] } = useExchangeRate();
@@ -404,6 +413,7 @@ export function DemandDetailPage(): ReactElement {
                     }}
                     initialCurrency={demand?.currency}
                     revisionNo={demand?.revisionNo}
+                    demandId={demandId}
                 />
             </div>
 
@@ -418,6 +428,7 @@ export function DemandDetailPage(): ReactElement {
                 customerId={watchedCustomerId}
                 erpCustomerCode={watchedErpCustomerCode}
                 representativeId={watchedRepresentativeId}
+                demandId={demandId}
               />
             </div>
 

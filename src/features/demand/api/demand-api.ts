@@ -12,6 +12,7 @@ import type {
   RejectActionDto,
   DemandExchangeRateGetDto,
   DemandLineGetDto,
+  CreateDemandLineDto,
   ApprovalStatus,
   ApprovalScopeUserDto,
 } from '../types/demand-types';
@@ -318,14 +319,47 @@ export const demandApi = {
     return [];
   },
 
+  updateExchangeRateInDemand: async (updateDtos: DemandExchangeRateGetDto[]): Promise<ApiResponse<boolean>> => {
+    const response = await api.put<ApiResponse<boolean>>(
+      '/api/DemandExchangeRate/update-exchange-rate-in-demand',
+      updateDtos
+    );
+    if (!response.success) {
+      throw new Error(response.message ?? 'Döviz kurları güncellenemedi');
+    }
+    return response;
+  },
+
   getDemandLinesByDemandId: async (demandId: number): Promise<DemandLineGetDto[]> => {
     const response = await api.get<ApiResponse<DemandLineGetDto[]>>(
       `/api/DemandLine/by-demand/${demandId}`
     );
     if (response.success && response.data) {
-      return response.data;
+      const raw = response.data as Array<DemandLineGetDto & { Id?: number }>;
+      return raw.map((line) => ({
+        ...line,
+        id: line.id ?? line.Id ?? 0,
+      })) as DemandLineGetDto[];
     }
     return [];
+  },
+
+  createDemandLines: async (dtos: CreateDemandLineDto[]): Promise<DemandLineGetDto[]> => {
+    const response = await api.post<ApiResponse<DemandLineGetDto[]>>(
+      '/api/DemandLine/create-multiple',
+      dtos
+    );
+    if (!response.success || !response.data) {
+      throw new Error(response.message ?? 'Satırlar eklenemedi');
+    }
+    return response.data;
+  },
+
+  deleteDemandLine: async (id: number): Promise<void> => {
+    const response = await api.delete<ApiResponse<unknown> | undefined>(`/api/DemandLine/${id}`);
+    if (response != null && response.success === false) {
+      throw new Error(response.message ?? 'Satır silinemedi');
+    }
   },
 
   updateBulk: async (id: number, data: DemandBulkCreateDto): Promise<ApiResponse<DemandGetDto>> => {
