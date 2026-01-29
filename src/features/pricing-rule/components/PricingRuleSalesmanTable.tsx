@@ -10,13 +10,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { VoiceSearchCombobox } from '@/components/shared/VoiceSearchCombobox';
 import {
   Dialog,
   DialogContent,
@@ -60,7 +54,6 @@ export function PricingRuleSalesmanTable({
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [selectedSalesmanId, setSelectedSalesmanId] = useState<number | null>(null);
   const [selectedSalesmanToDelete, setSelectedSalesmanToDelete] = useState<{ id: string; dbId?: number } | null>(null);
-  const [selectKey, setSelectKey] = useState(0);
 
   const isExistingRecord = !!header?.id;
 
@@ -173,28 +166,21 @@ export function PricingRuleSalesmanTable({
         
         {availableUsers.length > 0 && (
           <div className="flex items-center gap-2">
-            <Select
-              key={selectKey}
-              onValueChange={(value) => {
-                handleAddSalesman(parseInt(value));
-                setSelectKey((prev) => prev + 1);
-              }}
-              disabled={isLoadingAction}
-            >
-              <SelectTrigger className="w-[240px] h-9 bg-white dark:bg-white/5 border-slate-200 dark:border-white/10">
-                <div className="flex items-center text-xs">
-                    <UserPlus size={14} className="mr-2 text-slate-400" />
-                    <SelectValue placeholder={t('pricingRule.salesmen.add', 'Satışçı Ekle')} />
-                </div>
-              </SelectTrigger>
-              <SelectContent>
-                {availableUsers.map((user) => (
-                  <SelectItem key={user.id} value={user.id.toString()}>
-                    {user.fullName}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <VoiceSearchCombobox
+                options={availableUsers.map((user) => ({
+                    value: user.id.toString(),
+                    label: user.fullName || ''
+                }))}
+                value={null}
+                onSelect={(value) => {
+                    if (value) handleAddSalesman(parseInt(value));
+                }}
+                placeholder={t('pricingRule.salesmen.add', 'Satışçı Ekle')}
+                searchPlaceholder={t('pricingRule.salesmen.search', 'Satışçı ara...')}
+                className="w-[240px] h-9 bg-white dark:bg-white/5 border-slate-200 dark:border-white/10 text-xs"
+                disabled={isLoadingAction}
+                modal={true}
+            />
           </div>
         )}
       </div>

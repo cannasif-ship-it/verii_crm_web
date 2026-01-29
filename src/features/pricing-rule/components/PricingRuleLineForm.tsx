@@ -17,13 +17,7 @@ import type { PricingRuleLineFormState } from '../types/pricing-rule-types';
 import { ProductSelectDialog, type ProductSelectionResult } from '@/components/shared';
 import { useExchangeRate } from '@/services/hooks/useExchangeRate';
 import type { KurDto } from '@/services/erp-types';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { VoiceSearchCombobox } from '@/components/shared/VoiceSearchCombobox';
 // İkonlar
 import { 
   Search, 
@@ -267,24 +261,19 @@ export function PricingRuleLineForm({
                   <Coins size={12} className="text-pink-500" />
                   {t('pricingRule.lines.currencyCode', 'Döviz Tipi')} *
                 </FormLabel>
-                <Select
+                <VoiceSearchCombobox
+                  options={exchangeRates.map((currency: KurDto) => ({
+                    value: String(currency.dovizTipi),
+                    label: currency.dovizIsmi ? `${currency.dovizIsmi} (${currency.dovizTipi})` : `Döviz (${currency.dovizTipi})`
+                  }))}
                   value={field.value !== undefined && field.value !== null ? String(field.value) : ''}
-                  onValueChange={(value) => field.onChange(value ? Number(value) : undefined)}
+                  onSelect={(value) => field.onChange(value ? Number(value) : undefined)}
+                  placeholder={isLoadingRates ? t('pricingRule.loading', 'Yükleniyor...') : t('pricingRule.lines.selectCurrency', 'Seçiniz')}
+                  searchPlaceholder={t('pricingRule.lines.searchCurrency', 'Döviz ara...')}
+                  className={INPUT_STYLE}
                   disabled={isLoadingRates}
-                >
-                  <FormControl>
-                    <SelectTrigger className={INPUT_STYLE}>
-                      <SelectValue placeholder={isLoadingRates ? t('pricingRule.loading', 'Yükleniyor...') : t('pricingRule.lines.selectCurrency', 'Seçiniz')} />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent className="bg-white dark:bg-[#1a1025] border border-slate-100 dark:border-white/10 text-slate-900 dark:text-white shadow-xl">
-                    {exchangeRates.map((currency: KurDto) => (
-                      <SelectItem key={currency.dovizTipi} value={String(currency.dovizTipi)}>
-                        {currency.dovizIsmi ? `${currency.dovizIsmi} (${currency.dovizTipi})` : `Döviz (${currency.dovizTipi})`}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                  modal={true}
+                />
                 <FormMessage className="text-red-500 text-[10px] mt-1" />
               </FormItem>
             )}

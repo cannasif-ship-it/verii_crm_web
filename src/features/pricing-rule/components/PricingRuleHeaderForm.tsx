@@ -3,17 +3,11 @@ import { useTranslation } from 'react-i18next';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { useCustomersForPricingRule } from '../hooks/useCustomersForPricingRule';
 import { CustomerSelectDialog, type CustomerSelectionResult } from '@/components/shared';
 import { PricingRuleType, type PricingRuleHeaderCreateDto } from '../types/pricing-rule-types';
 import { Button } from '@/components/ui/button';
+import { VoiceSearchCombobox, type ComboboxOption } from '@/components/shared/VoiceSearchCombobox';
 // İkonlar
 import { 
   Search, 
@@ -83,6 +77,12 @@ export function PricingRuleHeaderForm({ header, setHeader }: PricingRuleHeaderFo
       ? `ERP: ${header.erpCustomerCode}`
       : '';
 
+  const ruleTypeOptions: ComboboxOption[] = [
+    { value: PricingRuleType.Demand.toString(), label: t('pricingRule.ruleType.demand', 'Talep') },
+    { value: PricingRuleType.Quotation.toString(), label: t('pricingRule.ruleType.quotation', 'Teklif') },
+    { value: PricingRuleType.Order.toString(), label: t('pricingRule.ruleType.order', 'Sipariş') },
+  ];
+
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
       
@@ -93,25 +93,15 @@ export function PricingRuleHeaderForm({ header, setHeader }: PricingRuleHeaderFo
             <List size={12} className="text-pink-500" />
             {t('pricingRule.header.ruleType', 'Kural Tipi')} *
           </Label>
-          <Select
+          <VoiceSearchCombobox
+            options={ruleTypeOptions}
             value={header.ruleType?.toString()}
-            onValueChange={(value) => handleChange('ruleType', parseInt(value) as PricingRuleType)}
-          >
-            <SelectTrigger id="ruleType" className={INPUT_STYLE}>
-              <SelectValue placeholder={t('pricingRule.header.ruleTypePlaceholder', 'Kural tipi seçin')} />
-            </SelectTrigger>
-            <SelectContent className="bg-white dark:bg-[#1a1025] border border-slate-100 dark:border-white/10 text-slate-900 dark:text-white shadow-xl">
-              <SelectItem value={PricingRuleType.Demand.toString()}>
-                {t('pricingRule.ruleType.demand', 'Talep')}
-              </SelectItem>
-              <SelectItem value={PricingRuleType.Quotation.toString()}>
-                {t('pricingRule.ruleType.quotation', 'Teklif')}
-              </SelectItem>
-              <SelectItem value={PricingRuleType.Order.toString()}>
-                {t('pricingRule.ruleType.order', 'Sipariş')}
-              </SelectItem>
-            </SelectContent>
-          </Select>
+            onSelect={(value) => handleChange('ruleType', value ? parseInt(value) as PricingRuleType : null)}
+            placeholder={t('pricingRule.header.ruleTypePlaceholder', 'Kural tipi seçin')}
+            searchPlaceholder={t('pricingRule.header.searchRuleType', 'Kural tipi ara...')}
+            className={INPUT_STYLE}
+            modal={true}
+          />
         </div>
 
         <div className="space-y-0">
