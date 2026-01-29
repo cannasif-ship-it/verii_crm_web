@@ -19,13 +19,7 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { VoiceSearchCombobox, type ComboboxOption } from '@/components/shared/VoiceSearchCombobox';
 import { cityFormSchema, type CityFormSchema } from '../types/city-types';
 import type { CityDto } from '../types/city-types';
 import { useCountryOptions } from '@/features/country-management/hooks/useCountryOptions';
@@ -70,6 +64,11 @@ export function CityForm({
 }: CityFormProps): ReactElement {
   const { t } = useTranslation();
   const { data: countries, isLoading: countriesLoading } = useCountryOptions();
+
+  const countryOptions: ComboboxOption[] = countries?.map(country => ({
+    value: country.id.toString(),
+    label: country.name,
+  })) || [];
 
   const form = useForm<CityFormSchema>({
     resolver: zodResolver(cityFormSchema),
@@ -159,26 +158,18 @@ export function CityForm({
                     <FormLabel className={LABEL_STYLE}>
                       {t('cityManagement.form.country', 'Ülke')} *
                     </FormLabel>
-                    <Select
-                      onValueChange={(value) => {
-                        field.onChange(Number(value));
-                      }}
+                    <VoiceSearchCombobox
+                      options={countryOptions}
                       value={field.value && field.value > 0 ? field.value.toString() : undefined}
+                      onSelect={(value) => {
+                        field.onChange(value ? Number(value) : 0);
+                      }}
+                      placeholder={t('cityManagement.form.selectCountry', 'Ülke seçin')}
+                      searchPlaceholder={t('cityManagement.form.searchCountry', 'Ülke ara...')}
+                      className={INPUT_STYLE}
+                      modal={true}
                       disabled={countriesLoading}
-                    >
-                      <FormControl>
-                        <SelectTrigger className={INPUT_STYLE}>
-                          <SelectValue placeholder={t('cityManagement.form.selectCountry', 'Ülke seçin')} />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {countries?.map((country) => (
-                          <SelectItem key={country.id} value={country.id.toString()}>
-                            {country.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    />
                     <FormMessage className="text-red-500 text-[10px] mt-1" />
                   </FormItem>
                 )}
