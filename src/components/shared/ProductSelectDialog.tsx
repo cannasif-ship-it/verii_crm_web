@@ -73,8 +73,10 @@ function StockCard({
   return (
     <Card
       className={cn(
-        'cursor-pointer transition-all duration-200 hover:shadow-md hover:border-primary/50 active:scale-[0.98]',
-        'touch-manipulation'
+        'cursor-pointer transition-all duration-300 group',
+        'bg-white/50 dark:bg-[#1a1025]/40 border-slate-200 dark:border-white/5',
+        'hover:border-pink-500/50 dark:hover:border-pink-500/50 hover:shadow-lg hover:shadow-pink-500/10 hover:-translate-y-1',
+        'active:scale-[0.98] touch-manipulation'
       )}
       onClick={onClick}
     >
@@ -82,37 +84,37 @@ function StockCard({
         <div className="flex items-start justify-between gap-3">
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-2">
-              <span className="px-2 py-0.5 rounded text-xs font-semibold whitespace-nowrap bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">
+              <span className="px-2 py-0.5 rounded-md text-xs font-bold whitespace-nowrap bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-300 border border-pink-200 dark:border-pink-800/50">
                 {t('productSelectDialog.stock', 'STOK')}
               </span>
-              <span className="text-xs text-muted-foreground font-mono">
+              <span className="text-xs text-slate-500 dark:text-slate-400 font-mono bg-slate-100 dark:bg-white/5 px-1.5 py-0.5 rounded">
                 {stock.erpStockCode}
               </span>
             </div>
-            <h3 className="font-semibold text-base mb-2 truncate">{stock.stockName}</h3>
+            <h3 className="font-semibold text-base mb-2 truncate text-slate-900 dark:text-white group-hover:text-pink-600 dark:group-hover:text-pink-400 transition-colors">{stock.stockName}</h3>
             {(stock.grupKodu || stock.grupAdi) && (
-              <div className="text-sm text-muted-foreground mb-1">
+              <div className="text-sm text-slate-500 dark:text-slate-400 mb-1">
                 {t('productSelectDialog.group', 'Grup')}: {stock.grupKodu && (
-                  <span className="font-mono">{stock.grupKodu}</span>
+                  <span className="font-mono font-medium text-slate-700 dark:text-slate-300">{stock.grupKodu}</span>
                 )}
                 {stock.grupKodu && stock.grupAdi && ' - '}
                 {stock.grupAdi && <span>{stock.grupAdi}</span>}
               </div>
             )}
             {stock.unit && (
-              <div className="text-sm text-muted-foreground">
-                {t('productSelectDialog.unit', 'Birim')}: {stock.unit}
+              <div className="text-sm text-slate-500 dark:text-slate-400">
+                {t('productSelectDialog.unit', 'Birim')}: <span className="font-medium text-slate-700 dark:text-slate-300">{stock.unit}</span>
               </div>
             )}
             {hasRelatedStocks && (
-              <div className="mt-2">
+              <div className="mt-3">
                 <Popover>
                   <PopoverTrigger asChild>
                     <Button
                       type="button"
                       variant="outline"
                       size="sm"
-                      className="h-7 text-xs"
+                      className="h-8 text-xs border-slate-200 dark:border-white/10 hover:border-pink-500/50 hover:bg-pink-50 dark:hover:bg-pink-500/10 hover:text-pink-600 dark:hover:text-pink-400 transition-all rounded-lg"
                       onClick={(e) => e.stopPropagation()}
                     >
                       <svg
@@ -125,14 +127,17 @@ function StockCard({
                         strokeWidth="2"
                         strokeLinecap="round"
                         strokeLinejoin="round"
-                        className="mr-1"
+                        className="mr-1.5"
                       >
                         <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
                         <circle cx="9" cy="7" r="4" />
                         <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
                         <path d="M16 3.13a4 4 0 0 1 0 7.75" />
                       </svg>
-                      {t('productSelectDialog.relatedStocks', 'Bağlı Stoklar')} ({stock.parentRelations?.length || 0})
+                      {t('productSelectDialog.relatedStocks', 'Bağlı Stoklar')} 
+                      <span className="ml-1 px-1.5 py-0.5 bg-pink-100 dark:bg-pink-900/50 text-pink-700 dark:text-pink-300 rounded text-[10px] font-bold">
+                        {stock.parentRelations?.length || 0}
+                      </span>
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-80" onClick={(e) => e.stopPropagation()}>
@@ -229,56 +234,59 @@ function StockWithImageCard({
   return (
     <Card
       className={cn(
-        'cursor-pointer transition-all duration-200 hover:shadow-md hover:border-primary/50 active:scale-[0.98]',
-        'touch-manipulation overflow-hidden'
+        'cursor-pointer transition-all duration-300 group',
+        'bg-white/50 dark:bg-[#1a1025]/40 border-slate-200 dark:border-white/5',
+        'hover:border-pink-500/50 dark:hover:border-pink-500/50 hover:shadow-lg hover:shadow-pink-500/10 hover:-translate-y-1',
+        'active:scale-[0.98] touch-manipulation overflow-hidden'
       )}
       onClick={onClick}
     >
       <CardContent className="p-0">
         {imageUrl && (
-          <div className="relative w-full h-48 bg-muted overflow-hidden">
+          <div className="relative w-full h-48 bg-slate-100 dark:bg-white/5 overflow-hidden">
             <img
               src={imageUrl}
               alt={stock.mainImage?.altText || stock.stockName}
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
             />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
           </div>
         )}
         <div className="p-4">
           <div className="flex items-start justify-between gap-3">
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-2">
-                <span className="px-2 py-0.5 rounded text-xs font-semibold whitespace-nowrap bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">
+                <span className="px-2 py-0.5 rounded-md text-xs font-bold whitespace-nowrap bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-300 border border-pink-200 dark:border-pink-800/50">
                   {t('productSelectDialog.stock', 'STOK')}
                 </span>
-                <span className="text-xs text-muted-foreground font-mono">
+                <span className="text-xs text-slate-500 dark:text-slate-400 font-mono bg-slate-100 dark:bg-white/5 px-1.5 py-0.5 rounded">
                   {stock.erpStockCode}
                 </span>
               </div>
-              <h3 className="font-semibold text-base mb-2 truncate">{stock.stockName}</h3>
+              <h3 className="font-semibold text-base mb-2 truncate text-slate-900 dark:text-white group-hover:text-pink-600 dark:group-hover:text-pink-400 transition-colors">{stock.stockName}</h3>
               {(stock.grupKodu || stock.grupAdi) && (
-                <div className="text-sm text-muted-foreground mb-1">
+                <div className="text-sm text-slate-500 dark:text-slate-400 mb-1">
                   {t('productSelectDialog.group', 'Grup')}: {stock.grupKodu && (
-                    <span className="font-mono">{stock.grupKodu}</span>
+                    <span className="font-mono font-medium text-slate-700 dark:text-slate-300">{stock.grupKodu}</span>
                   )}
                   {stock.grupKodu && stock.grupAdi && ' - '}
                   {stock.grupAdi && <span>{stock.grupAdi}</span>}
                 </div>
               )}
               {stock.unit && (
-                <div className="text-sm text-muted-foreground">
-                  {t('productSelectDialog.unit', 'Birim')}: {stock.unit}
+                <div className="text-sm text-slate-500 dark:text-slate-400">
+                  {t('productSelectDialog.unit', 'Birim')}: <span className="font-medium text-slate-700 dark:text-slate-300">{stock.unit}</span>
                 </div>
               )}
               {hasRelatedStocks && (
-                <div className="mt-2">
+                <div className="mt-3">
                   <Popover>
                     <PopoverTrigger asChild>
                       <Button
                         type="button"
                         variant="outline"
                         size="sm"
-                        className="h-7 text-xs"
+                        className="h-8 text-xs border-slate-200 dark:border-white/10 hover:border-pink-500/50 hover:bg-pink-50 dark:hover:bg-pink-500/10 hover:text-pink-600 dark:hover:text-pink-400 transition-all rounded-lg"
                         onClick={(e) => e.stopPropagation()}
                       >
                         <svg
@@ -291,49 +299,54 @@ function StockWithImageCard({
                           strokeWidth="2"
                           strokeLinecap="round"
                           strokeLinejoin="round"
-                          className="mr-1"
+                          className="mr-1.5"
                         >
                           <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
                           <circle cx="9" cy="7" r="4" />
                           <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
                           <path d="M16 3.13a4 4 0 0 1 0 7.75" />
                         </svg>
-                        {t('productSelectDialog.relatedStocks', 'Bağlı Stoklar')} ({stock.parentRelations?.length || 0})
+                        {t('productSelectDialog.relatedStocks', 'Bağlı Stoklar')} 
+                        <span className="ml-1 px-1.5 py-0.5 bg-pink-100 dark:bg-pink-900/50 text-pink-700 dark:text-pink-300 rounded text-[10px] font-bold">
+                          {stock.parentRelations?.length || 0}
+                        </span>
                       </Button>
                     </PopoverTrigger>
-                    <PopoverContent className="w-80" onClick={(e) => e.stopPropagation()}>
-                      <div className="space-y-2">
-                        <h4 className="font-semibold text-sm">
-                          {t('productSelectDialog.relatedStocks', 'Bağlı Stoklar')}
-                        </h4>
-                        <div className="max-h-60 overflow-y-auto space-y-2">
+                    <PopoverContent className="w-80 p-0 overflow-hidden bg-white/95 dark:bg-[#1a1025]/95 backdrop-blur-xl border border-white/20 dark:border-white/10" onClick={(e) => e.stopPropagation()}>
+                      <div className="flex flex-col max-h-[300px]">
+                        <div className="p-3 border-b border-slate-200 dark:border-white/5 bg-slate-50/50 dark:bg-white/5">
+                          <h4 className="font-semibold text-sm text-slate-900 dark:text-white">
+                            {t('productSelectDialog.relatedStocks', 'Bağlı Stoklar')}
+                          </h4>
+                        </div>
+                        <div className="overflow-y-auto p-2 space-y-2">
                           {stock.parentRelations?.map((relation) => (
                             <div
                               key={relation.id}
-                              className="flex items-center justify-between p-2 rounded-md border hover:bg-muted cursor-pointer"
+                              className="group/item flex items-center justify-between p-2 rounded-lg border border-transparent hover:border-pink-500/30 hover:bg-pink-50/50 dark:hover:bg-pink-500/10 cursor-pointer transition-all"
                               onClick={(e) => handleRelatedStockClick(e, relation)}
                             >
                               <div className="flex-1 min-w-0">
                                 <div className="flex items-center gap-2 mb-1">
-                                  <div className="font-medium text-sm truncate">
+                                  <div className="font-medium text-sm truncate text-slate-700 dark:text-slate-200 group-hover/item:text-pink-700 dark:group-hover/item:text-pink-300 transition-colors">
                                     {relation.relatedStockName || t('productSelectDialog.unknownStock', 'Bilinmeyen Stok')}
                                   </div>
                                   {relation.relatedStockCode && (
-                                    <span className="text-xs text-muted-foreground font-mono">
+                                    <span className="text-xs text-slate-400 font-mono">
                                       ({relation.relatedStockCode})
                                     </span>
                                   )}
                                 </div>
-                                <div className="text-xs text-muted-foreground">
-                                  {t('productSelectDialog.quantity', 'Miktar')}: {relation.quantity}
+                                <div className="text-xs text-slate-500 dark:text-slate-400">
+                                  {t('productSelectDialog.quantity', 'Miktar')}: <span className="font-medium text-slate-700 dark:text-slate-300">{relation.quantity}</span>
                                   {relation.isMandatory && (
-                                    <span className="ml-2 text-orange-600 dark:text-orange-400">
-                                      ({t('productSelectDialog.mandatory', 'Zorunlu')})
+                                    <span className="ml-2 text-orange-600 dark:text-orange-400 font-medium bg-orange-50 dark:bg-orange-900/20 px-1.5 py-0.5 rounded">
+                                      {t('productSelectDialog.mandatory', 'Zorunlu')}
                                     </span>
                                   )}
                                 </div>
                                 {relation.description && (
-                                  <div className="text-xs text-muted-foreground mt-1">
+                                  <div className="text-xs text-slate-400 mt-1 italic">
                                     {relation.description}
                                   </div>
                                 )}
@@ -347,7 +360,7 @@ function StockWithImageCard({
                 </div>
               )}
             </div>
-            <div className="shrink-0">
+            <div className="shrink-0 text-slate-300 dark:text-slate-600 group-hover:text-pink-500 dark:group-hover:text-pink-400 transition-colors">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="20"
@@ -358,7 +371,6 @@ function StockWithImageCard({
                 strokeWidth="2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                className="text-muted-foreground"
               >
                 <path d="m9 18 6-6-6-6" />
               </svg>
@@ -633,19 +645,19 @@ export function ProductSelectDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-6xl max-h-[90vh] flex flex-col p-0">
-        <DialogHeader className="px-6 pt-6 pb-4 flex-shrink-0">
-          <DialogTitle>
+      <DialogContent className="max-w-6xl max-h-[90vh] flex flex-col p-0 bg-white/95 dark:bg-[#1a1025]/95 backdrop-blur-xl border border-white/60 dark:border-white/5 shadow-2xl rounded-2xl overflow-hidden">
+        <DialogHeader className="px-6 pt-6 pb-4 flex-shrink-0 border-b border-slate-200/50 dark:border-white/5">
+          <DialogTitle className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-pink-600 to-orange-600">
             {t('productSelectDialog.title', 'Stok Seç')}
           </DialogTitle>
-          <DialogDescription>
+          <DialogDescription className="text-slate-500 dark:text-slate-400">
             {t('productSelectDialog.description', 'Teklif satırına eklenecek stoku seçin')}
           </DialogDescription>
         </DialogHeader>
 
-        <div className="px-6 pb-4 flex-shrink-0">
+        <div className="px-6 py-4 flex-shrink-0 bg-slate-50/50 dark:bg-white/5 border-b border-slate-200/50 dark:border-white/5">
           <div className="relative flex gap-2">
-            <div className="relative flex-1">
+            <div className="relative flex-1 group">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="16"
@@ -656,7 +668,7 @@ export function ProductSelectDialog({
                 strokeWidth="2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-pink-500 transition-colors"
               >
                 <circle cx="11" cy="11" r="8" />
                 <path d="m21 21-4.3-4.3" />
@@ -666,7 +678,7 @@ export function ProductSelectDialog({
                 placeholder={t('productSelectDialog.searchPlaceholder', 'Stok kodu veya adı ile ara...')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-9"
+                className="pl-10 h-11 bg-white dark:bg-[#0c0516] border-slate-200 dark:border-white/10 focus:border-pink-500/50 dark:focus:border-pink-500/50 focus:ring-pink-500/20 rounded-xl transition-all shadow-sm"
               />
             </div>
             {recognitionRef.current && (
@@ -676,8 +688,10 @@ export function ProductSelectDialog({
                 size="icon"
                 onClick={handleVoiceSearch}
                 className={cn(
-                  'shrink-0',
-                  isListening && 'animate-pulse bg-red-500 hover:bg-red-600'
+                  'shrink-0 h-11 w-11 rounded-xl transition-all',
+                  isListening 
+                    ? 'animate-pulse bg-red-500 hover:bg-red-600 border-red-500 shadow-lg shadow-red-500/30' 
+                    : 'bg-white dark:bg-[#0c0516] border-slate-200 dark:border-white/10 hover:border-pink-500/50 hover:bg-pink-50 dark:hover:bg-pink-500/10 text-slate-500 dark:text-slate-400 hover:text-pink-600 dark:hover:text-pink-400'
                 )}
                 title={t('productSelectDialog.voiceSearch', 'Sesli arama')}
               >
@@ -720,12 +734,18 @@ export function ProductSelectDialog({
           </div>
         </div>
 
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col min-h-0 px-6">
-          <TabsList className="grid w-fit grid-cols-2 bg-muted mb-4">
-            <TabsTrigger value="stocks">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col min-h-0 px-6 pt-4">
+          <TabsList className="w-full justify-start gap-2 bg-transparent p-0 mb-4 border-b border-slate-200/50 dark:border-white/5 h-auto">
+            <TabsTrigger 
+              value="stocks"
+              className="px-6 py-2.5 rounded-t-xl rounded-b-none border-b-2 border-transparent data-[state=active]:border-pink-500 data-[state=active]:bg-pink-500/5 dark:data-[state=active]:bg-pink-500/10 data-[state=active]:text-pink-600 dark:data-[state=active]:text-pink-400 font-semibold transition-all"
+            >
               {t('productSelectDialog.stocks', 'Stoklar')}
             </TabsTrigger>
-            <TabsTrigger value="stocksWithImages">
+            <TabsTrigger 
+              value="stocksWithImages"
+              className="px-6 py-2.5 rounded-t-xl rounded-b-none border-b-2 border-transparent data-[state=active]:border-pink-500 data-[state=active]:bg-pink-500/5 dark:data-[state=active]:bg-pink-500/10 data-[state=active]:text-pink-600 dark:data-[state=active]:text-pink-400 font-semibold transition-all"
+            >
               {t('productSelectDialog.stocksWithImages', 'Görselli Stoklar')}
             </TabsTrigger>
           </TabsList>
