@@ -20,7 +20,7 @@ apiReady.then(() => {
       </QueryClientProvider>
     </StrictMode>,
   );
-}).catch((err) => {
+}).catch((err: unknown) => {
   console.error('API config load failed:', err);
   root.render(
     <StrictMode>

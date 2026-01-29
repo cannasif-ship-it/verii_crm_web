@@ -48,14 +48,14 @@ const initApi = async (): Promise<void> => {
   api.defaults.baseURL = apiUrl;
 };
 
+export const apiReady = initApi();
+
 export const api = axios.create({
   baseURL: apiUrl,
   headers: {
     'Content-Type': 'application/json',
   },
 });
-
-initApi();
 
 api.interceptors.request.use(async (config) => {
   const token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
