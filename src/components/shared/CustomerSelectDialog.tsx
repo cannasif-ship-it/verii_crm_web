@@ -52,7 +52,9 @@ function CustomerCard({
   return (
     <Card
       className={cn(
-        'cursor-pointer transition-all duration-200 hover:shadow-md hover:border-primary/50 active:scale-[0.98]',
+        'cursor-pointer transition-all duration-200 hover:shadow-md active:scale-[0.98] border-slate-200 dark:border-white/5',
+        'bg-white/50 dark:bg-white/5 backdrop-blur-sm',
+        'hover:border-pink-500/30 hover:bg-pink-50/30 dark:hover:bg-pink-500/5',
         'touch-manipulation'
       )}
       onClick={onClick}
@@ -65,8 +67,8 @@ function CustomerCard({
                 className={cn(
                   'px-2 py-0.5 rounded text-xs font-semibold whitespace-nowrap',
                   type === 'erp'
-                    ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300'
-                    : 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300'
+                    ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300'
+                    : 'bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-300'
                 )}
               >
                 {type === 'erp'
@@ -462,19 +464,35 @@ export function CustomerSelectDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-6xl max-h-[90vh] flex flex-col p-0">
-        <DialogHeader className="px-6 pt-6 pb-4 flex-shrink-0">
-          <DialogTitle>
+      <DialogContent className="max-w-6xl max-h-[90vh] flex flex-col p-0 overflow-hidden bg-white/95 dark:bg-[#0c0516]/95 backdrop-blur-xl border-slate-200 dark:border-white/10 shadow-2xl">
+        <DialogHeader className="px-6 py-5 border-b border-slate-200/50 dark:border-white/5 bg-slate-50/50 dark:bg-white/5 flex-shrink-0">
+          <DialogTitle className="flex items-center gap-3 text-slate-900 dark:text-white text-lg">
+             <div className="bg-gradient-to-br from-indigo-500 to-violet-600 p-2.5 rounded-xl shadow-lg shadow-indigo-500/20 text-white">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+                  <circle cx="12" cy="7" r="4" />
+                </svg>
+             </div>
             {t('customerSelectDialog.title', 'Müşteri Seç')}
           </DialogTitle>
-          <DialogDescription>
+          <DialogDescription className="text-slate-500 dark:text-slate-400 text-sm leading-relaxed">
             {t('customerSelectDialog.description', 'Müşteri seçmek için bir tab seçin ve listeden müşteriyi seçin')}
           </DialogDescription>
         </DialogHeader>
 
-        <div className="px-6 pb-4 flex-shrink-0">
-          <div className="relative flex gap-2">
-            <div className="relative flex-1">
+        <div className="px-6 py-4 flex-shrink-0 bg-white/50 dark:bg-white/5 border-b border-slate-200/50 dark:border-white/5">
+          <div className="relative flex gap-3">
+            <div className="relative flex-1 group">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="16"
@@ -485,7 +503,7 @@ export function CustomerSelectDialog({
                 strokeWidth="2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+                className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-500 transition-colors"
               >
                 <circle cx="11" cy="11" r="8" />
                 <path d="m21 21-4.3-4.3" />
@@ -495,7 +513,7 @@ export function CustomerSelectDialog({
                 placeholder={t('customerSelectDialog.searchPlaceholder', 'İsim veya kod ile ara...')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-9"
+                className="pl-10 h-11 rounded-xl bg-white dark:bg-black/20 border-slate-200 dark:border-white/10 focus-visible:ring-indigo-500/20 focus-visible:border-indigo-500 transition-all"
               />
             </div>
             {recognitionRef.current && (
@@ -505,16 +523,18 @@ export function CustomerSelectDialog({
                 size="icon"
                 onClick={handleVoiceSearch}
                 className={cn(
-                  'shrink-0',
-                  isListening && 'animate-pulse bg-red-500 hover:bg-red-600'
+                  'shrink-0 h-11 w-11 rounded-xl transition-all',
+                  isListening 
+                    ? 'animate-pulse bg-red-500 hover:bg-red-600 border-red-500 text-white shadow-lg shadow-red-500/30' 
+                    : 'border-slate-200 dark:border-white/10 hover:bg-slate-100 dark:hover:bg-white/5'
                 )}
                 title={t('customerSelectDialog.voiceSearch', 'Sesli arama')}
               >
                 {isListening ? (
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    width="16"
-                    height="16"
+                    width="18"
+                    height="18"
                     viewBox="0 0 24 24"
                     fill="none"
                     stroke="currentColor"
@@ -529,8 +549,8 @@ export function CustomerSelectDialog({
                 ) : (
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    width="16"
-                    height="16"
+                    width="18"
+                    height="18"
                     viewBox="0 0 24 24"
                     fill="none"
                     stroke="currentColor"
@@ -549,33 +569,33 @@ export function CustomerSelectDialog({
           </div>
         </div>
 
-        <div className="flex-1 min-h-0 flex flex-col px-6 pb-6">
+        <div className="flex-1 min-h-0 flex flex-col px-6 pb-6 pt-4">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full flex-1 flex flex-col min-h-0">
-            <TabsList className="grid w-full grid-cols-3 mb-4 flex-shrink-0">
-              <TabsTrigger value="erp">
+            <TabsList className="grid w-full grid-cols-3 mb-4 flex-shrink-0 bg-slate-100/50 dark:bg-white/5 p-1 rounded-xl">
+              <TabsTrigger value="erp" className="rounded-lg data-[state=active]:bg-white dark:data-[state=active]:bg-white/10 data-[state=active]:shadow-sm transition-all">
                 {t('customerSelectDialog.erpCustomers', 'ERP Müşterisi')}
               </TabsTrigger>
-              <TabsTrigger value="crm">
+              <TabsTrigger value="crm" className="rounded-lg data-[state=active]:bg-white dark:data-[state=active]:bg-white/10 data-[state=active]:shadow-sm transition-all">
                 {t('customerSelectDialog.crmCustomers', 'CRM Müşterileri')}
               </TabsTrigger>
-              <TabsTrigger value="all">
+              <TabsTrigger value="all" className="rounded-lg data-[state=active]:bg-white dark:data-[state=active]:bg-white/10 data-[state=active]:shadow-sm transition-all">
                 {t('customerSelectDialog.allCustomers', 'Tümü')}
               </TabsTrigger>
             </TabsList>
 
             <div
               ref={scrollContainerRef}
-              className="flex-1 overflow-y-auto min-h-0 custom-scrollbar"
+              className="flex-1 overflow-y-auto min-h-0 custom-scrollbar pr-2"
             >
-              <TabsContent value="erp" className="mt-0">
+              <TabsContent value="erp" className="mt-0 space-y-3">
                 {renderErpCustomers()}
               </TabsContent>
 
-              <TabsContent value="crm" className="mt-0">
+              <TabsContent value="crm" className="mt-0 space-y-3">
                 {renderCrmCustomers()}
               </TabsContent>
 
-              <TabsContent value="all" className="mt-0">
+              <TabsContent value="all" className="mt-0 space-y-3">
                 {renderAllCustomers()}
               </TabsContent>
             </div>

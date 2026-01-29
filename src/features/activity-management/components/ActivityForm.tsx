@@ -22,13 +22,7 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { Combobox } from '@/components/ui/combobox';
 import { activityFormSchema, type ActivityFormSchema } from '../types/activity-types';
 import type { ActivityDto } from '../types/activity-types';
 import { ACTIVITY_STATUSES, ACTIVITY_PRIORITIES } from '../utils/activity-constants';
@@ -312,20 +306,17 @@ export function ActivityForm({
                         <List size={12} className="text-pink-500" />
                         {t('activityManagement.activityType', 'Aktivite Tipi')} *
                       </FormLabel>
-                      <Select onValueChange={field.onChange} value={field.value}>
-                        <FormControl>
-                          <SelectTrigger className={INPUT_STYLE}>
-                            <SelectValue placeholder={t('activityManagement.selectActivityType', 'Aktivite Tipi Seçin')} />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent className="bg-white dark:bg-[#1a1025] border border-slate-100 dark:border-white/10 text-slate-900 dark:text-white shadow-xl max-h-60">
-                          {activityTypes.map((type) => (
-                            <SelectItem key={type.id} value={String(type.id)}>
-                              {type.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                      <FormControl>
+                        <Combobox
+                          options={activityTypes.map(type => ({ value: String(type.id), label: type.name }))}
+                          value={field.value}
+                          onValueChange={field.onChange}
+                          placeholder={t('activityManagement.selectActivityType', 'Aktivite Tipi Seçin')}
+                          searchPlaceholder={t('common.search', 'Ara...')}
+                          emptyText={t('common.noResults', 'Sonuç bulunamadı.')}
+                          className={INPUT_STYLE}
+                        />
+                      </FormControl>
                       <FormMessage className="text-red-500 text-[10px] mt-1" />
                     </FormItem>
                   )}
@@ -340,20 +331,20 @@ export function ActivityForm({
                         <CheckSquare size={12} className="text-pink-500" />
                         {t('activityManagement.status', 'Durum')} *
                       </FormLabel>
-                      <Select onValueChange={field.onChange} value={field.value}>
-                        <FormControl>
-                          <SelectTrigger className={INPUT_STYLE}>
-                            <SelectValue placeholder={t('activityManagement.selectStatus', 'Durum Seçin')} />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent className="bg-white dark:bg-[#1a1025] border border-slate-100 dark:border-white/10 text-slate-900 dark:text-white shadow-xl max-h-60">
-                          {ACTIVITY_STATUSES.map((status) => (
-                            <SelectItem key={status.value} value={status.value}>
-                              {t(`activityManagement.status${status.value.replace(' ', '')}`, status.label)}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                      <FormControl>
+                        <Combobox
+                          options={ACTIVITY_STATUSES.map(status => ({
+                            value: status.value,
+                            label: t(`activityManagement.status${status.value.replace(' ', '')}`, status.label)
+                          }))}
+                          value={field.value}
+                          onValueChange={field.onChange}
+                          placeholder={t('activityManagement.selectStatus', 'Durum Seçin')}
+                          searchPlaceholder={t('common.search', 'Ara...')}
+                          emptyText={t('common.noResults', 'Sonuç bulunamadı.')}
+                          className={INPUT_STYLE}
+                        />
+                      </FormControl>
                       <FormMessage className="text-red-500 text-[10px] mt-1" />
                     </FormItem>
                   )}
@@ -508,27 +499,21 @@ export function ActivityForm({
                         <User size={12} className="text-pink-500" />
                         {t('activityManagement.contactId', 'İletişim')}
                       </FormLabel>
-                      <Select
-                        onValueChange={(value) => field.onChange(value && value !== 'none' ? parseInt(value) : undefined)}
-                        value={field.value && field.value !== 0 ? field.value.toString() : 'none'}
-                        disabled={!watchedCustomerId}
-                      >
-                        <FormControl>
-                          <SelectTrigger className={INPUT_STYLE}>
-                            <SelectValue placeholder={watchedCustomerId ? t('activityManagement.selectContact', 'İletişim Seçin') : t('activityManagement.selectCustomerFirst', 'Önce müşteri seçin')} />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent className="bg-white dark:bg-[#1a1025] border border-slate-100 dark:border-white/10 text-slate-900 dark:text-white shadow-xl max-h-60">
-                          <SelectItem value="none">
-                            {t('activityManagement.noContactSelected', 'İletişim seçilmedi')}
-                          </SelectItem>
-                          {contactOptions.map((contact) => (
-                            <SelectItem key={contact.id} value={contact.id.toString()}>
-                              {contact.fullName}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                      <FormControl>
+                        <Combobox
+                          options={[
+                            { value: 'none', label: t('activityManagement.noContactSelected', 'İletişim seçilmedi') },
+                            ...contactOptions.map(contact => ({ value: contact.id.toString(), label: contact.fullName }))
+                          ]}
+                          value={field.value && field.value !== 0 ? field.value.toString() : 'none'}
+                          onValueChange={(value) => field.onChange(value && value !== 'none' ? parseInt(value) : undefined)}
+                          placeholder={watchedCustomerId ? t('activityManagement.selectContact', 'İletişim Seçin') : t('activityManagement.selectCustomerFirst', 'Önce müşteri seçin')}
+                          searchPlaceholder={t('common.search', 'Ara...')}
+                          emptyText={t('common.noResults', 'Sonuç bulunamadı.')}
+                          disabled={!watchedCustomerId}
+                          className={INPUT_STYLE}
+                        />
+                      </FormControl>
                       <FormMessage className="text-red-500 text-[10px] mt-1" />
                     </FormItem>
                   )}
@@ -543,26 +528,23 @@ export function ActivityForm({
                         <AlertCircle size={12} className="text-pink-500" />
                         {t('activityManagement.priority', 'Öncelik')}
                       </FormLabel>
-                      <Select
-                        onValueChange={(value) => field.onChange(value && value !== 'none' ? value : undefined)}
-                        value={field.value || 'none'}
-                      >
-                        <FormControl>
-                          <SelectTrigger className={INPUT_STYLE}>
-                            <SelectValue placeholder={t('activityManagement.selectPriority', 'Öncelik Seçin')} />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent className="bg-white dark:bg-[#1a1025] border border-slate-100 dark:border-white/10 text-slate-900 dark:text-white shadow-xl max-h-60">
-                          <SelectItem value="none">
-                            {t('activityManagement.noPrioritySelected', 'Öncelik seçilmedi')}
-                          </SelectItem>
-                          {ACTIVITY_PRIORITIES.map((priority) => (
-                            <SelectItem key={priority.value} value={priority.value}>
-                              {t(`activityManagement.priority${priority.value}`, priority.label)}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                      <FormControl>
+                        <Combobox
+                          options={[
+                            { value: 'none', label: t('activityManagement.noPrioritySelected', 'Öncelik seçilmedi') },
+                            ...ACTIVITY_PRIORITIES.map(priority => ({
+                              value: priority.value,
+                              label: t(`activityManagement.priority${priority.value}`, priority.label)
+                            }))
+                          ]}
+                          value={field.value || 'none'}
+                          onValueChange={(value) => field.onChange(value && value !== 'none' ? value : undefined)}
+                          placeholder={t('activityManagement.selectPriority', 'Öncelik Seçin')}
+                          searchPlaceholder={t('common.search', 'Ara...')}
+                          emptyText={t('common.noResults', 'Sonuç bulunamadı.')}
+                          className={INPUT_STYLE}
+                        />
+                      </FormControl>
                       <FormMessage className="text-red-500 text-[10px] mt-1" />
                     </FormItem>
                   )}
@@ -580,26 +562,23 @@ export function ActivityForm({
                         <Briefcase size={12} className="text-pink-500" />
                         {t('activityManagement.assignedUserId', 'Atanan Kullanıcı')}
                       </FormLabel>
-                      <Select
-                        onValueChange={(value) => field.onChange(value && value !== 'none' ? parseInt(value) : undefined)}
-                        value={field.value && field.value !== 0 ? field.value.toString() : 'none'}
-                      >
-                        <FormControl>
-                          <SelectTrigger className={INPUT_STYLE}>
-                            <SelectValue placeholder={t('activityManagement.selectAssignedUser', 'Kullanıcı Seçin')} />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent className="bg-white dark:bg-[#1a1025] border border-slate-100 dark:border-white/10 text-slate-900 dark:text-white shadow-xl max-h-60">
-                          <SelectItem value="none">
-                            {t('activityManagement.noUserSelected', 'Kullanıcı seçilmedi')}
-                          </SelectItem>
-                          {userOptions.map((user) => (
-                            <SelectItem key={user.id} value={user.id.toString()}>
-                              {user.fullName || user.username}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                      <FormControl>
+                        <Combobox
+                          options={[
+                            { value: 'none', label: t('activityManagement.noUserSelected', 'Kullanıcı seçilmedi') },
+                            ...userOptions.map(user => ({
+                              value: user.id.toString(),
+                              label: user.fullName || user.username
+                            }))
+                          ]}
+                          value={field.value && field.value !== 0 ? field.value.toString() : 'none'}
+                          onValueChange={(value) => field.onChange(value && value !== 'none' ? parseInt(value) : undefined)}
+                          placeholder={t('activityManagement.selectAssignedUser', 'Kullanıcı Seçin')}
+                          searchPlaceholder={t('common.search', 'Ara...')}
+                          emptyText={t('common.noResults', 'Sonuç bulunamadı.')}
+                          className={INPUT_STYLE}
+                        />
+                      </FormControl>
                       <FormMessage className="text-red-500 text-[10px] mt-1" />
                     </FormItem>
                   )}

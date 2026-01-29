@@ -264,7 +264,7 @@ export function PricingRuleSalesmanTable({
 
       {/* Ekleme Onay Dialog */}
       <Dialog open={addConfirmOpen} onOpenChange={setAddConfirmOpen} modal={true}>
-        <DialogContent className="sm:max-w-[425px] bg-white dark:bg-[#130822] border-slate-100 dark:border-white/10">
+        <DialogContent className="sm:max-w-[425px] bg-white/80 dark:bg-[#1a1025]/80 backdrop-blur-xl border-slate-200 dark:border-white/10">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-slate-900 dark:text-white">
                 <div className="bg-purple-100 dark:bg-purple-900/30 p-2 rounded-full text-purple-600 dark:text-purple-400">
@@ -305,7 +305,7 @@ export function PricingRuleSalesmanTable({
 
       {/* Silme Onay Dialog */}
       <Dialog open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen} modal={true}>
-        <DialogContent className="sm:max-w-[425px] bg-white dark:bg-[#130822] border-slate-100 dark:border-white/10">
+        <DialogContent className="sm:max-w-[425px] bg-white/80 dark:bg-[#1a1025]/80 backdrop-blur-xl border-slate-200 dark:border-white/10">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-slate-900 dark:text-white">
                 <div className="bg-red-100 dark:bg-red-900/30 p-2 rounded-full text-red-600 dark:text-red-400">

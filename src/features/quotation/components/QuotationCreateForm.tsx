@@ -217,20 +217,6 @@ export function QuotationCreateForm(): ReactElement {
   const handleFormSubmit = async (e: React.FormEvent): Promise<void> => {
     e.preventDefault();
     const formData = form.getValues();
-
-    if (!formData.quotation.paymentTypeId) {
-      toast.error(t('quotation.create.error', 'Teklif Oluşturulamadı'), {
-        description: t('quotation.create.paymentTypeRequired', 'Ödeme tipi seçilmelidir'),
-      });
-      return;
-    }
-
-    if (!formData.quotation.deliveryDate) {
-      toast.error(t('quotation.create.error', 'Teklif Oluşturulamadı'), {
-        description: t('quotation.create.deliveryDateRequired', 'Teslimat tarihi girilmelidir'),
-      });
-      return;
-    }
     
     const isValid = await form.trigger();
     if (!isValid) {

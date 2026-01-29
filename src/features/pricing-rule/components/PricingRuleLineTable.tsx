@@ -242,7 +242,7 @@ export function PricingRuleLineTable({
     <div className="space-y-4 h-full flex flex-col">
       <div className="flex justify-between items-center px-1">
         <h3 className="text-lg font-bold text-slate-800 dark:text-white flex items-center gap-2">
-          <div className="bg-blue-50 dark:bg-blue-500/20 p-1.5 rounded-lg text-blue-600 dark:text-blue-400">
+          <div className="bg-pink-50 dark:bg-pink-500/20 p-1.5 rounded-lg text-pink-600 dark:text-pink-400">
             <Package size={18} />
           </div>
           {t('pricingRule.lines.title', 'Fiyat Kuralı Satırları')}
@@ -251,7 +251,7 @@ export function PricingRuleLineTable({
           type="button"
           onClick={() => setProductDialogOpen(true)}
           size="sm"
-          className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white border-0 hover:shadow-lg hover:shadow-blue-500/20 transition-all active:scale-95"
+          className="bg-gradient-to-r from-pink-600 to-orange-600 text-white border-0 hover:shadow-lg hover:shadow-pink-500/20 transition-all active:scale-95"
           disabled={isLoadingAction}
         >
           <Plus className="h-4 w-4 mr-2" />
@@ -391,10 +391,10 @@ export function PricingRuleLineTable({
 
       {/* Ekleme Onay Dialog */}
       <Dialog open={addConfirmOpen} onOpenChange={setAddConfirmOpen} modal={true}>
-        <DialogContent className="sm:max-w-[425px] bg-white dark:bg-[#130822] border-slate-100 dark:border-white/10">
+        <DialogContent className="sm:max-w-[425px] bg-white/80 dark:bg-[#1a1025]/80 backdrop-blur-xl border-slate-200 dark:border-white/10">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-slate-900 dark:text-white">
-                <div className="bg-blue-100 dark:bg-blue-900/30 p-2 rounded-full text-blue-600 dark:text-blue-400">
+                <div className="bg-pink-100 dark:bg-pink-900/30 p-2 rounded-full text-pink-600 dark:text-pink-400">
                     <AlertCircle size={20} />
                 </div>
                 {t('pricingRule.lines.addConfirmTitle', 'Satır Ekle')}

@@ -253,13 +253,17 @@ export function PaymentTypeTable({
         </div>
       </div>
 
-      <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <DialogContent className="bg-white dark:bg-[#130822] border border-slate-100 dark:border-white/10 text-slate-900 dark:text-white sm:rounded-2xl">
+      {/* Silme Onay Dialog */}
+      <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen} modal={true}>
+        <DialogContent className="sm:max-w-[425px] bg-white/80 dark:bg-[#1a1025]/80 backdrop-blur-xl border-slate-200 dark:border-white/10">
           <DialogHeader>
-            <DialogTitle className="text-slate-900 dark:text-white">
+            <DialogTitle className="flex items-center gap-2 text-slate-900 dark:text-white">
+              <div className="bg-red-100 dark:bg-red-900/30 p-2 rounded-full text-red-600 dark:text-red-400">
+                <Trash2 size={20} />
+              </div>
               {t('paymentTypeManagement.deleteTitle', 'Ödeme Tipini Sil')}
             </DialogTitle>
-            <DialogDescription className="text-slate-500 dark:text-slate-400">
+            <DialogDescription className="pt-2 text-slate-500 dark:text-slate-400">
               {t('paymentTypeManagement.confirmDelete', 'Bu ödeme tipini silmek istediğinizden emin misiniz?')}
             </DialogDescription>
           </DialogHeader>

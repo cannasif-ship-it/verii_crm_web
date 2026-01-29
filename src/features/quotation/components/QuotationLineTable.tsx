@@ -435,11 +435,19 @@ export function QuotationLineTable({
       />
 
       <Dialog open={addLineDialogOpen} onOpenChange={setAddLineDialogOpen}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>{t('quotation.lines.addLine', 'Yeni Satır Ekle')}</DialogTitle>
-            <DialogDescription>{t('quotation.lines.addLineDescription', 'Teklif satırı bilgilerini giriniz')}</DialogDescription>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-white/95 dark:bg-[#0c0516]/95 backdrop-blur-xl border-slate-200 dark:border-white/10 p-0 shadow-2xl">
+          <DialogHeader className="px-6 py-5 border-b border-slate-200/50 dark:border-white/5 bg-slate-50/50 dark:bg-white/5">
+            <DialogTitle className="flex items-center gap-3 text-slate-900 dark:text-white text-lg">
+              <div className="bg-gradient-to-br from-pink-500 to-rose-600 p-2.5 rounded-xl shadow-lg shadow-pink-500/20 text-white">
+                <Plus className="h-5 w-5" />
+              </div>
+              {t('quotation.lines.addLine', 'Yeni Satır Ekle')}
+            </DialogTitle>
+            <DialogDescription className="text-slate-500 dark:text-slate-400">
+              {t('quotation.lines.addLineDescription', 'Teklif satırı bilgilerini giriniz')}
+            </DialogDescription>
           </DialogHeader>
+          <div className="p-6">
           {newLine && (
             <QuotationLineForm
               line={newLine}
@@ -452,15 +460,24 @@ export function QuotationLineTable({
               userDiscountLimits={userDiscountLimits}
             />
           )}
+          </div>
         </DialogContent>
       </Dialog>
 
       <Dialog open={editLineDialogOpen} onOpenChange={setEditLineDialogOpen}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>{t('quotation.lines.editLine', 'Satırı Düzenle')}</DialogTitle>
-            <DialogDescription>{t('quotation.lines.editLineDescription', 'Teklif satırı bilgilerini düzenleyiniz')}</DialogDescription>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-white/95 dark:bg-[#0c0516]/95 backdrop-blur-xl border-slate-200 dark:border-white/10 p-0 shadow-2xl">
+          <DialogHeader className="px-6 py-5 border-b border-slate-200/50 dark:border-white/5 bg-slate-50/50 dark:bg-white/5">
+            <DialogTitle className="flex items-center gap-3 text-slate-900 dark:text-white text-lg">
+              <div className="bg-gradient-to-br from-blue-500 to-indigo-600 p-2.5 rounded-xl shadow-lg shadow-blue-500/20 text-white">
+                <Edit className="h-5 w-5" />
+              </div>
+              {t('quotation.lines.editLine', 'Satırı Düzenle')}
+            </DialogTitle>
+            <DialogDescription className="text-slate-500 dark:text-slate-400">
+              {t('quotation.lines.editLineDescription', 'Teklif satırı bilgilerini düzenleyiniz')}
+            </DialogDescription>
           </DialogHeader>
+          <div className="p-6">
           {lineToEdit && (
             <QuotationLineForm
               line={lineToEdit}
@@ -477,28 +494,43 @@ export function QuotationLineTable({
               userDiscountLimits={userDiscountLimits}
             />
           )}
+          </div>
         </DialogContent>
       </Dialog>
 
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-rose-600">
-              <Trash2 className="h-5 w-5" />
+        <DialogContent className="bg-white/80 dark:bg-[#0c0516]/80 backdrop-blur-xl border-slate-200 dark:border-white/10 sm:max-w-[425px] p-0 overflow-hidden shadow-2xl">
+          <DialogHeader className="px-6 py-5 border-b border-slate-200/50 dark:border-white/5 bg-slate-50/50 dark:bg-white/5">
+            <DialogTitle className="flex items-center gap-3 text-slate-900 dark:text-white text-lg">
+              <div className="bg-gradient-to-br from-red-500 to-rose-600 p-2.5 rounded-xl shadow-lg shadow-red-500/20 text-white">
+                <Trash2 className="h-5 w-5" />
+              </div>
               {relatedLinesCount > 1
                 ? t('quotation.lines.delete.confirmTitleMultiple', 'Bağlı Stokları Sil')
                 : t('quotation.lines.delete.confirmTitle', 'Satırı Sil')}
             </DialogTitle>
-            <DialogDescription className="pt-2">
+            <DialogDescription className="pt-2 text-slate-500 dark:text-slate-400 text-sm leading-relaxed">
               {relatedLinesCount > 1 
                 ? t('quotation.lines.delete.confirmMessageMultiple', 'Bu satır silindiğinde bağlı olan diğer {count} stok da silinecektir.', { count: relatedLinesCount })
                 : t('quotation.lines.delete.confirmMessage', 'Bu satırı silmek istediğinizden emin misiniz?')
               }
             </DialogDescription>
           </DialogHeader>
-          <DialogFooter className="gap-2 sm:gap-0">
-            <Button variant="outline" onClick={handleDeleteCancel}>{t('quotation.cancel', 'İptal')}</Button>
-            <Button variant="destructive" onClick={handleDeleteConfirm}>{t('quotation.delete', 'Sil')}</Button>
+          <DialogFooter className="gap-3 p-6 bg-slate-50/30 dark:bg-black/20">
+            <Button 
+              variant="outline" 
+              onClick={handleDeleteCancel} 
+              className="h-11 px-6 rounded-xl border-slate-200 dark:border-white/10 hover:bg-slate-100 dark:hover:bg-white/5 text-slate-700 dark:text-slate-300 font-medium transition-all"
+            >
+              {t('quotation.cancel', 'İptal')}
+            </Button>
+            <Button 
+              variant="destructive" 
+              onClick={handleDeleteConfirm} 
+              className="h-11 px-6 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 text-white shadow-lg shadow-red-500/25 hover:shadow-red-500/40 border-0 font-medium transition-all"
+            >
+              {t('quotation.delete', 'Sil')}
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

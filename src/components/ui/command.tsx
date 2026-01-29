@@ -62,6 +62,7 @@ function CommandDialog({
 
 function CommandInput({
   className,
+  children,
   ...props
 }: React.ComponentProps<typeof CommandPrimitive.Input>) {
   return (
@@ -78,6 +79,7 @@ function CommandInput({
         )}
         {...props}
       />
+      {children}
     </div>
   )
 }

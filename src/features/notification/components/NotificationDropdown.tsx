@@ -128,12 +128,11 @@ export function NotificationDropdown({ children }: NotificationDropdownProps): R
       
       <DropdownMenuContent 
         align="end" 
-        className="w-80 p-0 bg-[#1a1025] border border-white/10 rounded-2xl shadow-2xl overflow-hidden z-50 text-slate-200" 
-        sideOffset={8}
+        className="w-80 p-0 bg-white/80 dark:bg-[#1a1025]/80 backdrop-blur-xl border border-slate-200 dark:border-white/10 rounded-2xl shadow-2xl overflow-hidden z-50 text-slate-900 dark:text-slate-200" 
       >
-        <div className="p-4 border-b border-white/5 flex items-center justify-between">
+        <div className="p-4 border-b border-slate-200 dark:border-white/5 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className="text-sm font-bold text-white">{t('notification.title')}</span>
+            <span className="text-sm font-bold text-slate-900 dark:text-white">{t('notification.title')}</span>
             {unreadCount > 0 && (
               <span className="text-[10px] bg-pink-500/10 text-pink-400 px-1.5 py-0.5 rounded border border-pink-500/20">
                 {unreadCount}

@@ -4,12 +4,12 @@ export const createQuotationSchema = z.object({
   quotation: z.object({
     potentialCustomerId: z.number().nullable().optional(),
     erpCustomerCode: z.string().max(50, 'Müşteri kodu en fazla 50 karakter olabilir').nullable().optional(),
-    deliveryDate: z.string().nullable().optional(),
+    deliveryDate: z.string().min(1, 'Teslimat tarihi seçilmelidir'),
     shippingAddressId: z.number().nullable().optional(),
     representativeId: z.number().nullable().optional(),
     status: z.number().nullable().optional(),
     description: z.string().max(500, 'Açıklama en fazla 500 karakter olabilir').nullable().optional(),
-    paymentTypeId: z.number().nullable().optional(),
+    paymentTypeId: z.number({ required_error: 'Ödeme planı seçilmelidir' }).min(1, 'Ödeme planı seçilmelidir'),
     documentSerialTypeId: z.number().nullable().optional(),
     offerType: z.string({
       message: 'Teklif tipi seçilmelidir',

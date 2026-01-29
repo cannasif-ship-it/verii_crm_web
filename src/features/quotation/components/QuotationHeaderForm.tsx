@@ -435,7 +435,7 @@ export function QuotationHeaderForm({
         <div className={styles.glassCard}>
           <div className="p-5 h-full flex flex-col">
             <div className="flex items-center gap-2 mb-4">
-              <div className="p-1.5 rounded-md bg-blue-100 dark:bg-blue-900/30 text-blue-600">
+              <div className="p-1.5 rounded-md bg-pink-100 dark:bg-pink-900/30 text-pink-600 dark:text-pink-400">
                 <Globe className="h-4 w-4" />
               </div>
               <h4 className="text-sm font-bold text-zinc-700 dark:text-zinc-200">Tip & Tarihler</h4>
@@ -617,21 +617,30 @@ export function QuotationHeaderForm({
       )}
 
       <Dialog open={currencyChangeDialogOpen} onOpenChange={setCurrencyChangeDialogOpen}>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-pink-600">
-              <ArrowRightLeft className="h-5 w-5" />
+        <DialogContent className="sm:max-w-[425px] bg-white/80 dark:bg-[#0c0516]/80 backdrop-blur-xl border-slate-200 dark:border-white/10 p-0 overflow-hidden shadow-2xl">
+          <DialogHeader className="px-6 py-5 border-b border-slate-200/50 dark:border-white/5 bg-slate-50/50 dark:bg-white/5">
+            <DialogTitle className="flex items-center gap-3 text-slate-900 dark:text-white text-lg">
+              <div className="bg-gradient-to-br from-pink-500 to-rose-600 p-2.5 rounded-xl shadow-lg shadow-pink-500/20 text-white">
+                <ArrowRightLeft className="h-5 w-5" />
+              </div>
               {t('quotation.header.currencyChange.title', 'Kur Değişikliği')}
             </DialogTitle>
-            <DialogDescription className="pt-2">
+            <DialogDescription className="pt-2 text-slate-500 dark:text-slate-400 text-sm leading-relaxed">
               {t('quotation.header.currencyChange.message', 'Para birimi değişikliği tüm satırları etkileyecektir. Devam etmek istiyor musunuz?')}
             </DialogDescription>
           </DialogHeader>
-          <DialogFooter className="gap-2 sm:gap-0 mt-4">
-            <Button variant="outline" onClick={handleCurrencyChangeCancel} className="rounded-xl">
+          <DialogFooter className="gap-3 p-6 bg-slate-50/30 dark:bg-black/20">
+            <Button 
+              variant="outline" 
+              onClick={handleCurrencyChangeCancel} 
+              className="h-11 px-6 rounded-xl border-slate-200 dark:border-white/10 hover:bg-slate-100 dark:hover:bg-white/5 text-slate-700 dark:text-slate-300 font-medium transition-all"
+            >
               {t('quotation.cancel', 'Vazgeç')}
             </Button>
-            <Button onClick={handleCurrencyChangeConfirm} className="rounded-xl bg-pink-600 hover:bg-pink-700 text-white">
+            <Button 
+              onClick={handleCurrencyChangeConfirm} 
+              className="h-11 px-6 rounded-xl bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-700 hover:to-rose-700 text-white shadow-lg shadow-pink-500/25 hover:shadow-pink-500/40 border-0 font-medium transition-all"
+            >
               {t('quotation.confirm', 'Onayla')}
             </Button>
           </DialogFooter>
