@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -11,7 +11,6 @@ import { useLogin } from '../hooks/useLogin';
 import { useBranches } from '../hooks/useBranches';
 import { useAuthStore } from '@/stores/auth-store';
 import { isTokenValid } from '@/utils/jwt';
-import type React from 'react';
 import {
   Form,
   FormControl,
@@ -40,10 +39,10 @@ import {
   ViewOffIcon, 
   Globe02Icon, 
   WhatsappIcon,
-  Call02Icon,        // Telefon için
-  TelegramIcon,      // Telegram için
-  InstagramIcon,     // Instagram için
-  NewTwitterIcon     // X (Twitter) logosu için
+  Call02Icon,        
+  TelegramIcon,      
+  InstagramIcon,     
+  NewTwitterIcon     
 } from 'hugeicons-react';
 
 export function LoginPage(): React.JSX.Element {
@@ -53,7 +52,10 @@ export function LoginPage(): React.JSX.Element {
   const { data: branches } = useBranches();
   const { mutate: login, isPending } = useLogin(branches);
   const { logout } = useAuthStore();
+  
+  // State'ler
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [capsLockActive, setCapsLockActive] = useState(false);
   
   // Three.js Canvas Referansı
   const mountRef = useRef<HTMLDivElement>(null);
@@ -298,12 +300,10 @@ export function LoginPage(): React.JSX.Element {
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
         
-        /* Inputlar için tarayıcı native UI'ını (autocomplete popup vb.) koyu moda zorla */
         input {
           color-scheme: dark;
         }
 
-        /* Chrome, Safari, Edge, Opera için Autofill arka plan rengini düzelt */
         input:-webkit-autofill,
         input:-webkit-autofill:hover, 
         input:-webkit-autofill:focus, 
@@ -353,11 +353,9 @@ export function LoginPage(): React.JSX.Element {
                   <FormItem>
                     <FormControl>
                       <div className="relative group">
-                        {/* HugeIcon: Location */}
                         <Location01Icon 
                           className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 transition-colors group-focus-within:text-orange-400" 
                           size={18} 
-                          
                         />
                         <Select
                           onValueChange={field.onChange}
@@ -393,11 +391,9 @@ export function LoginPage(): React.JSX.Element {
                   <FormItem>
                     <FormControl>
                       <div className="relative group">
-                        {/* HugeIcon: Mail */}
                         <Mail02Icon 
                           className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-orange-400" 
                           size={18} 
-                         
                         />
                         <Input
                           {...field}
@@ -420,24 +416,24 @@ export function LoginPage(): React.JSX.Element {
                   <FormItem>
                     <FormControl>
                       <div className="relative group">
-                        {/* HugeIcon: Lock */}
                         <LockKeyIcon 
                           className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-orange-400" 
                           size={18} 
-                         
                         />
                         <Input
                           {...field}
                           type={isPasswordVisible ? 'text' : 'password'}
                           placeholder={t('auth.login.passwordPlaceholder', 'Şifre')}
                           className="w-full bg-black/30 border border-white/10 rounded-xl px-4 py-6 pl-12 pr-10 text-sm text-white placeholder-slate-500 focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-pink-500 focus:bg-black/50"
+                          // CAPS LOCK KONTROLÜ
+                          onKeyDown={(e) => setCapsLockActive(e.getModifierState('CapsLock'))}
+                          onKeyUp={(e) => setCapsLockActive(e.getModifierState('CapsLock'))}
                         />
                         <button
                           type="button"
                           onClick={() => setIsPasswordVisible(v => !v)}
                           className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white"
                         >
-                          {/* HugeIcon: Eye/EyeOff */}
                           {isPasswordVisible ? (
                             <ViewOffIcon size={20}  />
                           ) : (
@@ -446,6 +442,15 @@ export function LoginPage(): React.JSX.Element {
                         </button>
                       </div>
                     </FormControl>
+                    
+                    {/* YENİ TASARIMLI CAPS LOCK UYARISI */}
+                    {capsLockActive && (
+                      <div className="flex items-center gap-2 mt-3 px-3 py-2 rounded-lg bg-orange-500/10 border border-orange-500/20 text-orange-200 text-xs font-medium animate-in fade-in slide-in-from-top-1">
+                        <span className="text-orange-500 text-sm">⚠️</span> 
+                        CAPS LOCK AÇIK
+                      </div>
+                    )}
+
                     <FormMessage />
                   </FormItem>
                 )}
@@ -496,40 +501,33 @@ export function LoginPage(): React.JSX.Element {
             />
           </p>
           
-          {/* YENİ SOSYAL BUTON ALANI: Flex + Round Icons Only */}
+          {/* SOSYAL BUTONLAR */}
           <div className="flex flex-wrap items-center justify-center gap-4 px-4">
             
-            {/* 1. Telefon */}
             <a href="tel:+905070123018" className="flex items-center justify-center w-12 h-12 rounded-full bg-white/5 border border-white/5 text-slate-400 hover:text-lime-400 hover:bg-white/10 hover:border-lime-500/30 hover:shadow-[0_0_15px_rgba(132,204,22,0.3)] hover:scale-110 transition-all duration-300 group">
               <Call02Icon size={20} />
             </a>
 
-            {/* 2. Website */}
             <a href="https://v3rii.com" target="_blank" rel="noreferrer" className="flex items-center justify-center w-12 h-12 rounded-full bg-white/5 border border-white/5 text-slate-400 hover:text-pink-400 hover:bg-white/10 hover:border-pink-500/30 hover:shadow-[0_0_15px_rgba(244,114,182,0.3)] hover:scale-110 transition-all duration-300 group">
               <Globe02Icon size={20} />
             </a>
 
-            {/* 3. E-Posta */}
             <a href="mailto:info@v3rii.com" className="flex items-center justify-center w-12 h-12 rounded-full bg-white/5 border border-white/5 text-slate-400 hover:text-orange-400 hover:bg-white/10 hover:border-orange-500/30 hover:shadow-[0_0_15px_rgba(251,146,60,0.3)] hover:scale-110 transition-all duration-300 group">
               <Mail02Icon size={20} />
             </a>
 
-            {/* 4. WhatsApp */}
             <a href="https://wa.me/905070123018" target="_blank" rel="noreferrer" className="flex items-center justify-center w-12 h-12 rounded-full bg-white/5 border border-white/5 text-slate-400 hover:text-emerald-400 hover:bg-white/10 hover:border-emerald-500/30 hover:shadow-[0_0_15px_rgba(52,211,153,0.3)] hover:scale-110 transition-all duration-300 group">
               <WhatsappIcon size={20} />
             </a>
 
-            {/* 5. Telegram */}
             <a href="https://t.me/v3rii" target="_blank" rel="noreferrer" className="flex items-center justify-center w-12 h-12 rounded-full bg-white/5 border border-white/5 text-slate-400 hover:text-sky-400 hover:bg-white/10 hover:border-sky-500/30 hover:shadow-[0_0_15px_rgba(56,189,248,0.3)] hover:scale-110 transition-all duration-300 group">
               <TelegramIcon size={20} />
             </a>
 
-            {/* 6. Instagram */}
             <a href="https://instagram.com/v3rii" target="_blank" rel="noreferrer" className="flex items-center justify-center w-12 h-12 rounded-full bg-white/5 border border-white/5 text-slate-400 hover:text-fuchsia-400 hover:bg-white/10 hover:border-fuchsia-500/30 hover:shadow-[0_0_15px_rgba(232,121,249,0.3)] hover:scale-110 transition-all duration-300 group">
               <InstagramIcon size={20} />
             </a>
 
-            {/* 7. X (Twitter) */}
             <a href="https://x.com/v3rii" target="_blank" rel="noreferrer" className="flex items-center justify-center w-12 h-12 rounded-full bg-white/5 border border-white/5 text-slate-400 hover:text-white hover:bg-white/10 hover:border-white/30 hover:shadow-[0_0_15px_rgba(255,255,255,0.3)] hover:scale-110 transition-all duration-300 group">
               <NewTwitterIcon size={20} />
             </a>
