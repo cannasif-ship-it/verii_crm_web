@@ -74,7 +74,6 @@ export function QuotationHeaderForm({
   const [pendingCurrency, setPendingCurrency] = useState<string | null>(null);
   const isInitialLoadRef = useRef(true);
 
-  // Watchers
   const watchedCustomerId = form.watch('quotation.potentialCustomerId');
   const watchedErpCustomerCode = form.watch('quotation.erpCustomerCode');
   const watchedCurrency = form.watch('quotation.currency');
@@ -189,10 +188,12 @@ export function QuotationHeaderForm({
 
   const styles = {
     glassCard: "relative overflow-hidden rounded-2xl border border-zinc-200/80 dark:border-zinc-800/80 bg-white/60 dark:bg-zinc-900/40 backdrop-blur-xl shadow-sm transition-all duration-300 hover:shadow-md",
-    inputBase: "pl-10 h-11 bg-white dark:bg-zinc-950/50 border-zinc-200 dark:border-zinc-800 rounded-xl shadow-sm hover:shadow transition-all duration-300 ease-out focus-visible:border-pink-500 focus-visible:ring-4 focus-visible:ring-pink-500/20 w-full",
+    inputBase: "!pl-12 h-11 bg-white dark:bg-zinc-950/50 border-zinc-200 dark:border-zinc-800 rounded-xl shadow-sm hover:shadow transition-all duration-300 ease-out focus-visible:border-pink-500 focus-visible:ring-4 focus-visible:ring-pink-500/20 w-full",
     label: "text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-2 pl-1 flex items-center gap-1.5",
     iconWrapper: "absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-pink-600 dark:group-focus-within:text-pink-500 pointer-events-none z-10 flex items-center justify-center",
   };
+
+  const forcePaddingStyle = { paddingLeft: '3rem' };
 
   return (
     <div className="relative space-y-6 pt-2 pb-8 animate-in fade-in slide-in-from-bottom-3 duration-700">
@@ -218,7 +219,6 @@ export function QuotationHeaderForm({
         <div className="p-6">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-5">
             
-            {/* Müşteri Seçimi */}
             <div className="lg:col-span-8">
               <FormField
                 control={form.control}
@@ -236,6 +236,7 @@ export function QuotationHeaderForm({
                         <FormControl>
                           <Input
                             className={cn(styles.inputBase, "font-semibold text-zinc-800 dark:text-zinc-100")}
+                            style={forcePaddingStyle}
                             value={customerDisplayValue}
                             placeholder={t('quotation.header.selectCustomer', 'Müşteri seçiniz...')}
                             readOnly
@@ -258,7 +259,6 @@ export function QuotationHeaderForm({
               />
             </div>
 
-            {/* Temsilci Seçimi */}
             <div className="lg:col-span-4">
               <FormField
                 control={form.control}
@@ -269,18 +269,18 @@ export function QuotationHeaderForm({
                       {t('quotation.header.representative', 'Satış Temsilcisi')}
                     </FormLabel>
                     <div className="relative">
-                       <div className={styles.iconWrapper}><Briefcase className="h-4 w-4" /></div>
-                       <VoiceSearchCombobox
-                         className={styles.inputBase}
-                         value={field.value?.toString() || ''}
-                         onSelect={(value) => field.onChange(value ? Number(value) : null)}
-                         options={relatedUsers.map((u) => ({
+                        <div className={styles.iconWrapper}><Briefcase className="h-4 w-4" /></div>
+                        <VoiceSearchCombobox
+                          className={styles.inputBase}
+                          value={field.value?.toString() || ''}
+                          onSelect={(value) => field.onChange(value ? Number(value) : null)}
+                          options={relatedUsers.map((u) => ({
                            value: u.userId.toString(),
                            label: [u.firstName, u.lastName].filter(Boolean).join(' ')
-                         }))}
-                         placeholder={t('quotation.select', 'Seçiniz')}
-                         searchPlaceholder={t('common.search', 'Ara...')}
-                       />
+                          }))}
+                          placeholder={t('quotation.select', 'Seçiniz')}
+                          searchPlaceholder={t('common.search', 'Ara...')}
+                        />
                     </div>
                     <FormMessage className="mt-1.5" />
                   </FormItem>
@@ -296,22 +296,22 @@ export function QuotationHeaderForm({
                   render={({ field }) => (
                     <FormItem className="space-y-0 relative group">
                       <FormLabel className={styles.label}>
-                         <Truck className="h-3.5 w-3.5 text-orange-500" />
+                          <Truck className="h-3.5 w-3.5 text-orange-500" />
                         {t('quotation.header.shippingAddress', 'Sevk Adresi')}
                       </FormLabel>
                       <div className="relative">
-                         <div className={styles.iconWrapper}><Truck className="h-4 w-4" /></div>
-                         <VoiceSearchCombobox
-                           className={cn(styles.inputBase, "bg-orange-50/30 dark:bg-orange-950/10 border-orange-100 dark:border-orange-900/30")}
-                           value={field.value?.toString() || ''}
-                           onSelect={(value) => field.onChange(value ? Number(value) : null)}
-                           options={shippingAddresses.map((address) => ({
-                             value: address.id.toString(),
-                             label: address.addressText
-                           }))}
-                           placeholder={t('quotation.header.selectShippingAddress', 'Sevk adresi seçin')}
-                           searchPlaceholder={t('common.search', 'Ara...')}
-                         />
+                          <div className={styles.iconWrapper}><Truck className="h-4 w-4" /></div>
+                          <VoiceSearchCombobox
+                            className={cn(styles.inputBase, "bg-orange-50/30 dark:bg-orange-950/10 border-orange-100 dark:border-orange-900/30")}
+                            value={field.value?.toString() || ''}
+                            onSelect={(value) => field.onChange(value ? Number(value) : null)}
+                            options={shippingAddresses.map((address) => ({
+                              value: address.id.toString(),
+                              label: address.addressText
+                            }))}
+                            placeholder={t('quotation.header.selectShippingAddress', 'Sevk adresi seçin')}
+                            searchPlaceholder={t('common.search', 'Ara...')}
+                          />
                       </div>
                       <FormMessage className="mt-1.5" />
                     </FormItem>
@@ -323,10 +323,8 @@ export function QuotationHeaderForm({
         </div>
       </div>
 
-      {/* 2. DETAYLAR GRID'İ */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
-        {/* SOL: FİNANSAL BİLGİLER */}
         <div className={styles.glassCard}>
           <div className="p-5 h-full flex flex-col">
             <div className="flex items-center justify-between mb-4">
@@ -453,7 +451,8 @@ export function QuotationHeaderForm({
                         <FormControl>
                           <Input 
                             type="date" 
-                            className={cn(styles.inputBase, "pl-10 text-xs")} 
+                            className={cn(styles.inputBase, "text-xs")} 
+                            style={forcePaddingStyle}
                             {...field}
                             value={field.value ? new Date(field.value).toISOString().split('T')[0] : ''}
                             onChange={(e) => field.onChange(e.target.value)}
@@ -475,7 +474,8 @@ export function QuotationHeaderForm({
                         <FormControl>
                           <Input 
                             type="date" 
-                            className={cn(styles.inputBase, "pl-10 text-xs")}
+                            className={cn(styles.inputBase, "text-xs")}
+                            style={forcePaddingStyle}
                             {...field}
                             value={field.value ? new Date(field.value).toISOString().split('T')[0] : ''}
                             onChange={(e) => field.onChange(e.target.value)}
@@ -491,7 +491,6 @@ export function QuotationHeaderForm({
           </div>
         </div>
 
-        {/* SAĞ: BELGE & NOTLAR */}
         <div className={styles.glassCard}>
            <div className="p-5 h-full flex flex-col">
               <div className="flex items-center gap-2 mb-4">
