@@ -173,11 +173,12 @@ export interface QuotationGetDto {
 export interface QuotationExchangeRateGetDto {
   id: number;
   quotationId: number;
+  quotationOfferNo?: string | null;
   currency: string;
   exchangeRate: number;
   exchangeRateDate: string;
   isOfficial: boolean;
-  createdAt: string;
+  createdAt?: string;
   updatedAt?: string | null;
 }
 

@@ -1,0 +1,26 @@
+import { useMutation, useQueryClient, type UseMutationResult } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner';
+import type { ApiResponse } from '@/types/api';
+import { quotationApi } from '../api/quotation-api';
+import { queryKeys } from '../utils/query-keys';
+import type { QuotationExchangeRateGetDto } from '../types/quotation-types';
+
+export const useUpdateExchangeRateInQuotation = (
+  quotationId: number
+): UseMutationResult<ApiResponse<boolean>, Error, QuotationExchangeRateGetDto[], unknown> => {
+  const queryClient = useQueryClient();
+  const { t } = useTranslation();
+
+  return useMutation({
+    mutationFn: (dtos: QuotationExchangeRateGetDto[]) =>
+      quotationApi.updateExchangeRateInQuotation(dtos),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.quotationExchangeRates(quotationId) });
+      toast.success(t('quotation.exchangeRates.updateSuccess', 'Döviz kurları güncellendi'));
+    },
+    onError: (error: Error) => {
+      toast.error(error.message ?? t('quotation.exchangeRates.updateError', 'Döviz kurları güncellenirken bir hata oluştu'));
+    },
+  });
+};
