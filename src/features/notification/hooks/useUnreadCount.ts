@@ -12,11 +12,14 @@ export function useUnreadCount() {
         return 0;
       }
     },
-    refetchInterval: 30000,
-    staleTime: 30000,
+    // --- YENİ AYARLAR ---
+    refetchInterval: 60000,      // 60 saniyede bir kontrol et
+    staleTime: 60000,            // 1 dakika boyunca veriyi taze say
     retry: 1,
-    retryDelay: 2000,
-    refetchOnWindowFocus: true,
-    refetchOnMount: true,
+    refetchOnWindowFocus: false, // Sayfaya tıklayınca tekrar yükleme yapma (Dönmeyi engeller)
+    refetchOnMount: false,
+    
+    // Yükleniyor ikonunu engelleyen sihirli satır:
+    placeholderData: (previousData) => previousData,
   });
 }
