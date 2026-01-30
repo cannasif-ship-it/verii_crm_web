@@ -1,5 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
-import * as THREE from 'three';
+import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslation, Trans } from 'react-i18next';
@@ -27,6 +26,7 @@ import {
 } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { LanguageSwitcher } from '@/components/shared/LanguageSwitcher';
+import { AuthBackground } from './AuthBackground';
 
 import loginImage from '../../../../public/veriicrmlogo.png';
 
@@ -36,7 +36,14 @@ import {
   LockKeyIcon, 
   ViewIcon, 
   ViewOffIcon, 
-  Call02Icon,        
+  Call02Icon,   
+  Globe02Icon,      
+  WhatsappIcon,
+  TelegramIcon,
+  InstagramIcon,
+  NewTwitterIcon,
+  EnergyEllipseIcon, 
+  UnavailableIcon
 } from 'hugeicons-react';
 
 export function LoginPage(): React.JSX.Element {
@@ -50,7 +57,7 @@ export function LoginPage(): React.JSX.Element {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [capsLockActive, setCapsLockActive] = useState(false);
   
-  const mountRef = useRef<HTMLDivElement>(null);
+  const [showAnimation, setShowAnimation] = useState(true);
 
   const form = useForm<z.input<typeof loginRequestSchema>>({
     resolver: zodResolver(loginRequestSchema),
@@ -61,200 +68,6 @@ export function LoginPage(): React.JSX.Element {
       rememberMe: true,
     },
   });
-
-  useEffect(() => {
-    if (!mountRef.current) return;
-
-    while(mountRef.current.firstChild) {
-      mountRef.current.removeChild(mountRef.current.firstChild);
-    }
-
-    const scene = new THREE.Scene();
-    scene.fog = new THREE.Fog(0x1a0b2e, 20, 100);
-
-    const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
-    camera.position.z = 40;
-
-    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(window.devicePixelRatio);
-    mountRef.current.appendChild(renderer.domElement);
-
-    const particleCount = 200;
-    const particlesGeometry = new THREE.BufferGeometry();
-    const particlesPositions = new Float32Array(particleCount * 3);
-    const particlesVelocities: {x: number, y: number, z: number}[] = [];
-
-    for (let i = 0; i < particleCount; i++) {
-      particlesPositions[i * 3] = (Math.random() - 0.5) * 60;
-      particlesPositions[i * 3 + 1] = (Math.random() - 0.5) * 60;
-      particlesPositions[i * 3 + 2] = (Math.random() - 0.5) * 30;
-
-      particlesVelocities.push({
-        x: (Math.random() - 0.5) * 0.04,
-        y: (Math.random() - 0.5) * 0.04,
-        z: (Math.random() - 0.5) * 0.02
-      });
-    }
-
-    particlesGeometry.setAttribute('position', new THREE.BufferAttribute(particlesPositions, 3));
-    const particlesMaterial = new THREE.PointsMaterial({
-      color: 0xffedd5,
-      size: 0.4,
-      transparent: true,
-      opacity: 0.8,
-      blending: THREE.AdditiveBlending
-    });
-    const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
-    scene.add(particlesMesh);
-
-    const lineMaterial = new THREE.LineBasicMaterial({
-      color: 0xec4899,
-      transparent: true,
-      opacity: 0.12
-    });
-    const maxLines = particleCount * particleCount;
-    const linePositions = new Float32Array(maxLines * 3);
-    const lineGeometry = new THREE.BufferGeometry();
-    lineGeometry.setAttribute('position', new THREE.BufferAttribute(linePositions, 3));
-    const linesMesh = new THREE.LineSegments(lineGeometry, lineMaterial);
-    scene.add(linesMesh);
-
-    const pulsesCount = 15;
-    const pulsesGeo = new THREE.BufferGeometry();
-    const pulsesPos = new Float32Array(pulsesCount * 3);
-    const pulsesGeoAttr = new THREE.BufferAttribute(pulsesPos, 3);
-    pulsesGeo.setAttribute('position', pulsesGeoAttr);
-    const pulsesMat = new THREE.PointsMaterial({
-      color: 0xfbbf24,
-      size: 0.9,
-      transparent: true,
-      opacity: 1,
-      blending: THREE.AdditiveBlending
-    });
-    const pulsesMesh = new THREE.Points(pulsesGeo, pulsesMat);
-    scene.add(pulsesMesh);
-    
-    const activePulses = Array(pulsesCount).fill(null).map(() => ({
-      active: false, startIdx: 0, endIdx: 0, progress: 0, speed: 0
-    }));
-
-    let animationFrameId: number;
-    let mouseX = 0;
-    let mouseY = 0;
-
-    const animate = () => {
-      animationFrameId = requestAnimationFrame(animate);
-
-      const pos = particlesMesh.geometry.attributes.position.array as Float32Array;
-      for (let i = 0; i < particleCount; i++) {
-        pos[i * 3] += particlesVelocities[i].x;
-        pos[i * 3 + 1] += particlesVelocities[i].y;
-        pos[i * 3 + 2] += particlesVelocities[i].z;
-
-        if (pos[i * 3] > 40 || pos[i * 3] < -40) particlesVelocities[i].x *= -1;
-        if (pos[i * 3 + 1] > 30 || pos[i * 3 + 1] < -30) particlesVelocities[i].y *= -1;
-        if (pos[i * 3 + 2] > 15 || pos[i * 3 + 2] < -15) particlesVelocities[i].z *= -1;
-      }
-      particlesMesh.geometry.attributes.position.needsUpdate = true;
-
-      let lineIdx = 0;
-      const connectionDistance = 8;
-      const connections: [number, number][] = [];
-
-      for (let i = 0; i < particleCount; i++) {
-        for (let j = i + 1; j < particleCount; j++) {
-          const dx = pos[i * 3] - pos[j * 3];
-          const dy = pos[i * 3 + 1] - pos[j * 3 + 1];
-          const dz = pos[i * 3 + 2] - pos[j * 3 + 2];
-          const dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
-
-          if (dist < connectionDistance) {
-            linePositions[lineIdx++] = pos[i * 3];
-            linePositions[lineIdx++] = pos[i * 3 + 1];
-            linePositions[lineIdx++] = pos[i * 3 + 2];
-            linePositions[lineIdx++] = pos[j * 3];
-            linePositions[lineIdx++] = pos[j * 3 + 1];
-            linePositions[lineIdx++] = pos[j * 3 + 2];
-            connections.push([i, j]);
-          }
-        }
-      }
-      linesMesh.geometry.setDrawRange(0, lineIdx / 3);
-      linesMesh.geometry.attributes.position.needsUpdate = true;
-
-      const pPos = pulsesMesh.geometry.attributes.position.array as Float32Array;
-      activePulses.forEach((pulse, idx) => {
-        if (!pulse.active) {
-          if (Math.random() > 0.95 && connections.length > 0) {
-            const conn = connections[Math.floor(Math.random() * connections.length)];
-            pulse.active = true;
-            pulse.startIdx = conn[0];
-            pulse.endIdx = conn[1];
-            pulse.progress = 0;
-            pulse.speed = 0.02 + Math.random() * 0.03;
-          } else {
-            pPos[idx * 3] = 9999;
-          }
-        } else {
-          pulse.progress += pulse.speed;
-          if (pulse.progress >= 1) {
-            pulse.active = false;
-          } else {
-            const x1 = pos[pulse.startIdx * 3];
-            const y1 = pos[pulse.startIdx * 3 + 1];
-            const z1 = pos[pulse.startIdx * 3 + 2];
-            const x2 = pos[pulse.endIdx * 3];
-            const y2 = pos[pulse.endIdx * 3 + 1];
-            const z2 = pos[pulse.endIdx * 3 + 2];
-
-            pPos[idx * 3] = x1 + (x2 - x1) * pulse.progress;
-            pPos[idx * 3 + 1] = y1 + (y2 - y1) * pulse.progress;
-            pPos[idx * 3 + 2] = z1 + (z2 - z1) * pulse.progress;
-          }
-        }
-      });
-      pulsesMesh.geometry.attributes.position.needsUpdate = true;
-
-      scene.rotation.y += 0.0008;
-      camera.position.x += (mouseX * 0.5 - camera.position.x) * 0.05;
-      camera.position.y += (-mouseY * 0.5 - camera.position.y) * 0.05;
-      camera.lookAt(0, 0, 0);
-
-      renderer.render(scene, camera);
-    };
-
-    const handleMouseMove = (e: MouseEvent) => {
-      mouseX = (e.clientX / window.innerWidth) - 0.5;
-      mouseY = (e.clientY / window.innerHeight) - 0.5;
-    };
-    window.addEventListener('mousemove', handleMouseMove);
-
-    const handleResize = () => {
-      camera.aspect = window.innerWidth / window.innerHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(window.innerWidth, window.innerHeight);
-    };
-    window.addEventListener('resize', handleResize);
-
-    animate();
-
-    return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('resize', handleResize);
-      cancelAnimationFrame(animationFrameId);
-      if (mountRef.current && renderer.domElement) {
-        mountRef.current.removeChild(renderer.domElement);
-      }
-      renderer.dispose();
-      particlesGeometry.dispose();
-      particlesMaterial.dispose();
-      lineGeometry.dispose();
-      lineMaterial.dispose();
-      pulsesGeo.dispose();
-      pulsesMat.dispose();
-    };
-  }, []);
 
   useEffect(() => {
     if (searchParams.get('sessionExpired') === 'true') {
@@ -279,11 +92,7 @@ export function LoginPage(): React.JSX.Element {
       
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
-        
-        input {
-          color-scheme: dark;
-        }
-
+        input { color-scheme: dark; }
         input:-webkit-autofill,
         input:-webkit-autofill:hover, 
         input:-webkit-autofill:focus, 
@@ -296,20 +105,49 @@ export function LoginPage(): React.JSX.Element {
         }
       `}</style>
 
-      <div ref={mountRef} className="fixed inset-0 z-0 bg-[radial-gradient(circle_at_50%_50%,#1a0b2e_0%,#000000_100%)]" />
+      <div 
+        className={`absolute inset-0 z-0 transition-opacity duration-1000 ease-in-out ${showAnimation ? 'opacity-0' : 'opacity-100'}`}
+      >
+        <div className="absolute top-[-10%] right-[-10%] w-[60vw] h-[60vw] bg-pink-900/15 blur-[120px] rounded-full mix-blend-screen" />
+        <div className="absolute bottom-[-10%] left-[-10%] w-[60vw] h-[60vw] bg-orange-900/10 blur-[120px] rounded-full mix-blend-screen" />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#0f0518]/60 to-[#0f0518]" />
+      </div>
+
+      <AuthBackground isActive={showAnimation} />
+
+      <div className="fixed bottom-6 right-6 z-50 flex flex-col gap-3 animate-[fadeIn_1s_ease-out]">
+        
+        <LanguageSwitcher variant="icon" />
+
+        <button
+          onClick={() => setShowAnimation(!showAnimation)}
+          className={`
+            flex items-center justify-center w-12 h-12 rounded-full 
+            border transition-all duration-300 backdrop-blur-xl shadow-lg shadow-black/40
+            hover:scale-110 active:scale-95
+            ${showAnimation 
+              ? 'bg-pink-500/20 border-pink-500/50 text-pink-400 shadow-[0_0_20px_rgba(236,72,153,0.4)] hover:bg-pink-500/30' 
+              : 'bg-zinc-900/80 border-white/20 text-slate-200 hover:text-pink-400 hover:bg-zinc-800 hover:border-pink-500/30 hover:shadow-[0_0_15px_rgba(236,72,153,0.3)]'}
+          `}
+          title={showAnimation ? "Animasyonu Kapat" : "Animasyonu Aç"}
+        >
+          {showAnimation ? (
+            <EnergyEllipseIcon size={20} />
+          ) : (
+            <UnavailableIcon size={20} />
+          )}
+        </button>
+
+      </div>
 
       <div className="relative z-10 w-full h-full flex flex-col justify-between items-center px-4 py-8 overflow-y-auto">
 
-        <div className="absolute top-6 right-6 z-20">
-          <LanguageSwitcher />
-        </div>
-
-        <div className="w-full max-w-md p-10 rounded-3xl bg-[#140a1e]/70 backdrop-blur-xl border border-white/10 shadow-[0_20px_40px_rgba(0,0,0,0.4),_inset_0_0_20px_rgba(255,255,255,0.07)] animate-[fadeIn_0.8s_ease-out] my-auto">
+        <div className="w-full max-w-md p-10 rounded-3xl bg-[#140a1e]/70 backdrop-blur-xl border border-white/10 shadow-[0_20px_40px_rgba(0,0,0,0.4),_inset_0_0_20px_rgba(255,255,255,0.07)] animate-[fadeIn_0.8s_ease-out] my-auto mt-20 md:mt-auto">
           <div className="text-center mb-8">
             <img
               src={loginImage}
               alt="Logo"
-              className="inline-flex items-center justify-center w-80 h-50  object-contain p-2"
+              className="inline-flex items-center justify-center w-80 h-50 object-contain p-2"
             />
             <p className="text-slate-400 text-xs uppercase tracking-[0.15em] mt-2 font-medium">
               {t('auth.login.title')}
@@ -326,24 +164,14 @@ export function LoginPage(): React.JSX.Element {
                   <FormItem>
                     <FormControl>
                       <div className="relative group">
-                        <Location01Icon 
-                          className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 transition-colors group-focus-within:text-orange-400" 
-                          size={18} 
-                        />
-                        <Select
-                          onValueChange={field.onChange}
-                          value={field.value}
-                        >
+                        <Location01Icon className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 transition-colors group-focus-within:text-orange-400" size={18} />
+                        <Select onValueChange={field.onChange} value={field.value}>
                           <SelectTrigger className="w-full h-auto bg-black/10 border border-white/10 rounded-xl px-4 py-6 pl-12 text-sm text-white focus:ring-0 focus:ring-offset-0 focus:border-pink-500 focus:bg-black/30 transition-colors">
                             <SelectValue placeholder={t('auth.login.branchPlaceholder')} />
                           </SelectTrigger>
                           <SelectContent className="bg-black/90 backdrop-blur-xl border border-white/10 text-white">
                             {branches?.map((branch) => (
-                              <SelectItem
-                                key={branch.id}
-                                value={branch.id}
-                                className="focus:bg-pink-500/20 focus:text-white cursor-pointer"
-                              >
+                              <SelectItem key={branch.id} value={branch.id} className="focus:bg-pink-500/20 focus:text-white cursor-pointer">
                                 {branch.name}
                               </SelectItem>
                             ))}
@@ -363,10 +191,7 @@ export function LoginPage(): React.JSX.Element {
                   <FormItem>
                     <FormControl>
                       <div className="relative group">
-                        <Mail02Icon 
-                          className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-orange-400" 
-                          size={18} 
-                        />
+                        <Mail02Icon className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-orange-400" size={18} />
                         <Input
                           {...field}
                           type="email"
@@ -387,10 +212,7 @@ export function LoginPage(): React.JSX.Element {
                   <FormItem>
                     <FormControl>
                       <div className="relative group">
-                        <LockKeyIcon 
-                          className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-orange-400" 
-                          size={18} 
-                        />
+                        <LockKeyIcon className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-orange-400" size={18} />
                         <Input
                           {...field}
                           type={isPasswordVisible ? 'text' : 'password'}
@@ -404,22 +226,16 @@ export function LoginPage(): React.JSX.Element {
                           onClick={() => setIsPasswordVisible(v => !v)}
                           className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white"
                         >
-                          {isPasswordVisible ? (
-                            <ViewOffIcon size={20}  />
-                          ) : (
-                            <ViewIcon size={20} />
-                          )}
+                          {isPasswordVisible ? <ViewOffIcon size={20} /> : <ViewIcon size={20} />}
                         </button>
                       </div>
                     </FormControl>
                     
                     {capsLockActive && (
                       <div className="flex items-center gap-2 mt-3 px-3 py-2 rounded-lg bg-orange-500/10 border border-orange-500/20 text-orange-200 text-xs font-medium animate-in fade-in slide-in-from-top-1">
-                        <span className="text-orange-500 text-sm">⚠️</span> 
-                        CAPS LOCK AÇIK
+                        <span className="text-orange-500 text-sm">⚠️</span> CAPS LOCK AÇIK
                       </div>
                     )}
-
                     <FormMessage />
                   </FormItem>
                 )}
@@ -455,7 +271,6 @@ export function LoginPage(): React.JSX.Element {
               >
                 {isPending ? t('auth.login.processing') : t('auth.login.submitButton')}
               </button>
-
             </form>
           </Form>
         </div>
@@ -468,10 +283,33 @@ export function LoginPage(): React.JSX.Element {
             />
           </p>
           
-          <div className="flex flex-wrap items-center justify-center gap-4 px-4">
-            
-            <a href="tel:+905070123018" className="flex items-center justify-center w-12 h-12 rounded-full bg-white/5 border border-white/5 text-slate-400 hover:text-lime-400 hover:bg-white/10 hover:border-lime-500/30 hover:shadow-[0_0_15px_rgba(132,204,22,0.3)] hover:scale-110 transition-all duration-300 group">
+           <div className="flex flex-wrap items-center justify-center gap-4 px-4">
+            <a href="tel:+905070123018" className="flex items-center justify-center w-12 h-12 rounded-full bg-zinc-900/60 border border-white/10 text-slate-200 hover:text-lime-400 hover:bg-zinc-800 hover:border-lime-500/30 hover:shadow-[0_0_15px_rgba(132,204,22,0.3)] hover:scale-110 transition-all duration-300 group shadow-lg">
               <Call02Icon size={20} />
+            </a>
+
+            <a href="https://v3rii.com" target="_blank" rel="noreferrer" className="flex items-center justify-center w-12 h-12 rounded-full bg-zinc-900/60 border border-white/10 text-slate-200 hover:text-pink-400 hover:bg-zinc-800 hover:border-pink-500/30 hover:shadow-[0_0_15px_rgba(244,114,182,0.3)] hover:scale-110 transition-all duration-300 group shadow-lg">
+              <Globe02Icon size={20} />
+            </a>
+
+            <a href="mailto:info@v3rii.com" className="flex items-center justify-center w-12 h-12 rounded-full bg-zinc-900/60 border border-white/10 text-slate-200 hover:text-orange-400 hover:bg-zinc-800 hover:border-orange-500/30 hover:shadow-[0_0_15px_rgba(251,146,60,0.3)] hover:scale-110 transition-all duration-300 group shadow-lg">
+              <Mail02Icon size={20} />
+            </a>
+
+            <a href="https://wa.me/905070123018" target="_blank" rel="noreferrer" className="flex items-center justify-center w-12 h-12 rounded-full bg-zinc-900/60 border border-white/10 text-slate-200 hover:text-emerald-400 hover:bg-zinc-800 hover:border-emerald-500/30 hover:shadow-[0_0_15px_rgba(52,211,153,0.3)] hover:scale-110 transition-all duration-300 group shadow-lg">
+              <WhatsappIcon size={20} />
+            </a>
+
+            <a href="https://t.me/v3rii" target="_blank" rel="noreferrer" className="flex items-center justify-center w-12 h-12 rounded-full bg-zinc-900/60 border border-white/10 text-slate-200 hover:text-sky-400 hover:bg-zinc-800 hover:border-sky-500/30 hover:shadow-[0_0_15px_rgba(56,189,248,0.3)] hover:scale-110 transition-all duration-300 group shadow-lg">
+              <TelegramIcon size={20} />
+            </a>
+
+            <a href="https://instagram.com/v3rii" target="_blank" rel="noreferrer" className="flex items-center justify-center w-12 h-12 rounded-full bg-zinc-900/60 border border-white/10 text-slate-200 hover:text-fuchsia-400 hover:bg-zinc-800 hover:border-fuchsia-500/30 hover:shadow-[0_0_15px_rgba(232,121,249,0.3)] hover:scale-110 transition-all duration-300 group shadow-lg">
+              <InstagramIcon size={20} />
+            </a>
+
+            <a href="https://x.com/v3rii" target="_blank" rel="noreferrer" className="flex items-center justify-center w-12 h-12 rounded-full bg-zinc-900/60 border border-white/10 text-slate-200 hover:text-white hover:bg-zinc-800 hover:border-white/30 hover:shadow-[0_0_15px_rgba(255,255,255,0.3)] hover:scale-110 transition-all duration-300 group shadow-lg">
+              <NewTwitterIcon size={20} />
             </a>
           </div>
         </div>
