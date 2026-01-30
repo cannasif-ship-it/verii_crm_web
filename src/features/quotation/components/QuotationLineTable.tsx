@@ -25,6 +25,7 @@ import { useCurrencyOptions } from '@/services/hooks/useCurrencyOptions';
 import { useProductSelection } from '../hooks/useProductSelection';
 import { useQuotationCalculations } from '../hooks/useQuotationCalculations';
 import { useCreateQuotationLines } from '../hooks/useCreateQuotationLines';
+import { useUpdateQuotationLines } from '../hooks/useUpdateQuotationLines';
 import { useDeleteQuotationLine } from '../hooks/useDeleteQuotationLine';
 import { quotationApi } from '../api/quotation-api';
 import { formatCurrency } from '../utils/format-currency';
@@ -89,6 +90,37 @@ function dtoToFormState(dto: QuotationLineGetDto, index: number): QuotationLineF
   };
 }
 
+function toUpdateDto(line: QuotationLineFormState, quotationId: number): QuotationLineGetDto {
+  const lineId = parseLineId(line.id) ?? 0;
+  return {
+    id: lineId,
+    quotationId,
+    productId: line.productId ?? null,
+    productCode: line.productCode ?? '',
+    productName: line.productName ?? '',
+    groupCode: line.groupCode ?? null,
+    quantity: line.quantity,
+    unitPrice: line.unitPrice,
+    discountRate1: line.discountRate1,
+    discountAmount1: line.discountAmount1,
+    discountRate2: line.discountRate2,
+    discountAmount2: line.discountAmount2,
+    discountRate3: line.discountRate3,
+    discountAmount3: line.discountAmount3,
+    vatRate: line.vatRate,
+    vatAmount: line.vatAmount,
+    lineTotal: line.lineTotal,
+    lineGrandTotal: line.lineGrandTotal,
+    description: line.description ?? null,
+    pricingRuleHeaderId: line.pricingRuleHeaderId ?? null,
+    relatedStockId: line.relatedStockId ?? null,
+    relatedProductKey: line.relatedProductKey ?? null,
+    isMainRelatedProduct: line.isMainRelatedProduct ?? false,
+    approvalStatus: line.approvalStatus ?? 0,
+    createdAt: '',
+  };
+}
+
 interface QuotationLineTableProps {
   lines: QuotationLineFormState[];
   setLines: (lines: QuotationLineFormState[]) => void;
@@ -126,9 +158,11 @@ export function QuotationLineTable({
   const { currencyOptions } = useCurrencyOptions();
   const { calculateLineTotals } = useQuotationCalculations();
   const createMutation = useCreateQuotationLines(quotationId ?? 0);
+  const updateMutation = useUpdateQuotationLines(quotationId ?? 0);
   const deleteMutation = useDeleteQuotationLine(quotationId ?? 0);
   const isExistingQuotation = quotationId != null && quotationId > 0;
   const isCreatePending = createMutation.isPending;
+  const isUpdating = updateMutation.isPending;
   const isDeleting = deleteMutation.isPending;
   const { handleProductSelect: handleProductSelectHook, handleProductSelectWithRelatedStocks } = useProductSelection({
     currency,
@@ -273,14 +307,11 @@ export function QuotationLineTable({
     setEditLineDialogOpen(true);
   };
 
-  const handleSaveLine = (updatedLine: QuotationLineFormState, relatedLinesToUpdate?: QuotationLineFormState[]): void => {
-    const originalLine = lines.find((l) => l.id === updatedLine.id);
-    if (!originalLine) {
-      setEditLineDialogOpen(false);
-      setLineToEdit(null);
-      return;
-    }
-
+  const applyLineUpdatesToLocalState = (
+    updatedLine: QuotationLineFormState,
+    relatedLinesToUpdate: QuotationLineFormState[] | undefined,
+    originalLine: QuotationLineFormState
+  ): void => {
     const isQuantityChanged = originalLine.quantity !== updatedLine.quantity;
     const isMainLine = updatedLine.isMainRelatedProduct === true;
 
@@ -307,6 +338,37 @@ export function QuotationLineTable({
     } else {
       setLines(lines.map((line) => line.id === updatedLine.id ? { ...updatedLine, isEditing: false } : line));
     }
+  };
+
+  const handleSaveLine = async (
+    updatedLine: QuotationLineFormState,
+    relatedLinesToUpdate?: QuotationLineFormState[]
+  ): Promise<void> => {
+    const originalLine = lines.find((l) => l.id === updatedLine.id);
+    if (!originalLine) {
+      setEditLineDialogOpen(false);
+      setLineToEdit(null);
+      return;
+    }
+
+    const allUpdatedLines = [updatedLine, ...(relatedLinesToUpdate || [])].map((l) => ({ ...l, isEditing: false }));
+    const linesWithBackendId = allUpdatedLines.filter((l) => parseLineId(l.id) != null);
+
+    if (isExistingQuotation && quotationId && linesWithBackendId.length > 0) {
+      try {
+        const dtos: QuotationLineGetDto[] = linesWithBackendId.map((l) => toUpdateDto(l, quotationId));
+        await updateMutation.mutateAsync(dtos);
+        const fresh = await quotationApi.getQuotationLinesByQuotationId(quotationId);
+        const mapped = fresh.map((dto, index) => dtoToFormState(dto, index));
+        setLines(mapped);
+        setEditLineDialogOpen(false);
+        setLineToEdit(null);
+      } catch {
+      }
+      return;
+    }
+
+    applyLineUpdatesToLocalState(updatedLine, relatedLinesToUpdate, originalLine);
     setEditLineDialogOpen(false);
     setLineToEdit(null);
   };
@@ -602,7 +664,13 @@ export function QuotationLineTable({
         </DialogContent>
       </Dialog>
 
-      <Dialog open={editLineDialogOpen} onOpenChange={setEditLineDialogOpen}>
+      <Dialog
+        open={editLineDialogOpen}
+        onOpenChange={(open) => {
+          if (!open && isUpdating) return;
+          setEditLineDialogOpen(open);
+        }}
+      >
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-white/95 dark:bg-[#0c0516]/95 backdrop-blur-xl border-slate-200 dark:border-white/10 p-0 shadow-2xl">
           <DialogHeader className="px-6 py-5 border-b border-slate-200/50 dark:border-white/5 bg-slate-50/50 dark:bg-white/5">
             <DialogTitle className="flex items-center gap-3 text-slate-900 dark:text-white text-lg">
@@ -619,10 +687,10 @@ export function QuotationLineTable({
           {lineToEdit && (
             <QuotationLineForm
               line={lineToEdit}
-              onSave={(line) => handleSaveLine(line)}
-              onSaveMultiple={(lines) => {
-                if (lines.length > 0) {
-                  handleSaveLine(lines[0], lines.slice(1));
+              onSave={(line) => void handleSaveLine(line)}
+              onSaveMultiple={(linesToSave) => {
+                if (linesToSave.length > 0) {
+                  void handleSaveLine(linesToSave[0], linesToSave.slice(1));
                 }
               }}
               onCancel={handleCancelEditLine}
@@ -630,6 +698,7 @@ export function QuotationLineTable({
               exchangeRates={exchangeRates}
               pricingRules={pricingRules}
               userDiscountLimits={userDiscountLimits}
+              isSaving={isUpdating}
             />
           )}
           </div>

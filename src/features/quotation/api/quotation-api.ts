@@ -344,6 +344,17 @@ export const quotationApi = {
     throw new Error(response.message || 'Satırlar eklenirken bir hata oluştu');
   },
 
+  updateQuotationLines: async (dtos: QuotationLineGetDto[]): Promise<QuotationLineGetDto[]> => {
+    const response = await api.put<ApiResponse<QuotationLineGetDto[]>>(
+      '/api/QuotationLine/update-multiple',
+      dtos
+    );
+    if (response.success && response.data) {
+      return response.data;
+    }
+    throw new Error(response.message || 'Satırlar güncellenirken bir hata oluştu');
+  },
+
   deleteQuotationLine: async (id: number): Promise<void> => {
     const response = await api.delete<ApiResponse<unknown> | undefined>(`/api/QuotationLine/${id}`);
     if (response != null && response.success === false) {
