@@ -43,7 +43,8 @@ import {
   InstagramIcon,
   NewTwitterIcon,
   EnergyEllipseIcon, 
-  UnavailableIcon
+  UnavailableIcon,
+  Alert02Icon 
 } from 'hugeicons-react';
 
 export function LoginPage(): React.JSX.Element {
@@ -155,18 +156,27 @@ export function LoginPage(): React.JSX.Element {
           </div>
           
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5" noValidate>
               
               <FormField
                 control={form.control}
                 name="branchId"
-                render={({ field }) => (
+                render={({ field, fieldState }) => (
                   <FormItem>
                     <FormControl>
                       <div className="relative group">
-                        <Location01Icon className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 transition-colors group-focus-within:text-orange-400" size={18} />
+                        <Location01Icon 
+                          className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors duration-300 ${fieldState.invalid ? 'text-red-500' : 'text-slate-400 group-focus-within:text-orange-400'}`} 
+                          size={18} 
+                        />
                         <Select onValueChange={field.onChange} value={field.value}>
-                          <SelectTrigger className="w-full h-auto bg-black/10 border border-white/10 rounded-xl px-4 py-6 pl-12 text-sm text-white focus:ring-0 focus:ring-offset-0 focus:border-pink-500 focus:bg-black/30 transition-colors">
+                          <SelectTrigger 
+                            className={`w-full h-auto bg-black/10 rounded-xl px-4 py-6 pl-12 text-sm text-white focus:ring-0 focus:ring-offset-0 transition-all duration-300
+                              ${fieldState.invalid 
+                                ? 'border-red-500/80 focus:border-red-500 hover:border-red-500 bg-red-950/10' 
+                                : 'border border-white/10 focus:border-pink-500 focus:bg-black/30'
+                              }`}
+                          >
                             <SelectValue placeholder={t('auth.login.branchPlaceholder')} />
                           </SelectTrigger>
                           <SelectContent className="bg-black/90 backdrop-blur-xl border border-white/10 text-white">
@@ -179,7 +189,7 @@ export function LoginPage(): React.JSX.Element {
                         </Select>
                       </div>
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage className="text-red-500 text-xs font-medium pl-1 mt-1" />
                   </FormItem>
                 )}
               />
@@ -187,20 +197,27 @@ export function LoginPage(): React.JSX.Element {
               <FormField
                 control={form.control}
                 name="email"
-                render={({ field }) => (
+                render={({ field, fieldState }) => (
                   <FormItem>
                     <FormControl>
                       <div className="relative group">
-                        <Mail02Icon className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-orange-400" size={18} />
+                        <Mail02Icon 
+                          className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors duration-300 ${fieldState.invalid ? 'text-red-500' : 'text-slate-400 group-focus-within:text-orange-400'}`} 
+                          size={18} 
+                        />
                         <Input
                           {...field}
                           type="email"
                           placeholder={t('auth.login.emailPlaceholder', 'Kurumsal E-posta')}
-                          className="w-full bg-black/30 border border-white/10 rounded-xl px-4 py-6 pl-12 pr-10 text-sm text-white placeholder-slate-500 focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-pink-500 focus:bg-black/50"
+                          className={`w-full bg-black/30 rounded-xl px-4 py-6 pl-12 pr-10 text-sm text-white placeholder-slate-500 focus-visible:ring-0 focus-visible:ring-offset-0 transition-all duration-300
+                            ${fieldState.invalid 
+                              ? 'border-red-500/80 focus-visible:border-red-500 bg-red-950/10 text-red-100 placeholder-red-300/50' 
+                              : 'border border-white/10 focus-visible:border-pink-500 focus:bg-black/50'
+                            }`}
                         />
                       </div>
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage className="text-red-500 text-xs font-medium pl-1 mt-1" />
                   </FormItem>
                 )}
               />
@@ -208,35 +225,48 @@ export function LoginPage(): React.JSX.Element {
               <FormField
                 control={form.control}
                 name="password"
-                render={({ field }) => (
+                render={({ field, fieldState }) => (
                   <FormItem>
                     <FormControl>
                       <div className="relative group">
-                        <LockKeyIcon className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-orange-400" size={18} />
+                        <LockKeyIcon 
+                          className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors duration-300 ${fieldState.invalid ? 'text-red-500' : 'text-slate-400 group-focus-within:text-orange-400'}`} 
+                          size={18} 
+                        />
                         <Input
                           {...field}
                           type={isPasswordVisible ? 'text' : 'password'}
                           placeholder={t('auth.login.passwordPlaceholder', 'Şifre')}
-                          className="w-full bg-black/30 border border-white/10 rounded-xl px-4 py-6 pl-12 pr-10 text-sm text-white placeholder-slate-500 focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-pink-500 focus:bg-black/50"
+                          className={`w-full bg-black/30 rounded-xl px-4 py-6 pl-12 pr-10 text-sm text-white placeholder-slate-500 focus-visible:ring-0 focus-visible:ring-offset-0 transition-all duration-300
+                            ${fieldState.invalid 
+                              ? 'border-red-500/80 focus-visible:border-red-500 bg-red-950/10 text-red-100 placeholder-red-300/50' 
+                              : 'border border-white/10 focus-visible:border-pink-500 focus:bg-black/50'
+                            }`}
                           onKeyDown={(e) => setCapsLockActive(e.getModifierState('CapsLock'))}
                           onKeyUp={(e) => setCapsLockActive(e.getModifierState('CapsLock'))}
                         />
                         <button
                           type="button"
                           onClick={() => setIsPasswordVisible(v => !v)}
-                          className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white"
+                          className={`absolute right-4 top-1/2 -translate-y-1/2 transition-colors hover:text-white ${fieldState.invalid ? 'text-red-400' : 'text-slate-400'}`}
                         >
                           {isPasswordVisible ? <ViewOffIcon size={20} /> : <ViewIcon size={20} />}
                         </button>
                       </div>
                     </FormControl>
-                    
-                    {capsLockActive && (
-                      <div className="flex items-center gap-2 mt-3 px-3 py-2 rounded-lg bg-orange-500/10 border border-orange-500/20 text-orange-200 text-xs font-medium animate-in fade-in slide-in-from-top-1">
-                        <span className="text-orange-500 text-sm">⚠️</span> CAPS LOCK AÇIK
-                      </div>
-                    )}
-                    <FormMessage />
+        
+                    <div className="min-h-[20px] mt-1 pl-1">
+                      {fieldState.error ? (
+                   
+                        <FormMessage className="text-red-500 text-xs font-medium animate-in slide-in-from-top-1" />
+                      ) : capsLockActive ? (
+                                             <div className="flex items-center gap-1.5 text-red-500 text-xs font-medium animate-in slide-in-from-top-1">
+                          <Alert02Icon size={14} />
+                          CAPS LOCK AÇIK
+                        </div>
+                      ) : null}
+                    </div>
+
                   </FormItem>
                 )}
               />
