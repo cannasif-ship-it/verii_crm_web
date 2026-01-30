@@ -1,4 +1,4 @@
-import { type ReactElement, useState, useMemo } from 'react';
+import { type ReactElement, useState, useMemo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import {
@@ -24,10 +24,70 @@ import { ProductSelectDialog, type ProductSelectionResult } from '@/components/s
 import { useCurrencyOptions } from '@/services/hooks/useCurrencyOptions';
 import { useProductSelection } from '../hooks/useProductSelection';
 import { useQuotationCalculations } from '../hooks/useQuotationCalculations';
+import { useCreateQuotationLines } from '../hooks/useCreateQuotationLines';
+import { useDeleteQuotationLine } from '../hooks/useDeleteQuotationLine';
+import { quotationApi } from '../api/quotation-api';
 import { formatCurrency } from '../utils/format-currency';
-import { Trash2, Edit, Plus, ShoppingCart, Box, AlertTriangle, Layers } from 'lucide-react';
-import type { QuotationLineFormState, QuotationExchangeRateFormState, PricingRuleLineGetDto, UserDiscountLimitDto } from '../types/quotation-types';
+import { Trash2, Edit, Plus, ShoppingCart, Box, AlertTriangle, Layers, Loader2 } from 'lucide-react';
+import type { QuotationLineFormState, QuotationExchangeRateFormState, PricingRuleLineGetDto, UserDiscountLimitDto, CreateQuotationLineDto, QuotationLineGetDto } from '../types/quotation-types';
 import { cn } from '@/lib/utils';
+
+function toCreateDto(line: QuotationLineFormState, quotationId: number): CreateQuotationLineDto {
+  const { id, isEditing, relatedLines, ...rest } = line;
+  return {
+    ...rest,
+    quotationId,
+    productId: line.productId ?? 0,
+    productCode: line.productCode ?? '',
+    productName: line.productName ?? '',
+    approvalStatus: line.approvalStatus ?? 0,
+  };
+}
+
+function parseLineId(formId: string | number | undefined): number | null {
+  if (formId == null) return null;
+  if (typeof formId === 'number' && Number.isFinite(formId) && formId > 0) return formId;
+  const s = String(formId).trim();
+  const prefixed = s.match(/^line-(\d+)(?:-|$)/);
+  if (prefixed) {
+    const n = parseInt(prefixed[1], 10);
+    return Number.isNaN(n) ? null : n;
+  }
+  if (/^\d+$/.test(s)) {
+    const n = parseInt(s, 10);
+    return Number.isNaN(n) ? null : n;
+  }
+  return null;
+}
+
+function dtoToFormState(dto: QuotationLineGetDto, index: number): QuotationLineFormState {
+  return {
+    id: dto.id && dto.id > 0 ? `line-${dto.id}-${index}` : `line-temp-${index}`,
+    isEditing: false,
+    productId: dto.productId ?? null,
+    productCode: dto.productCode ?? '',
+    productName: dto.productName,
+    groupCode: dto.groupCode ?? null,
+    quantity: dto.quantity,
+    unitPrice: dto.unitPrice,
+    discountRate1: dto.discountRate1,
+    discountAmount1: dto.discountAmount1,
+    discountRate2: dto.discountRate2,
+    discountAmount2: dto.discountAmount2,
+    discountRate3: dto.discountRate3,
+    discountAmount3: dto.discountAmount3,
+    vatRate: dto.vatRate,
+    vatAmount: dto.vatAmount,
+    lineTotal: dto.lineTotal,
+    lineGrandTotal: dto.lineGrandTotal,
+    description: dto.description ?? null,
+    pricingRuleHeaderId: dto.pricingRuleHeaderId ?? null,
+    relatedStockId: dto.relatedStockId ?? null,
+    relatedProductKey: dto.relatedProductKey ?? null,
+    isMainRelatedProduct: dto.isMainRelatedProduct ?? false,
+    approvalStatus: dto.approvalStatus ?? 0,
+  };
+}
 
 interface QuotationLineTableProps {
   lines: QuotationLineFormState[];
@@ -39,6 +99,7 @@ interface QuotationLineTableProps {
   customerId?: number | null;
   erpCustomerCode?: string | null;
   representativeId?: number | null;
+  quotationId?: number | null;
 }
 
 export function QuotationLineTable({
@@ -51,6 +112,7 @@ export function QuotationLineTable({
   customerId,
   erpCustomerCode,
   representativeId,
+  quotationId,
 }: QuotationLineTableProps): ReactElement {
   const { t } = useTranslation();
   const [productDialogOpen, setProductDialogOpen] = useState(false);
@@ -63,6 +125,11 @@ export function QuotationLineTable({
   const [lineToEdit, setLineToEdit] = useState<QuotationLineFormState | null>(null);
   const { currencyOptions } = useCurrencyOptions();
   const { calculateLineTotals } = useQuotationCalculations();
+  const createMutation = useCreateQuotationLines(quotationId ?? 0);
+  const deleteMutation = useDeleteQuotationLine(quotationId ?? 0);
+  const isExistingQuotation = quotationId != null && quotationId > 0;
+  const isCreatePending = createMutation.isPending;
+  const isDeleting = deleteMutation.isPending;
   const { handleProductSelect: handleProductSelectHook, handleProductSelectWithRelatedStocks } = useProductSelection({
     currency,
     exchangeRates,
@@ -114,19 +181,49 @@ export function QuotationLineTable({
     setAddLineDialogOpen(true);
   };
 
-  const handleSaveNewLine = (line: QuotationLineFormState): void => {
-    const lineToAdd = { ...line, isEditing: false };
-    setLines([...lines, lineToAdd]);
-    setAddLineDialogOpen(false);
-    setNewLine(null);
-  };
+  const handleSaveNewLine = useCallback(
+    async (line: QuotationLineFormState): Promise<void> => {
+      const lineToAdd = { ...line, isEditing: false };
+      if (isExistingQuotation && quotationId) {
+        try {
+          const dtos: CreateQuotationLineDto[] = [toCreateDto(lineToAdd, quotationId)];
+          const created = await createMutation.mutateAsync(dtos);
+          const mapped = created.map((dto, i) => dtoToFormState(dto, lines.length + i));
+          setLines([...lines, ...mapped]);
+          setAddLineDialogOpen(false);
+          setNewLine(null);
+        } catch {
+        }
+        return;
+      }
+      setLines([...lines, lineToAdd]);
+      setAddLineDialogOpen(false);
+      setNewLine(null);
+    },
+    [isExistingQuotation, quotationId, createMutation, lines, setLines]
+  );
 
-  const handleSaveMultipleLines = (newLines: QuotationLineFormState[]): void => {
-    const linesToAdd = newLines.map((line) => ({ ...line, isEditing: false }));
-    setLines([...lines, ...linesToAdd]);
-    setAddLineDialogOpen(false);
-    setNewLine(null);
-  };
+  const handleSaveMultipleLines = useCallback(
+    async (newLines: QuotationLineFormState[]): Promise<void> => {
+      const linesToAdd = newLines.map((l) => ({ ...l, isEditing: false }));
+      if (isExistingQuotation && quotationId) {
+        try {
+          const dtos: CreateQuotationLineDto[] = linesToAdd.map((l) => toCreateDto(l, quotationId));
+          const created = await createMutation.mutateAsync(dtos);
+          const mapped = created.map((dto, i) => dtoToFormState(dto, lines.length + i));
+          setLines([...lines, ...mapped]);
+          setAddLineDialogOpen(false);
+          setNewLine(null);
+        } catch {
+        }
+        return;
+      }
+      setLines([...lines, ...linesToAdd]);
+      setAddLineDialogOpen(false);
+      setNewLine(null);
+    },
+    [isExistingQuotation, quotationId, createMutation, lines, setLines]
+  );
 
   const handleCancelNewLine = (): void => {
     setAddLineDialogOpen(false);
@@ -230,17 +327,48 @@ export function QuotationLineTable({
     setDeleteDialogOpen(true);
   };
 
-  const handleDeleteConfirm = (): void => {
-    if (lineToDelete) {
-      const lineToDeleteObj = lines.find((line) => line.id === lineToDelete);
-      if (lineToDeleteObj?.relatedProductKey) {
-        setLines(lines.filter((line) => line.relatedProductKey !== lineToDeleteObj.relatedProductKey));
-      } else {
-        setLines(lines.filter((line) => line.id !== lineToDelete));
-      }
+  const handleDeleteConfirm = async (): Promise<void> => {
+    if (!lineToDelete) return;
+    const lineToDeleteObj = lines.find((line) => line.id === lineToDelete);
+    if (!lineToDeleteObj) {
       setLineToDelete(null);
       setDeleteDialogOpen(false);
+      return;
     }
+    const removeFromList = (): void => {
+      if (lineToDeleteObj.relatedProductKey) {
+        setLines(lines.filter((l) => l.relatedProductKey !== lineToDeleteObj.relatedProductKey));
+      } else {
+        setLines(lines.filter((l) => l.id !== lineToDelete));
+      }
+      setLineToDelete(null);
+      setRelatedLinesCount(0);
+      setDeleteDialogOpen(false);
+    };
+    if (isExistingQuotation && quotationId) {
+      const lineBackendId = parseLineId(lineToDeleteObj.id);
+      const qid = Number(quotationId);
+      if (lineBackendId == null) {
+        removeFromList();
+        return;
+      }
+      if (!Number.isFinite(qid) || qid < 1) {
+        removeFromList();
+        return;
+      }
+      deleteMutation.mutate(lineBackendId, {
+        onSuccess: async (): Promise<void> => {
+          const fresh = await quotationApi.getQuotationLinesByQuotationId(qid);
+          const mapped = fresh.map((dto, index) => dtoToFormState(dto, index));
+          setLines(mapped);
+          setLineToDelete(null);
+          setRelatedLinesCount(0);
+          setDeleteDialogOpen(false);
+        },
+      });
+      return;
+    }
+    removeFromList();
   };
 
   const handleDeleteCancel = (): void => {
@@ -270,8 +398,9 @@ export function QuotationLineTable({
             </div>
           </div>
           
-          <Button 
-            onClick={handleAddLine} 
+          <Button
+            type="button"
+            onClick={handleAddLine}
             size="sm"
             className="h-10 px-6 rounded-xl bg-gradient-to-r from-pink-600 to-orange-600 text-white font-bold shadow-lg shadow-pink-500/20 hover:scale-105 active:scale-95 transition-all duration-300 border-0 hover:text-white"
           >
@@ -394,6 +523,7 @@ export function QuotationLineTable({
                         <TableCell className={cn(styles.tableCell, "text-center pr-4")}>
                           <div className="flex items-center justify-center gap-2">
                             <Button
+                              type="button"
                               variant="ghost"
                               size="icon"
                               className={styles.actionButton}
@@ -408,6 +538,7 @@ export function QuotationLineTable({
                             </Button>
                             
                             <Button
+                              type="button"
                               variant="ghost"
                               size="icon"
                               className={cn(styles.actionButton, "text-rose-600 hover:text-rose-700 hover:bg-rose-50 dark:hover:bg-rose-950/30")}
@@ -434,7 +565,13 @@ export function QuotationLineTable({
         onSelect={handleProductSelect}
       />
 
-      <Dialog open={addLineDialogOpen} onOpenChange={setAddLineDialogOpen}>
+      <Dialog
+        open={addLineDialogOpen}
+        onOpenChange={(open) => {
+          if (!open && isCreatePending) return;
+          setAddLineDialogOpen(open);
+        }}
+      >
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-white/95 dark:bg-[#0c0516]/95 backdrop-blur-xl border-slate-200 dark:border-white/10 p-0 shadow-2xl">
           <DialogHeader className="px-6 py-5 border-b border-slate-200/50 dark:border-white/5 bg-slate-50/50 dark:bg-white/5">
             <DialogTitle className="flex items-center gap-3 text-slate-900 dark:text-white text-lg">
@@ -451,13 +588,14 @@ export function QuotationLineTable({
           {newLine && (
             <QuotationLineForm
               line={newLine}
-              onSave={handleSaveNewLine}
-              onSaveMultiple={handleSaveMultipleLines}
+              onSave={(line) => void handleSaveNewLine(line)}
+              onSaveMultiple={(linesToSave) => void handleSaveMultipleLines(linesToSave)}
               onCancel={handleCancelNewLine}
               currency={currency}
               exchangeRates={exchangeRates}
               pricingRules={pricingRules}
               userDiscountLimits={userDiscountLimits}
+              isSaving={isExistingQuotation && isCreatePending}
             />
           )}
           </div>
@@ -498,7 +636,17 @@ export function QuotationLineTable({
         </DialogContent>
       </Dialog>
 
-      <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+      <Dialog
+        open={deleteDialogOpen}
+        onOpenChange={(open) => {
+          if (!open && isDeleting) return;
+          setDeleteDialogOpen(open);
+          if (!open) {
+            setLineToDelete(null);
+            setRelatedLinesCount(0);
+          }
+        }}
+      >
         <DialogContent className="bg-white/80 dark:bg-[#0c0516]/80 backdrop-blur-xl border-slate-200 dark:border-white/10 sm:max-w-[425px] p-0 overflow-hidden shadow-2xl">
           <DialogHeader className="px-6 py-5 border-b border-slate-200/50 dark:border-white/5 bg-slate-50/50 dark:bg-white/5">
             <DialogTitle className="flex items-center gap-3 text-slate-900 dark:text-white text-lg">
@@ -510,26 +658,41 @@ export function QuotationLineTable({
                 : t('quotation.lines.delete.confirmTitle', 'Satırı Sil')}
             </DialogTitle>
             <DialogDescription className="pt-2 text-slate-500 dark:text-slate-400 text-sm leading-relaxed">
-              {relatedLinesCount > 1 
+              {relatedLinesCount > 1
                 ? t('quotation.lines.delete.confirmMessageMultiple', 'Bu satır silindiğinde bağlı olan diğer {count} stok da silinecektir.', { count: relatedLinesCount })
                 : t('quotation.lines.delete.confirmMessage', 'Bu satırı silmek istediğinizden emin misiniz?')
               }
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="gap-3 p-6 bg-slate-50/30 dark:bg-black/20">
-            <Button 
-              variant="outline" 
-              onClick={handleDeleteCancel} 
+            <Button
+              type="button"
+              variant="outline"
+              onClick={handleDeleteCancel}
+              disabled={isDeleting}
               className="h-11 px-6 rounded-xl border-slate-200 dark:border-white/10 hover:bg-slate-100 dark:hover:bg-white/5 text-slate-700 dark:text-slate-300 font-medium transition-all"
             >
               {t('quotation.cancel', 'İptal')}
             </Button>
-            <Button 
-              variant="destructive" 
-              onClick={handleDeleteConfirm} 
+            <Button
+              type="button"
+              variant="destructive"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                void handleDeleteConfirm();
+              }}
+              disabled={isDeleting}
               className="h-11 px-6 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 text-white shadow-lg shadow-red-500/25 hover:shadow-red-500/40 border-0 font-medium transition-all"
             >
-              {t('quotation.delete', 'Sil')}
+              {isDeleting ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                  {t('quotation.saving', 'Siliniyor...')}
+                </>
+              ) : (
+                t('quotation.delete', 'Sil')
+              )}
             </Button>
           </DialogFooter>
         </DialogContent>

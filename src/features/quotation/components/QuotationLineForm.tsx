@@ -16,7 +16,7 @@ import { formatCurrency } from '../utils/format-currency';
 import { findExchangeRateByDovizTipi } from '../utils/price-conversion';
 import { quotationApi } from '../api/quotation-api';
 import type { QuotationLineFormState, QuotationExchangeRateFormState, PricingRuleLineGetDto, UserDiscountLimitDto, ApprovalStatus } from '../types/quotation-types';
-import { X, Check, Package, Calculator, Percent, DollarSign } from 'lucide-react';
+import { X, Check, Package, Calculator, Percent, DollarSign, Loader2 } from 'lucide-react';
 
 interface TemporaryStockData {
   productCode: string;
@@ -38,6 +38,7 @@ interface QuotationLineFormProps {
   pricingRules?: PricingRuleLineGetDto[];
   userDiscountLimits?: UserDiscountLimitDto[];
   onSaveMultiple?: (lines: QuotationLineFormState[]) => void;
+  isSaving?: boolean;
 }
 
 export function QuotationLineForm({
@@ -49,6 +50,7 @@ export function QuotationLineForm({
   pricingRules = [],
   userDiscountLimits = [],
   onSaveMultiple,
+  isSaving = false,
 }: QuotationLineFormProps): ReactElement {
   const { t } = useTranslation();
   const { calculateLineTotals } = useQuotationCalculations();
@@ -1009,19 +1011,28 @@ export function QuotationLineForm({
         )}
 
         <div className="flex justify-end gap-2 pt-2 border-t">
-          <Button type="button" variant="outline" onClick={onCancel} size="sm" className="gap-2">
+          <Button type="button" variant="outline" onClick={onCancel} size="sm" className="gap-2" disabled={isSaving}>
             <X className="h-4 w-4" />
             {t('quotation.cancel', 'İptal')}
           </Button>
-          <Button 
-            type="button" 
-            onClick={handleSave} 
-            size="sm" 
+          <Button
+            type="button"
+            onClick={handleSave}
+            size="sm"
             className="gap-2"
-            disabled={!formData.productCode || !formData.productName}
+            disabled={!formData.productCode || !formData.productName || isSaving}
           >
-            <Check className="h-4 w-4" />
-            {t('quotation.save', 'Kaydet')}
+            {isSaving ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" />
+                {t('quotation.saving', 'Kaydediliyor...')}
+              </>
+            ) : (
+              <>
+                <Check className="h-4 w-4" />
+                {t('quotation.save', 'Kaydet')}
+              </>
+            )}
           </Button>
         </div>
 
