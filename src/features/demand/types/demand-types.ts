@@ -173,11 +173,12 @@ export interface DemandGetDto {
 export interface DemandExchangeRateGetDto {
   id: number;
   demandId: number;
+  demandOfferNo?: string | null;
   currency: string;
   exchangeRate: number;
   exchangeRateDate: string;
   isOfficial: boolean;
-  createdAt: string;
+  createdAt?: string;
   updatedAt?: string | null;
 }
 

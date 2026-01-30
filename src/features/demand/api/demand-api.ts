@@ -3,6 +3,7 @@ import type { ApiResponse, PagedResponse, PagedParams, PagedFilter } from '@/typ
 import type {
   DemandBulkCreateDto,
   DemandGetDto,
+  CreateDemandLineDto,
   PriceOfProductDto,
   PriceOfProductRequestDto,
   PricingRuleLineGetDto,
@@ -323,9 +324,55 @@ export const demandApi = {
       `/api/DemandLine/by-demand/${demandId}`
     );
     if (response.success && response.data) {
-      return response.data;
+      const raw = response.data as Array<DemandLineGetDto & { Id?: number }>;
+      return raw.map((line) => ({
+        ...line,
+        id: line.id ?? line.Id ?? 0,
+      })) as DemandLineGetDto[];
     }
     return [];
+  },
+
+  createDemandLines: async (dtos: CreateDemandLineDto[]): Promise<DemandLineGetDto[]> => {
+    const response = await api.post<ApiResponse<DemandLineGetDto[]>>(
+      '/api/DemandLine/create-multiple',
+      dtos
+    );
+    if (response.success && response.data) {
+      return response.data;
+    }
+    throw new Error(response.message || 'Satırlar eklenirken bir hata oluştu');
+  },
+
+  updateDemandLines: async (dtos: DemandLineGetDto[]): Promise<DemandLineGetDto[]> => {
+    const response = await api.put<ApiResponse<DemandLineGetDto[]>>(
+      '/api/DemandLine/update-multiple',
+      dtos
+    );
+    if (response.success && response.data) {
+      return response.data;
+    }
+    throw new Error(response.message || 'Satırlar güncellenirken bir hata oluştu');
+  },
+
+  deleteDemandLine: async (id: number): Promise<void> => {
+    const response = await api.delete<ApiResponse<unknown> | undefined>(`/api/DemandLine/${id}`);
+    if (response != null && response.success === false) {
+      throw new Error(response.message || 'Satır silinirken bir hata oluştu');
+    }
+  },
+
+  updateExchangeRateInDemand: async (
+    dtos: DemandExchangeRateGetDto[]
+  ): Promise<ApiResponse<boolean>> => {
+    const response = await api.put<ApiResponse<boolean>>(
+      '/api/DemandExchangeRate/update-exchange-rate-in-demand',
+      dtos
+    );
+    if (!response.success) {
+      throw new Error(response.message || 'Döviz kurları güncellenirken bir hata oluştu');
+    }
+    return response;
   },
 
   updateBulk: async (id: number, data: DemandBulkCreateDto): Promise<ApiResponse<DemandGetDto>> => {

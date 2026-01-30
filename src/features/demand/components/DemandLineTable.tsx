@@ -1,4 +1,4 @@
-import { type ReactElement, useState, useMemo } from 'react';
+import { type ReactElement, useState, useMemo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import {
@@ -24,10 +24,102 @@ import { ProductSelectDialog, type ProductSelectionResult } from '@/components/s
 import { useCurrencyOptions } from '@/services/hooks/useCurrencyOptions';
 import { useProductSelection } from '../hooks/useProductSelection';
 import { useDemandCalculations } from '../hooks/useDemandCalculations';
+import { useCreateDemandLines } from '../hooks/useCreateDemandLines';
+import { useUpdateDemandLines } from '../hooks/useUpdateDemandLines';
+import { useDeleteDemandLine } from '../hooks/useDeleteDemandLine';
+import { demandApi } from '../api/demand-api';
 import { formatCurrency } from '../utils/format-currency';
-import { Trash2, Edit, Plus, ShoppingCart, Box, AlertTriangle, Layers } from 'lucide-react';
-import type { DemandLineFormState, DemandExchangeRateFormState, PricingRuleLineGetDto, UserDiscountLimitDto } from '../types/demand-types';
+import { Trash2, Edit, Plus, ShoppingCart, Box, AlertTriangle, Layers, Loader2 } from 'lucide-react';
+import type { DemandLineFormState, DemandExchangeRateFormState, PricingRuleLineGetDto, UserDiscountLimitDto, CreateDemandLineDto, DemandLineGetDto } from '../types/demand-types';
 import { cn } from '@/lib/utils';
+
+function toCreateDto(line: DemandLineFormState, demandId: number): CreateDemandLineDto {
+  const { id, isEditing, relatedLines, ...rest } = line;
+  return {
+    ...rest,
+    demandId,
+    productId: line.productId ?? 0,
+    productCode: line.productCode ?? '',
+    productName: line.productName ?? '',
+    approvalStatus: line.approvalStatus ?? 0,
+  };
+}
+
+function parseLineId(formId: string | number | undefined): number | null {
+  if (formId == null) return null;
+  if (typeof formId === 'number' && Number.isFinite(formId) && formId > 0) return formId;
+  const s = String(formId).trim();
+  const prefixed = s.match(/^line-(\d+)(?:-|$)/);
+  if (prefixed) {
+    const n = parseInt(prefixed[1], 10);
+    return Number.isNaN(n) ? null : n;
+  }
+  if (/^\d+$/.test(s)) {
+    const n = parseInt(s, 10);
+    return Number.isNaN(n) ? null : n;
+  }
+  return null;
+}
+
+function dtoToFormState(dto: DemandLineGetDto, index: number): DemandLineFormState {
+  return {
+    id: dto.id && dto.id > 0 ? `line-${dto.id}-${index}` : `line-temp-${index}`,
+    isEditing: false,
+    productId: dto.productId ?? null,
+    productCode: dto.productCode ?? '',
+    productName: dto.productName,
+    groupCode: dto.groupCode ?? null,
+    quantity: dto.quantity,
+    unitPrice: dto.unitPrice,
+    discountRate1: dto.discountRate1,
+    discountAmount1: dto.discountAmount1,
+    discountRate2: dto.discountRate2,
+    discountAmount2: dto.discountAmount2,
+    discountRate3: dto.discountRate3,
+    discountAmount3: dto.discountAmount3,
+    vatRate: dto.vatRate,
+    vatAmount: dto.vatAmount,
+    lineTotal: dto.lineTotal,
+    lineGrandTotal: dto.lineGrandTotal,
+    description: dto.description ?? null,
+    pricingRuleHeaderId: dto.pricingRuleHeaderId ?? null,
+    relatedStockId: dto.relatedStockId ?? null,
+    relatedProductKey: dto.relatedProductKey ?? null,
+    isMainRelatedProduct: dto.isMainRelatedProduct ?? false,
+    approvalStatus: dto.approvalStatus ?? 0,
+  };
+}
+
+function toUpdateDto(line: DemandLineFormState, demandId: number): DemandLineGetDto {
+  const lineId = parseLineId(line.id) ?? 0;
+  return {
+    id: lineId,
+    demandId,
+    productId: line.productId ?? null,
+    productCode: line.productCode ?? '',
+    productName: line.productName ?? '',
+    groupCode: line.groupCode ?? null,
+    quantity: line.quantity,
+    unitPrice: line.unitPrice,
+    discountRate1: line.discountRate1,
+    discountAmount1: line.discountAmount1,
+    discountRate2: line.discountRate2,
+    discountAmount2: line.discountAmount2,
+    discountRate3: line.discountRate3,
+    discountAmount3: line.discountAmount3,
+    vatRate: line.vatRate,
+    vatAmount: line.vatAmount,
+    lineTotal: line.lineTotal,
+    lineGrandTotal: line.lineGrandTotal,
+    description: line.description ?? null,
+    pricingRuleHeaderId: line.pricingRuleHeaderId ?? null,
+    relatedStockId: line.relatedStockId ?? null,
+    relatedProductKey: line.relatedProductKey ?? null,
+    isMainRelatedProduct: line.isMainRelatedProduct ?? false,
+    approvalStatus: line.approvalStatus ?? 0,
+    createdAt: '',
+  };
+}
 
 interface DemandLineTableProps {
   lines: DemandLineFormState[];
@@ -39,6 +131,7 @@ interface DemandLineTableProps {
   customerId?: number | null;
   erpCustomerCode?: string | null;
   representativeId?: number | null;
+  demandId?: number | null;
 }
 
 export function DemandLineTable({
@@ -51,6 +144,7 @@ export function DemandLineTable({
   customerId,
   erpCustomerCode,
   representativeId,
+  demandId,
 }: DemandLineTableProps): ReactElement {
   const { t } = useTranslation();
   const [productDialogOpen, setProductDialogOpen] = useState(false);
@@ -63,6 +157,11 @@ export function DemandLineTable({
   const [lineToEdit, setLineToEdit] = useState<DemandLineFormState | null>(null);
   const { currencyOptions } = useCurrencyOptions();
   const { calculateLineTotals } = useDemandCalculations();
+  const createMutation = useCreateDemandLines(demandId ?? 0);
+  const updateMutation = useUpdateDemandLines(demandId ?? 0);
+  const deleteMutation = useDeleteDemandLine(demandId ?? 0);
+  const isExistingDemand = demandId != null && demandId > 0;
+  const isDeleting = deleteMutation.isPending;
   const { handleProductSelect: handleProductSelectHook, handleProductSelectWithRelatedStocks } = useProductSelection({
     currency,
     exchangeRates,
@@ -114,19 +213,49 @@ export function DemandLineTable({
     setAddLineDialogOpen(true);
   };
 
-  const handleSaveNewLine = (line: DemandLineFormState): void => {
-    const lineToAdd = { ...line, isEditing: false };
-    setLines([...lines, lineToAdd]);
-    setAddLineDialogOpen(false);
-    setNewLine(null);
-  };
+  const handleSaveNewLine = useCallback(
+    async (line: DemandLineFormState): Promise<void> => {
+      const lineToAdd = { ...line, isEditing: false };
+      if (isExistingDemand && demandId) {
+        try {
+          const dtos: CreateDemandLineDto[] = [toCreateDto(lineToAdd, demandId)];
+          const created = await createMutation.mutateAsync(dtos);
+          const mapped = created.map((dto: DemandLineGetDto, i: number) => dtoToFormState(dto, lines.length + i));
+          setLines([...lines, ...mapped]);
+          setAddLineDialogOpen(false);
+          setNewLine(null);
+        } catch {
+        }
+        return;
+      }
+      setLines([...lines, lineToAdd]);
+      setAddLineDialogOpen(false);
+      setNewLine(null);
+    },
+    [isExistingDemand, demandId, createMutation, lines, setLines]
+  );
 
-  const handleSaveMultipleLines = (newLines: DemandLineFormState[]): void => {
-    const linesToAdd = newLines.map((line) => ({ ...line, isEditing: false }));
-    setLines([...lines, ...linesToAdd]);
-    setAddLineDialogOpen(false);
-    setNewLine(null);
-  };
+  const handleSaveMultipleLines = useCallback(
+    async (newLines: DemandLineFormState[]): Promise<void> => {
+      const linesToAdd = newLines.map((l) => ({ ...l, isEditing: false }));
+      if (isExistingDemand && demandId) {
+        try {
+          const dtos: CreateDemandLineDto[] = linesToAdd.map((l) => toCreateDto(l, demandId));
+          const created = await createMutation.mutateAsync(dtos);
+          const mapped = created.map((dto: DemandLineGetDto, i: number) => dtoToFormState(dto, lines.length + i));
+          setLines([...lines, ...mapped]);
+          setAddLineDialogOpen(false);
+          setNewLine(null);
+        } catch {
+        }
+        return;
+      }
+      setLines([...lines, ...linesToAdd]);
+      setAddLineDialogOpen(false);
+      setNewLine(null);
+    },
+    [isExistingDemand, demandId, createMutation, lines, setLines]
+  );
 
   const handleCancelNewLine = (): void => {
     setAddLineDialogOpen(false);
@@ -176,14 +305,11 @@ export function DemandLineTable({
     setEditLineDialogOpen(true);
   };
 
-  const handleSaveLine = (updatedLine: DemandLineFormState, relatedLinesToUpdate?: DemandLineFormState[]): void => {
-    const originalLine = lines.find((l) => l.id === updatedLine.id);
-    if (!originalLine) {
-      setEditLineDialogOpen(false);
-      setLineToEdit(null);
-      return;
-    }
-
+  const applyLineUpdatesToLocalState = (
+    updatedLine: DemandLineFormState,
+    relatedLinesToUpdate: DemandLineFormState[] | undefined,
+    originalLine: DemandLineFormState
+  ): void => {
     const isQuantityChanged = originalLine.quantity !== updatedLine.quantity;
     const isMainLine = updatedLine.isMainRelatedProduct === true;
 
@@ -210,6 +336,37 @@ export function DemandLineTable({
     } else {
       setLines(lines.map((line) => line.id === updatedLine.id ? { ...updatedLine, isEditing: false } : line));
     }
+  };
+
+  const handleSaveLine = async (
+    updatedLine: DemandLineFormState,
+    relatedLinesToUpdate?: DemandLineFormState[]
+  ): Promise<void> => {
+    const originalLine = lines.find((l) => l.id === updatedLine.id);
+    if (!originalLine) {
+      setEditLineDialogOpen(false);
+      setLineToEdit(null);
+      return;
+    }
+
+    const allUpdatedLines = [updatedLine, ...(relatedLinesToUpdate || [])].map((l) => ({ ...l, isEditing: false }));
+    const linesWithBackendId = allUpdatedLines.filter((l) => parseLineId(l.id) != null);
+
+    if (isExistingDemand && demandId && linesWithBackendId.length > 0) {
+      try {
+        const dtos: DemandLineGetDto[] = linesWithBackendId.map((l) => toUpdateDto(l, demandId));
+        await updateMutation.mutateAsync(dtos);
+        const fresh = await demandApi.getDemandLinesByDemandId(demandId);
+        const mapped = fresh.map((dto, index) => dtoToFormState(dto, index));
+        setLines(mapped);
+        setEditLineDialogOpen(false);
+        setLineToEdit(null);
+      } catch {
+      }
+      return;
+    }
+
+    applyLineUpdatesToLocalState(updatedLine, relatedLinesToUpdate, originalLine);
     setEditLineDialogOpen(false);
     setLineToEdit(null);
   };
@@ -230,17 +387,48 @@ export function DemandLineTable({
     setDeleteDialogOpen(true);
   };
 
-  const handleDeleteConfirm = (): void => {
-    if (lineToDelete) {
-      const lineToDeleteObj = lines.find((line) => line.id === lineToDelete);
-      if (lineToDeleteObj?.relatedProductKey) {
-        setLines(lines.filter((line) => line.relatedProductKey !== lineToDeleteObj.relatedProductKey));
-      } else {
-        setLines(lines.filter((line) => line.id !== lineToDelete));
-      }
+  const handleDeleteConfirm = async (): Promise<void> => {
+    if (!lineToDelete) return;
+    const lineToDeleteObj = lines.find((line) => line.id === lineToDelete);
+    if (!lineToDeleteObj) {
       setLineToDelete(null);
       setDeleteDialogOpen(false);
+      return;
     }
+    const removeFromList = (): void => {
+      if (lineToDeleteObj.relatedProductKey) {
+        setLines(lines.filter((l) => l.relatedProductKey !== lineToDeleteObj.relatedProductKey));
+      } else {
+        setLines(lines.filter((l) => l.id !== lineToDelete));
+      }
+      setLineToDelete(null);
+      setRelatedLinesCount(0);
+      setDeleteDialogOpen(false);
+    };
+    if (isExistingDemand && demandId) {
+      const lineBackendId = parseLineId(lineToDeleteObj.id);
+      const did = Number(demandId);
+      if (lineBackendId == null) {
+        removeFromList();
+        return;
+      }
+      if (!Number.isFinite(did) || did < 1) {
+        removeFromList();
+        return;
+      }
+      deleteMutation.mutate(lineBackendId, {
+        onSuccess: async (): Promise<void> => {
+          const fresh = await demandApi.getDemandLinesByDemandId(did);
+          const mapped = fresh.map((dto, index) => dtoToFormState(dto, index));
+          setLines(mapped);
+          setLineToDelete(null);
+          setRelatedLinesCount(0);
+          setDeleteDialogOpen(false);
+        },
+      });
+      return;
+    }
+    removeFromList();
   };
 
   const handleDeleteCancel = (): void => {
@@ -497,8 +685,10 @@ export function DemandLineTable({
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="gap-2 sm:gap-0">
-            <Button variant="outline" onClick={handleDeleteCancel}>{t('demand.cancel', 'İptal')}</Button>
-            <Button variant="destructive" onClick={handleDeleteConfirm}>{t('demand.delete', 'Sil')}</Button>
+            <Button variant="outline" onClick={handleDeleteCancel} disabled={isDeleting}>{t('demand.cancel', 'İptal')}</Button>
+            <Button variant="destructive" onClick={() => void handleDeleteConfirm()} disabled={isDeleting}>
+              {isDeleting ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />{t('demand.saving', 'Siliniyor...')}</> : t('demand.delete', 'Sil')}
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

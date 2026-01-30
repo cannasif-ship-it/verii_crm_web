@@ -55,15 +55,19 @@ interface DemandHeaderFormProps {
   onLinesChange?: (lines: Array<{ productCode?: string | null; productName?: string | null }>) => void;
   initialCurrency?: string | number | null;
   revisionNo?: string | null;
+  demandId?: number | null;
+  demandOfferNo?: string | null;
 }
 
-export function DemandHeaderForm({ 
+export function DemandHeaderForm({
   exchangeRates = [],
   onExchangeRatesChange,
   lines = [],
   onLinesChange,
   initialCurrency,
   revisionNo,
+  demandId,
+  demandOfferNo,
 }: DemandHeaderFormProps = {}): ReactElement {
   const { t } = useTranslation();
   const form = useFormContext<CreateDemandSchema>();
@@ -613,6 +617,8 @@ export function DemandHeaderForm({
           onSave={handleExchangeRatesSave}
           lines={lines}
           currentCurrency={watchedCurrency ? (typeof watchedCurrency === 'string' ? Number(watchedCurrency) : watchedCurrency) : undefined}
+          demandId={demandId}
+          demandOfferNo={demandOfferNo}
         />
       )}
 

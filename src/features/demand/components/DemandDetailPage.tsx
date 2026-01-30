@@ -104,6 +104,10 @@ export function DemandDetailPage(): ReactElement {
   }, [demand, form]);
 
   useEffect(() => {
+    linesInitializedRef.current = false;
+  }, [demandId]);
+
+  useEffect(() => {
     if (linesData && linesData.length > 0 && !linesInitializedRef.current) {
       const formattedLines: DemandLineFormState[] = linesData.map((line, index) => ({
         id: line.id && line.id > 0 ? `line-${line.id}-${index}` : `line-temp-${index}`,
@@ -404,6 +408,8 @@ export function DemandDetailPage(): ReactElement {
                     }}
                     initialCurrency={demand?.currency}
                     revisionNo={demand?.revisionNo}
+                    demandId={demandId}
+                    demandOfferNo={demand?.offerNo}
                 />
             </div>
 
@@ -418,6 +424,7 @@ export function DemandDetailPage(): ReactElement {
                 customerId={watchedCustomerId}
                 erpCustomerCode={watchedErpCustomerCode}
                 representativeId={watchedRepresentativeId}
+                demandId={demandId}
               />
             </div>
 
