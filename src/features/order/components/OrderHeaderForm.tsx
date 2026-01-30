@@ -49,15 +49,19 @@ interface OrderHeaderFormProps {
   onLinesChange?: (lines: Array<{ productCode?: string | null; productName?: string | null }>) => void;
   initialCurrency?: string | number | null;
   revisionNo?: string | null;
+  orderId?: number | null;
+  orderOfferNo?: string | null;
 }
 
-export function OrderHeaderForm({ 
+export function OrderHeaderForm({
   exchangeRates = [],
   onExchangeRatesChange,
   lines = [],
   onLinesChange,
   initialCurrency,
   revisionNo,
+  orderId,
+  orderOfferNo,
 }: OrderHeaderFormProps = {}): ReactElement {
   const { t } = useTranslation();
   const form = useFormContext<CreateOrderSchema>();
@@ -579,6 +583,8 @@ export function OrderHeaderForm({
           onSave={handleExchangeRatesSave}
           lines={lines}
           currentCurrency={watchedCurrency ? (typeof watchedCurrency === 'string' ? Number(watchedCurrency) : watchedCurrency) : undefined}
+          orderId={orderId}
+          orderOfferNo={orderOfferNo}
         />
       )}
 

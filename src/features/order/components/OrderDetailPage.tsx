@@ -104,6 +104,10 @@ export function OrderDetailPage(): ReactElement {
   }, [order, form]);
 
   useEffect(() => {
+    linesInitializedRef.current = false;
+  }, [orderId]);
+
+  useEffect(() => {
     if (linesData && linesData.length > 0 && !linesInitializedRef.current) {
       const formattedLines: OrderLineFormState[] = linesData.map((line, index) => ({
         id: line.id && line.id > 0 ? `line-${line.id}-${index}` : `line-temp-${index}`,
@@ -404,6 +408,8 @@ export function OrderDetailPage(): ReactElement {
                     }}
                     initialCurrency={order?.currency}
                     revisionNo={order?.revisionNo}
+                    orderId={orderId}
+                    orderOfferNo={order?.offerNo}
                 />
             </div>
 
@@ -418,6 +424,7 @@ export function OrderDetailPage(): ReactElement {
                 customerId={watchedCustomerId}
                 erpCustomerCode={watchedErpCustomerCode}
                 representativeId={watchedRepresentativeId}
+                orderId={orderId}
               />
             </div>
 

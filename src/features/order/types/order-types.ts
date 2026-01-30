@@ -173,11 +173,12 @@ export interface OrderGetDto {
 export interface OrderExchangeRateGetDto {
   id: number;
   orderId: number;
+  orderOfferNo?: string | null;
   currency: string;
   exchangeRate: number;
   exchangeRateDate: string;
   isOfficial: boolean;
-  createdAt: string;
+  createdAt?: string;
   updatedAt?: string | null;
 }
 

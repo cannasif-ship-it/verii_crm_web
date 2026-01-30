@@ -1,4 +1,4 @@
-import { type ReactElement, useState, useEffect } from 'react';
+import { type ReactElement, useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Dialog,
@@ -14,8 +14,9 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Badge } from '@/components/ui/badge';
 import { useExchangeRate } from '@/services/hooks/useExchangeRate';
 import { toast } from 'sonner';
-import { DollarSign, Edit2, Check, X, RefreshCw } from 'lucide-react';
-import type { OrderExchangeRateFormState } from '../types/order-types';
+import { DollarSign, Edit2, Check, X, RefreshCw, Loader2 } from 'lucide-react';
+import type { OrderExchangeRateFormState, OrderExchangeRateGetDto } from '../types/order-types';
+import { useUpdateExchangeRateInOrder } from '../hooks/useUpdateExchangeRateInOrder';
 import { cn } from '@/lib/utils';
 
 interface ExchangeRateDialogProps {
@@ -25,6 +26,17 @@ interface ExchangeRateDialogProps {
   onSave: (rates: OrderExchangeRateFormState[]) => void;
   lines?: Array<{ productCode?: string | null; productName?: string | null }>;
   currentCurrency?: number;
+  orderId?: number | null;
+  orderOfferNo?: string | null;
+}
+
+function parseRateId(id: string): number {
+  if (id.startsWith('rate-')) {
+    const n = parseInt(id.slice(5), 10);
+    return Number.isNaN(n) ? 0 : n;
+  }
+  const n = parseInt(id, 10);
+  return Number.isNaN(n) ? 0 : n;
 }
 
 export function ExchangeRateDialog({
@@ -34,11 +46,16 @@ export function ExchangeRateDialog({
   onSave,
   lines = [],
   currentCurrency,
+  orderId,
+  orderOfferNo,
 }: ExchangeRateDialogProps): ReactElement {
   const { t } = useTranslation();
   const { data: erpRates = [], isLoading } = useExchangeRate();
+  const updateMutation = useUpdateExchangeRateInOrder(orderId ?? 0);
   const [localRates, setLocalRates] = useState<OrderExchangeRateFormState[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const isUpdateMode = orderId != null && orderId > 0;
+  const isSaving = isUpdateMode && updateMutation.isPending;
 
   useEffect(() => {
     if (open && erpRates.length > 0) {
@@ -84,15 +101,42 @@ export function ExchangeRateDialog({
     );
   };
 
-  const handleSave = (): void => {
+  const mapToUpdateDtos = useCallback((): OrderExchangeRateGetDto[] => {
+    return localRates.map((r) => ({
+      id: parseRateId(r.id),
+      orderId: orderId ?? 0,
+      orderOfferNo: orderOfferNo ?? undefined,
+      currency: r.currency || (r.dovizTipi != null ? String(r.dovizTipi) : ''),
+      exchangeRate: r.exchangeRate,
+      exchangeRateDate: r.exchangeRateDate || new Date().toISOString().split('T')[0],
+      isOfficial: r.isOfficial ?? true,
+    }));
+  }, [localRates, orderId, orderOfferNo]);
+
+  const handleSave = async (): Promise<void> => {
+    if (isUpdateMode) {
+      try {
+        await updateMutation.mutateAsync(mapToUpdateDtos());
+        onSave(localRates);
+        onOpenChange(false);
+      } catch {
+      }
+      return;
+    }
     onSave(localRates);
     onOpenChange(false);
   };
 
   const handleCancel = (): void => {
+    if (isSaving) return;
     setLocalRates([]);
     setEditingId(null);
     onOpenChange(false);
+  };
+
+  const handleOpenChange = (next: boolean): void => {
+    if (!next && isSaving) return;
+    onOpenChange(next);
   };
 
   const styles = {
@@ -103,7 +147,7 @@ export function ExchangeRateDialog({
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto p-0 gap-0 overflow-hidden bg-white/95 dark:bg-zinc-950/95 backdrop-blur-xl border-zinc-200 dark:border-zinc-800 shadow-2xl">
         
         {/* HEADER */}
@@ -254,21 +298,29 @@ export function ExchangeRateDialog({
 
         {/* FOOTER */}
         <DialogFooter className="p-4 border-t border-zinc-200/50 dark:border-zinc-800/50 bg-zinc-50/30 dark:bg-zinc-900/10 gap-2">
-          <Button 
-            type="button" 
-            variant="outline" 
+          <Button
+            type="button"
+            variant="outline"
             onClick={handleCancel}
+            disabled={isSaving}
             className="rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 border-zinc-200 dark:border-zinc-700"
           >
             {t('order.cancel', 'Vazgeç')}
           </Button>
-          <Button 
-            type="button" 
-            onClick={handleSave} 
-            disabled={isLoading}
+          <Button
+            type="button"
+            onClick={() => void handleSave()}
+            disabled={isLoading || isSaving}
             className="rounded-lg bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white shadow-md hover:shadow-lg transition-all border-0"
           >
-            {t('order.saveAndApply', 'Kaydet ve Uygula')}
+            {isSaving ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                {t('order.saving', 'Kaydediliyor...')}
+              </>
+            ) : (
+              t('order.saveAndApply', 'Kaydet ve Uygula')
+            )}
           </Button>
         </DialogFooter>
       </DialogContent>
