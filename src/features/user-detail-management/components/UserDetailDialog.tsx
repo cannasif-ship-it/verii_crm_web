@@ -57,7 +57,6 @@ import {
   LogOut,
   Loader2 // Yükleme ikonu eklendi
 } from 'lucide-react';
-import { cn } from '@/lib/utils';
 
 interface UserDetailDialogProps {
   open: boolean;
