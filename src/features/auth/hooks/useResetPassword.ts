@@ -21,9 +21,7 @@ export const useResetPassword = () => {
       }
     },
     onError: (error: Error) => {
-      console.error('Reset password error:', error);
-      const errorMessage = error.message || 'Şifre sıfırlama işlemi sırasında bir hata oluştu';
-      toast.error(errorMessage);
+      toast.error(error.message || 'Şifre sıfırlama işlemi sırasında bir hata oluştu');
     },
   });
 };

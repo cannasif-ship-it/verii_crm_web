@@ -15,32 +15,14 @@ export const useLogin = (branches?: Branch[]) => {
   return useMutation({
     mutationFn: (data: LoginRequest) => authApi.login(data),
     onSuccess: (response, variables) => {
-      console.log('Login response:', response);
-      
       if (response.success && response.data) {
         const user = getUserFromToken(response.data.token);
-        console.log('Parsed user:', user);
 
         if (user) {
           const selectedBranch = branches?.find((b) => b.id === variables.branchId) || null;
-          
-          // --- BURASI EKLENDİ: MANUEL HAFIZA YÖNETİMİ ---
-          const token = response.data.token;
-          const rememberMe = variables.rememberMe; // Formdan gelen "Beni Hatırla" verisi
+          const { token, rememberMe } = response.data;
 
-          if (rememberMe) {
-            // Beni Hatırla SEÇİLİ: Kalıcı hafızaya yaz, geçiciyi temizle
-            localStorage.setItem('access_token', token);
-            sessionStorage.removeItem('access_token');
-          } else {
-            // Beni Hatırla SEÇİLİ DEĞİL: Geçici hafızaya yaz, kalıcıyı temizle
-            sessionStorage.setItem('access_token', token);
-            localStorage.removeItem('access_token');
-          }
-          // ----------------------------------------------
-
-          // Store'u güncelle (State yönetimi için)
-          setAuth(user, token, selectedBranch, rememberMe);
+          setAuth(user, token, selectedBranch, rememberMe ?? variables.rememberMe);
 
           setTimeout(() => {
             navigate('/', { replace: true });
@@ -54,9 +36,7 @@ export const useLogin = (branches?: Branch[]) => {
       }
     },
     onError: (error: Error) => {
-      console.error('Login error:', error);
-      const errorMessage = error.message || t('auth.login.loginError');
-      toast.error(errorMessage);
+      toast.error(error.message || t('auth.login.loginError'));
     },
   });
 };

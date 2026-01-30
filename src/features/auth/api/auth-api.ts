@@ -7,6 +7,7 @@ export const authApi = {
     const response = await api.post<LoginResponse>('/api/auth/login', {
       email: data.email,
       password: data.password,
+      branchId: data.branchId,
       rememberMe: data.rememberMe,
     });
     return response;
