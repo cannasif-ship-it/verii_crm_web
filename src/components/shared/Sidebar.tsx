@@ -324,15 +324,11 @@ export function Sidebar({ items }: SidebarProps): ReactElement {
           'fixed lg:sticky top-0 h-screen z-50 flex flex-col transition-all duration-300 ease-in-out shrink-0 overflow-hidden shadow-2xl',
           'bg-white border-r border-slate-200 dark:bg-[#130822]/90 dark:border-white/5 dark:backdrop-blur-2xl',
           
-          // --- GÜNCELLENEN MANTIK ---
-          // Açıkken: Hem mobil hem masaüstü geniş (w-80) ve görünür (translate-x-0)
+          // --- GÜNCELLENEN MANTIK (w-80 yerine w-72 yapıldı) ---
           isSidebarOpen 
-            ? "w-80 translate-x-0" 
+            ? "w-72 translate-x-0" 
             : 
-            // Kapalıyken:
-            // Mobil (<lg): Genişlik w-80 kalsın (layout bozulmasın) ama EKRANDAN ÇIKAR (-translate-x-full)
-            // Masaüstü (lg): Genişlik w-20 olsun ve GÖRÜNÜR olsun (translate-x-0)
-            "w-80 -translate-x-full lg:w-20 lg:translate-x-0"
+            "w-72 -translate-x-full lg:w-20 lg:translate-x-0"
         )}
       >
         <div className={cn(
@@ -361,13 +357,13 @@ export function Sidebar({ items }: SidebarProps): ReactElement {
                  </div>
             ) : (
                 <div className="flex items-center justify-center w-full h-full">
-                     <div className="w-full h-full flex items-center justify-center p-1">
-                         <img 
-                            src={Logo}
-                            alt="V3" 
-                            className="w-full h-full object-contain scale-150" 
-                        />
-                     </div>
+                      <div className="w-full h-full flex items-center justify-center p-1">
+                          <img 
+                             src={Logo}
+                             alt="V3" 
+                             className="w-full h-full object-contain scale-150" 
+                         />
+                      </div>
                 </div>
             )}
         </div>
