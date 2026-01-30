@@ -297,6 +297,23 @@ export function LoginPage(): React.JSX.Element {
       
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+        
+        /* Inputlar için tarayıcı native UI'ını (autocomplete popup vb.) koyu moda zorla */
+        input {
+          color-scheme: dark;
+        }
+
+        /* Chrome, Safari, Edge, Opera için Autofill arka plan rengini düzelt */
+        input:-webkit-autofill,
+        input:-webkit-autofill:hover, 
+        input:-webkit-autofill:focus, 
+        input:-webkit-autofill:active {
+            -webkit-box-shadow: 0 0 0 30px #140a1e inset !important;
+            -webkit-text-fill-color: white !important;
+            transition: background-color 5000s ease-in-out 0s;
+            caret-color: white;
+            color-scheme: dark;
+        }
       `}</style>
 
       {/* THREE.JS BACKGROUND CANVAS */}
