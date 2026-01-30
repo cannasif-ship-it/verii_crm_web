@@ -20,15 +20,13 @@ interface SidebarProps {
   items: NavItem[];
 }
 
-// --- YARDIMCI: Metin Normalleştirme ---
 const normalizeText = (text: string): string => {
   return text.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
     .replace(/ı/g, 'i').replace(/ş/g, 's').replace(/ğ/g, 'g')
     .replace(/ü/g, 'u').replace(/ö/g, 'o').replace(/ç/g, 'c');
 };
 
-// --- 3. SEVİYE ALT MENÜ ---
-function SubMenuComponent({ item, pathname }: { item: NavItem; pathname: string }) {
+function SubMenuComponent({ item, pathname }: { item: NavItem; pathname: string }): ReactElement {
   const hasActiveChild = item.children?.some(child => child.href === pathname) || false;
   const [isOpen, setIsOpen] = useState(hasActiveChild);
 
@@ -87,7 +85,6 @@ function SubMenuComponent({ item, pathname }: { item: NavItem; pathname: string 
   );
 }
 
-// --- ANA MENÜ ELEMANI (1. Seviye) ---
 function NavItemComponent({
   item,
   searchQuery,
@@ -152,7 +149,6 @@ function NavItemComponent({
     }
   };
 
-  // --- DURUM 1: Ana Başlık ve Altında Elemanlar Var ---
   if (hasChildren) {
     const visualActive = isAnyChildActive; 
     
@@ -245,7 +241,6 @@ function NavItemComponent({
     );
   }
 
-  // --- DURUM 2: Direkt Link ---
   if (!item.href) return <></>;
 
   return (
@@ -320,11 +315,9 @@ export function Sidebar({ items }: SidebarProps): ReactElement {
 
       <aside
         className={cn(
-          // Temel stiller (Animasyon, pozisyon vb.)
           'fixed lg:sticky top-0 h-screen z-50 flex flex-col transition-all duration-300 ease-in-out shrink-0 overflow-hidden shadow-2xl',
           'bg-white border-r border-slate-200 dark:bg-[#130822]/90 dark:border-white/5 dark:backdrop-blur-2xl',
           
-          // --- GÜNCELLENEN MANTIK (w-80 yerine w-72 yapıldı) ---
           isSidebarOpen 
             ? "w-72 translate-x-0" 
             : 

@@ -3,7 +3,6 @@ import { Outlet } from 'react-router-dom';
 
 export default function MainLayout(): ReactElement {
   return (
-    // 👇 BURAYA style={{ zoom: '90%' }} EKLENDİ
     <div className="min-h-screen bg-background" style={{ zoom: '90%' }}>
       <header className="border-b">
         <div className="container mx-auto px-4 py-4">

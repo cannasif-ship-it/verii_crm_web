@@ -1,6 +1,6 @@
 import { type ReactElement, useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Menu, Search, X, Command } from 'lucide-react'; // Command ikonu eklendi
+import { Menu, Search, X, Command } from 'lucide-react';
 
 import { useAuthStore } from '@/stores/auth-store';
 import { useUIStore } from '@/stores/ui-store';
@@ -24,7 +24,6 @@ export function Navbar(): ReactElement {
   const displayName = user?.name || user?.email || 'Kullanıcı';
   const displayInitials = user?.name?.[0]?.toUpperCase() || user?.email?.[0]?.toUpperCase() || 'MK';
 
-  // --- CTRL + K Kısa Yolu ---
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
@@ -36,7 +35,7 @@ export function Navbar(): ReactElement {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const val = e.target.value;
     setSearchQuery(val);
     
@@ -50,7 +49,6 @@ export function Navbar(): ReactElement {
       <header 
         className={cn(
           "h-20 px-8 flex items-center justify-between border-b transition-all sticky top-0 z-40 shrink-0",
-          // Glassmorphism Efekti
           "backdrop-blur-xl border-slate-200 bg-white/80", 
           "dark:border-white/5 dark:bg-[#0c0516]/80"
         )}
@@ -64,7 +62,6 @@ export function Navbar(): ReactElement {
             <Menu size={24} />
           </button>
 
-          {/* --- MODERN ARAMA ALANI (COMMAND PALETTE STYLE) --- */}
           <div className="relative hidden md:block w-full max-w-md group">
             <div className="absolute inset-0 bg-gradient-to-r from-pink-500/20 to-purple-500/20 rounded-2xl blur-xl opacity-0 group-focus-within:opacity-100 transition-opacity duration-500" />
             
@@ -79,16 +76,12 @@ export function Navbar(): ReactElement {
                 placeholder={t('navbar.search_placeholder', 'Hızlı arama yap...')}
                 className={cn(
                   "w-full py-3 pl-12 pr-24 text-sm font-medium transition-all duration-300 outline-none rounded-2xl border",
-                  // Light Mode
                   "bg-slate-100/50 border-slate-200 text-slate-900 placeholder:text-slate-500 focus:bg-white focus:border-pink-500/30",
-                  // Dark Mode
                   "dark:bg-white/5 dark:border-white/10 dark:text-white dark:placeholder:text-slate-500 dark:focus:bg-[#150a25]",
-                  // Focus Glow Efekti
                   "focus:ring-4 focus:ring-pink-500/10 focus:shadow-[0_0_20px_rgba(236,72,153,0.15)]"
                 )}
               />
 
-              {/* Sağdaki İkonlar / Kısayol İpucu */}
               <div className="absolute right-3 flex items-center gap-2">
                 {searchQuery ? (
                   <button 
@@ -108,7 +101,6 @@ export function Navbar(): ReactElement {
           </div>
         </div>
 
-        {/* --- SAĞ TARAF (Profil & Ayarlar) --- */}
         <div className="flex items-center gap-3 sm:gap-6 pl-4">
           <div className="flex items-center gap-2 sm:gap-3">
             <LanguageSwitcher />
@@ -152,7 +144,6 @@ export function Navbar(): ReactElement {
                     )}
                   </div>
                 </div>
-                {/* Online Indicator */}
                 <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white dark:border-[#0c0516] rounded-full"></div>
               </div>
             </div>

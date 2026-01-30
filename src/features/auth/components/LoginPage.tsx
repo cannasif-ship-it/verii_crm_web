@@ -30,19 +30,13 @@ import { LanguageSwitcher } from '@/components/shared/LanguageSwitcher';
 
 import loginImage from '../../../../public/veriicrmlogo.png';
 
-// --- HUGEICONS IMPORTLARI ---
 import { 
   Location01Icon, 
   Mail02Icon, 
   LockKeyIcon, 
   ViewIcon, 
   ViewOffIcon, 
-  Globe02Icon, 
-  WhatsappIcon,
   Call02Icon,        
-  TelegramIcon,      
-  InstagramIcon,     
-  NewTwitterIcon     
 } from 'hugeicons-react';
 
 export function LoginPage(): React.JSX.Element {
@@ -53,11 +47,9 @@ export function LoginPage(): React.JSX.Element {
   const { mutate: login, isPending } = useLogin(branches);
   const { logout } = useAuthStore();
   
-  // State'ler
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [capsLockActive, setCapsLockActive] = useState(false);
   
-  // Three.js Canvas Referansı
   const mountRef = useRef<HTMLDivElement>(null);
 
   const form = useForm<z.input<typeof loginRequestSchema>>({
@@ -70,16 +62,13 @@ export function LoginPage(): React.JSX.Element {
     },
   });
 
-  // --- THREE.JS ANIMASYON KODU ---
   useEffect(() => {
     if (!mountRef.current) return;
 
-    // Temizlik
     while(mountRef.current.firstChild) {
       mountRef.current.removeChild(mountRef.current.firstChild);
     }
 
-    // Sahne
     const scene = new THREE.Scene();
     scene.fog = new THREE.Fog(0x1a0b2e, 20, 100);
 
@@ -91,7 +80,6 @@ export function LoginPage(): React.JSX.Element {
     renderer.setPixelRatio(window.devicePixelRatio);
     mountRef.current.appendChild(renderer.domElement);
 
-    // Particles
     const particleCount = 200;
     const particlesGeometry = new THREE.BufferGeometry();
     const particlesPositions = new Float32Array(particleCount * 3);
@@ -120,7 +108,6 @@ export function LoginPage(): React.JSX.Element {
     const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
     scene.add(particlesMesh);
 
-    // Lines
     const lineMaterial = new THREE.LineBasicMaterial({
       color: 0xec4899,
       transparent: true,
@@ -133,7 +120,6 @@ export function LoginPage(): React.JSX.Element {
     const linesMesh = new THREE.LineSegments(lineGeometry, lineMaterial);
     scene.add(linesMesh);
 
-    // Pulses
     const pulsesCount = 15;
     const pulsesGeo = new THREE.BufferGeometry();
     const pulsesPos = new Float32Array(pulsesCount * 3);
@@ -153,7 +139,6 @@ export function LoginPage(): React.JSX.Element {
       active: false, startIdx: 0, endIdx: 0, progress: 0, speed: 0
     }));
 
-    // Animation Loop
     let animationFrameId: number;
     let mouseX = 0;
     let mouseY = 0;
@@ -161,7 +146,6 @@ export function LoginPage(): React.JSX.Element {
     const animate = () => {
       animationFrameId = requestAnimationFrame(animate);
 
-      // Particles Movement
       const pos = particlesMesh.geometry.attributes.position.array as Float32Array;
       for (let i = 0; i < particleCount; i++) {
         pos[i * 3] += particlesVelocities[i].x;
@@ -174,7 +158,6 @@ export function LoginPage(): React.JSX.Element {
       }
       particlesMesh.geometry.attributes.position.needsUpdate = true;
 
-      // Lines & Connections
       let lineIdx = 0;
       const connectionDistance = 8;
       const connections: [number, number][] = [];
@@ -200,7 +183,6 @@ export function LoginPage(): React.JSX.Element {
       linesMesh.geometry.setDrawRange(0, lineIdx / 3);
       linesMesh.geometry.attributes.position.needsUpdate = true;
 
-      // Pulses
       const pPos = pulsesMesh.geometry.attributes.position.array as Float32Array;
       activePulses.forEach((pulse, idx) => {
         if (!pulse.active) {
@@ -234,7 +216,6 @@ export function LoginPage(): React.JSX.Element {
       });
       pulsesMesh.geometry.attributes.position.needsUpdate = true;
 
-      // Scene Rotation
       scene.rotation.y += 0.0008;
       camera.position.x += (mouseX * 0.5 - camera.position.x) * 0.05;
       camera.position.y += (-mouseY * 0.5 - camera.position.y) * 0.05;
@@ -274,7 +255,6 @@ export function LoginPage(): React.JSX.Element {
       pulsesMat.dispose();
     };
   }, []);
-  // --- THREE.JS SONU ---
 
   useEffect(() => {
     if (searchParams.get('sessionExpired') === 'true') {
@@ -316,20 +296,15 @@ export function LoginPage(): React.JSX.Element {
         }
       `}</style>
 
-      {/* THREE.JS BACKGROUND CANVAS */}
       <div ref={mountRef} className="fixed inset-0 z-0 bg-[radial-gradient(circle_at_50%_50%,#1a0b2e_0%,#000000_100%)]" />
 
-      {/* İÇERİK KAPSAYICISI */}
       <div className="relative z-10 w-full h-full flex flex-col justify-between items-center px-4 py-8 overflow-y-auto">
 
-        {/* DİL SEÇİMİ */}
         <div className="absolute top-6 right-6 z-20">
           <LanguageSwitcher />
         </div>
 
-        {/* LOGIN CARD */}
         <div className="w-full max-w-md p-10 rounded-3xl bg-[#140a1e]/70 backdrop-blur-xl border border-white/10 shadow-[0_20px_40px_rgba(0,0,0,0.4),_inset_0_0_20px_rgba(255,255,255,0.07)] animate-[fadeIn_0.8s_ease-out] my-auto">
-          {/* LOGO */}
           <div className="text-center mb-8">
             <img
               src={loginImage}
@@ -341,11 +316,9 @@ export function LoginPage(): React.JSX.Element {
             </p>
           </div>
           
-          {/* BACKEND FORM */}
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
               
-              {/* ŞUBE */}
               <FormField
                 control={form.control}
                 name="branchId"
@@ -383,7 +356,6 @@ export function LoginPage(): React.JSX.Element {
                 )}
               />
 
-              {/* EMAIL */}
               <FormField
                 control={form.control}
                 name="email"
@@ -408,7 +380,6 @@ export function LoginPage(): React.JSX.Element {
                 )}
               />
 
-              {/* PASSWORD */}
               <FormField
                 control={form.control}
                 name="password"
@@ -425,7 +396,6 @@ export function LoginPage(): React.JSX.Element {
                           type={isPasswordVisible ? 'text' : 'password'}
                           placeholder={t('auth.login.passwordPlaceholder', 'Şifre')}
                           className="w-full bg-black/30 border border-white/10 rounded-xl px-4 py-6 pl-12 pr-10 text-sm text-white placeholder-slate-500 focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-pink-500 focus:bg-black/50"
-                          // CAPS LOCK KONTROLÜ
                           onKeyDown={(e) => setCapsLockActive(e.getModifierState('CapsLock'))}
                           onKeyUp={(e) => setCapsLockActive(e.getModifierState('CapsLock'))}
                         />
@@ -443,7 +413,6 @@ export function LoginPage(): React.JSX.Element {
                       </div>
                     </FormControl>
                     
-                    {/* YENİ TASARIMLI CAPS LOCK UYARISI */}
                     {capsLockActive && (
                       <div className="flex items-center gap-2 mt-3 px-3 py-2 rounded-lg bg-orange-500/10 border border-orange-500/20 text-orange-200 text-xs font-medium animate-in fade-in slide-in-from-top-1">
                         <span className="text-orange-500 text-sm">⚠️</span> 
@@ -479,7 +448,6 @@ export function LoginPage(): React.JSX.Element {
                 <Link to="/auth/forgot-password" className="hover:text-orange-400 transition">{t('auth.login.forgotPassword')}</Link>
               </div>
 
-              {/* BUTTON */}
               <button
                 type="submit"
                 disabled={isPending}
@@ -492,7 +460,6 @@ export function LoginPage(): React.JSX.Element {
           </Form>
         </div>
 
-{/* --- FOOTER --- */}
         <div className="w-full max-w-4xl z-20 mt-8 flex flex-col items-center gap-6 pb-6">
           <p className="text-slate-400 text-sm font-light tracking-[0.2em] uppercase opacity-80 text-center">
             <Trans
@@ -501,37 +468,11 @@ export function LoginPage(): React.JSX.Element {
             />
           </p>
           
-          {/* SOSYAL BUTONLAR */}
           <div className="flex flex-wrap items-center justify-center gap-4 px-4">
             
             <a href="tel:+905070123018" className="flex items-center justify-center w-12 h-12 rounded-full bg-white/5 border border-white/5 text-slate-400 hover:text-lime-400 hover:bg-white/10 hover:border-lime-500/30 hover:shadow-[0_0_15px_rgba(132,204,22,0.3)] hover:scale-110 transition-all duration-300 group">
               <Call02Icon size={20} />
             </a>
-
-            <a href="https://v3rii.com" target="_blank" rel="noreferrer" className="flex items-center justify-center w-12 h-12 rounded-full bg-white/5 border border-white/5 text-slate-400 hover:text-pink-400 hover:bg-white/10 hover:border-pink-500/30 hover:shadow-[0_0_15px_rgba(244,114,182,0.3)] hover:scale-110 transition-all duration-300 group">
-              <Globe02Icon size={20} />
-            </a>
-
-            <a href="mailto:info@v3rii.com" className="flex items-center justify-center w-12 h-12 rounded-full bg-white/5 border border-white/5 text-slate-400 hover:text-orange-400 hover:bg-white/10 hover:border-orange-500/30 hover:shadow-[0_0_15px_rgba(251,146,60,0.3)] hover:scale-110 transition-all duration-300 group">
-              <Mail02Icon size={20} />
-            </a>
-
-            <a href="https://wa.me/905070123018" target="_blank" rel="noreferrer" className="flex items-center justify-center w-12 h-12 rounded-full bg-white/5 border border-white/5 text-slate-400 hover:text-emerald-400 hover:bg-white/10 hover:border-emerald-500/30 hover:shadow-[0_0_15px_rgba(52,211,153,0.3)] hover:scale-110 transition-all duration-300 group">
-              <WhatsappIcon size={20} />
-            </a>
-
-            <a href="https://t.me/v3rii" target="_blank" rel="noreferrer" className="flex items-center justify-center w-12 h-12 rounded-full bg-white/5 border border-white/5 text-slate-400 hover:text-sky-400 hover:bg-white/10 hover:border-sky-500/30 hover:shadow-[0_0_15px_rgba(56,189,248,0.3)] hover:scale-110 transition-all duration-300 group">
-              <TelegramIcon size={20} />
-            </a>
-
-            <a href="https://instagram.com/v3rii" target="_blank" rel="noreferrer" className="flex items-center justify-center w-12 h-12 rounded-full bg-white/5 border border-white/5 text-slate-400 hover:text-fuchsia-400 hover:bg-white/10 hover:border-fuchsia-500/30 hover:shadow-[0_0_15px_rgba(232,121,249,0.3)] hover:scale-110 transition-all duration-300 group">
-              <InstagramIcon size={20} />
-            </a>
-
-            <a href="https://x.com/v3rii" target="_blank" rel="noreferrer" className="flex items-center justify-center w-12 h-12 rounded-full bg-white/5 border border-white/5 text-slate-400 hover:text-white hover:bg-white/10 hover:border-white/30 hover:shadow-[0_0_15px_rgba(255,255,255,0.3)] hover:scale-110 transition-all duration-300 group">
-              <NewTwitterIcon size={20} />
-            </a>
-
           </div>
         </div>
       </div>
