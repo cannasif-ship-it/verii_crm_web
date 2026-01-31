@@ -211,17 +211,19 @@ export function QuotationTable({
                   </Badge>
                 </TableCell>
                 <TableCell>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={(e) => handleRevision(e, quotation.id)}
-                    disabled={createRevisionMutation.isPending}
-                    className="w-full"
-                  >
-                    {createRevisionMutation.isPending
-                      ? t('quotation.loading', 'Yükleniyor...')
-                      : t('quotation.list.revise', 'Revize et')}
-                  </Button>
+                  {(quotation.status === 0 || quotation.status === 1) && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={(e) => handleRevision(e, quotation.id)}
+                      disabled={createRevisionMutation.isPending}
+                      className="w-full"
+                    >
+                      {createRevisionMutation.isPending
+                        ? t('quotation.loading', 'Yükleniyor...')
+                        : t('quotation.list.revise', 'Revize et')}
+                    </Button>
+                  )}
                 </TableCell>
               </TableRow>
             ))}

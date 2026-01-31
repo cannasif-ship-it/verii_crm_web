@@ -211,17 +211,19 @@ export function OrderTable({
                   </Badge>
                 </TableCell>
                 <TableCell>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={(e) => handleRevision(e, order.id)}
-                    disabled={createRevisionMutation.isPending}
-                    className="w-full"
-                  >
-                    {createRevisionMutation.isPending
-                      ? t('order.loading', 'Yükleniyor...')
-                      : t('order.list.revise', 'Revize et')}
-                  </Button>
+                  {(order.status === 0 || order.status === 1) && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={(e) => handleRevision(e, order.id)}
+                      disabled={createRevisionMutation.isPending}
+                      className="w-full"
+                    >
+                      {createRevisionMutation.isPending
+                        ? t('order.loading', 'Yükleniyor...')
+                        : t('order.list.revise', 'Revize et')}
+                    </Button>
+                  )}
                 </TableCell>
               </TableRow>
             ))}

@@ -211,17 +211,19 @@ export function DemandTable({
                   </Badge>
                 </TableCell>
                 <TableCell>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={(e) => handleRevision(e, demand.id)}
-                    disabled={createRevisionMutation.isPending}
-                    className="w-full"
-                  >
-                    {createRevisionMutation.isPending
-                      ? t('demand.loading', 'Yükleniyor...')
-                      : t('demand.list.revise', 'Revize et')}
-                  </Button>
+                  {(demand.status === 0 || demand.status === 1) && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={(e) => handleRevision(e, demand.id)}
+                      disabled={createRevisionMutation.isPending}
+                      className="w-full"
+                    >
+                      {createRevisionMutation.isPending
+                        ? t('demand.loading', 'Yükleniyor...')
+                        : t('demand.list.revise', 'Revize et')}
+                    </Button>
+                  )}
                 </TableCell>
               </TableRow>
             ))}
