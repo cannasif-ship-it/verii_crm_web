@@ -1,54 +1,72 @@
 import axios from 'axios';
 import i18n from './i18n';
 
-const API_BASE_URL = 'http://localhost:5000';
+const API_BASE_URL = 'https://crmapi.v3rii.com';
 
-let apiUrl = API_BASE_URL;
+interface RuntimeConfig {
+  apiUrl?: string;
+}
+
+function isValidApiUrl(value: string | undefined | null): boolean {
+  if (!value || typeof value !== 'string') return false;
+  const trimmed = value.trim();
+  if (!trimmed) return false;
+  try {
+    const u = new URL(trimmed);
+    return u.protocol === 'http:' || u.protocol === 'https:';
+  } catch {
+    return false;
+  }
+}
+
+function normalizeBaseUrl(url: string): string {
+  return url.trim().replace(/\/$/, '');
+}
+
+let apiUrl = normalizeBaseUrl(API_BASE_URL);
 let configPromise: Promise<string> | null = null;
 
-export const loadConfig = async (): Promise<string> => {
-  if (configPromise) {
-    return configPromise;
+async function fetchRuntimeConfig(): Promise<string> {
+  const envUrl = import.meta.env.VITE_API_URL;
+  if (isValidApiUrl(envUrl)) return normalizeBaseUrl(envUrl);
+
+  try {
+    const response = await fetch('/config.json', {
+      cache: import.meta.env.PROD ? 'no-cache' : 'default',
+    });
+    if (!response.ok) return API_BASE_URL;
+    const config = (await response.json()) as RuntimeConfig;
+    if (isValidApiUrl(config?.apiUrl)) return normalizeBaseUrl(config.apiUrl!);
+  } catch (error) {
+    if (import.meta.env.DEV) {
+      console.warn('[axios] config.json yüklenemedi, fallback kullanılıyor:', error);
+    }
   }
+  return normalizeBaseUrl(API_BASE_URL);
+}
 
-  configPromise = (async (): Promise<string> => {
-    if (import.meta.env.VITE_API_URL) {
-      return import.meta.env.VITE_API_URL;
-    }
-
-    try {
-      const response = await fetch('/config.json');
-      if (response.ok) {
-        const config = await response.json();
-        if (config.apiUrl) {
-          return config.apiUrl;
-        }
-      }
-    } catch (error) {
-      console.warn('Failed to load config.json, using default API URL:', error);
-    }
-    return API_BASE_URL;
-  })();
-
+export function loadConfig(): Promise<string> {
+  if (!configPromise) {
+    configPromise = fetchRuntimeConfig();
+  }
   return configPromise;
-};
+}
 
-export const getApiUrl = async (): Promise<string> => {
-  const url = await loadConfig();
-  return url.replace(/\/$/, '');
-};
+export async function ensureApiReady(): Promise<void> {
+  const base = await loadConfig();
+  apiUrl = base;
+  api.defaults.baseURL = base;
+}
 
-export const getApiBaseUrl = (): string => {
-  if (import.meta.env.VITE_API_URL) {
-    return import.meta.env.VITE_API_URL.replace(/\/$/, '');
-  }
-  return (apiUrl || API_BASE_URL).replace(/\/$/, '');
-};
+export async function getApiUrl(): Promise<string> {
+  return loadConfig();
+}
 
-const initApi = async (): Promise<void> => {
-  apiUrl = await loadConfig();
-  api.defaults.baseURL = apiUrl;
-};
+export function getApiBaseUrl(): string {
+  const env = import.meta.env.VITE_API_URL;
+  if (isValidApiUrl(env)) return normalizeBaseUrl(env);
+  return apiUrl || normalizeBaseUrl(API_BASE_URL);
+}
 
 export const api = axios.create({
   baseURL: apiUrl,
@@ -57,15 +75,8 @@ export const api = axios.create({
   },
 });
 
-initApi();
-
 api.interceptors.request.use(async (config) => {
-  const base = await loadConfig();
-  const baseClean = base.replace(/\/$/, '');
-  if (!apiUrl || apiUrl !== baseClean) {
-    apiUrl = baseClean;
-    api.defaults.baseURL = baseClean;
-  }
+  config.baseURL = config.baseURL || apiUrl || api.defaults.baseURL;
 
   const token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
   if (token) {
@@ -80,8 +91,7 @@ api.interceptors.request.use(async (config) => {
     if (branch?.code) {
       config.headers['X-Branch-Code'] = branch.code;
     }
-  } catch (error) {
-    console.warn('Failed to get branch code from auth store:', error);
+  } catch {
   }
 
   return config;
@@ -93,14 +103,13 @@ api.interceptors.response.use(
     if (error.response?.status === 401) {
       localStorage.removeItem('access_token');
       sessionStorage.removeItem('access_token');
-      
+
       try {
         const { useAuthStore } = await import('@/stores/auth-store');
         useAuthStore.getState().logout();
-      } catch (err) {
-        console.warn('Failed to clear auth store:', err);
+      } catch {
       }
-      
+
       if (window.location.pathname !== '/auth/login') {
         window.location.href = '/auth/login?sessionExpired=true';
       }
@@ -119,10 +128,10 @@ api.interceptors.response.use(
 
 declare module 'axios' {
   export interface AxiosInstance {
-    get<T = unknown>(url: string, config?: any): Promise<T>;
-    post<T = unknown>(url: string, data?: any, config?: any): Promise<T>;
-    put<T = unknown>(url: string, data?: any, config?: any): Promise<T>;
-    delete<T = unknown>(url: string, config?: any): Promise<T>;
-    patch<T = unknown>(url: string, data?: any, config?: any): Promise<T>;
+    get<T = unknown>(url: string, config?: import('axios').AxiosRequestConfig): Promise<T>;
+    post<T = unknown>(url: string, data?: unknown, config?: import('axios').AxiosRequestConfig): Promise<T>;
+    put<T = unknown>(url: string, data?: unknown, config?: import('axios').AxiosRequestConfig): Promise<T>;
+    delete<T = unknown>(url: string, config?: import('axios').AxiosRequestConfig): Promise<T>;
+    patch<T = unknown>(url: string, data?: unknown, config?: import('axios').AxiosRequestConfig): Promise<T>;
   }
 }
