@@ -8,7 +8,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Languages } from 'lucide-react';
-import { LanguageSkillIcon } from 'hugeicons-react'; 
+import { TranslateIcon } from 'hugeicons-react'; 
 
 const languages = [
   { code: 'tr', name: 'Türkçe', flag: '🇹🇷' },
@@ -19,9 +19,11 @@ const languages = [
   { code: 'es', name: 'Español', flag: '🇪🇸' },
   { code: 'sa', name: 'العربية', flag: '🇸🇦' },
 ];
+
 interface LanguageSwitcherProps {
   variant?: 'default' | 'icon'; 
 }
+
 export function LanguageSwitcher({ variant = 'default' }: LanguageSwitcherProps): ReactElement {
   const { i18n } = useTranslation();
   const currentLanguage = languages.find((lang) => lang.code === i18n.language) || languages[0];
@@ -41,8 +43,6 @@ export function LanguageSwitcher({ variant = 'default' }: LanguageSwitcherProps)
               w-12 h-12 rounded-full border border-white/20 bg-zinc-900/80 backdrop-blur-xl shadow-lg shadow-black/40 
               flex items-center justify-center p-0 ring-0 focus:ring-0 transition-all duration-300 
               hover:scale-110 active:scale-95 [&>span]:hidden [&>svg:not(.hugeicon)]:hidden
-              
-              /* GÜNCELLENEN KISIM: HOVER EFEKTİ (SKY BLUE) */
               text-slate-200 
               hover:text-sky-400 
               hover:bg-zinc-800 
@@ -64,7 +64,7 @@ export function LanguageSwitcher({ variant = 'default' }: LanguageSwitcherProps)
             </SelectValue>
           </div>
         ) : (
-          <LanguageSkillIcon size={20} className="hugeicon drop-shadow-md" />
+          <TranslateIcon size={20} className="hugeicon drop-shadow-md" />
         )}
       </SelectTrigger>
       
