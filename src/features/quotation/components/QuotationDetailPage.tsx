@@ -14,7 +14,7 @@ import { useUserDiscountLimitsBySalesperson } from '../hooks/useUserDiscountLimi
 import { useCustomerOptions } from '@/features/customer-management/hooks/useCustomerOptions';
 import { useUIStore } from '@/stores/ui-store';
 import { Button } from '@/components/ui/button';
-import { Send, Save, Calculator, Layers, X, Loader2 } from 'lucide-react';
+import { Send, Calculator, Layers, Loader2 } from 'lucide-react';
 import { createQuotationSchema, type CreateQuotationSchema } from '../schemas/quotation-schema';
 import type { QuotationLineFormState, QuotationExchangeRateFormState, QuotationBulkCreateDto, CreateQuotationDto, PricingRuleLineGetDto, UserDiscountLimitDto } from '../types/quotation-types';
 import { QuotationHeaderForm } from './QuotationHeaderForm';
@@ -454,15 +454,6 @@ export function QuotationDetailPage(): ReactElement {
 
             {/* ACTION BUTTONS */}
             <div className="flex items-center justify-end gap-3 pt-6 border-t border-zinc-200 dark:border-white/10">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => navigate('/quotations')}
-                className="group"
-              >
-                <X className="mr-2 h-4 w-4" />
-                {t('quotation.cancel', 'İptal')}
-              </Button>
               {quotation?.status === 0 && (
                 <Button 
                   type="button"
@@ -484,12 +475,6 @@ export function QuotationDetailPage(): ReactElement {
                   )}
                 </Button>
               )}
-              <Button type="submit" disabled={updateMutation.isPending} className="group bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-700 hover:to-purple-700 text-white min-w-[140px]">
-          <Save className="mr-2 h-4 w-4" />
-          {updateMutation.isPending
-            ? t('quotation.saving', 'Kaydediliyor...')
-            : t('quotation.save', 'Kaydet')}
-        </Button>
             </div>
 
           </div>
