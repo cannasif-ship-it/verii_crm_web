@@ -1,7 +1,9 @@
 import axios from 'axios';
 import i18n from './i18n';
 
-let apiUrl = '';
+const API_BASE_URL = 'http://localhost:5000';
+
+let apiUrl = API_BASE_URL;
 let configPromise: Promise<string> | null = null;
 
 export const loadConfig = async (): Promise<string> => {
@@ -25,7 +27,7 @@ export const loadConfig = async (): Promise<string> => {
     } catch (error) {
       console.warn('Failed to load config.json, using default API URL:', error);
     }
-    return 'https://crmapi.v3rii.com';
+    return API_BASE_URL;
   })();
 
   return configPromise;
@@ -40,7 +42,7 @@ export const getApiBaseUrl = (): string => {
   if (import.meta.env.VITE_API_URL) {
     return import.meta.env.VITE_API_URL.replace(/\/$/, '');
   }
-  return apiUrl.replace(/\/$/, '');
+  return (apiUrl || API_BASE_URL).replace(/\/$/, '');
 };
 
 const initApi = async (): Promise<void> => {
@@ -58,6 +60,13 @@ export const api = axios.create({
 initApi();
 
 api.interceptors.request.use(async (config) => {
+  const base = await loadConfig();
+  const baseClean = base.replace(/\/$/, '');
+  if (!apiUrl || apiUrl !== baseClean) {
+    apiUrl = baseClean;
+    api.defaults.baseURL = baseClean;
+  }
+
   const token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
