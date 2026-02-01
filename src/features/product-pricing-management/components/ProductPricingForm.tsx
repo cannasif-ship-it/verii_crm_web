@@ -12,7 +12,17 @@ import {
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue
 } from '@/components/ui/select';
-import { Package, Calculator, Trash2 } from 'lucide-react';
+import { 
+  Package, 
+  Calculator, 
+  Trash2, 
+  Layers, 
+  Banknote, 
+  Tag, 
+  Coins, 
+  Percent,
+  Save
+} from 'lucide-react';
 
 // Kendi oluşturduğumuz types dosyasından importlar
 import { 
@@ -36,6 +46,11 @@ interface ProductPricingFormProps {
   productPricing?: ProductPricingGetDto | null;
   isLoading?: boolean;
 }
+
+// STİL: Standart yükseklik ve kenarlıklar
+const BASE_INPUT = "h-10 rounded-lg bg-slate-50 dark:bg-[#0c0516] border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white text-sm placeholder:text-slate-400 dark:placeholder:text-slate-600 focus-visible:ring-0 focus:border-pink-500 transition-all";
+const INPUT_STYLE = `${BASE_INPUT} w-full`;
+const LABEL_STYLE = "text-[11px] text-slate-500 dark:text-slate-400 uppercase tracking-wider font-bold ml-1 mb-1.5 flex items-center gap-1.5";
 
 export function ProductPricingForm({
   open, onOpenChange, onSubmit, onDelete, productPricing, isLoading
@@ -82,157 +97,200 @@ export function ProductPricingForm({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle>{productPricing ? 'Fiyatlandırma Düzenle' : 'Yeni Fiyatlandırma'}</DialogTitle>
-          <DialogDescription>Ürün fiyat ve maliyet bilgilerini giriniz.</DialogDescription>
+      <DialogContent className="bg-white dark:bg-[#130822] border border-slate-100 dark:border-white/10 text-slate-900 dark:text-white max-w-4xl max-h-[95vh] h-full flex flex-col gap-0 p-0 overflow-hidden sm:rounded-2xl">
+        <DialogHeader className="border-b border-slate-100 dark:border-white/5 px-6 py-5 bg-white/80 dark:bg-[#130822]/90 backdrop-blur-md shrink-0 flex-row items-center gap-3 space-y-0">
+          <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-pink-500/20 to-orange-500/20 border border-pink-500/10 flex items-center justify-center text-pink-500 shrink-0">
+            <Tag size={20} />
+          </div>
+          <div>
+            <DialogTitle className="text-lg font-bold">{productPricing ? 'Fiyatlandırma Düzenle' : 'Yeni Fiyatlandırma'}</DialogTitle>
+            <DialogDescription className="text-xs mt-0.5">Ürün fiyat ve maliyet bilgilerini giriniz.</DialogDescription>
+          </div>
         </DialogHeader>
 
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 py-4">
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* SOL KOLON: Ürün Bilgileri */}
-              <div className="space-y-4">
-                <FormField control={form.control as any} name="erpProductCode" render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Stok Kodu *</FormLabel>
-                    <div className="flex gap-2">
+        <div className="flex-1 overflow-y-auto p-6 custom-scrollbar">
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* SOL KOLON: Ürün Bilgileri */}
+                <div className="space-y-5">
+                  <FormField control={form.control as any} name="erpProductCode" render={({ field }) => (
+                    <FormItem className="space-y-0">
+                      <FormLabel className={LABEL_STYLE}>
+                        <Package size={12} className="text-pink-500" /> Stok Kodu *
+                      </FormLabel>
+                      <div className="flex gap-2">
+                        <FormControl>
+                          <Input {...field} readOnly placeholder="Ürün seçiniz" className={INPUT_STYLE} />
+                        </FormControl>
+                        <Button 
+                          type="button" 
+                          variant="outline" 
+                          onClick={() => setProductDialogOpen(true)}
+                          className="h-10 shrink-0 border-slate-200 dark:border-white/10 hover:bg-slate-50 dark:hover:bg-white/5 px-4"
+                        >
+                          <Package size={16} className="mr-2" /> Seç
+                        </Button>
+                      </div>
+                      <FormMessage className="text-red-500 text-[10px]" />
+                    </FormItem>
+                  )} />
+
+                  <FormField control={form.control as any} name="erpGroupCode" render={({ field }) => (
+                    <FormItem className="space-y-0">
+                      <FormLabel className={LABEL_STYLE}>
+                        <Layers size={12} className="text-pink-500" /> Grup Kodu
+                      </FormLabel>
                       <FormControl>
-                        <Input {...field} readOnly placeholder="Ürün seçiniz" />
+                        <Input {...field} readOnly className={`${INPUT_STYLE} bg-slate-100 dark:bg-slate-800/50`} />
                       </FormControl>
-                      <Button type="button" variant="outline" onClick={() => setProductDialogOpen(true)}>
-                        <Package size={16} className="mr-2" /> Seç
-                      </Button>
+                    </FormItem>
+                  )} />
+
+                  <FormField control={form.control as any} name="currency" render={({ field }) => (
+                    <FormItem className="space-y-0">
+                      <FormLabel className={LABEL_STYLE}>
+                        <Banknote size={12} className="text-pink-500" /> Para Birimi *
+                      </FormLabel>
+                      <Select onValueChange={field.onChange} value={field.value}>
+                        <FormControl>
+                          <SelectTrigger className={INPUT_STYLE}>
+                            <SelectValue placeholder="Seçiniz" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {CURRENCIES.map(c => (
+                            <SelectItem key={c.value} value={c.value}>{c.value} - {c.label}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage className="text-red-500 text-[10px]" />
+                    </FormItem>
+                  )} />
+                  
+                  {/* HESAPLAMA ÖZETİ KARTI */}
+                  <div className="rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50/50 dark:bg-[#0c0516] p-4 transition-colors space-y-3 mt-4">
+                    <div className="flex items-center gap-2 text-sm font-semibold text-pink-600 border-b border-slate-200 dark:border-white/10 pb-2 mb-2">
+                      <Calculator size={16} /> Hesaplama Özeti
                     </div>
-                    <FormMessage />
-                  </FormItem>
-                )} />
-
-                <FormField control={form.control as any} name="erpGroupCode" render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Grup Kodu</FormLabel>
-                    <FormControl><Input {...field} readOnly className="bg-slate-50" /></FormControl>
-                  </FormItem>
-                )} />
-
-                <FormField control={form.control as any} name="currency" render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Para Birimi *</FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Seçiniz" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {CURRENCIES.map(c => (
-                          <SelectItem key={c.value} value={c.value}>{c.value} - {c.label}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )} />
-              </div>
-
-              {/* SAĞ KOLON: Fiyatlar */}
-              <div className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <FormField control={form.control as any} name="listPrice" render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Liste Fiyatı</FormLabel>
-                      <FormControl>
-                        <Input type="number" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )} />
-                  <FormField control={form.control as any} name="costPrice" render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Maliyet</FormLabel>
-                      <FormControl>
-                        <Input type="number" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )} />
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span className="text-slate-500 dark:text-slate-400">Son Fiyat:</span>
+                        <span className="font-bold text-slate-900 dark:text-white">{formatPrice(calculations.final, values.currency)}</span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-slate-500 dark:text-slate-400">Kar Tutarı:</span>
+                        <span className={calculations.profit.amount >= 0 ? "text-green-600 font-medium" : "text-red-600 font-medium"}>
+                          {formatPrice(calculations.profit.amount, values.currency)}
+                        </span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-slate-500 dark:text-slate-400">Kar Marjı:</span>
+                        <span className={calculations.profit.percentage >= 0 ? "text-green-600 font-medium" : "text-red-600 font-medium"}>
+                          %{calculations.profit.percentage.toFixed(2)}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
-                <div className="grid grid-cols-3 gap-2">
-                  <FormField control={form.control as any} name="discount1" render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-xs">İsk. 1 (%)</FormLabel>
-                      <FormControl><Input type="number" {...field} /></FormControl>
-                    </FormItem>
-                  )} />
-                  <FormField control={form.control as any} name="discount2" render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-xs">İsk. 2 (%)</FormLabel>
-                      <FormControl><Input type="number" {...field} /></FormControl>
-                    </FormItem>
-                  )} />
-                  <FormField control={form.control as any} name="discount3" render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-xs">İsk. 3 (%)</FormLabel>
-                      <FormControl><Input type="number" {...field} /></FormControl>
-                    </FormItem>
-                  )} />
-                </div>
+                {/* SAĞ KOLON: Fiyatlar */}
+                <div className="space-y-5">
+                  <div className="grid grid-cols-2 gap-4">
+                    <FormField control={form.control as any} name="listPrice" render={({ field }) => (
+                      <FormItem className="space-y-0">
+                        <FormLabel className={LABEL_STYLE}>
+                          <Tag size={12} className="text-pink-500" /> Liste Fiyatı
+                        </FormLabel>
+                        <FormControl>
+                          <Input type="number" {...field} className={INPUT_STYLE} />
+                        </FormControl>
+                        <FormMessage className="text-red-500 text-[10px]" />
+                      </FormItem>
+                    )} />
+                    <FormField control={form.control as any} name="costPrice" render={({ field }) => (
+                      <FormItem className="space-y-0">
+                        <FormLabel className={LABEL_STYLE}>
+                          <Coins size={12} className="text-pink-500" /> Maliyet
+                        </FormLabel>
+                        <FormControl>
+                          <Input type="number" {...field} className={INPUT_STYLE} />
+                        </FormControl>
+                        <FormMessage className="text-red-500 text-[10px]" />
+                      </FormItem>
+                    )} />
+                  </div>
 
-                {/* HESAPLAMA ÖZETİ KARTI */}
-                <div className="bg-slate-100 dark:bg-slate-800 p-4 rounded-lg space-y-2 border border-slate-200 dark:border-slate-700">
-                  <div className="flex items-center gap-2 text-sm font-semibold text-pink-600">
-                    <Calculator size={16} /> Hesaplama Özeti
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span>Son Fiyat:</span>
-                    <span className="font-bold">{formatPrice(calculations.final, values.currency)}</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span>Kar Tutarı:</span>
-                    <span className={calculations.profit.amount >= 0 ? "text-green-600" : "text-red-600"}>
-                      {formatPrice(calculations.profit.amount, values.currency)}
-                    </span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span>Kar Marjı:</span>
-                    <span className={calculations.profit.percentage >= 0 ? "text-green-600" : "text-red-600"}>
-                      %{calculations.profit.percentage.toFixed(2)}
-                    </span>
+                  <div className="grid grid-cols-3 gap-3">
+                    <FormField control={form.control as any} name="discount1" render={({ field }) => (
+                      <FormItem className="space-y-0">
+                        <FormLabel className={LABEL_STYLE}>
+                          <Percent size={12} className="text-pink-500" /> İsk. 1 (%)
+                        </FormLabel>
+                        <FormControl><Input type="number" {...field} className={INPUT_STYLE} /></FormControl>
+                      </FormItem>
+                    )} />
+                    <FormField control={form.control as any} name="discount2" render={({ field }) => (
+                      <FormItem className="space-y-0">
+                        <FormLabel className={LABEL_STYLE}>
+                          <Percent size={12} className="text-pink-500" /> İsk. 2 (%)
+                        </FormLabel>
+                        <FormControl><Input type="number" {...field} className={INPUT_STYLE} /></FormControl>
+                      </FormItem>
+                    )} />
+                    <FormField control={form.control as any} name="discount3" render={({ field }) => (
+                      <FormItem className="space-y-0">
+                        <FormLabel className={LABEL_STYLE}>
+                          <Percent size={12} className="text-pink-500" /> İsk. 3 (%)
+                        </FormLabel>
+                        <FormControl><Input type="number" {...field} className={INPUT_STYLE} /></FormControl>
+                      </FormItem>
+                    )} />
                   </div>
                 </div>
               </div>
-            </div>
+            </form>
+          </Form>
+        </div>
 
-            <DialogFooter className="flex justify-between items-center w-full">
-              <div>
-                {productPricing && onDelete && (
-                  <Button type="button" variant="destructive" onClick={() => onDelete(productPricing.id)}>
-                    <Trash2 size={16} className="mr-2" /> Sil
-                  </Button>
-                )}
-              </div>
-              <div className="flex gap-2">
-                <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>İptal</Button>
-                <Button type="submit" disabled={isLoading}>Kaydet</Button>
-              </div>
-            </DialogFooter>
-
-          </form>
-        </Form>
-
-        {/* Ürün Seçim Dialogu */}
-        <ProductSelectDialog 
-          open={productDialogOpen} 
-          onOpenChange={setProductDialogOpen}
-          onSelect={(product) => {
-            form.setValue('erpProductCode', product.code);
-            form.setValue('erpGroupCode', product.groupCode || '');
-            setProductDialogOpen(false);
-          }}
-        />
+        <DialogFooter className="border-t border-slate-100 dark:border-white/5 px-6 py-5 bg-white/80 dark:bg-[#130822]/90 backdrop-blur-md shrink-0 flex items-center justify-between w-full">
+          {productPricing && onDelete ? (
+            <Button 
+              type="button" 
+              variant="destructive" 
+              onClick={() => onDelete(productPricing.id)}
+              disabled={isLoading}
+              className="bg-red-500/10 text-red-500 hover:bg-red-500/20 border-0"
+            >
+              <Trash2 size={16} className="mr-2" /> Sil
+            </Button>
+          ) : <div />}
+          
+          <div className="flex items-center gap-2">
+            <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isLoading}>
+              İptal
+            </Button>
+            <Button onClick={form.handleSubmit(onSubmit)} disabled={isLoading} className="bg-gradient-to-r from-pink-600 to-indigo-600 text-white border-0 hover:from-pink-700 hover:to-indigo-700">
+              <Save size={16} className="mr-2" />
+              {isLoading ? 'Kaydediliyor...' : 'Kaydet'}
+            </Button>
+          </div>
+        </DialogFooter>
       </DialogContent>
+
+      <ProductSelectDialog
+        open={productDialogOpen}
+        onOpenChange={setProductDialogOpen}
+        onSelect={(product) => {
+          const p = product as any;
+          form.setValue('erpProductCode', product.code);
+          form.setValue('erpGroupCode', product.groupCode || '');
+          form.setValue('currency', p.currency || 'TRY');
+          form.setValue('listPrice', p.listPrice || 0);
+          setProductDialogOpen(false);
+        }}
+      />
     </Dialog>
   );
 }
