@@ -15,6 +15,7 @@ import type {
   QuotationLineGetDto,
   ApprovalStatus,
   ApprovalScopeUserDto,
+  QuotationApprovalFlowReportDto,
 } from '../types/quotation-types';
 
 export const quotationApi = {
@@ -411,6 +412,16 @@ export const quotationApi = {
         stepOrder: (r.stepOrder as number) ?? (r.StepOrder as number) ?? 0,
       };
     });
+  },
+
+  getApprovalFlowReport: async (quotationId: number): Promise<QuotationApprovalFlowReportDto> => {
+    const response = await api.get<ApiResponse<QuotationApprovalFlowReportDto>>(
+      `/api/Quotation/${quotationId}/approval-flow-report`
+    );
+    if (response.success && response.data) {
+      return response.data;
+    }
+    throw new Error(response.message || 'Onay akışı raporu yüklenemedi');
   },
 
   createRevisionOfQuotation: async (quotationId: number): Promise<ApiResponse<QuotationGetDto>> => {

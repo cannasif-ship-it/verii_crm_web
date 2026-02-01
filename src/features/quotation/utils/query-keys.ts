@@ -15,6 +15,7 @@ export const QUOTATION_QUERY_KEYS = {
   QUOTATION_EXCHANGE_RATES: 'quotation.exchangeRates',
   QUOTATION_LINES: 'quotation.lines',
   RELATED_USERS: 'quotation.relatedUsers',
+  APPROVAL_FLOW_REPORT: 'quotation.approvalFlowReport',
 } as const;
 
 export const queryKeys = {
@@ -35,4 +36,5 @@ export const queryKeys = {
   quotationExchangeRates: (quotationId: number) => [QUOTATION_QUERY_KEYS.QUOTATION_EXCHANGE_RATES, quotationId] as const,
   quotationLines: (quotationId: number) => [QUOTATION_QUERY_KEYS.QUOTATION_LINES, quotationId] as const,
   relatedUsers: (userId: number) => [QUOTATION_QUERY_KEYS.RELATED_USERS, userId] as const,
+  approvalFlowReport: (quotationId: number) => [QUOTATION_QUERY_KEYS.APPROVAL_FLOW_REPORT, quotationId] as const,
 };
