@@ -23,6 +23,7 @@ import {
 } from '@/components/ui/form';
 import { customerTypeFormSchema, type CustomerTypeFormSchema } from '../types/customer-type-types';
 import type { CustomerTypeDto } from '../types/customer-type-types';
+import { Tag, FileText } from 'lucide-react';
 
 interface CustomerTypeFormProps {
   open: boolean;
@@ -52,7 +53,7 @@ const INPUT_STYLE = `
   transition-all duration-200
 `;
 
-const LABEL_STYLE = "text-[11px] text-slate-500 dark:text-slate-400 uppercase tracking-wider font-bold ml-1 mb-1.5 block";
+const LABEL_STYLE = "text-[11px] text-slate-500 dark:text-slate-400 uppercase tracking-wider font-bold ml-1 mb-1.5 block flex items-center gap-1.5";
 
 export function CustomerTypeForm({
   open,
@@ -95,12 +96,13 @@ export function CustomerTypeForm({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-white dark:bg-[#130822] border border-slate-100 dark:border-white/10 text-slate-900 dark:text-white max-w-lg shadow-2xl shadow-slate-200/50 dark:shadow-black/50 sm:rounded-2xl max-h-[90vh] h-auto flex flex-col gap-0 p-0 overflow-hidden transition-colors duration-300">
+      {/* Modal Genişletildi: max-w-lg -> max-w-xl */}
+      <DialogContent className="bg-white dark:bg-[#130822] border border-slate-100 dark:border-white/10 text-slate-900 dark:text-white max-w-xl shadow-2xl shadow-slate-200/50 dark:shadow-black/50 sm:rounded-2xl max-h-[90vh] h-auto flex flex-col gap-0 p-0 overflow-hidden transition-colors duration-300">
         
         <DialogHeader className="border-b border-slate-100 dark:border-white/5 px-6 py-5 bg-white/80 dark:bg-[#130822]/90 backdrop-blur-md shrink-0 flex-row items-center justify-between space-y-0">
           <div className="flex items-center gap-3">
              <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-pink-500/20 to-orange-500/20 border border-pink-500/10 flex items-center justify-center text-pink-500 shrink-0">
-               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2H2v10l9.29 9.29c.94.94 2.48.94 3.42 0l6.58-6.58c.94-.94.94-2.48 0-3.42L12 2Z"/><path d="M7 7h.01"/></svg>
+               <Tag size={20} />
              </div>
              <div>
                 <DialogTitle className="text-lg font-bold text-slate-900 dark:text-white">
@@ -119,7 +121,7 @@ export function CustomerTypeForm({
 
         <div className="flex-1 overflow-y-auto p-6 custom-scrollbar">
           <Form {...form}>
-            <form id="customer-type-form" onSubmit={form.handleSubmit(handleSubmit)} className="space-y-5">
+            <form id="customer-type-form" onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
               
               <FormField
                 control={form.control}
@@ -127,6 +129,7 @@ export function CustomerTypeForm({
                 render={({ field }) => (
                   <FormItem className="space-y-0">
                     <FormLabel className={LABEL_STYLE}>
+                      <Tag size={12} className="text-pink-500" />
                       {t('customerTypeManagement.form.name', 'Müşteri Tipi Adı')}
                     </FormLabel>
                     <FormControl>
@@ -148,6 +151,7 @@ export function CustomerTypeForm({
                 render={({ field }) => (
                   <FormItem className="space-y-0">
                     <FormLabel className={LABEL_STYLE}>
+                      <FileText size={12} className="text-pink-500" />
                       {t('customerTypeManagement.form.description', 'Açıklama')}
                     </FormLabel>
                     <FormControl>
@@ -156,7 +160,7 @@ export function CustomerTypeForm({
                         className={`${INPUT_STYLE} h-auto min-h-[120px] py-3`}
                         placeholder={t('customerTypeManagement.form.descriptionPlaceholder', 'Açıklama girin (opsiyonel)')}
                         maxLength={500}
-                        rows={4}
+                        rows={5}
                       />
                     </FormControl>
                     <FormMessage className="text-red-500 text-[10px] mt-1" />
