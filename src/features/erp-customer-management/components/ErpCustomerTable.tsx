@@ -1,4 +1,4 @@
-import { type ReactElement } from 'react';
+import { type ReactElement, useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Table,
@@ -8,15 +8,79 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { 
+    DropdownMenu, 
+    DropdownMenuCheckboxItem, 
+    DropdownMenuContent, 
+    DropdownMenuTrigger,
+    DropdownMenuLabel,
+    DropdownMenuSeparator
+} from '@/components/ui/dropdown-menu';
+import { Button } from '@/components/ui/button';
+import { ArrowUpDown, ChevronDown, EyeOff, ArrowUp, ArrowDown } from 'lucide-react';
 import type { CariDto } from '@/services/erp-types';
 
 interface ErpCustomerTableProps {
   customers: CariDto[];
   isLoading: boolean;
 }
+const getColumnsConfig = (t: any) => [
+    { key: 'subeKodu', label: t('erpCustomerManagement.table.branchCode', 'Şube'), className: 'font-medium whitespace-nowrap' },
+    { key: 'isletmeKodu', label: t('erpCustomerManagement.table.businessUnitCode', 'İş Birimi'), className: 'whitespace-nowrap' },
+    { key: 'cariKod', label: t('erpCustomerManagement.table.customerCode', 'Müşteri Kodu'), className: 'font-semibold text-slate-900 dark:text-white group-hover:text-pink-600 dark:group-hover:text-pink-400 transition-colors whitespace-nowrap' },
+    { key: 'cariIsim', label: t('erpCustomerManagement.table.customerName', 'Müşteri Adı'), className: 'text-slate-800 dark:text-slate-200 font-medium min-w-[200px]' },
+    { key: 'cariTel', label: t('erpCustomerManagement.table.phone', 'Telefon'), className: 'whitespace-nowrap' },
+    { key: 'email', label: t('erpCustomerManagement.table.email', 'E-posta'), className: 'min-w-[200px] break-all' },
+    { key: 'cariIl', label: t('erpCustomerManagement.table.city', 'Şehir'), className: 'whitespace-nowrap' },
+    { key: 'cariIlce', label: t('erpCustomerManagement.table.district', 'İlçe'), className: 'whitespace-nowrap' },
+    { key: 'cariAdres', label: t('erpCustomerManagement.table.address', 'Adres'), className: 'min-w-[300px] leading-relaxed' },
+    { key: 'ulkeKodu', label: t('erpCustomerManagement.table.countryCode', 'Ülke'), className: '' },
+    { key: 'web', label: t('erpCustomerManagement.table.website', 'Web Sitesi'), className: 'text-blue-500 hover:underline min-w-[150px] break-all', isLink: true },
+    { key: 'vergiNumarasi', label: t('erpCustomerManagement.table.taxNumber', 'Vergi No'), className: 'font-mono text-xs whitespace-nowrap' },
+    { key: 'vergiDairesi', label: t('erpCustomerManagement.table.taxOffice', 'Vergi Dairesi'), className: 'whitespace-nowrap' },
+    { key: 'tcknNumber', label: t('erpCustomerManagement.table.tcknNumber', 'TCKN'), className: 'font-mono text-xs whitespace-nowrap' },
+];
 
 export function ErpCustomerTable({ customers, isLoading }: ErpCustomerTableProps): ReactElement {
   const { t } = useTranslation();
+
+  const [sortConfig, setSortConfig] = useState<{ key: keyof CariDto | string; direction: 'asc' | 'desc' } | null>(null);
+  
+  const allColumns = getColumnsConfig(t);
+  const [visibleColumns, setVisibleColumns] = useState<string[]>(allColumns.map(col => col.key));
+
+  const sortedCustomers = useMemo(() => {
+    if (!sortConfig) return customers;
+
+    return [...customers].sort((a: CariDto, b: CariDto) => {
+      const key = sortConfig.key as keyof CariDto;
+      
+      const aValue = a[key] ? String(a[key]).toLowerCase() : '';
+      const bValue = b[key] ? String(b[key]).toLowerCase() : '';
+
+      if (aValue < bValue) {
+        return sortConfig.direction === 'asc' ? -1 : 1;
+      }
+      if (aValue > bValue) {
+        return sortConfig.direction === 'asc' ? 1 : -1;
+      }
+      return 0;
+    });
+  }, [customers, sortConfig]);
+
+  const handleSort = (key: string) => {
+    let direction: 'asc' | 'desc' = 'asc';
+    if (sortConfig && sortConfig.key === key && sortConfig.direction === 'asc') {
+      direction = 'desc';
+    }
+    setSortConfig({ key, direction });
+  };
+
+  const toggleColumn = (key: string) => {
+    setVisibleColumns(prev => 
+      prev.includes(key) ? prev.filter(c => c !== key) : [...prev, key]
+    );
+  };
 
   if (isLoading) {
     return (
@@ -41,20 +105,17 @@ export function ErpCustomerTable({ customers, isLoading }: ErpCustomerTableProps
     );
   }
 
-  // Başlıklar tek satır kalsın, alta geçmesin
   const headStyle = `
     text-slate-500 dark:text-slate-400 
     font-bold text-xs uppercase tracking-wider 
-    py-5 px-5 
+    py-4 px-5 
     hover:text-pink-600 dark:hover:text-pink-400 
-    transition-colors cursor-default 
+    transition-colors cursor-pointer select-none
     border-r border-slate-200 dark:border-white/[0.03] last:border-r-0
     whitespace-nowrap bg-slate-50/90 dark:bg-[#130822]/90
     text-left
   `;
 
-  // Hücrelerde 'whitespace-nowrap' kaldırdık, böylece metin aşağıya akar (wrap olur).
-  // 'align-top' ekledik ki çok satırlı verilerde yazı yukarıda dursun, ortada kalmasın.
   const cellStyle = `
     text-slate-600 dark:text-slate-400 
     px-5 py-4
@@ -63,69 +124,91 @@ export function ErpCustomerTable({ customers, isLoading }: ErpCustomerTableProps
   `;
 
   return (
-    <div className="rounded-xl border border-slate-200 dark:border-white/10 overflow-hidden bg-white/40 dark:bg-[#1a1025]/40 backdrop-blur-sm min-h-[75vh] flex flex-col shadow-sm">
-      <div className="flex-1 overflow-auto custom-scrollbar">
-        <Table>
-          <TableHeader className="sticky top-0 z-20 shadow-sm">
-            <TableRow className="hover:bg-transparent border-b border-slate-200 dark:border-white/10">
-              <TableHead className={headStyle}>{t('erpCustomerManagement.table.branchCode', 'Şube')}</TableHead>
-              <TableHead className={headStyle}>{t('erpCustomerManagement.table.businessUnitCode', 'İş Birimi')}</TableHead>
-              <TableHead className={headStyle}>{t('erpCustomerManagement.table.customerCode', 'Müşteri Kodu')}</TableHead>
-              <TableHead className={headStyle}>{t('erpCustomerManagement.table.customerName', 'Müşteri Adı')}</TableHead>
-              <TableHead className={headStyle}>{t('erpCustomerManagement.table.phone', 'Telefon')}</TableHead>
-              <TableHead className={headStyle}>{t('erpCustomerManagement.table.email', 'E-posta')}</TableHead>
-              <TableHead className={headStyle}>{t('erpCustomerManagement.table.city', 'Şehir')}</TableHead>
-              <TableHead className={headStyle}>{t('erpCustomerManagement.table.district', 'İlçe')}</TableHead>
-              <TableHead className={headStyle}>{t('erpCustomerManagement.table.address', 'Adres')}</TableHead>
-              <TableHead className={headStyle}>{t('erpCustomerManagement.table.countryCode', 'Ülke')}</TableHead>
-              <TableHead className={headStyle}>{t('erpCustomerManagement.table.website', 'Web Sitesi')}</TableHead>
-              <TableHead className={headStyle}>{t('erpCustomerManagement.table.taxNumber', 'Vergi No')}</TableHead>
-              <TableHead className={headStyle}>{t('erpCustomerManagement.table.taxOffice', 'Vergi Dairesi')}</TableHead>
-              <TableHead className={headStyle}>{t('erpCustomerManagement.table.tcknNumber', 'TCKN')}</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {customers.map((customer, index) => (
-              <TableRow 
-                key={`${customer.cariKod}-${customer.subeKodu}-${index}`}
-                className="border-b border-slate-100 dark:border-white/5 transition-colors duration-200 hover:bg-pink-50/40 dark:hover:bg-pink-500/5 group last:border-0"
-              >
-                <TableCell className={`${cellStyle} font-medium whitespace-nowrap`}>{customer.subeKodu}</TableCell>
-                <TableCell className={`${cellStyle} whitespace-nowrap`}>{customer.isletmeKodu}</TableCell>
-                <TableCell className={`${cellStyle} font-semibold text-slate-900 dark:text-white group-hover:text-pink-600 dark:group-hover:text-pink-400 transition-colors whitespace-nowrap`}>
-                    {customer.cariKod}
-                </TableCell>
-                {/* Müşteri adı uzun olabilir, minimum genişlik verip wrap olmasını sağladık */}
-                <TableCell className={`${cellStyle} text-slate-800 dark:text-slate-200 font-medium min-w-[200px]`}>
-                    {customer.cariIsim || '-'}
-                </TableCell>
-                <TableCell className={`${cellStyle} whitespace-nowrap`}>{customer.cariTel || '-'}</TableCell>
-                
-                {/* E-posta alanı artık kesilmeyecek (min-w arttırıldı ve wrap aktif) */}
-                <TableCell className={`${cellStyle} min-w-[200px] break-all`}>
-                    {customer.email || '-'}
-                </TableCell>
-                
-                <TableCell className={`${cellStyle} whitespace-nowrap`}>{customer.cariIl || '-'}</TableCell>
-                <TableCell className={`${cellStyle} whitespace-nowrap`}>{customer.cariIlce || '-'}</TableCell>
-                
-                {/* Adres alanı için truncate kaldırıldı, genişlik arttırıldı */}
-                <TableCell className={`${cellStyle} min-w-[300px] leading-relaxed`}>
-                    {customer.cariAdres || '-'}
-                </TableCell>
-                
-                <TableCell className={cellStyle}>{customer.ulkeKodu || '-'}</TableCell>
-                <TableCell className={`${cellStyle} text-blue-500 hover:underline min-w-[150px] break-all`}>
-                    {customer.web ? <a href={customer.web} target="_blank" rel="noreferrer">{customer.web}</a> : '-'}
-                </TableCell>
-                <TableCell className={`${cellStyle} font-mono text-xs whitespace-nowrap`}>{customer.vergiNumarasi || '-'}</TableCell>
-                <TableCell className={`${cellStyle} whitespace-nowrap`}>{customer.vergiDairesi || '-'}</TableCell>
-                <TableCell className={`${cellStyle} font-mono text-xs whitespace-nowrap`}>{customer.tcknNumber || '-'}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </div>
+    <div className="flex flex-col gap-4">
+        <div className="flex justify-end p-2 sm:p-0">
+            <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                    <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="ml-auto h-9 lg:flex border-dashed border-slate-300 dark:border-white/20 bg-transparent hover:bg-slate-50 dark:hover:bg-white/5 text-xs sm:text-sm"
+                    >
+                        <EyeOff className="mr-2 h-4 w-4" />
+                        {t('erpCustomerManagement.table.editColumns')}
+                        <ChevronDown className="ml-2 h-4 w-4" />
+                    </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent 
+                    align="end" 
+                    className="w-56 max-h-[400px] overflow-y-auto bg-white/95 dark:bg-[#1a1025]/95 backdrop-blur-xl border border-slate-200 dark:border-white/10 shadow-xl rounded-xl p-2 z-50"
+                >
+                    <DropdownMenuLabel className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider px-2 py-1.5">
+                        {t('erpCustomerManagement.table.visibleColumns')}
+                    </DropdownMenuLabel>
+                    <DropdownMenuSeparator className="bg-slate-200 dark:bg-white/10 my-1" />
+                    
+                    {allColumns.map((col) => (
+                        <DropdownMenuCheckboxItem
+                            key={col.key}
+                            checked={visibleColumns.includes(col.key)}
+                            onSelect={(e) => e.preventDefault()} 
+                            onCheckedChange={() => toggleColumn(col.key)}
+                            className="text-sm text-slate-700 dark:text-slate-200 focus:bg-pink-50 dark:focus:bg-pink-500/10 focus:text-pink-600 dark:focus:text-pink-400 cursor-pointer rounded-lg px-2 py-1.5 pl-8 relative"
+                        >
+                            {col.label}
+                        </DropdownMenuCheckboxItem>
+                    ))}
+                </DropdownMenuContent>
+            </DropdownMenu>
+        </div>
+
+        <div className="rounded-xl border border-slate-200 dark:border-white/10 overflow-hidden bg-white/40 dark:bg-[#1a1025]/40 backdrop-blur-sm min-h-[75vh] flex flex-col shadow-sm">
+            <div className="flex-1 overflow-auto custom-scrollbar w-full">
+                <Table className="min-w-full">
+                    <TableHeader className="sticky top-0 z-20 shadow-sm">
+                        <TableRow className="hover:bg-transparent border-b border-slate-200 dark:border-white/10">
+                            {allColumns.filter(col => visibleColumns.includes(col.key)).map((col) => (
+                                <TableHead 
+                                    key={col.key} 
+                                    className={headStyle}
+                                    onClick={() => handleSort(col.key)}
+                                >
+                                    <div className="flex items-center gap-2">
+                                        {col.label}
+                                        {sortConfig?.key === col.key ? (
+                                            sortConfig.direction === 'asc' ? <ArrowUp size={14} className="text-pink-500" /> : <ArrowDown size={14} className="text-pink-500" />
+                                        ) : (
+                                            <ArrowUpDown size={14} className="opacity-30 group-hover:opacity-100" />
+                                        )}
+                                    </div>
+                                </TableHead>
+                            ))}
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        {sortedCustomers.map((customer: CariDto, index: number) => (
+                        <TableRow 
+                            key={`${customer.cariKod}-${index}`}
+                            className="border-b border-slate-100 dark:border-white/5 transition-colors duration-200 hover:bg-pink-50/40 dark:hover:bg-pink-500/5 group last:border-0"
+                        >
+                            {allColumns.filter(col => visibleColumns.includes(col.key)).map((col) => {
+                                const cellKey = col.key as keyof CariDto;
+                                return (
+                                    <TableCell key={col.key} className={`${cellStyle} ${col.className}`}>
+                                        {col.isLink && customer[cellKey] ? (
+                                            <a href={String(customer[cellKey])} target="_blank" rel="noreferrer">{customer[cellKey]}</a>
+                                        ) : (
+                                            customer[cellKey] || '-'
+                                        )}
+                                    </TableCell>
+                                );
+                            })}
+                        </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+            </div>
+        </div>
     </div>
   );
 }
