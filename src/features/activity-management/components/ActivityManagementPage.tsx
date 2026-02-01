@@ -2,7 +2,7 @@ import { type ReactElement, useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router-dom';
 import { useUIStore } from '@/stores/ui-store';
-import { Plus, Search, RefreshCw, X } from 'lucide-react'; // İkon Eklendi
+import { Plus, Search, RefreshCw, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useQueryClient } from '@tanstack/react-query';
@@ -53,9 +53,6 @@ export function ActivityManagementPage(): ReactElement {
       newFilters.subject = searchTerm;
     }
     
-    // Aktif/Pasif filtresi
-    // Aktif -> Tamamlanmamış (isCompleted: false)
-    // Pasif -> Tamamlanmış (isCompleted: true)
     if (activeFilter === 'active') {
         newFilters.isCompleted = false;
     } else if (activeFilter === 'inactive') {
@@ -77,7 +74,6 @@ export function ActivityManagementPage(): ReactElement {
 
   const handleRefresh = async () => {
     setIsRefreshing(true);
-    // Query key tahmini: 'activities'
     await queryClient.invalidateQueries({ queryKey: ['activities'] });
     setTimeout(() => setIsRefreshing(false), 500);
   };
@@ -131,15 +127,15 @@ export function ActivityManagementPage(): ReactElement {
   };
 
   return (
-    <div className="w-full space-y-8 relative">
+    <div className="w-full space-y-6">
       
-      {/* Başlık ve Aksiyon Butonu */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-900 dark:text-white mb-1 transition-colors">
+      {/* Header Section */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-5 pt-2">
+        <div className="flex flex-col gap-2">
+          <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white transition-colors">
             {t('activityManagement.title', 'Aktivite Yönetimi')}
           </h1>
-          <p className="text-slate-500 dark:text-slate-400 text-xs font-medium transition-colors">
+          <p className="text-slate-500 dark:text-slate-400 text-sm font-medium transition-colors">
             {t('activityManagement.description', 'Aktiviteleri yönetin ve düzenleyin')}
           </p>
         </div>
@@ -153,9 +149,11 @@ export function ActivityManagementPage(): ReactElement {
         </Button>
       </div>
 
+      {/* Stats Section Placeholder (Eğer varsa buraya <ActivityStats /> gelecek) */}
+
       {/* Filter Section */}
-      <div className="bg-white/70 dark:bg-[#1a1025]/60 backdrop-blur-xl border border-white/60 dark:border-white/5 shadow-sm rounded-2xl p-4 flex flex-col md:flex-row items-center justify-between gap-4 transition-all duration-300">
-          <div className="flex items-center gap-2 w-full md:w-auto">
+      <div className="bg-white/70 dark:bg-[#1a1025]/60 backdrop-blur-xl border border-white/60 dark:border-white/5 shadow-sm rounded-2xl p-5 flex flex-col md:flex-row items-center justify-between gap-5 transition-all duration-300">
+          <div className="flex items-center gap-3 w-full md:w-auto">
             <div className="relative group w-full md:w-96">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-pink-500 transition-colors" />
               <Input
@@ -174,7 +172,7 @@ export function ActivityManagementPage(): ReactElement {
               )}
             </div>
             <div 
-              className="h-10 w-10 flex items-center justify-center bg-white/50 dark:bg-card/50 border border-slate-200 dark:border-white/10 rounded-xl cursor-pointer hover:border-pink-500/30 hover:bg-pink-50/50 dark:hover:bg-pink-500/10 transition-all group"
+              className="h-10 w-10 flex items-center justify-center bg-white/50 dark:bg-card/50 border border-slate-200 dark:border-white/10 rounded-xl cursor-pointer hover:border-pink-500/30 hover:bg-pink-50/50 dark:hover:bg-pink-500/10 transition-all group shrink-0"
               onClick={handleRefresh}
             >
               <RefreshCw 
@@ -202,7 +200,7 @@ export function ActivityManagementPage(): ReactElement {
           </div>
       </div>
 
-      {/* Tablo Alanı: Glassmorphism / Buzlu Cam Efekti */}
+      {/* Table Section */}
       <div className="bg-white/70 dark:bg-[#1a1025]/60 backdrop-blur-xl border border-white/60 dark:border-white/5 shadow-sm rounded-2xl p-6 transition-all duration-300">
         <ActivityTable
           onEdit={handleEdit}
@@ -216,7 +214,6 @@ export function ActivityManagementPage(): ReactElement {
         />
       </div>
 
-      {/* Form Dialog */}
       <ActivityForm
         open={formOpen}
         onOpenChange={setFormOpen}
