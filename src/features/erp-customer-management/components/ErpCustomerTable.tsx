@@ -21,11 +21,11 @@ export function ErpCustomerTable({ customers, isLoading }: ErpCustomerTableProps
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-20 min-h-[500px]">
-        <div className="flex flex-col items-center gap-2">
+        <div className="flex flex-col items-center gap-3">
            <div className="h-10 w-10 animate-spin rounded-full border-b-2 border-current text-pink-500" />
-           <div className="text-sm text-muted-foreground animate-pulse">
+           <span className="text-sm font-medium text-muted-foreground animate-pulse">
              {t('erpCustomerManagement.loading', 'Yükleniyor...')}
-           </div>
+           </span>
         </div>
       </div>
     );
@@ -34,7 +34,7 @@ export function ErpCustomerTable({ customers, isLoading }: ErpCustomerTableProps
   if (customers.length === 0) {
     return (
       <div className="flex items-center justify-center py-20 min-h-[500px]">
-        <div className="text-muted-foreground bg-slate-50 dark:bg-white/5 px-8 py-6 rounded-xl border border-dashed border-slate-200 dark:border-white/10">
+        <div className="text-muted-foreground bg-slate-50 dark:bg-white/5 px-8 py-6 rounded-xl border border-dashed border-slate-200 dark:border-white/10 text-sm font-medium">
           {t('erpCustomerManagement.noData', 'Müşteri bulunamadı')}
         </div>
       </div>
@@ -44,25 +44,26 @@ export function ErpCustomerTable({ customers, isLoading }: ErpCustomerTableProps
   const headStyle = `
     text-slate-500 dark:text-slate-400 
     font-bold text-xs uppercase tracking-wider 
-    py-4 px-4 
+    py-5 px-5 
     hover:text-pink-600 dark:hover:text-pink-400 
     transition-colors cursor-default 
-    border-r border-slate-200 dark:border-white/10 last:border-r-0
-    whitespace-nowrap
+    border-r border-slate-200 dark:border-white/[0.03] last:border-r-0
+    whitespace-nowrap bg-slate-50/90 dark:bg-[#130822]/90
   `;
 
   const cellStyle = `
     text-slate-600 dark:text-slate-400 
-    px-4 py-3 
-    border-r border-slate-100 dark:border-white/5 last:border-r-0
+    px-5 py-4
+    border-r border-slate-100 dark:border-white/[0.03] last:border-r-0
+    text-sm
   `;
 
   return (
-    <div className="rounded-xl border border-slate-200 dark:border-white/10 overflow-hidden bg-white/40 dark:bg-[#1a1025]/40 backdrop-blur-sm min-h-[75vh] flex flex-col">
+    <div className="rounded-xl border border-slate-200 dark:border-white/10 overflow-hidden bg-white/40 dark:bg-[#1a1025]/40 backdrop-blur-sm min-h-[75vh] flex flex-col shadow-sm">
       <div className="flex-1 overflow-auto custom-scrollbar">
         <Table>
-          <TableHeader className="bg-slate-50/80 dark:bg-[#130822]/80 border-b border-slate-200 dark:border-white/10 sticky top-0 z-10 backdrop-blur-md">
-            <TableRow className="hover:bg-transparent border-none">
+          <TableHeader className="sticky top-0 z-20 shadow-sm">
+            <TableRow className="hover:bg-transparent border-b border-slate-200 dark:border-white/10">
               <TableHead className={headStyle}>{t('erpCustomerManagement.table.branchCode', 'Şube')}</TableHead>
               <TableHead className={headStyle}>{t('erpCustomerManagement.table.businessUnitCode', 'İş Birimi')}</TableHead>
               <TableHead className={headStyle}>{t('erpCustomerManagement.table.customerCode', 'Müşteri Kodu')}</TableHead>
@@ -94,15 +95,15 @@ export function ErpCustomerTable({ customers, isLoading }: ErpCustomerTableProps
                 <TableCell className={`${cellStyle} whitespace-nowrap`}>{customer.cariTel || '-'}</TableCell>
                 <TableCell className={cellStyle}>{customer.cariIl || '-'}</TableCell>
                 <TableCell className={cellStyle}>{customer.cariIlce || '-'}</TableCell>
-                <TableCell className={`${cellStyle} max-w-[250px] truncate`} title={customer.cariAdres || ''}>
+                <TableCell className={`${cellStyle} max-w-[280px] truncate`} title={customer.cariAdres || ''}>
                     {customer.cariAdres || '-'}
                 </TableCell>
                 <TableCell className={cellStyle}>{customer.ulkeKodu || '-'}</TableCell>
                 <TableCell className={cellStyle}>{customer.email || '-'}</TableCell>
                 <TableCell className={cellStyle}>{customer.web || '-'}</TableCell>
-                <TableCell className={`${cellStyle} font-mono text-xs`}>{customer.vergiNumarasi || '-'}</TableCell>
+                <TableCell className={`${cellStyle} font-mono text-xs text-slate-500 dark:text-slate-400`}>{customer.vergiNumarasi || '-'}</TableCell>
                 <TableCell className={cellStyle}>{customer.vergiDairesi || '-'}</TableCell>
-                <TableCell className={`${cellStyle} font-mono text-xs`}>{customer.tcknNumber || '-'}</TableCell>
+                <TableCell className={`${cellStyle} font-mono text-xs text-slate-500 dark:text-slate-400`}>{customer.tcknNumber || '-'}</TableCell>
               </TableRow>
             ))}
           </TableBody>

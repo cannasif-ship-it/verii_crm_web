@@ -14,7 +14,6 @@ export function ErpCustomerManagementPage(): ReactElement {
   const { setPageTitle } = useUIStore();
   const { data: customers, isLoading } = useErpCustomers(null);
   
-  // State
   const [searchTerm, setSearchTerm] = useState('');
   const [activeFilter, setActiveFilter] = useState('all');
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -29,7 +28,6 @@ export function ErpCustomerManagementPage(): ReactElement {
     };
   }, [t, setPageTitle]);
 
-  // Filtering Logic
   useEffect(() => {
     if (!customers) {
       setFilteredCustomers([]);
@@ -38,7 +36,6 @@ export function ErpCustomerManagementPage(): ReactElement {
 
     let result = [...customers];
 
-    // Search Filter
     if (searchTerm) {
       const lowerSearch = searchTerm.toLowerCase();
       result = result.filter(c => 
@@ -47,10 +44,6 @@ export function ErpCustomerManagementPage(): ReactElement {
       );
     }
 
-    // Active/Passive Filter 
-    // ERP customers DTO usually doesn't have an isActive field exposed here.
-    // We implement the filter UI as requested, but currently 'active' shows all (or filtered by search),
-    // and 'inactive' shows empty list as we assume all fetched ERP customers are valid/active or we don't distinguish.
     if (activeFilter === 'inactive') {
         result = []; 
     }
@@ -69,23 +62,18 @@ export function ErpCustomerManagementPage(): ReactElement {
   };
 
   return (
-    <div className="w-full space-y-8 relative">
-      
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-900 dark:text-white mb-1 transition-colors">
-            {t('erpCustomerManagement.menu', 'ERP Müşteri')}
-          </h1>
-          <p className="text-slate-500 dark:text-slate-400 text-xs font-medium transition-colors">
-            {t('erpCustomerManagement.description', 'ERP sisteminden gelen müşteri listesi')}
-          </p>
-        </div>
+    <div className="w-full space-y-6">
+      <div className="flex flex-col gap-2 pt-2">
+        <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white transition-colors">
+          {t('erpCustomerManagement.menu', 'ERP Müşteri')}
+        </h1>
+        <p className="text-slate-500 dark:text-slate-400 text-sm font-medium transition-colors">
+          {t('erpCustomerManagement.description', 'ERP sisteminden gelen müşteri listesi')}
+        </p>
       </div>
 
-      {/* Filter Section */}
-      <div className="bg-white/70 dark:bg-[#1a1025]/60 backdrop-blur-xl border border-white/60 dark:border-white/5 shadow-sm rounded-2xl p-4 flex flex-col md:flex-row items-center justify-between gap-4 transition-all duration-300">
-          <div className="flex items-center gap-2 w-full md:w-auto">
+      <div className="bg-white/70 dark:bg-[#1a1025]/60 backdrop-blur-xl border border-white/60 dark:border-white/5 shadow-sm rounded-2xl p-5 flex flex-col md:flex-row items-center justify-between gap-5 transition-all duration-300">
+          <div className="flex items-center gap-3 w-full md:w-auto">
             <div className="relative group w-full md:w-96">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-pink-500 transition-colors" />
               <Input
@@ -104,7 +92,7 @@ export function ErpCustomerManagementPage(): ReactElement {
               )}
             </div>
             <div 
-              className="h-10 w-10 flex items-center justify-center bg-white/50 dark:bg-card/50 border border-slate-200 dark:border-white/10 rounded-xl cursor-pointer hover:border-pink-500/30 hover:bg-pink-50/50 dark:hover:bg-pink-500/10 transition-all group"
+              className="h-10 w-10 flex items-center justify-center bg-white/50 dark:bg-card/50 border border-slate-200 dark:border-white/10 rounded-xl cursor-pointer hover:border-pink-500/30 hover:bg-pink-50/50 dark:hover:bg-pink-500/10 transition-all group shrink-0"
               onClick={handleRefresh}
             >
               <RefreshCw 
@@ -135,7 +123,6 @@ export function ErpCustomerManagementPage(): ReactElement {
       <div className="bg-white/70 dark:bg-[#1a1025]/60 backdrop-blur-xl border border-white/60 dark:border-white/5 shadow-sm rounded-2xl p-6 transition-all duration-300">
         <ErpCustomerTable customers={filteredCustomers} isLoading={isLoading} />
       </div>
-      
     </div>
   );
 }
