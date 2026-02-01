@@ -15,6 +15,7 @@ export const DEMAND_QUERY_KEYS = {
   DEMAND_EXCHANGE_RATES: 'demand.exchangeRates',
   DEMAND_LINES: 'demand.lines',
   RELATED_USERS: 'demand.relatedUsers',
+  APPROVAL_FLOW_REPORT: 'demand.approvalFlowReport',
 } as const;
 
 export const queryKeys = {
@@ -35,4 +36,5 @@ export const queryKeys = {
   demandExchangeRates: (demandId: number) => [DEMAND_QUERY_KEYS.DEMAND_EXCHANGE_RATES, demandId] as const,
   demandLines: (demandId: number) => [DEMAND_QUERY_KEYS.DEMAND_LINES, demandId] as const,
   relatedUsers: (userId: number) => [DEMAND_QUERY_KEYS.RELATED_USERS, userId] as const,
+  approvalFlowReport: (demandId: number) => [DEMAND_QUERY_KEYS.APPROVAL_FLOW_REPORT, demandId] as const,
 };

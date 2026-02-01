@@ -15,6 +15,7 @@ import type {
   DemandLineGetDto,
   ApprovalStatus,
   ApprovalScopeUserDto,
+  DemandApprovalFlowReportDto,
 } from '../types/demand-types';
 
 export const demandApi = {
@@ -411,6 +412,16 @@ export const demandApi = {
         stepOrder: (r.stepOrder as number) ?? (r.StepOrder as number) ?? 0,
       };
     });
+  },
+
+  getApprovalFlowReport: async (demandId: number): Promise<DemandApprovalFlowReportDto> => {
+    const response = await api.get<ApiResponse<DemandApprovalFlowReportDto>>(
+      `/api/Demand/${demandId}/approval-flow-report`
+    );
+    if (response.success && response.data) {
+      return response.data;
+    }
+    throw new Error(response.message || 'Onay akışı raporu yüklenemedi');
   },
 
   createRevisionOfDemand: async (demandId: number): Promise<ApiResponse<DemandGetDto>> => {

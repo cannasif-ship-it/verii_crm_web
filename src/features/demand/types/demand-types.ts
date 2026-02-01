@@ -313,3 +313,32 @@ export interface ApprovalScopeUserDto {
   roleGroupName: string;
   stepOrder: number;
 }
+
+export interface ApprovalActionDetailDto {
+  userId: number;
+  userFullName: string | null;
+  userEmail: string | null;
+  status: number;
+  statusName: string;
+  actionDate: string | null;
+  rejectedReason: string | null;
+}
+
+export interface ApprovalFlowStepReportDto {
+  stepOrder: number;
+  stepName: string;
+  stepStatus: 'NotStarted' | 'InProgress' | 'Completed' | 'Rejected';
+  actions: ApprovalActionDetailDto[];
+}
+
+export interface DemandApprovalFlowReportDto {
+  demandId: number;
+  demandOfferNo: string | null;
+  hasApprovalRequest: boolean;
+  overallStatus: number | null;
+  overallStatusName: string | null;
+  currentStep: number;
+  flowDescription: string | null;
+  rejectedReason: string | null;
+  steps: ApprovalFlowStepReportDto[];
+}

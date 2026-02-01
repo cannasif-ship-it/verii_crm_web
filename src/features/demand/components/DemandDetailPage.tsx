@@ -14,7 +14,10 @@ import { useUserDiscountLimitsBySalesperson } from '../hooks/useUserDiscountLimi
 import { useCustomerOptions } from '@/features/customer-management/hooks/useCustomerOptions';
 import { useUIStore } from '@/stores/ui-store';
 import { Button } from '@/components/ui/button';
-import { Send, Calculator, Layers, Loader2 } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Send, Calculator, Layers, Loader2, FileCheck } from 'lucide-react';
+import { DemandApprovalFlowTab } from './DemandApprovalFlowTab';
+import { cn } from '@/lib/utils';
 import { createDemandSchema, type CreateDemandSchema } from '../schemas/demand-schema';
 import type { DemandLineFormState, DemandExchangeRateFormState, DemandBulkCreateDto, CreateDemandDto, PricingRuleLineGetDto, UserDiscountLimitDto } from '../types/demand-types';
 import { DemandHeaderForm } from './DemandHeaderForm';
@@ -49,6 +52,7 @@ export function DemandDetailPage(): ReactElement {
   const linesInitializedRef = useRef(false);
   const exchangeRatesInitializedRef = useRef(false);
   const formInitializedRef = useRef(false);
+  const [activeTab, setActiveTab] = useState('detail');
 
   const form = useForm<CreateDemandSchema>({
     resolver: zodResolver(createDemandSchema),
@@ -373,30 +377,55 @@ export function DemandDetailPage(): ReactElement {
 
   return (
     <div className="w-full space-y-8 relative pb-10">
-      <FormProvider {...form}>
-        <form onSubmit={handleFormSubmit} className="space-y-6">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <div>
-              <h2 className="text-2xl font-bold tracking-tight">
-                  {t('demand.detail.title', 'Teklif Detayı: {{offerNo}}', { offerNo: demand.offerNo || `#${demand.id}` })}
-              </h2>
-              <p className="text-muted-foreground text-sm">
-                  {t('demand.detail.subtitle', 'Teklif detaylarını görüntüleyin ve düzenleyin.')}
-              </p>
-            </div>
-          </div>
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div>
+          <h2 className="text-2xl font-bold tracking-tight">
+            {t('demand.detail.title', 'Talep Detayı: {{offerNo}}', { offerNo: demand.offerNo || `#${demand.id}` })}
+          </h2>
+          <p className="text-muted-foreground text-sm">
+            {t('demand.detail.subtitle', 'Talep detaylarını görüntüleyin ve düzenleyin.')}
+          </p>
+        </div>
+      </div>
 
-          <div className="flex flex-col gap-6">
-            <div className="space-y-1">
-                <div className="flex items-center gap-2 pb-2 mb-4 border-b border-zinc-200 dark:border-white/5">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <TabsList className="bg-muted/50 h-auto p-1 rounded-xl gap-1">
+          <TabsTrigger
+            value="detail"
+            className={cn(
+              'rounded-lg px-4 py-2 data-[state=active]:bg-background data-[state=active]:shadow-sm',
+              activeTab === 'detail' && 'text-pink-600 dark:text-pink-500 font-medium'
+            )}
+          >
+            <Layers className="h-4 w-4 mr-2" />
+            {t('demand.detail.tabDetail', 'Talep Bilgileri')}
+          </TabsTrigger>
+          <TabsTrigger
+            value="approval-flow"
+            className={cn(
+              'rounded-lg px-4 py-2 data-[state=active]:bg-background data-[state=active]:shadow-sm',
+              activeTab === 'approval-flow' && 'text-pink-600 dark:text-pink-500 font-medium'
+            )}
+          >
+            <FileCheck className="h-4 w-4 mr-2" />
+            {t('demand.detail.tabApprovalFlow', 'Onay Akışı')}
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="detail" className="mt-6 focus-visible:outline-none">
+          <FormProvider {...form}>
+            <form onSubmit={handleFormSubmit} className="space-y-6">
+              <div className="flex flex-col gap-6">
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2 pb-2 mb-4 border-b border-zinc-200 dark:border-white/5">
                     <div className="p-2 rounded-lg bg-blue-100 dark:bg-blue-900/20 text-blue-600">
-                        <Layers className="h-5 w-5" />
+                      <Layers className="h-5 w-5" />
                     </div>
                     <h3 className="text-lg font-semibold text-zinc-900 dark:text-white">
-                        {t('demand.header.title', 'Teklif Bilgileri')}
+                      {t('demand.header.title', 'Talep Bilgileri')}
                     </h3>
-                </div>
-                <DemandHeaderForm 
+                  </div>
+                  <DemandHeaderForm 
                     exchangeRates={exchangeRates}
                     onExchangeRatesChange={setExchangeRates}
                     lines={lines}
@@ -470,10 +499,15 @@ export function DemandDetailPage(): ReactElement {
                 </Button>
               )}
             </div>
+              </div>
+            </form>
+          </FormProvider>
+        </TabsContent>
 
-          </div>
-        </form>
-      </FormProvider>
+        <TabsContent value="approval-flow" className="mt-6 focus-visible:outline-none">
+          <DemandApprovalFlowTab demandId={demandId} />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
