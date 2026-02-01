@@ -41,6 +41,7 @@ export function ErpCustomerTable({ customers, isLoading }: ErpCustomerTableProps
     );
   }
 
+  // Başlıklar tek satır kalsın, alta geçmesin
   const headStyle = `
     text-slate-500 dark:text-slate-400 
     font-bold text-xs uppercase tracking-wider 
@@ -49,13 +50,16 @@ export function ErpCustomerTable({ customers, isLoading }: ErpCustomerTableProps
     transition-colors cursor-default 
     border-r border-slate-200 dark:border-white/[0.03] last:border-r-0
     whitespace-nowrap bg-slate-50/90 dark:bg-[#130822]/90
+    text-left
   `;
 
+  // Hücrelerde 'whitespace-nowrap' kaldırdık, böylece metin aşağıya akar (wrap olur).
+  // 'align-top' ekledik ki çok satırlı verilerde yazı yukarıda dursun, ortada kalmasın.
   const cellStyle = `
     text-slate-600 dark:text-slate-400 
     px-5 py-4
     border-r border-slate-100 dark:border-white/[0.03] last:border-r-0
-    text-sm
+    text-sm align-top
   `;
 
   return (
@@ -69,11 +73,11 @@ export function ErpCustomerTable({ customers, isLoading }: ErpCustomerTableProps
               <TableHead className={headStyle}>{t('erpCustomerManagement.table.customerCode', 'Müşteri Kodu')}</TableHead>
               <TableHead className={headStyle}>{t('erpCustomerManagement.table.customerName', 'Müşteri Adı')}</TableHead>
               <TableHead className={headStyle}>{t('erpCustomerManagement.table.phone', 'Telefon')}</TableHead>
+              <TableHead className={headStyle}>{t('erpCustomerManagement.table.email', 'E-posta')}</TableHead>
               <TableHead className={headStyle}>{t('erpCustomerManagement.table.city', 'Şehir')}</TableHead>
               <TableHead className={headStyle}>{t('erpCustomerManagement.table.district', 'İlçe')}</TableHead>
               <TableHead className={headStyle}>{t('erpCustomerManagement.table.address', 'Adres')}</TableHead>
               <TableHead className={headStyle}>{t('erpCustomerManagement.table.countryCode', 'Ülke')}</TableHead>
-              <TableHead className={headStyle}>{t('erpCustomerManagement.table.email', 'E-posta')}</TableHead>
               <TableHead className={headStyle}>{t('erpCustomerManagement.table.website', 'Web Sitesi')}</TableHead>
               <TableHead className={headStyle}>{t('erpCustomerManagement.table.taxNumber', 'Vergi No')}</TableHead>
               <TableHead className={headStyle}>{t('erpCustomerManagement.table.taxOffice', 'Vergi Dairesi')}</TableHead>
@@ -86,24 +90,37 @@ export function ErpCustomerTable({ customers, isLoading }: ErpCustomerTableProps
                 key={`${customer.cariKod}-${customer.subeKodu}-${index}`}
                 className="border-b border-slate-100 dark:border-white/5 transition-colors duration-200 hover:bg-pink-50/40 dark:hover:bg-pink-500/5 group last:border-0"
               >
-                <TableCell className={`${cellStyle} font-medium`}>{customer.subeKodu}</TableCell>
-                <TableCell className={cellStyle}>{customer.isletmeKodu}</TableCell>
-                <TableCell className={`${cellStyle} font-semibold text-slate-900 dark:text-white group-hover:text-pink-600 dark:group-hover:text-pink-400 transition-colors`}>
+                <TableCell className={`${cellStyle} font-medium whitespace-nowrap`}>{customer.subeKodu}</TableCell>
+                <TableCell className={`${cellStyle} whitespace-nowrap`}>{customer.isletmeKodu}</TableCell>
+                <TableCell className={`${cellStyle} font-semibold text-slate-900 dark:text-white group-hover:text-pink-600 dark:group-hover:text-pink-400 transition-colors whitespace-nowrap`}>
                     {customer.cariKod}
                 </TableCell>
-                <TableCell className={`${cellStyle} text-slate-800 dark:text-slate-200 font-medium whitespace-nowrap`}>{customer.cariIsim || '-'}</TableCell>
+                {/* Müşteri adı uzun olabilir, minimum genişlik verip wrap olmasını sağladık */}
+                <TableCell className={`${cellStyle} text-slate-800 dark:text-slate-200 font-medium min-w-[200px]`}>
+                    {customer.cariIsim || '-'}
+                </TableCell>
                 <TableCell className={`${cellStyle} whitespace-nowrap`}>{customer.cariTel || '-'}</TableCell>
-                <TableCell className={cellStyle}>{customer.cariIl || '-'}</TableCell>
-                <TableCell className={cellStyle}>{customer.cariIlce || '-'}</TableCell>
-                <TableCell className={`${cellStyle} max-w-[280px] truncate`} title={customer.cariAdres || ''}>
+                
+                {/* E-posta alanı artık kesilmeyecek (min-w arttırıldı ve wrap aktif) */}
+                <TableCell className={`${cellStyle} min-w-[200px] break-all`}>
+                    {customer.email || '-'}
+                </TableCell>
+                
+                <TableCell className={`${cellStyle} whitespace-nowrap`}>{customer.cariIl || '-'}</TableCell>
+                <TableCell className={`${cellStyle} whitespace-nowrap`}>{customer.cariIlce || '-'}</TableCell>
+                
+                {/* Adres alanı için truncate kaldırıldı, genişlik arttırıldı */}
+                <TableCell className={`${cellStyle} min-w-[300px] leading-relaxed`}>
                     {customer.cariAdres || '-'}
                 </TableCell>
+                
                 <TableCell className={cellStyle}>{customer.ulkeKodu || '-'}</TableCell>
-                <TableCell className={cellStyle}>{customer.email || '-'}</TableCell>
-                <TableCell className={cellStyle}>{customer.web || '-'}</TableCell>
-                <TableCell className={`${cellStyle} font-mono text-xs text-slate-500 dark:text-slate-400`}>{customer.vergiNumarasi || '-'}</TableCell>
-                <TableCell className={cellStyle}>{customer.vergiDairesi || '-'}</TableCell>
-                <TableCell className={`${cellStyle} font-mono text-xs text-slate-500 dark:text-slate-400`}>{customer.tcknNumber || '-'}</TableCell>
+                <TableCell className={`${cellStyle} text-blue-500 hover:underline min-w-[150px] break-all`}>
+                    {customer.web ? <a href={customer.web} target="_blank" rel="noreferrer">{customer.web}</a> : '-'}
+                </TableCell>
+                <TableCell className={`${cellStyle} font-mono text-xs whitespace-nowrap`}>{customer.vergiNumarasi || '-'}</TableCell>
+                <TableCell className={`${cellStyle} whitespace-nowrap`}>{customer.vergiDairesi || '-'}</TableCell>
+                <TableCell className={`${cellStyle} font-mono text-xs whitespace-nowrap`}>{customer.tcknNumber || '-'}</TableCell>
               </TableRow>
             ))}
           </TableBody>
