@@ -196,3 +196,12 @@ input:-webkit-autofill:active {
   caret-color: #ffffff;
   box-shadow: inset 0 0 20px 20px var(--card);
 }
+#root {
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
