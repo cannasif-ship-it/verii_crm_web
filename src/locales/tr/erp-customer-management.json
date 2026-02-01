@@ -17,6 +17,33 @@
     "website": "Web Sitesi",
     "taxNumber": "Vergi Numarası",
     "taxOffice": "Vergi Dairesi",
-    "tcknNumber": "TCKN Numarası"
+    "tcknNumber": "TCKN Numarası",
+    "visibleColumns": "Görünür Sütunlar",
+    "editColumns": "Sütunları Düzenle"
+  },
+  "filterLabels": {
+    "branchCode": "Şube Kodu",
+    "customerCode": "Müşteri Kodu",
+    "customerName": "Müşteri Adı",
+    "city": "Şehir",
+    "district": "İlçe",
+    "taxNumber": "Vergi No"
+  },
+  "placeholders": {
+    "quickSearch": "Hızlı Ara...",
+    "all": "Tümü",
+    "codeExample": "Örn: 120...",
+    "nameExample": "Müşteri ismi...",
+    "cityExample": "İl...",
+    "districtExample": "İlçe...",
+    "taxExample": "Vergi/TCKN..."
+  },
+  "actions": {
+    "detailedFilter": "Detaylı Filtre",
+    "clear": "Temizle",
+    "filter": "Filtrele",
+    "all": "TÜMÜ",
+    "active": "AKTİF",
+    "passive": "PASİF"
   }
 }

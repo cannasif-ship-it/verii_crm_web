@@ -17,6 +17,33 @@
     "website": "Website",
     "taxNumber": "Tax Number",
     "taxOffice": "Tax Office",
-    "tcknNumber": "TCKN Number"
+    "tcknNumber": "TCKN Number",
+    "visibleColumns": "Visible Columns",
+    "editColumns": "Edit Columns"
+  },
+  "filterLabels": {
+    "branchCode": "Branch Code",
+    "customerCode": "Customer Code",
+    "customerName": "Customer Name",
+    "city": "City",
+    "district": "District",
+    "taxNumber": "Tax Number"
+  },
+  "placeholders": {
+    "quickSearch": "Quick Search...",
+    "all": "All",
+    "codeExample": "Ex: 120...",
+    "nameExample": "Customer name...",
+    "cityExample": "City...",
+    "districtExample": "District...",
+    "taxExample": "Tax/TCKN..."
+  },
+  "actions": {
+    "detailedFilter": "Detailed Filter",
+    "clear": "Clear",
+    "filter": "Filter",
+    "all": "ALL",
+    "active": "ACTIVE",
+    "passive": "PASSIVE"
   }
 }

@@ -17,6 +17,33 @@
     "website": "Site Web",
     "taxNumber": "Numéro Fiscal",
     "taxOffice": "Administration Fiscale",
-    "tcknNumber": "Numéro TCKN"
+    "tcknNumber": "Numéro TCKN",
+    "visibleColumns": "Colonnes visibles",
+    "editColumns": "Modifier les colonnes"
+  },
+  "filterLabels": {
+    "branchCode": "Code Agence",
+    "customerCode": "Code Client",
+    "customerName": "Nom du Client",
+    "city": "Ville",
+    "district": "District",
+    "taxNumber": "Numéro Fiscal"
+  },
+  "placeholders": {
+    "quickSearch": "Recherche rapide...",
+    "all": "Tous",
+    "codeExample": "Ex: 120...",
+    "nameExample": "Nom du client...",
+    "cityExample": "Ville...",
+    "districtExample": "District...",
+    "taxExample": "Fiscal/TCKN..."
+  },
+  "actions": {
+    "detailedFilter": "Filtre détaillé",
+    "clear": "Effacer",
+    "filter": "Filtrer",
+    "all": "TOUS",
+    "active": "ACTIF",
+    "passive": "INACTIF"
   }
 }

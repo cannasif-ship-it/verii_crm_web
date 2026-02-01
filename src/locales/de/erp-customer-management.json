@@ -1,5 +1,5 @@
 {
-  "menu": "ERP Kunde",
+  "menu": "ERP Kunden",
   "description": "Kundenliste aus dem ERP-System",
   "loading": "Laden...",
   "noData": "Keine Kunden gefunden",
@@ -17,6 +17,33 @@
     "website": "Webseite",
     "taxNumber": "Steuernummer",
     "taxOffice": "Finanzamt",
-    "tcknNumber": "TCKN Nummer"
+    "tcknNumber": "TCKN Nummer",
+    "visibleColumns": "Sichtbare Spalten",
+    "editColumns": "Spalten bearbeiten"
+  },
+  "filterLabels": {
+    "branchCode": "Filialcode",
+    "customerCode": "Kundencode",
+    "customerName": "Kundenname",
+    "city": "Stadt",
+    "district": "Bezirk",
+    "taxNumber": "Steuernummer"
+  },
+  "placeholders": {
+    "quickSearch": "Schnellsuche...",
+    "all": "Alle",
+    "codeExample": "Bsp: 120...",
+    "nameExample": "Kundenname...",
+    "cityExample": "Stadt...",
+    "districtExample": "Bezirk...",
+    "taxExample": "Steuer/TCKN..."
+  },
+  "actions": {
+    "detailedFilter": "Detaillierter Filter",
+    "clear": "Leeren",
+    "filter": "Filtern",
+    "all": "ALLE",
+    "active": "AKTIV",
+    "passive": "PASSIV"
   }
 }

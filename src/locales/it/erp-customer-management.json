@@ -17,6 +17,33 @@
     "website": "Sito Web",
     "taxNumber": "Codice Fiscale",
     "taxOffice": "Ufficio Fiscale",
-    "tcknNumber": "Numero TCKN"
+    "tcknNumber": "Numero TCKN",
+    "visibleColumns": "Colonne Visibili",
+    "editColumns": "Modifica Colonne"
+  },
+  "filterLabels": {
+    "branchCode": "Codice Filiale",
+    "customerCode": "Codice Cliente",
+    "customerName": "Nome Cliente",
+    "city": "Città",
+    "district": "Distretto",
+    "taxNumber": "Codice Fiscale"
+  },
+  "placeholders": {
+    "quickSearch": "Ricerca rapida...",
+    "all": "Tutti",
+    "codeExample": "Es: 120...",
+    "nameExample": "Nome cliente...",
+    "cityExample": "Città...",
+    "districtExample": "Distretto...",
+    "taxExample": "Fiscale/TCKN..."
+  },
+  "actions": {
+    "detailedFilter": "Filtro Dettagliato",
+    "clear": "Pulisci",
+    "filter": "Filtra",
+    "all": "TUTTI",
+    "active": "ATTIVO",
+    "passive": "PASSIVO"
   }
 }

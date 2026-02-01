@@ -17,6 +17,33 @@
     "website": "الموقع الإلكتروني",
     "taxNumber": "الرقم الضريبي",
     "taxOffice": "مكتب الضرائب",
-    "tcknNumber": "رقم TCKN"
+    "tcknNumber": "رقم TCKN",
+    "visibleColumns": "الأعمدة المرئية",
+    "editColumns": "تعديل الأعمدة"
+  },
+  "filterLabels": {
+    "branchCode": "رمز الفرع",
+    "customerCode": "رمز العميل",
+    "customerName": "اسم العميل",
+    "city": "المدينة",
+    "district": "المنطقة",
+    "taxNumber": "الرقم الضريبي"
+  },
+  "placeholders": {
+    "quickSearch": "بحث سريع...",
+    "all": "الكل",
+    "codeExample": "مثال: 120...",
+    "nameExample": "اسم العميل...",
+    "cityExample": "المدينة...",
+    "districtExample": "المنطقة...",
+    "taxExample": "ضريبة/TCKN..."
+  },
+  "actions": {
+    "detailedFilter": "تصفية مفصلة",
+    "clear": "مسح",
+    "filter": "تصفية",
+    "all": "الكل",
+    "active": "نشط",
+    "passive": "غير نشط"
   }
 }
