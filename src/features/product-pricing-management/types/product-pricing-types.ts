@@ -1,5 +1,6 @@
 import { z } from 'zod';
 
+// --- DTO ---
 export interface ProductPricingGetDto {
   id: number;
   erpProductCode: string;
@@ -11,54 +12,11 @@ export interface ProductPricingGetDto {
   discount2?: number;
   discount3?: number;
   createdDate: string;
-  updatedDate?: string;
-  deletedDate?: string;
-  isDeleted: boolean;
-  createdBy?: number;
-  updatedBy?: number;
-  deletedBy?: number;
-  createdByFullUser?: string;
-  updatedByFullUser?: string;
-  deletedByFullUser?: string;
 }
 
 export interface CreateProductPricingDto {
   erpProductCode: string;
-  erpGroupCode: string;
-  currency: string;
-  listPrice: number;
-  costPrice: number;
-  discount1?: number;
-  discount2?: number;
-  discount3?: number;
-}
-
-export interface UpdateProductPricingDto {
-  erpProductCode: string;
-  erpGroupCode: string;
-  currency: string;
-  listPrice: number;
-  costPrice: number;
-  discount1?: number;
-  discount2?: number;
-  discount3?: number;
-}
-
-export interface ProductPricingListFilters {
-  erpProductCode?: string;
   erpGroupCode?: string;
-  currency?: string;
-  minListPrice?: number;
-  maxListPrice?: number;
-  minCostPrice?: number;
-  maxCostPrice?: number;
-  minDiscount?: number;
-  maxDiscount?: number;
-}
-
-export interface ProductPricingFormData {
-  erpProductCode: string;
-  erpGroupCode: string;
   currency: string;
   listPrice: number;
   costPrice: number;
@@ -67,113 +25,57 @@ export interface ProductPricingFormData {
   discount3?: number;
 }
 
+export interface UpdateProductPricingDto extends CreateProductPricingDto {
+  id: number;
+}
+
+// --- SCHEMA (Validasyon Hatalarını Önlemek İçin Esnek) ---
 export const productPricingFormSchema = z.object({
-  erpProductCode: z
-    .string()
-    .min(1, 'productPricingManagement.erpProductCodeRequired')
-    .max(50, 'productPricingManagement.erpProductCodeMaxLength'),
-  erpGroupCode: z
-    .string()
-    .min(1, 'productPricingManagement.erpGroupCodeRequired')
-    .max(50, 'productPricingManagement.erpGroupCodeMaxLength'),
-  currency: z
-    .string()
-    .min(1, 'productPricingManagement.currencyRequired')
-    .max(50, 'productPricingManagement.currencyMaxLength'),
-  listPrice: z
-    .number()
-    .min(0, 'productPricingManagement.listPriceMin'),
-  costPrice: z
-    .number()
-    .min(0, 'productPricingManagement.costPriceMin'),
-  discount1: z
-    .number()
-    .min(0, 'productPricingManagement.discount1Range')
-    .max(100, 'productPricingManagement.discount1Range')
-    .optional()
-    .nullable(),
-  discount2: z
-    .number()
-    .min(0, 'productPricingManagement.discount2Range')
-    .max(100, 'productPricingManagement.discount2Range')
-    .optional()
-    .nullable(),
-  discount3: z
-    .number()
-    .min(0, 'productPricingManagement.discount3Range')
-    .max(100, 'productPricingManagement.discount3Range')
-    .optional()
-    .nullable(),
+  erpProductCode: z.string().min(1, 'Stok kodu zorunludur'),
+  
+  // Grup kodu boş olabilir, zorunluluğu kaldırdım
+  erpGroupCode: z.string().optional().or(z.literal('')),
+  
+  currency: z.string().min(1, 'Para birimi seçiniz'),
+  
+  // Sayısal alanlar (String gelirse Number'a çeviriyoruz)
+  listPrice: z.preprocess((val) => Number(val), z.number().min(0, 'Fiyat 0 dan küçük olamaz')),
+  costPrice: z.preprocess((val) => Number(val), z.number().min(0, 'Maliyet 0 dan küçük olamaz')),
+  
+  // İskontolar boş gelebilir
+  discount1: z.preprocess((val) => (val === '' ? undefined : Number(val)), z.number().min(0).max(100).optional()),
+  discount2: z.preprocess((val) => (val === '' ? undefined : Number(val)), z.number().min(0).max(100).optional()),
+  discount3: z.preprocess((val) => (val === '' ? undefined : Number(val)), z.number().min(0).max(100).optional()),
 });
 
 export type ProductPricingFormSchema = z.infer<typeof productPricingFormSchema>;
 
+// --- SABİTLER (Hook yerine bunları kullanacağız) ---
 export const CURRENCIES = [
-  { value: 'TRY', label: 'Turkish Lira', symbol: '₺' },
-  { value: 'USD', label: 'US Dollar', symbol: '$' },
+  { value: 'TRY', label: 'Türk Lirası', symbol: '₺' },
+  { value: 'USD', label: 'ABD Doları', symbol: '$' },
   { value: 'EUR', label: 'Euro', symbol: '€' },
-  { value: 'GBP', label: 'British Pound', symbol: '£' },
-  { value: 'JPY', label: 'Japanese Yen', symbol: '¥' },
-  { value: 'CHF', label: 'Swiss Franc', symbol: 'CHF' },
-  { value: 'CAD', label: 'Canadian Dollar', symbol: 'C$' },
-  { value: 'AUD', label: 'Australian Dollar', symbol: 'A$' },
+  { value: 'GBP', label: 'Sterlin', symbol: '£' },
 ] as const;
 
-export const calculateFinalPrice = (
-  listPrice: number,
-  discount1?: number | null,
-  discount2?: number | null,
-  discount3?: number | null
-): number => {
-  let finalPrice = listPrice;
-  if (discount1) {
-    finalPrice = finalPrice * (1 - discount1 / 100);
-  }
-  if (discount2) {
-    finalPrice = finalPrice * (1 - discount2 / 100);
-  }
-  if (discount3) {
-    finalPrice = finalPrice * (1 - discount3 / 100);
-  }
-  return Math.max(0, finalPrice);
+// --- HESAPLAMA FONKSİYONLARI ---
+export const calculateFinalPrice = (price: number, d1?: number | null, d2?: number | null, d3?: number | null) => {
+  let final = Number(price) || 0;
+  if (d1) final = final * (1 - Number(d1) / 100);
+  if (d2) final = final * (1 - Number(d2) / 100);
+  if (d3) final = final * (1 - Number(d3) / 100);
+  return final > 0 ? final : 0;
 };
 
-export const calculateProfitMargin = (
-  listPrice: number,
-  costPrice: number,
-  discount1?: number | null,
-  discount2?: number | null,
-  discount3?: number | null
-): { percentage: number; amount: number } => {
-  const finalPrice = calculateFinalPrice(listPrice, discount1, discount2, discount3);
-  const profitAmount = finalPrice - costPrice;
-  const profitPercentage = costPrice > 0 ? (profitAmount / costPrice) * 100 : 0;
-  return { percentage: profitPercentage, amount: profitAmount };
+export const calculateProfitMargin = (finalPrice: number, cost: number) => {
+  const c = Number(cost) || 0;
+  const f = Number(finalPrice) || 0;
+  if (c <= 0) return { amount: f, percentage: 100 };
+  const profit = f - c;
+  return { amount: profit, percentage: (profit / c) * 100 };
 };
 
-export const getCurrencySymbol = (currency: string | number, exchangeRates?: Array<{ dovizTipi: number; dovizIsmi: string | null }>): string => {
-  if (exchangeRates) {
-    const currencyValue = typeof currency === 'string' ? parseInt(currency, 10) : currency;
-    const currencyData = exchangeRates.find((c) => c.dovizTipi === currencyValue);
-    return currencyData?.dovizIsmi || String(currency);
-  }
-  const currencyValue = typeof currency === 'string' ? currency : String(currency);
-  const currencyData = CURRENCIES.find((c) => c.value === currencyValue);
-  return currencyData?.symbol || currencyValue;
-};
-
-import i18n from '@/lib/i18n';
-
-export const formatPrice = (price: number, currency: string | number, exchangeRates?: Array<{ dovizTipi: number; dovizIsmi: string | null }>): string => {
-  const symbol = getCurrencySymbol(currency, exchangeRates);
-  
-  return new Intl.NumberFormat(i18n.language, {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  }).format(price) + ` ${symbol}`;
-};
-
-export const formatPercentage = (value: number | undefined | null): string => {
-  if (value === undefined || value === null) return '-';
-  return `${value.toFixed(2)}%`;
+export const formatPrice = (amount: number, currencyCode: string) => {
+  const symbol = CURRENCIES.find(c => c.value === currencyCode)?.symbol || currencyCode;
+  return new Intl.NumberFormat('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(amount) + ' ' + symbol;
 };

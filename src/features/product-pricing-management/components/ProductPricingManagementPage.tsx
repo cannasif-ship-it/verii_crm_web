@@ -3,15 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { useUIStore } from '@/stores/ui-store';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Search, Plus } from 'lucide-react';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
+import { Search, Plus, RefreshCw, X } from 'lucide-react';
+import { useQueryClient } from '@tanstack/react-query';
 import { ProductPricingTable } from './ProductPricingTable';
 import { ProductPricingForm } from './ProductPricingForm';
 import { useCreateProductPricing } from '../hooks/useCreateProductPricing';
@@ -33,9 +26,9 @@ export function ProductPricingManagementPage(): ReactElement {
   const [filters, setFilters] = useState<PagedFilter[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState('all');
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [itemToDelete, setItemToDelete] = useState<number | null>(null);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
+  const queryClient = useQueryClient();
   const createProductPricing = useCreateProductPricing();
   const updateProductPricing = useUpdateProductPricing();
   const deleteProductPricing = useDeleteProductPricing();
@@ -60,8 +53,6 @@ export function ProductPricingManagementPage(): ReactElement {
 
     if (activeFilter === 'active') {
       newFilters.push({ column: 'IsDeleted', operator: 'eq', value: 'false' });
-    } else if (activeFilter === 'critical') {
-      newFilters.push({ column: 'IsCriticalStock', operator: 'eq', value: 'true' });
     } else if (activeFilter === 'archive') {
       newFilters.push({ column: 'IsDeleted', operator: 'eq', value: 'true' });
     }
@@ -75,6 +66,16 @@ export function ProductPricingManagementPage(): ReactElement {
     setFormOpen(true);
   };
 
+  const clearSearch = () => {
+    setSearchQuery('');
+  };
+
+  const handleRefresh = async () => {
+    setIsRefreshing(true);
+    await queryClient.invalidateQueries({ queryKey: ['product-pricings'] });
+    setTimeout(() => setIsRefreshing(false), 500);
+  };
+
   const handleEdit = (productPricing: ProductPricingGetDto): void => {
     setEditingProductPricing(productPricing);
     setFormOpen(true);
@@ -85,6 +86,7 @@ export function ProductPricingManagementPage(): ReactElement {
       await updateProductPricing.mutateAsync({
         id: editingProductPricing.id,
         data: {
+          id: editingProductPricing.id,
           erpProductCode: data.erpProductCode,
           erpGroupCode: data.erpGroupCode,
           currency: data.currency,
@@ -111,19 +113,10 @@ export function ProductPricingManagementPage(): ReactElement {
     setEditingProductPricing(null);
   };
 
-  const handleDeleteClick = (id: number): void => {
-    setItemToDelete(id);
-    setDeleteDialogOpen(true);
-  };
-
-  const handleDeleteConfirm = async (): Promise<void> => {
-    if (itemToDelete) {
-      await deleteProductPricing.mutateAsync(itemToDelete);
-      setDeleteDialogOpen(false);
-      setItemToDelete(null);
+  const handleDeleteClick = async (id: number): Promise<void> => {
+      await deleteProductPricing.mutateAsync(id);
       setFormOpen(false);
       setEditingProductPricing(null);
-    }
   };
 
   const handleSortChange = (newSortBy: string, newSortDirection: 'asc' | 'desc'): void => {
@@ -133,16 +126,19 @@ export function ProductPricingManagementPage(): ReactElement {
   };
 
   return (
-    <div className="flex flex-col gap-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold">
-            {t('productPricingManagement.title', 'Ürün Fiyatlandırma Yönetimi')}
+    <div className="w-full space-y-6">
+      
+      {/* Header */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-5 pt-2">
+        <div className="flex flex-col gap-2">
+          <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white transition-colors">
+            {t('productPricingManagement.title', 'Ürün Fiyatlandırma')}
           </h1>
-          <p className="text-muted-foreground mt-1 text-sm">
-            {t('productPricingManagement.description', 'Ürün fiyatlandırmalarını yönetin ve düzenleyin')}
+          <p className="text-slate-500 dark:text-slate-400 text-sm font-medium transition-colors">
+            {t('productPricingManagement.description', 'Ürün fiyatlarını, maliyetlerini ve iskontolarını yönetin')}
           </p>
         </div>
+        
         <Button 
           onClick={handleAddClick}
           className="px-6 py-2 bg-gradient-to-r from-pink-600 to-orange-600 rounded-lg text-white text-sm font-bold shadow-lg shadow-pink-500/20 hover:scale-105 transition-transform border-0 hover:text-white"
@@ -152,36 +148,56 @@ export function ProductPricingManagementPage(): ReactElement {
         </Button>
       </div>
 
-      <div className="bg-white/70 dark:bg-[#1a1025]/60 backdrop-blur-xl border border-white/60 dark:border-white/5 shadow-sm rounded-2xl p-4 flex flex-col md:flex-row items-center justify-between gap-4 transition-all duration-300">
-        <div className="relative w-full md:w-96 group">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 group-focus-within:text-pink-500 transition-colors" size={18} />
-          <Input 
-            className="pl-10 h-10 bg-white/50 dark:bg-[#0c0516]/50 border-slate-200 dark:border-white/5 focus:border-pink-500/50 dark:focus:border-pink-500/50 rounded-xl transition-all" 
-            placeholder={t('productPricingManagement.searchPlaceholder', 'Ürün adı, SKU veya Kategori ara...')} 
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-        </div>
-        
-        <div className="flex items-center gap-2 overflow-x-auto w-full md:w-auto pb-2 md:pb-0 scrollbar-hide">
-           {['all', 'active', 'critical', 'archive'].map((filter) => (
-             <Button
-               key={filter}
-               variant="ghost"
-               onClick={() => setActiveFilter(filter)}
-               className={`
-                 rounded-lg px-4 h-9 text-xs font-bold uppercase tracking-wider transition-all
-                 ${activeFilter === filter 
-                   ? 'bg-pink-500/10 text-pink-600 dark:text-pink-400 border border-pink-500/20' 
-                   : 'text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white border border-transparent'}
-               `}
-             >
-               {t(`productPricingManagement.filter.${filter}`, filter === 'all' ? 'Tümü' : filter === 'active' ? 'Aktif' : filter === 'critical' ? 'Kritik Stok' : 'Arşiv')}
-             </Button>
-           ))}
-        </div>
+      {/* Filter Section */}
+      <div className="bg-white/70 dark:bg-[#1a1025]/60 backdrop-blur-xl border border-white/60 dark:border-white/5 shadow-sm rounded-2xl p-5 flex flex-col md:flex-row items-center justify-between gap-5 transition-all duration-300">
+          <div className="flex items-center gap-3 w-full md:w-auto">
+            <div className="relative group w-full md:w-96">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-pink-500 transition-colors" />
+              <Input
+                placeholder={t('productPricingManagement.searchPlaceholder', 'Ürün kodu veya grup ara...')}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10 h-10 bg-white/50 dark:bg-card/50 border-slate-200 dark:border-white/10 focus:border-pink-500/50 focus:ring-pink-500/20 rounded-xl transition-all"
+              />
+              {searchQuery && (
+                <button
+                  onClick={clearSearch}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 p-1 hover:bg-slate-100 dark:hover:bg-white/10 rounded-full transition-colors"
+                >
+                  <X size={14} className="text-slate-400" />
+                </button>
+              )}
+            </div>
+            <div 
+              className="h-10 w-10 flex items-center justify-center bg-white/50 dark:bg-card/50 border border-slate-200 dark:border-white/10 rounded-xl cursor-pointer hover:border-pink-500/30 hover:bg-pink-50/50 dark:hover:bg-pink-500/10 transition-all group shrink-0"
+              onClick={handleRefresh}
+            >
+              <RefreshCw 
+                size={18} 
+                className={`text-slate-500 dark:text-slate-400 group-hover:text-pink-600 dark:group-hover:text-pink-400 transition-colors ${isRefreshing ? 'animate-spin' : ''}`} 
+              />
+            </div>
+          </div>
+          <div className="flex items-center gap-2 overflow-x-auto w-full md:w-auto pb-2 md:pb-0 scrollbar-hide">
+             {['all', 'active', 'archive'].map((filter) => (
+               <Button
+                 key={filter}
+                 variant="ghost"
+                 onClick={() => setActiveFilter(filter)}
+                 className={`
+                   rounded-lg px-4 h-9 text-xs font-bold uppercase tracking-wider transition-all
+                   ${activeFilter === filter 
+                     ? 'bg-pink-500/10 text-pink-600 dark:text-pink-400 border border-pink-500/20' 
+                     : 'text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white border border-transparent'}
+                 `}
+               >
+                 {t(`productPricingManagement.filter.${filter}`, filter === 'all' ? 'Tümü' : filter === 'active' ? 'Aktif' : 'Arşiv')}
+               </Button>
+             ))}
+          </div>
       </div>
 
+      {/* Table Section */}
       <div className="bg-white/70 dark:bg-[#1a1025]/60 backdrop-blur-xl border border-white/60 dark:border-white/5 shadow-sm rounded-2xl p-6 transition-all duration-300">
         <ProductPricingTable
           onEdit={handleEdit}
@@ -201,30 +217,8 @@ export function ProductPricingManagementPage(): ReactElement {
         onSubmit={handleFormSubmit}
         onDelete={handleDeleteClick}
         productPricing={editingProductPricing}
-        isLoading={createProductPricing.isPending || updateProductPricing.isPending}
+        isLoading={createProductPricing.isPending || updateProductPricing.isPending || deleteProductPricing.isPending}
       />
-
-      <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>{t('productPricingManagement.deleteConfirmTitle', 'Silme Onayı')}</DialogTitle>
-            <DialogDescription>
-              {t('productPricingManagement.deleteConfirmMessage', 'Bu kaydı silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.')}
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setDeleteDialogOpen(false)}>
-              {t('productPricingManagement.cancel', 'İptal')}
-            </Button>
-            <Button
-              variant="destructive"
-              onClick={handleDeleteConfirm}
-            >
-              {t('productPricingManagement.delete', 'Sil')}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }
