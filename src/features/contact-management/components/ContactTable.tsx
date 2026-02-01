@@ -45,22 +45,29 @@ import {
 } from 'lucide-react';
 import { Alert02Icon } from 'hugeicons-react';
 
+export interface ColumnDef<T> {
+  key: keyof T;
+  label: string;
+  type: 'text' | 'email' | 'phone' | 'mobile' | 'date' | 'user' | 'customer' | 'title';
+  className?: string;
+}
+
 interface ContactTableProps {
   contacts: ContactDto[];
   isLoading: boolean;
   onEdit: (contact: ContactDto) => void;
 }
 
-const getColumnsConfig = (t: any) => [
-    { key: 'id', label: t('contactManagement.table.id', 'ID'), className: 'font-medium w-[80px]' },
-    { key: 'fullName', label: t('contactManagement.table.fullName', 'Ad Soyad'), className: 'font-semibold text-slate-900 dark:text-white min-w-[150px]' },
-    { key: 'email', label: t('contactManagement.table.email', 'E-posta'), className: 'min-w-[180px] break-all' },
-    { key: 'phone', label: t('contactManagement.table.phone', 'Telefon'), className: 'whitespace-nowrap' },
-    { key: 'mobile', label: t('contactManagement.table.mobile', 'Mobil'), className: 'whitespace-nowrap' },
-    { key: 'customerName', label: t('contactManagement.table.customer', 'Müşteri'), className: 'min-w-[200px]' },
-    { key: 'titleName', label: t('contactManagement.table.title', 'Ünvan'), className: 'min-w-[150px]' },
-    { key: 'createdDate', label: t('contactManagement.table.createdDate', 'Oluşturulma'), className: 'whitespace-nowrap' },
-    { key: 'createdByFullUser', label: t('contactManagement.table.createdBy', 'Oluşturan'), className: 'whitespace-nowrap' },
+const getColumnsConfig = (t: any): ColumnDef<ContactDto>[] => [
+    { key: 'id', label: t('contactManagement.table.id', 'ID'), type: 'text', className: 'font-medium w-[80px]' },
+    { key: 'fullName', label: t('contactManagement.table.fullName', 'Ad Soyad'), type: 'text', className: 'font-semibold text-slate-900 dark:text-white min-w-[150px]' },
+    { key: 'email', label: t('contactManagement.table.email', 'E-posta'), type: 'email', className: 'min-w-[180px] break-all' },
+    { key: 'phone', label: t('contactManagement.table.phone', 'Telefon'), type: 'phone', className: 'whitespace-nowrap' },
+    { key: 'mobile', label: t('contactManagement.table.mobile', 'Mobil'), type: 'mobile', className: 'whitespace-nowrap' },
+    { key: 'customerName', label: t('contactManagement.table.customer', 'Müşteri'), type: 'customer', className: 'min-w-[200px]' },
+    { key: 'titleName', label: t('contactManagement.table.title', 'Ünvan'), type: 'title', className: 'min-w-[150px]' },
+    { key: 'createdDate', label: t('contactManagement.table.createdDate', 'Oluşturulma'), type: 'date', className: 'whitespace-nowrap' },
+    { key: 'createdByFullUser', label: t('contactManagement.table.createdBy', 'Oluşturan'), type: 'user', className: 'whitespace-nowrap' },
 ];
 
 export function ContactTable({
@@ -75,16 +82,19 @@ export function ContactTable({
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 10;
 
-  const [sortConfig, setSortConfig] = useState<{ key: keyof ContactDto | string; direction: 'asc' | 'desc' } | null>(null);
+  const [sortConfig, setSortConfig] = useState<{ key: keyof ContactDto; direction: 'asc' | 'desc' } | null>(null);
 
-  const allColumns = getColumnsConfig(t);
-  const [visibleColumns, setVisibleColumns] = useState<string[]>(allColumns.map(col => col.key));
+  const tableColumns = useMemo(() => getColumnsConfig(t), [t]);
+  
+  const [visibleColumns, setVisibleColumns] = useState<Array<keyof ContactDto>>(
+    tableColumns.map(col => col.key)
+  );
 
   const processedContacts = useMemo(() => {
     let result = [...contacts];
 
     if (sortConfig) {
-      result.sort((a: any, b: any) => {
+      result.sort((a, b) => {
         const aValue = a[sortConfig.key] ? String(a[sortConfig.key]).toLowerCase() : '';
         const bValue = b[sortConfig.key] ? String(b[sortConfig.key]).toLowerCase() : '';
 
@@ -114,7 +124,7 @@ export function ContactTable({
     }
   };
 
-  const handleSort = (key: string) => {
+  const handleSort = (key: keyof ContactDto) => {
     let direction: 'asc' | 'desc' = 'asc';
     if (sortConfig && sortConfig.key === key && sortConfig.direction === 'asc') {
       direction = 'desc';
@@ -122,13 +132,38 @@ export function ContactTable({
     setSortConfig({ key, direction });
   };
 
-  const toggleColumn = (key: string) => {
+  const toggleColumn = (key: keyof ContactDto) => {
     setVisibleColumns(prev => 
       prev.includes(key) ? prev.filter(c => c !== key) : [...prev, key]
     );
   };
 
-  const SortIcon = ({ column }: { column: string }): ReactElement => {
+  const renderCellContent = (item: ContactDto, column: ColumnDef<ContactDto>) => {
+    const value = item[column.key];
+    
+    if (!value && value !== 0) return '-';
+
+    switch (column.type) {
+        case 'email':
+            return <div className="flex items-start gap-2"><Mail size={14} className="text-blue-500 mt-0.5 shrink-0" />{String(value)}</div>;
+        case 'phone':
+            return <div className="flex items-center gap-2"><Phone size={14} className="text-orange-500" />{String(value)}</div>;
+        case 'mobile':
+            return <div className="flex items-center gap-2"><Smartphone size={14} className="text-green-500" />{String(value)}</div>;
+        case 'customer':
+            return <div className="flex items-start gap-2"><Building2 size={14} className="text-slate-400 mt-0.5 shrink-0" />{String(value)}</div>;
+        case 'title':
+            return <div className="flex items-start gap-2"><Briefcase size={14} className="text-slate-400 mt-0.5 shrink-0" />{String(value)}</div>;
+        case 'date':
+            return <div className="flex items-center gap-2 text-xs"><Calendar size={14} className="text-pink-500/50" />{new Date(String(value)).toLocaleDateString(i18n.language)}</div>;
+        case 'user':
+            return <div className="flex items-center gap-2 text-xs"><User size={14} className="text-indigo-500/50" />{String(value)}</div>;
+        default:
+            return String(value);
+    }
+  };
+
+  const SortIcon = ({ column }: { column: keyof ContactDto }): ReactElement => {
     if (sortConfig?.key !== column) {
       return <ArrowUpDown size={14} className="ml-2 inline-block text-slate-400 opacity-50 group-hover:opacity-100 transition-opacity" />;
     }
@@ -190,7 +225,7 @@ export function ContactTable({
                     </DropdownMenuLabel>
                     <DropdownMenuSeparator className="bg-slate-200 dark:bg-white/10 my-1" />
                     
-                    {allColumns.map((col) => (
+                    {tableColumns.map((col) => (
                         <DropdownMenuCheckboxItem
                             key={col.key}
                             checked={visibleColumns.includes(col.key)}
@@ -209,7 +244,7 @@ export function ContactTable({
         <Table>
             <TableHeader className="bg-slate-50/50 dark:bg-white/5">
               <TableRow className="border-b border-slate-200 dark:border-white/10 hover:bg-transparent">
-                {allColumns.filter(col => visibleColumns.includes(col.key)).map((col) => (
+                {tableColumns.filter(col => visibleColumns.includes(col.key)).map((col) => (
                     <TableHead 
                         key={col.key} 
                         onClick={() => handleSort(col.key)} 
@@ -232,15 +267,11 @@ export function ContactTable({
                   key={contact.id || `contact-${index}`}
                   className="border-b border-slate-100 dark:border-white/5 transition-colors duration-200 hover:bg-pink-50/40 dark:hover:bg-pink-500/5 group last:border-0"
                 >
-                  {visibleColumns.includes('id') && <TableCell className={`${cellStyle} font-medium text-slate-700 dark:text-slate-300`}>{contact.id}</TableCell>}
-                  {visibleColumns.includes('fullName') && <TableCell className={`${cellStyle} font-semibold text-slate-900 dark:text-white`}>{contact.fullName}</TableCell>}
-                  {visibleColumns.includes('email') && <TableCell className={cellStyle}>{contact.email ? <div className="flex items-start gap-2"><Mail size={14} className="text-blue-500 mt-0.5 shrink-0" />{contact.email}</div> : '-'}</TableCell>}
-                  {visibleColumns.includes('phone') && <TableCell className={cellStyle}>{contact.phone ? <div className="flex items-center gap-2"><Phone size={14} className="text-orange-500" />{contact.phone}</div> : '-'}</TableCell>}
-                  {visibleColumns.includes('mobile') && <TableCell className={cellStyle}>{contact.mobile ? <div className="flex items-center gap-2"><Smartphone size={14} className="text-green-500" />{contact.mobile}</div> : '-'}</TableCell>}
-                  {visibleColumns.includes('customerName') && <TableCell className={cellStyle}>{contact.customerName ? <div className="flex items-start gap-2"><Building2 size={14} className="text-slate-400 mt-0.5 shrink-0" />{contact.customerName}</div> : '-'}</TableCell>}
-                  {visibleColumns.includes('titleName') && <TableCell className={cellStyle}>{contact.titleName ? <div className="flex items-start gap-2"><Briefcase size={14} className="text-slate-400 mt-0.5 shrink-0" />{contact.titleName}</div> : '-'}</TableCell>}
-                  {visibleColumns.includes('createdDate') && <TableCell className={cellStyle}><div className="flex items-center gap-2 text-xs"><Calendar size={14} className="text-pink-500/50" />{new Date(contact.createdDate).toLocaleDateString(i18n.language)}</div></TableCell>}
-                  {visibleColumns.includes('createdByFullUser') && <TableCell className={cellStyle}>{contact.createdByFullUser ? <div className="flex items-center gap-2 text-xs"><User size={14} className="text-indigo-500/50" />{contact.createdByFullUser}</div> : '-'}</TableCell>}
+                  {tableColumns.filter(col => visibleColumns.includes(col.key)).map((col) => (
+                      <TableCell key={`${contact.id}-${col.key}`} className={`${cellStyle} ${col.className || ''}`}>
+                          {renderCellContent(contact, col)}
+                      </TableCell>
+                  ))}
 
                   <TableCell className={`${cellStyle} text-right`}>
                     <div className="flex justify-end gap-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
