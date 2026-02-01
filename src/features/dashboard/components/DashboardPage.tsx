@@ -1,10 +1,12 @@
-import { type ReactElement, type ReactNode, useEffect, useState } from 'react';
+import { type ReactElement, type ReactNode, useEffect, useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { useUIStore } from '@/stores/ui-store';
 import { useDashboardQuery } from '../hooks/useDashboardQuery';
 import i18n from '@/lib/i18n';
 import { Button } from '@/components/ui/button';
 import { useAuthStore } from '@/stores/auth-store';
+import { cn } from '@/lib/utils';
 import {
   ArrowDownRight,
   ArrowUpRight,
@@ -18,43 +20,70 @@ import {
   Zap,
   MoreHorizontal,
   CalendarDays,
-  Activity
+  Activity,
+  Download,
+  RefreshCcw,
+  BarChart3
 } from 'lucide-react';
 
-// --- Reusable Glass Card ---
 type CardWrapperProps = {
   children: ReactNode;
   className?: string;
   noPadding?: boolean;
   onClick?: () => void;
+  interactive?: boolean;
 };
 
-function CardWrapper({ children, className = '', noPadding = false, onClick }: CardWrapperProps): ReactElement {
+function CardWrapper({ children, className = '', noPadding = false, onClick, interactive = false }: CardWrapperProps) {
   return (
     <div
       onClick={onClick}
-      className={`
-        bg-white/70 dark:bg-[#1a1025]/60 backdrop-blur-xl 
-        border border-white/60 dark:border-white/5 
-        rounded-2xl shadow-sm transition-all duration-300
-        hover:shadow-md hover:border-pink-500/20 hover:-translate-y-0.5
-        ${className}
-        ${noPadding ? 'p-0' : 'p-6'}
-      `}
+      className={cn(
+        "relative overflow-hidden bg-white/70 dark:bg-[#1a1025]/60 backdrop-blur-xl border border-white/60 dark:border-white/5 rounded-2xl shadow-sm",
+        "transition-all duration-300 ease-out transform-gpu backface-hidden will-change-transform",
+        interactive && [
+            "cursor-pointer group",
+            "hover:border-pink-500/50 dark:hover:border-pink-500/50",
+            "hover:shadow-[0_0_20px_rgba(236,72,153,0.15)]",
+            "active:scale-[0.99]",
+        ],
+        noPadding ? 'p-0' : 'p-6',
+        className
+      )}
     >
-      {children}
+      <div className="relative z-10 h-full">
+        {children}
+      </div>
     </div>
   );
 }
 
 export function DashboardPage(): ReactElement {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const { setPageTitle } = useUIStore();
   const { user } = useAuthStore();
-  const { data, isLoading } = useDashboardQuery();
+  
+  const { data, isLoading, refetch } = useDashboardQuery(); 
+  
   const [greeting, setGreeting] = useState('');
+  const [chartMenuOpen, setChartMenuOpen] = useState(false);
+  const chartMenuRef = useRef<HTMLDivElement>(null);
 
-  // --- Dinamik Selamlama ---
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (chartMenuRef.current && !chartMenuRef.current.contains(event.target as Node)) {
+        setChartMenuOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  useEffect(() => {
+    refetch();
+  }, [refetch]);
+
   useEffect(() => {
     const hour = new Date().getHours();
     if (hour < 12) setGreeting(t('dashboard.morning', 'Günaydın'));
@@ -69,19 +98,18 @@ export function DashboardPage(): ReactElement {
     };
   }, [t, setPageTitle]);
 
-  // --- Güvenli Kullanıcı Adı Çözümleme ---
   const getUserDisplayName = () => {
     if (!user) return t('dashboard.user', 'Kullanıcı');
-    return (user as any).fullName?.split(' ')[0] || (user as any).username || (user as any).name || t('dashboard.user', 'Kullanıcı');
+    return (user as any).fullName || (user as any).name || (user as any).username || t('dashboard.user', 'Kullanıcı');
   };
 
-  // --- Formatlayıcılar ---
-  const formatCurrency = (amount: number): string => {
+  const formatCurrency = (amount: number | undefined | null): string => {
+    const val = amount || 0;
     return new Intl.NumberFormat(i18n.language, {
       style: 'currency',
       currency: 'TRY',
       minimumFractionDigits: 2,
-    }).format(amount);
+    }).format(val);
   };
 
   const formatDate = (): string => {
@@ -89,7 +117,6 @@ export function DashboardPage(): ReactElement {
     return now.toLocaleDateString(i18n.language, { day: 'numeric', month: 'long', year: 'numeric', weekday: 'long' });
   };
 
-  // --- Loading State ---
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -102,66 +129,75 @@ export function DashboardPage(): ReactElement {
   }
 
   const kpis = data?.kpis;
-  const activities = data?.activities || [];
+  const activities = Array.isArray(data?.activities) ? data.activities : [];
 
-  // --- İstatistik Verileri ---
   const stats = [
     {
       l: t('dashboard.stats.totalRevenue', 'Toplam Ciro'),
-      v: kpis ? formatCurrency(kpis.monthlyRevenue) : '-',
-      c: kpis ? `${kpis.monthlyRevenueChange}%` : '-',
+      v: formatCurrency(kpis?.monthlyRevenue),
+      c: kpis?.monthlyRevenueChange ? `${kpis.monthlyRevenueChange}%` : '0%',
       p: (kpis?.monthlyRevenueChange ?? 0) >= 0 ? 1 : 0,
       i: Wallet,
       color: 'text-blue-600 dark:text-blue-400',
-      bg: 'bg-blue-50 dark:bg-blue-500/10'
+      bg: 'bg-blue-50 dark:bg-blue-500/10',
     },
     {
       l: t('dashboard.stats.activeOpportunities', 'Aktif Fırsatlar'),
-      v: kpis ? String(kpis.activeAgreements) : '-',
-      c: kpis ? `${kpis.activeAgreementsChange}%` : '-',
+      v: kpis?.activeAgreements ? String(kpis.activeAgreements) : '0',
+      c: kpis?.activeAgreementsChange ? `${kpis.activeAgreementsChange}%` : '0%',
       p: (kpis?.activeAgreementsChange ?? 0) >= 0 ? 1 : 0,
       i: Users,
       color: 'text-purple-600 dark:text-purple-400',
-      bg: 'bg-purple-50 dark:bg-purple-500/10'
+      bg: 'bg-purple-50 dark:bg-purple-500/10',
     },
     {
       l: t('dashboard.stats.newLeads', 'Yeni Müşteriler'),
       v: kpis && 'newLeads' in kpis ? String(kpis.newLeads) : '0', 
-      c: '-', 
+      c: '0%', 
       p: 1,
       i: Users,
       color: 'text-pink-600 dark:text-pink-400',
-      bg: 'bg-pink-50 dark:bg-pink-500/10'
+      bg: 'bg-pink-50 dark:bg-pink-500/10',
     },
     {
       l: t('dashboard.stats.pendingOrders', 'Bekleyen Sipariş'),
       v: kpis && 'pendingOrders' in kpis ? String(kpis.pendingOrders) : '0',
-      c: '-', 
+      c: '0%', 
       p: 0,
       i: ShoppingCart,
       color: 'text-orange-600 dark:text-orange-400',
-      bg: 'bg-orange-50 dark:bg-orange-500/10'
+      bg: 'bg-orange-50 dark:bg-orange-500/10',
     },
   ];
 
   const monthKeys = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
 
-  // API'den gelen aktiviteleri map'le
-  const deals = activities.slice(0, 5).map((activity) => ({
-      c: activity.title,
+  const deals = activities.slice(0, 5).map((activity: any) => ({
+      c: activity.title || activity.subject || activity.konu || activity.description || 'İsimsiz Aktivite',
       a: activity.amount ? formatCurrency(activity.amount) : '',
-      s: t(`dashboard.activityType.${activity.type}`),
-      d: activity.timeAgo,
+      s: t(`dashboard.activityType.${activity.type}`) || activity.type || 'Genel',
+      d: activity.timeAgo || (activity.createdAt ? new Date(activity.createdAt).toLocaleDateString() : 'Tarih yok'),
   }));
 
+  const handleDownloadReport = () => {
+    console.log("Rapor indiriliyor...");
+  };
+
+  const handleQuickAction = () => {
+    navigate('/demands/create');
+  };
+
+  const hasChartData = false; 
+  const chartData = Array(12).fill(0);
+
   return (
-    <div className="w-full space-y-6 pb-10 bg-transparent">
+    <div className="w-full space-y-6 pb-20 sm:pb-10 bg-transparent">
       
-      {/* 1. Header Area (Hoşgeldin Mesajı ve Butonlar) */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-1 transition-colors flex items-center gap-2">
-            {greeting}, <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-600 to-orange-500">
+          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white mb-1 transition-colors flex flex-col items-start sm:flex-row sm:items-center sm:gap-x-2">
+            <span>{greeting},</span>
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-600 to-orange-500">
               {getUserDisplayName()}
             </span>
           </h1>
@@ -171,18 +207,20 @@ export function DashboardPage(): ReactElement {
           </p>
         </div>
         
-        <div className="flex flex-wrap gap-2">
+        <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0">
             <Button 
                 variant="outline"
                 size="sm"
-                className="bg-white/50 dark:bg-white/5 border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-300"
+                onClick={handleDownloadReport}
+                className="bg-white/50 dark:bg-white/5 border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-300 shrink-0 hover:bg-white dark:hover:bg-white/10 hover:border-pink-200 dark:hover:border-pink-500/30 transition-all duration-300"
             >
-                <FileText size={14} className="mr-2" />
-                {t('dashboard.reportDownload', 'Rapor')}
+                <Download size={14} className="mr-2" />
+                {t('dashboard.reportDownload', 'Rapor İndir')}
             </Button>
             <Button 
                 size="sm"
-                className="bg-gradient-to-r from-pink-600 to-orange-600 text-white border-0 shadow-md hover:shadow-lg hover:scale-105 transition-all"
+                onClick={handleQuickAction}
+                className="bg-gradient-to-r from-pink-600 to-orange-600 text-white border-0 shadow-md hover:shadow-lg hover:shadow-pink-500/20 active:scale-95 transition-all duration-300 shrink-0"
             >
                 <Zap size={14} className="mr-2" />
                 {t('dashboard.quickAction', 'Hızlı İşlem')}
@@ -190,15 +228,18 @@ export function DashboardPage(): ReactElement {
         </div>
       </div>
 
-      {/* 2. Stats Grid (KPI Kartları) */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {stats.map((s, i) => (
-          <CardWrapper key={i} className="p-5 flex flex-col justify-between h-[130px]">
-            <div className="flex justify-between items-start">
-              <div className={`p-2.5 rounded-xl ${s.bg} ${s.color}`}>
-                <s.i size={20} />
+          <CardWrapper 
+            key={i} 
+            interactive={false} 
+            className="flex flex-col justify-between h-[150px]"
+          >
+            <div className="flex justify-between items-start mb-3">
+              <div className={`p-3 rounded-xl ${s.bg} ${s.color} shadow-sm`}>
+                <s.i size={22} />
               </div>
-              {s.c !== '-' && (
+              {s.c !== '0%' && (
                 <span className={`flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full border ${s.p ? 'bg-green-50 text-green-600 border-green-100 dark:bg-green-500/10 dark:text-green-400 dark:border-green-500/20' : 'bg-red-50 text-red-600 border-red-100 dark:bg-red-500/10 dark:text-red-400 dark:border-red-500/20'}`}>
                   {s.p ? <ArrowUpRight size={10} strokeWidth={3} /> : <ArrowDownRight size={10} strokeWidth={3} />}
                   {s.c}
@@ -207,88 +248,133 @@ export function DashboardPage(): ReactElement {
             </div>
             <div>
               <h3 className="text-slate-500 dark:text-slate-400 text-xs font-semibold uppercase tracking-wider">{s.l}</h3>
-              <p className="text-2xl font-bold text-slate-900 dark:text-white mt-0.5">{s.v}</p>
+              <p 
+                className="text-2xl sm:text-3xl font-semibold text-slate-900 dark:text-white mt-1 tracking-tight truncate" 
+                title={s.v}
+              >
+                {s.v}
+              </p>
             </div>
           </CardWrapper>
         ))}
       </div>
 
-      {/* 3. Main Content Grid (Grafik ve Liste) */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
-        {/* Sales Chart */}
-        <CardWrapper className="lg:col-span-2 flex flex-col h-[400px] p-6">
-            <div className="flex justify-between items-center mb-6">
+        <CardWrapper className="lg:col-span-2 flex flex-col h-[400px] p-0 overflow-hidden">
+            <div className="p-6 pb-0 flex justify-between items-center z-30 relative shrink-0">
                 <div>
                     <h3 className="text-lg font-bold flex items-center gap-2 text-slate-800 dark:text-white">
                         <TrendingUp size={18} className="text-pink-500" />
                         {t('dashboard.salesAnalysis', 'Satış Analizi')}
                     </h3>
-                    <p className="text-xs text-slate-500 ml-6">{t('dashboard.targetVsActual', 'Hedef ve Gerçekleşen')}</p>
+                    <p className="text-xs text-slate-500 mt-1">{t('dashboard.targetVsActual', 'Hedef ve Gerçekleşen')}</p>
                 </div>
-                <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400"><MoreHorizontal size={16} /></Button>
+                
+                <div className="relative" ref={chartMenuRef}>
+                    <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="h-8 w-8 text-slate-400 hover:text-slate-600 dark:hover:text-white"
+                        onClick={() => setChartMenuOpen(!chartMenuOpen)}
+                    >
+                        <MoreHorizontal size={16} />
+                    </Button>
+                    {chartMenuOpen && (
+                        <div className="absolute right-0 top-full mt-2 w-40 bg-white dark:bg-[#1a1025] border border-slate-200 dark:border-white/10 rounded-xl shadow-xl z-50 py-1">
+                            <button 
+                                onClick={() => { refetch(); setChartMenuOpen(false); }} 
+                                className="w-full text-left px-4 py-2 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-white/5 flex items-center gap-2"
+                            >
+                                <RefreshCcw size={14} /> Yenile
+                            </button>
+                        </div>
+                    )}
+                </div>
             </div>
             
-            <div className="flex-1 flex items-end justify-between gap-2 sm:gap-4 px-2 pb-2">
-                {monthKeys.map((key, i) => {
-                    // API'den aylık veri gelmediği için 0 veya mevcut data
-                    const height = 0; 
-                    
-                    return (
-                        <div key={i} className="flex-1 flex flex-col items-center gap-2 group h-full justify-end">
-                            <div className="w-full h-full flex items-end justify-center relative">
-                                <div className="absolute bottom-0 w-full h-full bg-slate-100 dark:bg-white/5 rounded-t-sm mx-1" />
-                                <div
-                                    style={{ height: `${height}%` }} 
-                                    className="w-full mx-1 bg-gradient-to-t from-pink-600 to-orange-400 opacity-90 rounded-t-sm relative z-10 transition-all duration-300 group-hover:opacity-100"
-                                />
-                            </div>
-                            <span className="text-[10px] font-medium text-slate-400 uppercase">
-                                {t(`dashboard.monthsShort.${key}`).substring(0, 3)}
-                            </span>
-                        </div>
-                    );
-                })}
+            <div className="flex-1 w-full relative min-h-0">
+                
+                {!hasChartData && (
+                    <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-white/60 dark:bg-[#0c0516]/60 backdrop-blur-sm pt-12 gap-6">
+                         <div className="bg-slate-50 dark:bg-white/5 p-4 rounded-full shadow-sm border border-slate-100 dark:border-white/5">
+                            <BarChart3 size={32} className="text-slate-300 dark:text-slate-600" />
+                         </div>
+                         <p className="text-sm font-medium text-slate-500 dark:text-slate-400">Henüz satış verisi oluşmadı</p>
+                    </div>
+                )}
+
+                <div className="w-full h-full overflow-x-auto custom-scrollbar px-6 pb-4 pt-4">
+                    <div className="flex items-end justify-between gap-3 w-full min-w-[500px] h-full">
+                        {monthKeys.map((key, i) => {
+                            const height = hasChartData ? chartData[i] : 0; 
+                            
+                            return (
+                                <div key={i} className="flex-1 flex flex-col items-center gap-2 group h-full justify-end">
+                                    <div className="w-full h-full flex items-end justify-center relative">
+                                        <div className="absolute bottom-0 w-full h-full bg-slate-100 dark:bg-white/5 rounded-t-sm mx-1" />
+                                        <div
+                                            style={{ height: `${height}%` }} 
+                                            className="w-full mx-1 bg-gradient-to-t from-pink-600 to-orange-400 opacity-90 rounded-t-sm relative z-10"
+                                        />
+                                    </div>
+                                    <span className="text-[10px] font-medium text-slate-400 uppercase">
+                                        {t(`dashboard.monthsShort.${key}`).substring(0, 3)}
+                                    </span>
+                                </div>
+                            );
+                        })}
+                    </div>
+                </div>
             </div>
         </CardWrapper>
 
-        {/* Latest Activities */}
         <CardWrapper className="h-[400px] flex flex-col p-0 overflow-hidden">
-            <div className="p-5 border-b border-slate-100 dark:border-white/5 flex justify-between items-center bg-slate-50/30 dark:bg-white/5">
+            <div className="p-5 border-b border-slate-100 dark:border-white/5 flex justify-between items-center bg-slate-50/30 dark:bg-white/5 shrink-0">
                 <h3 className="text-md font-bold text-slate-800 dark:text-white flex items-center gap-2">
                     <Activity size={16} className="text-orange-500" />
                     {t('dashboard.latestActivities', 'Son Aktiviteler')}
                 </h3>
-                <Button variant="ghost" size="sm" className="text-xs text-pink-600 h-7 px-2 hover:bg-pink-50 dark:hover:bg-pink-500/10">
+                <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    onClick={() => navigate('/activity-management')} 
+                    className="text-xs text-pink-600 h-7 px-2 hover:bg-pink-50 dark:hover:bg-pink-500/10"
+                >
                     {t('dashboard.viewAll', 'Tümü')}
                 </Button>
             </div>
-            <div className="flex-1 overflow-y-auto p-4 space-y-3 custom-scrollbar">
+            
+            <div className="flex-1 flex flex-col overflow-y-auto custom-scrollbar">
                 {deals.length > 0 ? (
-                    deals.map((d, i) => (
-                        <div key={i} className="flex items-center justify-between p-3 rounded-xl hover:bg-slate-50 dark:hover:bg-white/5 border border-transparent hover:border-slate-100 dark:hover:border-white/5 transition-all">
-                            <div className="flex items-center gap-3">
-                                <div className={`w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold border ${
-                                    i % 2 === 0
-                                        ? 'bg-pink-50 border-pink-100 text-pink-600 dark:bg-pink-500/10 dark:border-pink-500/20 dark:text-pink-400'
-                                        : 'bg-orange-50 border-orange-100 text-orange-600 dark:bg-orange-500/10 dark:border-orange-500/20 dark:text-orange-400'
-                                }`}>
-                                    {d.c.substring(0, 2).toUpperCase()}
+                    <div className="p-4 space-y-3">
+                        {deals.map((d, i) => (
+                            <div key={i} className="flex items-center justify-between p-3 rounded-xl hover:bg-slate-50 dark:hover:bg-white/5 border border-transparent hover:border-slate-100 dark:hover:border-white/5 transition-all cursor-default">
+                                <div className="flex items-center gap-3">
+                                    <div className={`w-9 h-9 shrink-0 rounded-full flex items-center justify-center text-xs font-bold border ${
+                                        i % 2 === 0
+                                            ? 'bg-pink-50 border-pink-100 text-pink-600 dark:bg-pink-500/10 dark:border-pink-500/20 dark:text-pink-400'
+                                            : 'bg-orange-50 border-orange-100 text-orange-600 dark:bg-orange-500/10 dark:border-orange-500/20 dark:text-orange-400'
+                                    }`}>
+                                        {d.c ? d.c.substring(0, 2).toUpperCase() : '??'}
+                                    </div>
+                                    <div className="min-w-0">
+                                        <h4 className="text-xs font-semibold text-slate-700 dark:text-slate-200 truncate max-w-[120px]">{d.c}</h4>
+                                        <p className="text-[10px] text-slate-400 truncate">{d.s}</p>
+                                    </div>
                                 </div>
-                                <div className="min-w-0">
-                                    <h4 className="text-xs font-semibold text-slate-700 dark:text-slate-200 truncate max-w-[120px]">{d.c}</h4>
-                                    <p className="text-[10px] text-slate-400 truncate">{d.s}</p>
+                                <div className="text-right shrink-0">
+                                    <p className="text-xs font-bold text-slate-800 dark:text-white">{d.a || '-'}</p>
+                                    <span className="text-[9px] text-slate-400">{d.d}</span>
                                 </div>
                             </div>
-                            <div className="text-right shrink-0">
-                                <p className="text-xs font-bold text-slate-800 dark:text-white">{d.a}</p>
-                                <span className="text-[9px] text-slate-400">{d.d}</span>
-                            </div>
-                        </div>
-                    ))
+                        ))}
+                    </div>
                 ) : (
-                    <div className="flex flex-col items-center justify-center h-full text-slate-400 gap-2">
-                        <Package size={32} className="opacity-20" />
+                    <div className="flex-1 flex flex-col items-center justify-center text-slate-400 gap-8 pt-20">
+                        <div className="bg-slate-50 dark:bg-white/5 p-4 rounded-full">
+                            <Package size={32} className="opacity-40" />
+                        </div>
                         <p className="text-xs">{t('dashboard.noActivities', 'Henüz aktivite yok')}</p>
                     </div>
                 )}
@@ -296,7 +382,6 @@ export function DashboardPage(): ReactElement {
         </CardWrapper>
       </div>
 
-      {/* 4. Quick Info Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {[
             { 
@@ -304,29 +389,39 @@ export function DashboardPage(): ReactElement {
               d: t('dashboard.quickStats.checkTasks', 'Görev listesini kontrol et'), 
               i: Clock, 
               c: 'text-orange-500', 
-              bg: 'bg-orange-50 dark:bg-orange-500/10' 
+              bg: 'bg-orange-50 dark:bg-orange-500/10',
+              link: '/daily-tasks'
             },
             { 
               t: t('dashboard.quickStats.openQuotations', 'Açık Teklifler'), 
               d: t('dashboard.quickStats.reviewQuotations', 'Teklifleri incele'), 
               i: FileText, 
               c: 'text-pink-500', 
-              bg: 'bg-pink-50 dark:bg-pink-500/10' 
+              bg: 'bg-pink-50 dark:bg-pink-500/10',
+              link: '/quotations'
             },
             { 
               t: t('dashboard.quickStats.criticalStock', 'Kritik Stok'), 
               d: t('dashboard.quickStats.stockStatus', 'Stok durumunu gör'), 
               i: Package, 
               c: 'text-purple-500', 
-              bg: 'bg-purple-50 dark:bg-purple-500/10' 
+              bg: 'bg-purple-50 dark:bg-purple-500/10',
+              link: '/stocks'
             },
         ].map((x, k) => (
-            <CardWrapper key={k} className="p-4 flex items-center gap-4 cursor-pointer hover:border-pink-300 dark:hover:border-pink-500/30">
-                <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${x.bg} ${x.c}`}>
-                    <x.i size={20} />
+            <CardWrapper 
+                key={k} 
+                onClick={() => navigate(x.link)}
+                interactive={true}
+                className="p-5 flex items-center gap-8 group"
+            >
+                <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${x.bg} ${x.c} transition-transform group-hover:scale-110 shrink-0`}>
+                    <x.i size={24} />
                 </div>
                 <div>
-                    <h4 className="font-bold text-sm text-slate-800 dark:text-white">{x.t}</h4>
+                    <h4 className="font-bold text-sm text-slate-800 dark:text-white group-hover:text-pink-600 dark:group-hover:text-pink-400 transition-colors">
+                        {x.t}
+                    </h4>
                     <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-1">{x.d}</p>
                 </div>
             </CardWrapper>
