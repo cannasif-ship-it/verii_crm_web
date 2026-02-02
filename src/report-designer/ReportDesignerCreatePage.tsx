@@ -1,8 +1,8 @@
 import type { ReactElement } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useNavigate } from 'react-router-dom';
-import { useRef } from 'react';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
+import { useRef, useMemo, useEffect } from 'react';
 import { DndContext, type DragEndEvent } from '@dnd-kit/core';
 import { PricingRuleType } from '@/features/pricing-rule/types/pricing-rule-types';
 import { Button } from '@/components/ui/button';
@@ -32,9 +32,17 @@ import {
   getSectionFromDroppableId,
   parseTableIdFromDroppableId,
 } from './components/A4Canvas';
-import { Sidebar, type SidebarDragData } from './components/Sidebar';
+import { Sidebar, type SidebarDragData, type FieldPaletteItem } from './components/Sidebar';
 import type { ReportElement, TableElement } from './models/report-element';
+import { isTableElement } from './models/report-element';
 import { useReportStore } from './store/useReportStore';
+import { useReportTemplateFields } from './hooks/useReportTemplateFields';
+import { useCreateReportTemplate } from './hooks/useCreateReportTemplate';
+import { useUpdateReportTemplate } from './hooks/useUpdateReportTemplate';
+import { useReportTemplateById } from './hooks/useReportTemplateById';
+import { dtoElementsToCanvasElements } from './utils/dto-to-canvas';
+import type { ReportTemplateCreateDto, ReportTemplateElementDto } from './types/report-template-types';
+import type { ReportTemplateGetDto } from './types/report-template-types';
 
 const RULE_TYPE_OPTIONS: { value: PricingRuleType; label: string }[] = [
   { value: PricingRuleType.Demand, label: 'Talep' },
@@ -44,6 +52,19 @@ const RULE_TYPE_OPTIONS: { value: PricingRuleType; label: string }[] = [
 
 const DEFAULT_ELEMENT_WIDTH = 200;
 const DEFAULT_ELEMENT_HEIGHT = 50;
+const A4_WIDTH = 794;
+const A4_HEIGHT = 1123;
+
+function ruleTypeForApi(ruleType: PricingRuleType): number {
+  return ruleType - 1;
+}
+
+function apiRuleTypeToForm(apiRuleType: number): PricingRuleType {
+  const n = apiRuleType + 1;
+  if (n === PricingRuleType.Demand || n === PricingRuleType.Quotation || n === PricingRuleType.Order)
+    return n;
+  return PricingRuleType.Demand;
+}
 
 function isSidebarDragData(data: unknown): data is SidebarDragData {
   const d = data as SidebarDragData | null;
@@ -56,11 +77,53 @@ function isSidebarDragData(data: unknown): data is SidebarDragData {
   );
 }
 
+function elementToDto(el: ReportElement | TableElement): ReportTemplateElementDto {
+  const base = {
+    id: el.id,
+    type: el.type,
+    section: el.section,
+    x: el.x,
+    y: el.y,
+    width: el.width,
+    height: el.height,
+    value: el.value,
+    text: el.text,
+    path: el.path,
+    fontSize: el.fontSize,
+    fontFamily: el.fontFamily,
+    color: el.color,
+  };
+  if (isTableElement(el)) {
+    return { ...base, columns: el.columns };
+  }
+  return base;
+}
+
+function applyTemplateToFormAndStore(
+  template: ReportTemplateGetDto,
+  form: ReturnType<typeof useForm<ReportDesignerCreateFormValues>>,
+  setElements: (elements: import('./models/report-element').CanvasElement[]) => void
+): void {
+  form.reset({
+    ruleType: apiRuleTypeToForm(template.ruleType as number),
+    title: template.title,
+  });
+  setElements(dtoElementsToCanvasElements(template.templateData.elements));
+}
+
 export function ReportDesignerCreatePage(): ReactElement {
   const navigate = useNavigate();
+  const { id: idParam } = useParams<{ id: string }>();
+  const location = useLocation();
+  const copyFrom = (location.state as { copyFrom?: ReportTemplateGetDto } | null)?.copyFrom;
+  const editId = idParam != null ? parseInt(idParam, 10) : null;
+  const isEdit = editId != null && !Number.isNaN(editId) && editId > 0;
+
   const canvasRef = useRef<HTMLDivElement | null>(null);
+  const elements = useReportStore((s) => s.elements);
   const addElement = useReportStore((s) => s.addElement);
   const addColumnToTable = useReportStore((s) => s.addColumnToTable);
+  const setElements = useReportStore((s) => s.setElements);
 
   const form = useForm<ReportDesignerCreateFormValues>({
     resolver: zodResolver(reportDesignerCreateSchema),
@@ -70,11 +133,93 @@ export function ReportDesignerCreatePage(): ReactElement {
     },
   });
 
-  const onSubmit = (values: ReportDesignerCreateFormValues): void => {
-    toast.success('Kaydedildi', {
-      description: `Belge tipi: ${RULE_TYPE_OPTIONS.find((o) => o.value === values.ruleType)?.label}, Başlık: ${values.title}`,
-    });
-    navigate('/report-designer');
+  const { data: templateById, isSuccess: templateByIdLoaded } = useReportTemplateById(isEdit ? editId! : null);
+  const appliedEditIdRef = useRef<number | null>(null);
+  const justAppliedCopyRef = useRef(false);
+
+  useEffect(() => {
+    if (copyFrom) {
+      applyTemplateToFormAndStore(copyFrom, form, setElements);
+      justAppliedCopyRef.current = true;
+      navigate(location.pathname, { replace: true, state: {} });
+      return;
+    }
+  }, [copyFrom]);
+
+  useEffect(() => {
+    if (!isEdit && !copyFrom) {
+      if (justAppliedCopyRef.current) {
+        justAppliedCopyRef.current = false;
+        return;
+      }
+      setElements([]);
+    }
+  }, [isEdit, copyFrom]);
+
+  useEffect(() => {
+    if (!isEdit || !templateById || editId == null) return;
+    if (appliedEditIdRef.current === editId) return;
+    appliedEditIdRef.current = editId;
+    applyTemplateToFormAndStore(templateById, form, setElements);
+  }, [isEdit, editId, templateById]);
+
+  useEffect(() => {
+    if (!isEdit) appliedEditIdRef.current = null;
+  }, [isEdit]);
+
+  const ruleType = form.watch('ruleType') ?? PricingRuleType.Demand;
+  const ruleTypeForFields = ruleTypeForApi(ruleType);
+  const { data: fieldsData } = useReportTemplateFields(ruleTypeForFields);
+  const headerFields: FieldPaletteItem[] = useMemo(
+    () =>
+      (fieldsData?.headerFields ?? []).map((f) => ({
+        label: f.label,
+        path: f.path,
+        type: 'field' as const,
+      })),
+    [fieldsData?.headerFields]
+  );
+  const lineFields: FieldPaletteItem[] = useMemo(
+    () =>
+      (fieldsData?.lineFields ?? []).map((f) => ({
+        label: f.label,
+        path: f.path,
+        type: 'table-column' as const,
+      })),
+    [fieldsData?.lineFields]
+  );
+
+  const createMutation = useCreateReportTemplate();
+  const updateMutation = useUpdateReportTemplate();
+
+  const onSubmit = async (values: ReportDesignerCreateFormValues): Promise<void> => {
+    const payload: ReportTemplateCreateDto = {
+      ruleType: ruleTypeForApi(values.ruleType),
+      title: values.title,
+      templateData: {
+        page: { width: A4_WIDTH, height: A4_HEIGHT, unit: 'px' },
+        elements: elements.map(elementToDto),
+      },
+      isActive: true,
+    };
+    try {
+      if (isEdit && editId != null) {
+        await updateMutation.mutateAsync({ id: editId, data: payload });
+        toast.success('Güncellendi', {
+          description: `Şablon güncellendi: ${values.title}`,
+        });
+      } else {
+        await createMutation.mutateAsync(payload);
+        toast.success('Kaydedildi', {
+          description: `Şablon kaydedildi: ${values.title}`,
+        });
+      }
+      navigate('/report-designer');
+    } catch (err) {
+      toast.error(isEdit ? 'Şablon güncellenemedi' : 'Şablon kaydedilemedi', {
+        description: err instanceof Error ? err.message : undefined,
+      });
+    }
   };
 
   const handleDragEnd = (event: DragEndEvent): void => {
@@ -133,6 +278,7 @@ export function ReportDesignerCreatePage(): ReactElement {
         width: DEFAULT_ELEMENT_WIDTH,
         height: DEFAULT_ELEMENT_HEIGHT,
         value: data.label,
+        path: data.path,
       };
       addElement(newElement);
       return;
@@ -172,7 +318,7 @@ export function ReportDesignerCreatePage(): ReactElement {
     <div className="flex h-full min-h-0 flex-col">
       <div className="shrink-0 border-b border-slate-200 bg-white px-6 py-4 dark:border-slate-700 dark:bg-slate-900/50">
         <h1 className="mb-4 text-xl font-semibold text-slate-900 dark:text-white">
-          Yeni Rapor Şablonu
+          {isEdit ? 'Şablonu Düzenle' : 'Yeni Rapor Şablonu'}
         </h1>
         <Form {...form}>
           <form
@@ -219,14 +365,19 @@ export function ReportDesignerCreatePage(): ReactElement {
                 </FormItem>
               )}
             />
-            <Button type="submit">Kaydet</Button>
+            <Button
+              type="submit"
+              disabled={isEdit && (updateMutation.isPending || !templateByIdLoaded)}
+            >
+              {isEdit ? 'Güncelle' : 'Kaydet'}
+            </Button>
           </form>
         </Form>
       </div>
       <div className="flex-1 min-h-[600px] overflow-hidden">
         <DndContext onDragEnd={handleDragEnd}>
           <div className="flex h-full w-full">
-            <Sidebar />
+            <Sidebar headerFields={headerFields} lineFields={lineFields} />
             <A4Canvas canvasRef={canvasRef} />
           </div>
         </DndContext>

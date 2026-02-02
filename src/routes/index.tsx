@@ -65,6 +65,10 @@ export const router = createBrowserRouter([
         element: <ReportDesignerCreatePage />,
       },
       {
+        path: 'report-designer/edit/:id',
+        element: <ReportDesignerCreatePage />,
+      },
+      {
         path: 'title-management',
         element: <TitleManagementPage />,
       },

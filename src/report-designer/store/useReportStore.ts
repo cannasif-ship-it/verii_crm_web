@@ -9,6 +9,7 @@ import type {
 interface ReportState {
   elements: CanvasElement[];
   selectedElementId: string | null;
+  setElements: (elements: CanvasElement[]) => void;
   addElement: (element: ReportElement | TableElement) => void;
   removeElement: (id: string) => void;
   setSelectedElement: (id: string | null) => void;
@@ -17,7 +18,7 @@ interface ReportState {
   updateElementText: (id: string, text: string) => void;
   updateReportElement: (
     id: string,
-    updates: Partial<Pick<ReportElement, 'text' | 'value' | 'fontSize' | 'fontFamily' | 'color'>>
+    updates: Partial<Pick<ReportElement, 'text' | 'value' | 'path' | 'fontSize' | 'fontFamily' | 'color'>>
   ) => void;
   addColumnToTable: (tableId: string, column: TableColumn) => void;
 }
@@ -25,6 +26,7 @@ interface ReportState {
 export const useReportStore = create<ReportState>()((set) => ({
   elements: [],
   selectedElementId: null,
+  setElements: (elements) => set({ elements, selectedElementId: null }),
   addElement: (element) =>
     set((state) => ({ elements: [...state.elements, element] })),
   removeElement: (id) =>

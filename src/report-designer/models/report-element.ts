@@ -9,6 +9,7 @@ interface ReportElementBase {
   height: number;
   value?: string;
   text?: string;
+  path?: string;
   fontSize?: number;
   fontFamily?: string;
   color?: string;
