@@ -35,8 +35,7 @@ import {
   formatPrice 
 } from '../types/product-pricing-types';
 
-// Paylaşılan bileşenler (Eğer projenizde yoksa burayı yorum satırı yapın)
-import { ProductSelectDialog } from '@/components/shared/ProductSelectDialog';
+import { ProductPricingStockSelectDialog } from './ProductPricingStockSelectDialog';
 
 interface ProductPricingFormProps {
   open: boolean;
@@ -45,6 +44,7 @@ interface ProductPricingFormProps {
   onDelete?: (id: number) => void;
   productPricing?: ProductPricingGetDto | null;
   isLoading?: boolean;
+  excludeProductCodes?: string[];
 }
 
 // STİL: Standart yükseklik ve kenarlıklar
@@ -53,7 +53,13 @@ const INPUT_STYLE = `${BASE_INPUT} w-full`;
 const LABEL_STYLE = "text-[11px] text-slate-500 dark:text-slate-400 uppercase tracking-wider font-bold ml-1 mb-1.5 flex items-center gap-1.5";
 
 export function ProductPricingForm({
-  open, onOpenChange, onSubmit, onDelete, productPricing, isLoading
+  open,
+  onOpenChange,
+  onSubmit,
+  onDelete,
+  productPricing,
+  isLoading,
+  excludeProductCodes,
 }: ProductPricingFormProps): ReactElement {
   const [productDialogOpen, setProductDialogOpen] = useState(false);
 
@@ -279,17 +285,15 @@ export function ProductPricingForm({
         </DialogFooter>
       </DialogContent>
 
-      <ProductSelectDialog
+      <ProductPricingStockSelectDialog
         open={productDialogOpen}
         onOpenChange={setProductDialogOpen}
-        onSelect={(product) => {
-          const p = product as any;
-          form.setValue('erpProductCode', product.code);
-          form.setValue('erpGroupCode', product.groupCode || '');
-          form.setValue('currency', p.currency || 'TRY');
-          form.setValue('listPrice', p.listPrice || 0);
+        onSelect={(result) => {
+          form.setValue('erpProductCode', result.code);
+          form.setValue('erpGroupCode', result.groupCode ?? '');
           setProductDialogOpen(false);
         }}
+        excludeProductCodes={excludeProductCodes}
       />
     </Dialog>
   );

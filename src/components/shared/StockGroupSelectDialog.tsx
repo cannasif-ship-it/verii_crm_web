@@ -18,6 +18,7 @@ interface StockGroupSelectDialogProps {
   onOpenChange: (open: boolean) => void;
   onSelect: (group: StokGroupDto) => void;
   selectedGroupCode?: string;
+  excludeGroupCodes?: string[];
 }
 
 export function StockGroupSelectDialog({
@@ -25,12 +26,12 @@ export function StockGroupSelectDialog({
   onOpenChange,
   onSelect,
   selectedGroupCode,
+  excludeGroupCodes,
 }: StockGroupSelectDialogProps): ReactElement {
   const { t } = useTranslation();
   const [searchQuery, setSearchQuery] = useState('');
   const { data: stockGroups = [], isLoading } = useStokGroup();
-  
-  // Normalize text for search
+
   const normalizeText = (text: string) => {
     return text
       .toLowerCase()
@@ -42,16 +43,28 @@ export function StockGroupSelectDialog({
       .replace(/ç/g, 'c');
   };
 
-  const filteredGroups = useMemo(() => {
-    if (!searchQuery.trim()) return stockGroups;
-    
-    const normalizedQuery = normalizeText(searchQuery);
+  const excludedSet = useMemo(
+    () => (excludeGroupCodes?.length ? new Set(excludeGroupCodes) : undefined),
+    [excludeGroupCodes]
+  );
+
+  const availableGroups = useMemo(() => {
+    if (!excludedSet) return stockGroups;
     return stockGroups.filter((group) => {
+      const code = group.grupKodu || `__group_${group.isletmeKodu}_${group.subeKodu}`;
+      return !excludedSet.has(code);
+    });
+  }, [stockGroups, excludedSet]);
+
+  const filteredGroups = useMemo(() => {
+    if (!searchQuery.trim()) return availableGroups;
+    const normalizedQuery = normalizeText(searchQuery);
+    return availableGroups.filter((group) => {
       const code = group.grupKodu ? normalizeText(group.grupKodu) : '';
       const name = group.grupAdi ? normalizeText(group.grupAdi) : '';
       return code.includes(normalizedQuery) || name.includes(normalizedQuery);
     });
-  }, [stockGroups, searchQuery]);
+  }, [availableGroups, searchQuery]);
 
   const handleSelect = (group: StokGroupDto) => {
     onSelect(group);

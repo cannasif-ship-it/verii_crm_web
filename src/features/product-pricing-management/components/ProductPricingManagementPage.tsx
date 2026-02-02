@@ -1,4 +1,4 @@
-import { type ReactElement, useState, useEffect } from 'react';
+import { type ReactElement, useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useUIStore } from '@/stores/ui-store';
 import { Button } from '@/components/ui/button';
@@ -10,6 +10,7 @@ import { ProductPricingForm } from './ProductPricingForm';
 import { useCreateProductPricing } from '../hooks/useCreateProductPricing';
 import { useUpdateProductPricing } from '../hooks/useUpdateProductPricing';
 import { useDeleteProductPricing } from '../hooks/useDeleteProductPricing';
+import { useProductPricings } from '../hooks/useProductPricings';
 import type { ProductPricingGetDto } from '../types/product-pricing-types';
 import type { ProductPricingFormSchema } from '../types/product-pricing-types';
 import type { PagedFilter } from '@/types/api';
@@ -32,6 +33,23 @@ export function ProductPricingManagementPage(): ReactElement {
   const createProductPricing = useCreateProductPricing();
   const updateProductPricing = useUpdateProductPricing();
   const deleteProductPricing = useDeleteProductPricing();
+
+  const { data: usedProductsData } = useProductPricings({
+    pageNumber: 1,
+    pageSize: 10000,
+    sortBy: 'Id',
+    sortDirection: 'desc',
+  });
+
+  const usedErpProductCodes = useMemo((): string[] => {
+    const items = usedProductsData?.data ?? [];
+    return [...new Set(items.map((x) => x.erpProductCode))];
+  }, [usedProductsData]);
+
+  const excludeProductCodes = useMemo((): string[] => {
+    if (!editingProductPricing) return usedErpProductCodes;
+    return usedErpProductCodes.filter((c) => c !== editingProductPricing.erpProductCode);
+  }, [usedErpProductCodes, editingProductPricing]);
 
   useEffect(() => {
     setPageTitle(t('productPricingManagement.title', 'Ürün Fiyatlandırma Yönetimi'));
@@ -218,6 +236,7 @@ export function ProductPricingManagementPage(): ReactElement {
         onDelete={handleDeleteClick}
         productPricing={editingProductPricing}
         isLoading={createProductPricing.isPending || updateProductPricing.isPending || deleteProductPricing.isPending}
+        excludeProductCodes={excludeProductCodes}
       />
     </div>
   );

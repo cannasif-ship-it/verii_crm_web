@@ -1,4 +1,4 @@
-import { type ReactElement, useState, useEffect } from 'react';
+import { type ReactElement, useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useUIStore } from '@/stores/ui-store';
 import { Button } from '@/components/ui/button';
@@ -15,6 +15,7 @@ import { ProductPricingGroupByTable } from './ProductPricingGroupByTable';
 import { ProductPricingGroupByForm } from './ProductPricingGroupByForm';
 import { useCreateProductPricingGroupBy } from '../hooks/useCreateProductPricingGroupBy';
 import { useUpdateProductPricingGroupBy } from '../hooks/useUpdateProductPricingGroupBy';
+import { useProductPricingGroupBys } from '../hooks/useProductPricingGroupBys';
 import type { ProductPricingGroupByDto } from '../types/product-pricing-group-by-types';
 import type { ProductPricingGroupByFormSchema } from '../types/product-pricing-group-by-types';
 import type { PagedFilter } from '@/types/api';
@@ -38,6 +39,23 @@ export function ProductPricingGroupByManagementPage(): ReactElement {
   const createProductPricingGroupBy = useCreateProductPricingGroupBy();
   const updateProductPricingGroupBy = useUpdateProductPricingGroupBy();
   const queryClient = useQueryClient();
+
+  const { data: usedGroupsData } = useProductPricingGroupBys({
+    pageNumber: 1,
+    pageSize: 10000,
+    sortBy: 'Id',
+    sortDirection: 'desc',
+  });
+
+  const usedErpGroupCodes = useMemo((): string[] => {
+    const items = usedGroupsData?.data ?? [];
+    return [...new Set(items.map((x) => x.erpGroupCode))];
+  }, [usedGroupsData]);
+
+  const excludeGroupCodes = useMemo((): string[] => {
+    if (!editingProductPricingGroupBy) return usedErpGroupCodes;
+    return usedErpGroupCodes.filter((c) => c !== editingProductPricingGroupBy.erpGroupCode);
+  }, [usedErpGroupCodes, editingProductPricingGroupBy]);
 
   useEffect(() => {
     setPageTitle(t('productPricingGroupByManagement.title', 'Ürün Fiyatlandırma Grubu Yönetimi'));
@@ -260,6 +278,7 @@ export function ProductPricingGroupByManagementPage(): ReactElement {
         onSubmit={handleFormSubmit}
         productPricingGroupBy={editingProductPricingGroupBy}
         isLoading={createProductPricingGroupBy.isPending || updateProductPricingGroupBy.isPending}
+        excludeGroupCodes={excludeGroupCodes}
       />
     </div>
   );

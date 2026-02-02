@@ -35,6 +35,7 @@ interface ProductPricingGroupByFormProps {
   onSubmit: (data: ProductPricingGroupByFormSchema) => void | Promise<void>;
   productPricingGroupBy?: ProductPricingGroupByDto | null;
   isLoading?: boolean;
+  excludeGroupCodes?: string[];
 }
 
 const INPUT_STYLE = `
@@ -65,6 +66,7 @@ export function ProductPricingGroupByForm({
   onSubmit,
   productPricingGroupBy,
   isLoading = false,
+  excludeGroupCodes,
 }: ProductPricingGroupByFormProps): ReactElement {
   const { t } = useTranslation();
   const { data: exchangeRates = [] } = useExchangeRate();
@@ -202,6 +204,7 @@ export function ProductPricingGroupByForm({
                         const code = group.grupKodu || `__group_${group.isletmeKodu}_${group.subeKodu}`;
                         field.onChange(code);
                       }}
+                      excludeGroupCodes={excludeGroupCodes}
                     />
                     <FormMessage className="text-red-500 text-[10px] mt-1" />
                   </FormItem>
