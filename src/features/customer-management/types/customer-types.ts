@@ -23,7 +23,7 @@ export interface CustomerDto {
   customerTypeName?: string;
   salesRepCode?: string;
   groupCode?: string;
-  creditLimit?: number;
+  creditLimit?: number | null;
   branchCode: number;
   businessUnitCode: number;
   createdDate: string;
@@ -52,7 +52,7 @@ export interface CreateCustomerDto {
   customerTypeId?: number;
   salesRepCode?: string;
   groupCode?: string;
-  creditLimit?: number;
+  creditLimit?: number | null;
   branchCode: number;
   businessUnitCode: number;
   isCompleted?: boolean;
@@ -76,7 +76,7 @@ export interface UpdateCustomerDto {
   customerTypeId?: number;
   salesRepCode?: string;
   groupCode?: string;
-  creditLimit?: number;
+  creditLimit?: number | null;
   branchCode: number;
   businessUnitCode: number;
   completedDate?: string;
@@ -111,7 +111,7 @@ export interface CustomerFormData {
   customerTypeId?: number;
   salesRepCode?: string;
   groupCode?: string;
-  creditLimit?: number;
+  creditLimit?: number | null;
   branchCode: number;
   businessUnitCode: number;
   isCompleted?: boolean;

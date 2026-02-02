@@ -1,4 +1,4 @@
-import { type ReactElement, useState } from 'react';
+import { type ReactElement, useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Table,
@@ -17,46 +17,106 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { useCustomerList } from '../hooks/useCustomerList';
+import { 
+    DropdownMenu, 
+    DropdownMenuCheckboxItem, 
+    DropdownMenuContent, 
+    DropdownMenuTrigger,
+    DropdownMenuLabel,
+    DropdownMenuSeparator
+} from '@/components/ui/dropdown-menu';
 import { useDeleteCustomer } from '../hooks/useDeleteCustomer';
 import type { CustomerDto } from '../types/customer-types';
-import type { PagedFilter } from '@/types/api';
-import { Edit2, Trash2, ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react'; // İkonları Lucide'den alırsak daha şık durur
+import { 
+  Edit2, 
+  Trash2, 
+  ArrowUpDown, 
+  ArrowUp, 
+  ArrowDown,
+  Calendar,
+  User,
+  EyeOff,
+  ChevronDown,
+  Tag,
+  MapPin,
+  Mail,
+  Phone,
+  Globe,
+  CreditCard,
+  Hash
+} from 'lucide-react';
+import { Alert02Icon } from 'hugeicons-react';
 
-interface CustomerTableProps {
-  onEdit: (customer: CustomerDto) => void;
-  pageNumber: number;
-  pageSize: number;
-  sortBy?: string;
-  sortDirection?: 'asc' | 'desc';
-  filters?: PagedFilter[] | Record<string, unknown>;
-  onPageChange: (page: number) => void;
-  onSortChange: (sortBy: string, sortDirection: 'asc' | 'desc') => void;
+export interface ColumnDef<T> {
+  key: keyof T;
+  label: string;
+  type: 'text' | 'date' | 'user' | 'badge' | 'email' | 'phone' | 'location' | 'money' | 'link' | 'code';
+  className?: string;
 }
 
+interface CustomerTableProps {
+  customers: CustomerDto[];
+  isLoading: boolean;
+  onEdit: (customer: CustomerDto) => void;
+}
+
+const getColumnsConfig = (t: any): ColumnDef<CustomerDto>[] => [
+    { key: 'id', label: t('customerManagement.table.id', 'ID'), type: 'text', className: 'font-medium w-[60px]' },
+    { key: 'customerCode', label: t('customerManagement.table.customerCode', 'Kod'), type: 'code', className: 'font-mono text-xs' },
+    { key: 'name', label: t('customerManagement.table.name', 'Müşteri Adı'), type: 'text', className: 'font-bold text-slate-900 dark:text-white min-w-[200px]' },
+    { key: 'customerTypeName', label: t('customerManagement.table.customerType', 'Müşteri Tipi'), type: 'badge', className: 'min-w-[140px]' },
+    { key: 'email', label: t('customerManagement.table.email', 'E-posta'), type: 'email', className: 'min-w-[180px]' },
+    { key: 'phone', label: t('customerManagement.table.phone', 'Telefon'), type: 'phone', className: 'whitespace-nowrap' },
+    { key: 'cityName', label: t('customerManagement.table.city', 'Şehir'), type: 'location', className: 'min-w-[120px]' },
+    { key: 'districtName', label: t('customerManagement.table.district', 'İlçe'), type: 'text', className: 'text-slate-500' },
+    { key: 'countryName', label: t('customerManagement.table.country', 'Ülke'), type: 'text', className: 'text-slate-500' },
+    { key: 'creditLimit', label: t('customerManagement.table.creditLimit', 'Kredi Limiti'), type: 'money', className: 'font-medium' },
+    { key: 'salesRepCode', label: t('customerManagement.table.salesRep', 'Temsilci'), type: 'user', className: 'whitespace-nowrap' },
+    { key: 'tcknNumber', label: t('customerManagement.table.tckn', 'TCKN'), type: 'code', className: 'font-mono text-xs' },
+    { key: 'taxNumber', label: t('customerManagement.table.tax', 'Vergi No'), type: 'code', className: 'font-mono text-xs' },
+    { key: 'website', label: t('customerManagement.table.website', 'Web'), type: 'link', className: 'text-blue-500' },
+    { key: 'createdDate', label: t('customerManagement.table.createdDate', 'Oluşturulma'), type: 'date', className: 'whitespace-nowrap' },
+];
+
 export function CustomerTable({
+  customers,
+  isLoading,
   onEdit,
-  pageNumber,
-  pageSize,
-  sortBy = 'Id',
-  sortDirection = 'desc',
-  filters = {},
-  onPageChange,
-  onSortChange,
 }: CustomerTableProps): ReactElement {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedCustomer, setSelectedCustomer] = useState<CustomerDto | null>(null);
 
-  const { data, isLoading, isFetching } = useCustomerList({
-    pageNumber,
-    pageSize,
-    sortBy,
-    sortDirection,
-    filters: filters as PagedFilter[] | undefined,
-  });
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 10;
+  const [sortConfig, setSortConfig] = useState<{ key: keyof CustomerDto; direction: 'asc' | 'desc' } | null>(null);
+
+  const tableColumns = useMemo(() => getColumnsConfig(t), [t]);
+  
+  const [visibleColumns, setVisibleColumns] = useState<Array<keyof CustomerDto>>([
+    'customerCode', 'name', 'customerTypeName', 'email', 'phone', 'cityName', 'creditLimit', 'salesRepCode'
+  ]);
 
   const deleteCustomer = useDeleteCustomer();
+
+  const processedData = useMemo(() => {
+    const safeData = customers || [];
+    let result = [...safeData];
+    
+    if (sortConfig) {
+      result.sort((a, b) => {
+        const aValue = a[sortConfig.key] ? String(a[sortConfig.key]).toLowerCase() : '';
+        const bValue = b[sortConfig.key] ? String(b[sortConfig.key]).toLowerCase() : '';
+        if (aValue < bValue) return sortConfig.direction === 'asc' ? -1 : 1;
+        if (aValue > bValue) return sortConfig.direction === 'asc' ? 1 : -1;
+        return 0;
+      });
+    }
+    return result;
+  }, [customers, sortConfig]);
+
+  const totalPages = Math.ceil(processedData.length / pageSize);
+  const paginatedData = processedData.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
   const handleDeleteClick = (customer: CustomerDto): void => {
     setSelectedCustomer(customer);
@@ -71,29 +131,64 @@ export function CustomerTable({
     }
   };
 
-  const handleSort = (column: string): void => {
-    const newDirection =
-      sortBy === column && sortDirection === 'asc' ? 'desc' : 'asc';
-    onSortChange(column, newDirection);
+  const handleSort = (key: string) => {
+    let direction: 'asc' | 'desc' = 'asc';
+    if (sortConfig && sortConfig.key === (key as keyof CustomerDto) && sortConfig.direction === 'asc') {
+        direction = 'desc';
+    }
+    setSortConfig({ key: key as keyof CustomerDto, direction });
   };
 
-  // Modern Sort İkonu Bileşeni
-  const SortIcon = ({ column }: { column: string }): ReactElement => {
-    if (sortBy !== column) {
-      return <ArrowUpDown size={14} className="ml-2 inline-block text-slate-400 opacity-50" />;
+  const toggleColumn = (key: keyof CustomerDto) => {
+    setVisibleColumns(prev => 
+      prev.includes(key) ? prev.filter(c => c !== key) : [...prev, key]
+    );
+  };
+
+  const renderCellContent = (item: CustomerDto, column: ColumnDef<CustomerDto>) => {
+    const value = item[column.key];
+    if (!value && value !== 0) return '-';
+
+    switch (column.type) {
+        case 'badge':
+            return <div className="flex items-center gap-2"><Tag size={14} className="text-pink-500" />{String(value)}</div>;
+        case 'email':
+            return <div className="flex items-center gap-2 text-xs truncate max-w-[180px]" title={String(value)}><Mail size={14} className="text-blue-500 shrink-0" />{String(value)}</div>;
+        case 'phone':
+            return <div className="flex items-center gap-2 text-xs"><Phone size={14} className="text-orange-500 shrink-0" />{String(value)}</div>;
+        case 'location':
+            return <div className="flex items-center gap-2 text-xs"><MapPin size={14} className="text-green-500 shrink-0" />{String(value)}</div>;
+        case 'money':
+            return <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 font-mono"><CreditCard size={14} className="shrink-0" />{Number(value).toLocaleString('tr-TR', { minimumFractionDigits: 2 })} ₺</div>;
+        case 'user':
+            return <div className="flex items-center gap-2 text-xs"><User size={14} className="text-indigo-500/50 shrink-0" />{String(value)}</div>;
+        case 'link':
+            return <div className="flex items-center gap-2 text-xs text-blue-600 hover:underline"><Globe size={14} className="shrink-0" /><a href={String(value).startsWith('http') ? String(value) : `https://${value}`} target="_blank" rel="noreferrer">{String(value)}</a></div>;
+        case 'code':
+            return <div className="flex items-center gap-1 bg-slate-100 dark:bg-white/10 px-1.5 py-0.5 rounded text-[11px] font-mono text-slate-600 dark:text-slate-300"><Hash size={12} className="opacity-50" />{String(value)}</div>;
+        case 'date':
+            return <div className="flex items-center gap-2 text-xs"><Calendar size={14} className="text-pink-500/50" />{new Date(String(value)).toLocaleDateString(i18n.language)}</div>;
+        default:
+            return String(value);
     }
-    return sortDirection === 'asc' ? (
+  };
+
+  const SortIcon = ({ column }: { column: string }): ReactElement => {
+    if (sortConfig?.key !== column) {
+      return <ArrowUpDown size={14} className="ml-2 inline-block text-slate-400 opacity-50 group-hover:opacity-100 transition-opacity" />;
+    }
+    return sortConfig.direction === 'asc' ? (
       <ArrowUp size={14} className="ml-2 inline-block text-pink-600 dark:text-pink-400" />
     ) : (
       <ArrowDown size={14} className="ml-2 inline-block text-pink-600 dark:text-pink-400" />
     );
   };
 
-  if (isLoading || isFetching) {
+  if (isLoading) {
     return (
-      <div className="flex items-center justify-center py-12">
+      <div className="flex items-center justify-center py-20 min-h-[400px]">
         <div className="flex flex-col items-center gap-2">
-           <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-current text-pink-500" />
+           <div className="h-10 w-10 animate-spin rounded-full border-b-2 border-current text-pink-500" />
            <div className="text-sm text-muted-foreground animate-pulse">
              {t('customerManagement.loading', 'Yükleniyor...')}
            </div>
@@ -102,201 +197,160 @@ export function CustomerTable({
     );
   }
 
-  const customers = data?.data || (data as any)?.items || [];
-
-  if (!data || customers.length === 0) {
+  if (!customers || customers.length === 0) {
     return (
-      <div className="flex items-center justify-center py-12">
-        <div className="text-muted-foreground bg-slate-50 dark:bg-white/5 px-6 py-4 rounded-xl border border-dashed border-slate-200 dark:border-white/10">
+      <div className="flex items-center justify-center py-20 min-h-[400px]">
+        <div className="text-muted-foreground bg-slate-50 dark:bg-white/5 px-8 py-6 rounded-xl border border-dashed border-slate-200 dark:border-white/10 text-sm font-medium">
           {t('customerManagement.noData', 'Veri yok')}
         </div>
       </div>
     );
   }
 
-  const totalPages = Math.ceil((data.totalCount || 0) / pageSize);
-
-  // Tablo Başlık Stili
-  const headStyle = "cursor-pointer select-none text-slate-500 dark:text-slate-400 hover:text-pink-600 dark:hover:text-pink-400 transition-colors py-4";
+  const headStyle = "cursor-pointer select-none text-slate-500 dark:text-slate-400 hover:text-pink-600 dark:hover:text-pink-400 transition-colors py-4 font-bold text-xs uppercase tracking-wider whitespace-nowrap";
+  const cellStyle = "text-slate-600 dark:text-slate-400 text-sm py-4 border-b border-slate-100 dark:border-white/5 align-middle";
 
   return (
-    <>
-      <div className="rounded-xl border border-slate-200 dark:border-white/10 overflow-hidden">
-        <Table>
-          <TableHeader className="bg-slate-50/50 dark:bg-white/5">
-            <TableRow className="border-b border-slate-200 dark:border-white/10 hover:bg-transparent">
-              <TableHead onClick={() => handleSort('Id')} className={headStyle}>
-                <div className="flex items-center">
-                  {t('customerManagement.table.id', 'ID')}
-                  <SortIcon column="Id" />
-                </div>
-              </TableHead>
-              <TableHead onClick={() => handleSort('CustomerCode')} className={headStyle}>
-                <div className="flex items-center">
-                  {t('customerManagement.table.customerCode', 'Müşteri Kodu')}
-                  <SortIcon column="CustomerCode" />
-                </div>
-              </TableHead>
-              <TableHead onClick={() => handleSort('Name')} className={headStyle}>
-                <div className="flex items-center">
-                  {t('customerManagement.table.name', 'Müşteri Adı')}
-                  <SortIcon column="Name" />
-                </div>
-              </TableHead>
-              <TableHead className="text-slate-500 dark:text-slate-400">
-                {t('customerManagement.table.customerType', 'Müşteri Tipi')}
-              </TableHead>
-              <TableHead className="text-slate-500 dark:text-slate-400">
-                {t('customerManagement.table.tcknNumber', 'TCKN Numarası')}
-              </TableHead>
-              <TableHead className="text-slate-500 dark:text-slate-400">
-                {t('customerManagement.table.country', 'Ülke')}
-              </TableHead>
-              <TableHead className="text-slate-500 dark:text-slate-400">
-                {t('customerManagement.table.city', 'Şehir')}
-              </TableHead>
-              <TableHead className="text-slate-500 dark:text-slate-400">
-                {t('customerManagement.table.district', 'İlçe')}
-              </TableHead>
-              <TableHead className="text-slate-500 dark:text-slate-400">
-                {t('customerManagement.table.phone', 'Telefon')}
-              </TableHead>
-              <TableHead className="text-slate-500 dark:text-slate-400">
-                {t('customerManagement.table.phone2', 'Telefon 2')}
-              </TableHead>
-              <TableHead className="text-slate-500 dark:text-slate-400">
-                {t('customerManagement.table.email', 'E-posta')}
-              </TableHead>
-              <TableHead className="text-slate-500 dark:text-slate-400">
-                {t('customerManagement.table.salesRepCode', 'Satış Temsilcisi')}
-              </TableHead>
-              <TableHead className="text-slate-500 dark:text-slate-400">
-                {t('customerManagement.table.branchCode', 'Şube Kodu')}
-              </TableHead>
-              <TableHead className="text-right text-slate-500 dark:text-slate-400">
-                {t('customerManagement.actions', 'İşlemler')}
-              </TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {customers.map((customer: CustomerDto, index: number) => (
-              <TableRow 
-                key={customer.id || `customer-${index}`}
-                // TASARIM GİYDİRME: Hover Efekti Buraya Eklendi
-                className="border-b border-slate-100 dark:border-white/5 transition-colors duration-200 hover:bg-pink-50/40 dark:hover:bg-pink-500/5 group"
-              >
-                <TableCell className="font-medium text-slate-700 dark:text-slate-300 group-hover:text-pink-600 dark:group-hover:text-pink-400 transition-colors">
-                    {customer.id}
-                </TableCell>
-                <TableCell className="text-slate-600 dark:text-slate-400">{customer.customerCode || '-'}</TableCell>
-                <TableCell className="font-medium text-slate-900 dark:text-white">{customer.name}</TableCell>
-                <TableCell className="text-slate-600 dark:text-slate-400">{customer.customerTypeName || '-'}</TableCell>
-                <TableCell className="text-slate-600 dark:text-slate-400">{customer.tcknNumber || '-'}</TableCell>
-                <TableCell className="text-slate-600 dark:text-slate-400">{customer.countryName || '-'}</TableCell>
-                <TableCell className="text-slate-600 dark:text-slate-400">{customer.cityName || '-'}</TableCell>
-                <TableCell className="text-slate-600 dark:text-slate-400">{customer.districtName || '-'}</TableCell>
-                <TableCell className="text-slate-600 dark:text-slate-400">{customer.phone || '-'}</TableCell>
-                <TableCell className="text-slate-600 dark:text-slate-400">{customer.phone2 || '-'}</TableCell>
-                <TableCell className="text-slate-600 dark:text-slate-400">{customer.email || '-'}</TableCell>
-                <TableCell className="text-slate-600 dark:text-slate-400">{customer.salesRepCode || '-'}</TableCell>
-                <TableCell className="text-slate-600 dark:text-slate-400">{customer.branchCode || '-'}</TableCell>
-                <TableCell className="text-right">
-                  <div className="flex justify-end gap-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-8 w-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-500/10"
-                      onClick={() => onEdit(customer)}
+    <div className="flex flex-col gap-4">
+      
+      <div className="flex justify-end p-2 sm:p-0">
+            <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                    <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="ml-auto h-9 lg:flex border-dashed border-slate-300 dark:border-white/20 bg-transparent hover:bg-slate-50 dark:hover:bg-white/5 text-xs sm:text-sm"
                     >
-                      <Edit2 size={16} />
+                        <EyeOff className="mr-2 h-4 w-4" />
+                        {t('common.editColumns', 'Sütunları Düzenle')}
+                        <ChevronDown className="ml-2 h-4 w-4" />
                     </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-500/10"
-                      onClick={() => handleDeleteClick(customer)}
-                    >
-                      <Trash2 size={16} />
-                    </Button>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent 
+                    align="end" 
+                    className="w-56 max-h-[400px] overflow-y-auto bg-white/95 dark:bg-[#1a1025]/95 backdrop-blur-xl border border-slate-200 dark:border-white/10 shadow-xl rounded-xl p-2 z-50"
+                >
+                    <DropdownMenuLabel className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider px-2 py-1.5">
+                        {t('common.visibleColumns', 'Görünür Sütunlar')}
+                    </DropdownMenuLabel>
+                    <DropdownMenuSeparator className="bg-slate-200 dark:bg-white/10 my-1" />
+                    
+                    {tableColumns.map((col) => (
+                        <DropdownMenuCheckboxItem
+                            key={col.key}
+                            checked={visibleColumns.includes(col.key)}
+                            onSelect={(e) => e.preventDefault()} 
+                            onCheckedChange={() => toggleColumn(col.key)}
+                            className="text-sm text-slate-700 dark:text-slate-200 focus:bg-pink-50 dark:focus:bg-pink-500/10 focus:text-pink-600 dark:focus:text-pink-400 cursor-pointer rounded-lg px-2 py-1.5 pl-8 relative"
+                        >
+                            {col.label}
+                        </DropdownMenuCheckboxItem>
+                    ))}
+                </DropdownMenuContent>
+            </DropdownMenu>
       </div>
 
-      {/* Pagination Alanı */}
+      <div className="rounded-xl border border-slate-200 dark:border-white/10 overflow-hidden bg-white/50 dark:bg-transparent">
+        <Table>
+            <TableHeader className="bg-slate-50/50 dark:bg-white/5">
+              <TableRow className="border-b border-slate-200 dark:border-white/10 hover:bg-transparent">
+                {tableColumns.filter(col => visibleColumns.includes(col.key)).map((col) => (
+                    <TableHead 
+                        key={col.key} 
+                        onClick={() => handleSort(col.key as string)} 
+                        className={headStyle}
+                    >
+                        <div className="flex items-center gap-2">
+                            {col.label}
+                            <SortIcon column={col.key as string} />
+                        </div>
+                    </TableHead>
+                ))}
+                <TableHead className={`${headStyle} text-right w-[100px]`}>
+                  {t('customerManagement.actions', 'İşlemler')}
+                </TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {paginatedData.map((customer: CustomerDto, index: number) => (
+                <TableRow 
+                  key={customer.id || `customer-${index}`}
+                  className="border-b border-slate-100 dark:border-white/5 transition-colors duration-200 hover:bg-pink-50/40 dark:hover:bg-pink-500/5 group last:border-0"
+                >
+                  {tableColumns.filter(col => visibleColumns.includes(col.key)).map((col) => (
+                      <TableCell key={`${customer.id}-${col.key}`} className={`${cellStyle} ${col.className || ''}`}>
+                          {renderCellContent(customer, col)}
+                      </TableCell>
+                  ))}
+
+                  <TableCell className={`${cellStyle} text-right`}>
+                    <div className="flex justify-end gap-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
+                      <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-500/10" onClick={() => onEdit(customer)}><Edit2 size={16} /></Button>
+                      <Button variant="ghost" size="icon" className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-500/10" onClick={() => handleDeleteClick(customer)}><Trash2 size={16} /></Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+      </div>
+
       <div className="flex flex-col sm:flex-row items-center justify-between py-4 gap-4">
         <div className="text-sm text-slate-500 dark:text-slate-400">
           {t('customerManagement.table.showing', '{{from}}-{{to}} / {{total}} gösteriliyor', {
-            from: (pageNumber - 1) * pageSize + 1,
-            to: Math.min(pageNumber * pageSize, data.totalCount || 0),
-            total: data.totalCount || 0,
+            from: (currentPage - 1) * pageSize + 1,
+            to: Math.min(currentPage * pageSize, processedData.length),
+            total: processedData.length,
           })}
         </div>
         <div className="flex gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => onPageChange(pageNumber - 1)}
-            disabled={pageNumber <= 1}
-            className="bg-white dark:bg-transparent border-slate-200 dark:border-white/10 hover:bg-slate-50 dark:hover:bg-white/5"
-          >
-            {t('customerManagement.previous', 'Önceki')}
-          </Button>
-          <div className="flex items-center px-4 text-sm font-medium text-slate-700 dark:text-slate-200">
-            {t('customerManagement.table.page', 'Sayfa {{current}} / {{total}}', {
-              current: pageNumber,
-              total: totalPages,
-            })}
-          </div>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => onPageChange(pageNumber + 1)}
-            disabled={pageNumber >= totalPages}
-            className="bg-white dark:bg-transparent border-slate-200 dark:border-white/10 hover:bg-slate-50 dark:hover:bg-white/5"
-          >
-            {t('customerManagement.next', 'Sonraki')}
-          </Button>
+          <Button variant="outline" size="sm" onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))} disabled={currentPage <= 1} className="bg-white dark:bg-transparent border-slate-200 dark:border-white/10 hover:bg-slate-50 dark:hover:bg-white/5">{t('customerManagement.previous', 'Önceki')}</Button>
+          <div className="flex items-center px-4 text-sm font-medium text-slate-700 dark:text-slate-200">{t('customerManagement.table.page', 'Sayfa {{current}} / {{total}}', { current: currentPage, total: totalPages || 1 })}</div>
+          <Button variant="outline" size="sm" onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))} disabled={currentPage >= totalPages} className="bg-white dark:bg-transparent border-slate-200 dark:border-white/10 hover:bg-slate-50 dark:hover:bg-white/5">{t('customerManagement.next', 'Sonraki')}</Button>
         </div>
       </div>
 
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <DialogContent className="bg-white dark:bg-[#130822] border border-slate-100 dark:border-white/10 text-slate-900 dark:text-white sm:rounded-2xl">
-          <DialogHeader>
-            <DialogTitle className="text-slate-900 dark:text-white">
-              {t('customerManagement.delete.confirmTitle', 'Müşteriyi Sil')}
-            </DialogTitle>
-            <DialogDescription className="text-slate-500 dark:text-slate-400">
-              {t('customerManagement.delete.confirmMessage', '{{name}} müşterisini silmek istediğinizden emin misiniz?', {
-                name: selectedCustomer?.name || '',
-              })}
-            </DialogDescription>
+        <DialogContent className="bg-white dark:bg-[#130822] border border-slate-100 dark:border-white/10 text-slate-900 dark:text-white w-[90%] sm:w-full max-w-md rounded-2xl shadow-2xl overflow-hidden p-0 gap-0">
+          <DialogHeader className="flex flex-col items-center gap-4 text-center pb-6 pt-10 px-6">
+            <div className="h-20 w-20 rounded-full bg-red-50 dark:bg-red-500/10 flex items-center justify-center mb-2 animate-in zoom-in duration-300">
+               <Alert02Icon size={36} className="text-red-600 dark:text-red-500" />
+            </div>
+            <div className="space-y-2">
+                <DialogTitle className="text-2xl font-bold text-slate-900 dark:text-white">
+                {t('customerManagement.delete.confirmTitle', 'Müşteriyi Sil')}
+                </DialogTitle>
+                <DialogDescription className="text-slate-500 dark:text-slate-400 max-w-[280px] mx-auto text-sm leading-relaxed">
+                {t('customerManagement.delete.confirmMessage', '{{name}} müşterisini silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.', {
+                    name: selectedCustomer?.name || '',
+                })}
+                </DialogDescription>
+            </div>
           </DialogHeader>
-          <DialogFooter className="gap-2 sm:gap-0">
+          <DialogFooter className="flex flex-row gap-3 justify-center p-6 bg-slate-50/50 dark:bg-[#1a1025]/50 border-t border-slate-100 dark:border-white/5">
             <Button
+              type="button"
               variant="outline"
               onClick={() => setDeleteDialogOpen(false)}
               disabled={deleteCustomer.isPending}
-              className="bg-white dark:bg-transparent border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/5"
+              className="flex-1 h-12 rounded-xl border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300 hover:bg-white dark:hover:bg-white/5 font-semibold"
             >
-              {t('customerManagement.cancel', 'İptal')}
+              {t('customerManagement.cancel', 'Vazgeç')}
             </Button>
             <Button
+              type="button"
               variant="destructive"
               onClick={handleDeleteConfirm}
               disabled={deleteCustomer.isPending}
-              className="bg-red-600 hover:bg-red-700 dark:bg-red-900/50 dark:hover:bg-red-900/70 border border-transparent dark:border-red-500/20 text-white"
+              className="flex-1 h-12 rounded-xl bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white border-0 shadow-lg shadow-red-500/20 transition-all hover:scale-[1.02] font-bold"
             >
               {deleteCustomer.isPending
-                ? t('customerManagement.loading', 'Yükleniyor...')
-                : t('customerManagement.delete.action', 'Sil')}
+                ? t('customerManagement.loading', 'Siliniyor...')
+                : t('customerManagement.delete.action', 'Evet, Sil')}
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </>
+    </div>
   );
 }

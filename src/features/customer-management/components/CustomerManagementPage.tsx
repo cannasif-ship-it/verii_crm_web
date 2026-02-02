@@ -1,4 +1,4 @@
-import { type ReactElement, useState, useEffect } from 'react';
+import { type ReactElement, useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useUIStore } from '@/stores/ui-store';
 import { Plus, Search, RefreshCw, X } from 'lucide-react';
@@ -10,20 +10,18 @@ import { CustomerTable } from './CustomerTable';
 import { CustomerForm } from './CustomerForm';
 import { useCreateCustomer } from '../hooks/useCreateCustomer';
 import { useUpdateCustomer } from '../hooks/useUpdateCustomer';
-import type { CustomerDto } from '../types/customer-types';
-import type { CustomerFormSchema } from '../types/customer-types';
+import { useCustomerList } from '../hooks/useCustomerList';
+import type { CustomerDto, CustomerFormData } from '../types/customer-types';
 
 export function CustomerManagementPage(): ReactElement {
   const { t } = useTranslation();
   const { setPageTitle } = useUIStore();
+  
   const [formOpen, setFormOpen] = useState(false);
   const [editingCustomer, setEditingCustomer] = useState<CustomerDto | null>(null);
-  const [pageNumber, setPageNumber] = useState(1);
-  const [pageSize] = useState(20);
-  const [sortBy, setSortBy] = useState('Id');
-  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
-  const [filters, setFilters] = useState<Record<string, unknown>>({});
+  
   const [searchTerm, setSearchTerm] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
   const [activeFilter, setActiveFilter] = useState('all');
   const [isRefreshing, setIsRefreshing] = useState(false);
 
@@ -31,29 +29,50 @@ export function CustomerManagementPage(): ReactElement {
   const createCustomer = useCreateCustomer();
   const updateCustomer = useUpdateCustomer();
 
+  const { data: apiResponse, isLoading } = useCustomerList({
+    pageNumber: 1,
+    pageSize: 10000,
+  });
+
+  const customers = apiResponse?.data || (apiResponse as any)?.items || [];
+
   useEffect(() => {
     setPageTitle(t('customerManagement.menu', 'Müşteri Yönetimi'));
-    return () => {
-      setPageTitle(null);
-    };
+    return () => setPageTitle(null);
   }, [t, setPageTitle]);
 
   useEffect(() => {
-    const newFilters: Record<string, unknown> = {};
-    if (searchTerm) {
-      newFilters.name = searchTerm;
+    const timer = setTimeout(() => {
+      setDebouncedSearch(searchTerm);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
+
+  const filteredCustomers = useMemo(() => {
+    if (!customers) return [];
+
+    let result = [...customers];
+
+    if (debouncedSearch) {
+        const lowerSearch = debouncedSearch.toLowerCase();
+        result = result.filter(item => 
+            (item.name && item.name.toLowerCase().includes(lowerSearch)) ||
+            (item.customerCode && item.customerCode.toLowerCase().includes(lowerSearch)) ||
+            (item.email && item.email.toLowerCase().includes(lowerSearch)) ||
+            (item.phone && item.phone.includes(lowerSearch)) ||
+            (item.taxNumber && item.taxNumber.includes(lowerSearch))
+        );
     }
-    
-    // Müşteri için aktif/pasif filtresi genellikle IsActive gibi bir alanla yapılır
+
     if (activeFilter === 'active') {
-        newFilters.isActive = true;
+        result = result.filter(item => !item.isDeleted);
     } else if (activeFilter === 'inactive') {
-        newFilters.isActive = false;
+        result = result.filter(item => item.isDeleted);
     }
-    
-    setFilters(newFilters);
-    setPageNumber(1);
-  }, [searchTerm, activeFilter]);
+
+    return result;
+  }, [customers, debouncedSearch, activeFilter]);
 
   const handleAddClick = (): void => {
     setEditingCustomer(null);
@@ -62,6 +81,7 @@ export function CustomerManagementPage(): ReactElement {
 
   const clearSearch = () => {
     setSearchTerm('');
+    setDebouncedSearch('');
   };
 
   const handleRefresh = async () => {
@@ -75,79 +95,29 @@ export function CustomerManagementPage(): ReactElement {
     setFormOpen(true);
   };
 
-  const handleFormSubmit = async (data: CustomerFormSchema): Promise<void> => {
+  const handleFormSubmit = async (data: CustomerFormData): Promise<void> => {
     if (editingCustomer) {
       await updateCustomer.mutateAsync({
         id: editingCustomer.id,
-        data: {
-          customerCode: data.customerCode || undefined,
-          name: data.name,
-          taxNumber: data.taxNumber || undefined,
-          taxOffice: data.taxOffice || undefined,
-          tcknNumber: data.tcknNumber || undefined,
-          address: data.address || undefined,
-          phone: data.phone || undefined,
-          phone2: data.phone2 || undefined,
-          email: data.email || undefined,
-          website: data.website || undefined,
-          notes: data.notes || undefined,
-          countryId: data.countryId,
-          cityId: data.cityId,
-          districtId: data.districtId,
-          customerTypeId: data.customerTypeId,
-          salesRepCode: data.salesRepCode || undefined,
-          groupCode: data.groupCode || undefined,
-          creditLimit: data.creditLimit ?? undefined,
-          branchCode: data.branchCode,
-          businessUnitCode: data.businessUnitCode,
-          isCompleted: data.isCompleted,
-        },
+        data: data,
       });
     } else {
-      await createCustomer.mutateAsync({
-        customerCode: data.customerCode || undefined,
-        name: data.name,
-        taxNumber: data.taxNumber || undefined,
-        taxOffice: data.taxOffice || undefined,
-        address: data.address || undefined,
-        phone: data.phone || undefined,
-        phone2: data.phone2 || undefined,
-        email: data.email || undefined,
-        website: data.website || undefined,
-        notes: data.notes || undefined,
-        countryId: data.countryId,
-        cityId: data.cityId,
-        districtId: data.districtId,
-        customerTypeId: data.customerTypeId,
-        salesRepCode: data.salesRepCode || undefined,
-        groupCode: data.groupCode || undefined,
-        creditLimit: data.creditLimit ?? undefined,
-        branchCode: data.branchCode,
-        businessUnitCode: data.businessUnitCode,
-        isCompleted: data.isCompleted,
-      });
+      await createCustomer.mutateAsync(data);
     }
     setFormOpen(false);
     setEditingCustomer(null);
   };
 
-  const handleSortChange = (newSortBy: string, newSortDirection: 'asc' | 'desc'): void => {
-    setSortBy(newSortBy);
-    setSortDirection(newSortDirection);
-    setPageNumber(1);
-  };
-
-  // ARKAPLAN VE GLOW EFEKTLERİ KALDIRILDI (Çünkü artık MainLayout'tan geliyor)
   return (
-    <div className="w-full space-y-8 relative">
+    <div className="w-full space-y-6">
       
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-900 dark:text-white mb-1 transition-colors">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-5 pt-2">
+        <div className="flex flex-col gap-2">
+          <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white transition-colors">
             {t('customerManagement.menu', 'Müşteri Yönetimi')}
           </h1>
-          <p className="text-slate-500 dark:text-slate-400 text-xs font-medium transition-colors">
-            {t('customerManagement.description', 'Müşterileri yönetin ve düzenleyin')}
+          <p className="text-slate-500 dark:text-slate-400 text-sm font-medium transition-colors">
+            {t('customerManagement.description', 'Müşterilerinizi yönetin ve düzenleyin')}
           </p>
         </div>
         
@@ -155,73 +125,73 @@ export function CustomerManagementPage(): ReactElement {
           onClick={handleAddClick}
           className="px-6 py-2 bg-gradient-to-r from-pink-600 to-orange-600 rounded-lg text-white text-sm font-bold shadow-lg shadow-pink-500/20 hover:scale-105 transition-transform border-0 hover:text-white"
         >
-            <Plus size={18} className="mr-2" />
+          <Plus size={18} className="mr-2" />
           {t('customerManagement.addButton', 'Yeni Müşteri Ekle')}
         </Button>
       </div>
 
       <CustomerStats />
 
-      {/* Filter Section */}
-      <div className="bg-white/70 dark:bg-[#1a1025]/60 backdrop-blur-xl border border-white/60 dark:border-white/5 shadow-sm rounded-2xl p-4 flex flex-col md:flex-row items-center justify-between gap-4 transition-all duration-300">
-          <div className="flex items-center gap-2 w-full md:w-auto">
-            <div className="relative group w-full md:w-96">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-pink-500 transition-colors" />
-              <Input
-                placeholder={t('common.search', 'Ara...')}
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 h-10 bg-white/50 dark:bg-card/50 border-slate-200 dark:border-white/10 focus:border-pink-500/50 focus:ring-pink-500/20 rounded-xl transition-all"
-              />
-              {searchTerm && (
-                <button
-                  onClick={clearSearch}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 p-1 hover:bg-slate-100 dark:hover:bg-white/10 rounded-full transition-colors"
-                >
-                  <X size={14} className="text-slate-400" />
-                </button>
-              )}
+      <div className="bg-white/70 dark:bg-[#1a1025]/60 backdrop-blur-xl border border-white/60 dark:border-white/5 shadow-sm rounded-2xl p-5 flex flex-col gap-5 transition-all duration-300">
+          
+          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+            
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full lg:w-auto">
+                <div className="relative group w-full sm:w-72 lg:w-96">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-pink-500 transition-colors" />
+                  <Input
+                    placeholder={t('common.search', 'Hızlı Ara (Ad, Kod, Vergi No...)')}
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-10 h-10 bg-white/50 dark:bg-card/50 border-slate-200 dark:border-white/10 focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-pink-500 dark:focus-visible:border-pink-500 rounded-xl transition-all w-full"
+                  />
+                  {searchTerm && (
+                    <button
+                      onClick={clearSearch}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 p-1 hover:bg-slate-100 dark:hover:bg-white/10 rounded-full transition-colors"
+                    >
+                      <X size={14} className="text-slate-400" />
+                    </button>
+                  )}
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <div 
+                    className="h-10 w-10 flex items-center justify-center bg-white/50 dark:bg-card/50 border border-slate-200 dark:border-white/10 rounded-xl cursor-pointer hover:border-pink-500/30 hover:bg-pink-50/50 dark:hover:bg-pink-500/10 transition-all group shrink-0"
+                    onClick={handleRefresh}
+                  >
+                    <RefreshCw 
+                      size={18} 
+                      className={`text-slate-500 dark:text-slate-400 group-hover:text-pink-600 dark:group-hover:text-pink-400 transition-colors ${isRefreshing ? 'animate-spin' : ''}`} 
+                    />
+                  </div>
+                </div>
             </div>
-            <div 
-              className="h-10 w-10 flex items-center justify-center bg-white/50 dark:bg-card/50 border border-slate-200 dark:border-white/10 rounded-xl cursor-pointer hover:border-pink-500/30 hover:bg-pink-50/50 dark:hover:bg-pink-500/10 transition-all group"
-              onClick={handleRefresh}
-            >
-              <RefreshCw 
-                size={18} 
-                className={`text-slate-500 dark:text-slate-400 group-hover:text-pink-600 dark:group-hover:text-pink-400 transition-colors ${isRefreshing ? 'animate-spin' : ''}`} 
-              />
+
+            <div className="flex items-center gap-1 bg-slate-100/50 dark:bg-white/5 p-1 rounded-xl w-full lg:w-auto overflow-x-auto">
+               {['all', 'active', 'inactive'].map((filter) => (
+                 <button
+                   key={filter}
+                   onClick={() => setActiveFilter(filter)}
+                   className={`
+                     flex-1 lg:flex-none px-4 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all whitespace-nowrap
+                     ${activeFilter === filter 
+                     ? 'bg-white dark:bg-[#1a1025] text-pink-600 dark:text-pink-400 shadow-sm border border-slate-200 dark:border-white/10' 
+                     : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'}
+                   `}
+                 >
+                   {filter === 'all' ? t('common.all', 'Tümü') : filter === 'active' ? t('status.active', 'Aktif') : t('status.inactive', 'Pasif')}
+                 </button>
+               ))}
             </div>
-          </div>
-          <div className="flex items-center gap-2 overflow-x-auto w-full md:w-auto pb-2 md:pb-0 scrollbar-hide">
-             {['all', 'active', 'inactive'].map((filter) => (
-               <Button
-                 key={filter}
-                 variant="ghost"
-                 onClick={() => setActiveFilter(filter)}
-                 className={`
-                   rounded-lg px-4 h-9 text-xs font-bold uppercase tracking-wider transition-all
-                   ${activeFilter === filter 
-                     ? 'bg-pink-500/10 text-pink-600 dark:text-pink-400 border border-pink-500/20' 
-                     : 'text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white border border-transparent'}
-                 `}
-               >
-                 {filter === 'all' ? t('common.all', 'Tümü') : filter === 'active' ? t('status.active', 'Aktif') : t('status.inactive', 'Pasif')}
-               </Button>
-             ))}
           </div>
       </div>
 
-      {/* Tablo Alanı: Hala kendi cam efektini koruyor, bu çok şık durur */}
-      <div className="bg-white/70 dark:bg-[#1a1025]/60 backdrop-blur-xl border border-white/60 dark:border-white/5 shadow-sm rounded-2xl p-6 transition-all duration-300">
+      <div className="bg-white/70 dark:bg-[#1a1025]/60 backdrop-blur-xl border border-white/60 dark:border-white/5 shadow-sm rounded-2xl p-0 sm:p-1 transition-all duration-300 overflow-hidden">
         <CustomerTable
+          customers={filteredCustomers}
+          isLoading={isLoading}
           onEdit={handleEdit}
-          pageNumber={pageNumber}
-          pageSize={pageSize}
-          sortBy={sortBy}
-          sortDirection={sortDirection}
-          filters={filters}
-          onPageChange={setPageNumber}
-          onSortChange={handleSortChange}
         />
       </div>
 
