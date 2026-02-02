@@ -23,7 +23,7 @@ import {
 } from '@/components/ui/form';
 import { activityTypeFormSchema, type ActivityTypeFormSchema } from '../types/activity-type-types';
 import type { ActivityTypeDto } from '../types/activity-type-types';
-import { ListTodo, Type, FileText } from 'lucide-react';
+import { ListTodo, Type, FileText, X } from 'lucide-react';
 
 interface ActivityTypeFormProps {
   open: boolean;
@@ -33,27 +33,24 @@ interface ActivityTypeFormProps {
   isLoading?: boolean;
 }
 
+// ContactForm ile BİREBİR AYNI Input Stili
 const INPUT_STYLE = `
-  h-11 rounded-lg
-  bg-slate-50 dark:bg-[#0c0516] 
+  h-12 rounded-xl
+  bg-slate-50 dark:bg-[#0f0a18] 
   border border-slate-200 dark:border-white/10 
   text-slate-900 dark:text-white text-sm
   placeholder:text-slate-400 dark:placeholder:text-slate-600 
   
-  focus-visible:ring-0 focus-visible:ring-offset-0 
+  focus-visible:bg-white dark:focus-visible:bg-[#1a1025]
+  focus-visible:border-pink-500 dark:focus-visible:border-pink-500/70
+  focus-visible:ring-2 focus-visible:ring-pink-500/10 focus-visible:ring-offset-0
   
-  focus:bg-white 
-  focus:border-pink-500 
-  focus:shadow-[0_0_0_3px_rgba(236,72,153,0.15)] 
-
-  dark:focus:bg-[#0c0516] 
-  dark:focus:border-pink-500/60 
-  dark:focus:shadow-[0_0_0_3px_rgba(236,72,153,0.1)]
-
+  focus:ring-2 focus:ring-pink-500/10 focus:ring-offset-0 focus:border-pink-500
+  
   transition-all duration-200
 `;
 
-const LABEL_STYLE = "text-[11px] text-slate-500 dark:text-slate-400 uppercase tracking-wider font-bold ml-1 mb-1.5 block flex items-center gap-1.5";
+const LABEL_STYLE = "text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide ml-1 mb-2 flex items-center gap-2";
 
 export function ActivityTypeForm({
   open,
@@ -96,91 +93,101 @@ export function ActivityTypeForm({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-white dark:bg-[#130822] border border-slate-100 dark:border-white/10 text-slate-900 dark:text-white max-w-2xl shadow-2xl shadow-slate-200/50 dark:shadow-black/50 sm:rounded-2xl max-h-[90vh] h-full flex flex-col gap-0 p-0 overflow-hidden transition-colors duration-300">
+      <DialogContent className="bg-white dark:bg-[#130822] border border-slate-100 dark:border-white/10 text-slate-900 dark:text-white max-w-2xl w-[95%] sm:w-full shadow-2xl sm:rounded-2xl p-0 overflow-hidden flex flex-col max-h-[90vh]">
         
-        <DialogHeader className="border-b border-slate-100 dark:border-white/5 px-6 py-5 bg-white/80 dark:bg-[#130822]/90 backdrop-blur-md shrink-0 flex-row items-center justify-between space-y-0">
-          <div className="flex items-center gap-3">
-             <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-pink-500/20 to-orange-500/20 border border-pink-500/10 flex items-center justify-center text-pink-500 shrink-0">
-               <ListTodo size={20} />
+        {/* HEADER: ContactForm ile Birebir Aynı Tasarım */}
+        <DialogHeader className="px-6 py-5 border-b border-slate-100 dark:border-white/5 bg-slate-50/50 dark:bg-[#1a1025]/50 flex flex-row items-center justify-between sticky top-0 z-10 backdrop-blur-sm">
+          <div className="flex items-center gap-4">
+             {/* Gradient İkon Kutusu */}
+             <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-pink-500 to-orange-500 p-0.5 shadow-lg shadow-pink-500/20">
+               <div className="h-full w-full bg-white dark:bg-[#130822] rounded-[14px] flex items-center justify-center">
+                 <ListTodo size={24} className="text-pink-600 dark:text-pink-500" />
+               </div>
              </div>
-             <div>
-                <DialogTitle className="text-lg font-bold text-slate-900 dark:text-white">
+             <div className="space-y-1">
+                <DialogTitle className="text-xl font-bold tracking-tight text-slate-900 dark:text-white">
                   {activityType
                     ? t('activityType.form.editTitle', 'Aktivite Tipi Düzenle')
                     : t('activityType.form.addTitle', 'Yeni Aktivite Tipi Ekle')}
                 </DialogTitle>
-                <DialogDescription className="text-slate-500 dark:text-slate-400 text-xs mt-0.5">
+                <DialogDescription className="text-slate-500 dark:text-slate-400 text-sm">
                   {activityType
-                    ? t('activityType.form.editDescription', 'Aktivite tipi bilgilerini düzenleyin')
-                    : t('activityType.form.addDescription', 'Yeni aktivite tipi bilgilerini girin')}
+                    ? t('activityType.form.editDescription', 'Aktivite tipi bilgilerini güncelleyin')
+                    : t('activityType.form.addDescription', 'Yeni aktivite tipi kaydı oluşturun')}
                 </DialogDescription>
              </div>
           </div>
+          <Button variant="ghost" size="icon" onClick={() => onOpenChange(false)} className="text-slate-400 hover:text-slate-600 dark:hover:text-white rounded-full">
+            <X size={20} />
+          </Button>
         </DialogHeader>
 
-        {/* BODY: Kaydırılabilir Form Alanı */}
-        <div className="flex-1 overflow-y-auto p-6 custom-scrollbar">
+        {/* BODY */}
+        <div className="flex-1 overflow-y-auto p-6 sm:p-8 custom-scrollbar">
           <Form {...form}>
-            <form id="activity-type-form" onSubmit={form.handleSubmit(handleSubmit)} className="space-y-5">
+            <form id="activity-type-form" onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
               
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem className="space-y-0">
-                    <FormLabel className={LABEL_STYLE}>
-                      <Type size={12} className="text-pink-500" />
-                      {t('activityType.form.name', 'Aktivite Tipi Adı')} *
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        className={INPUT_STYLE}
-                        placeholder={t('activityType.form.namePlaceholder', 'Aktivite tipi adını girin')}
-                        maxLength={100}
-                      />
-                    </FormControl>
-                    <FormMessage className="text-red-500 text-[10px] mt-1" />
-                  </FormItem>
-                )}
-              />
+              <div className="grid grid-cols-1 gap-5">
+                
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className={LABEL_STYLE}>
+                        <Type size={16} className="text-pink-500" />
+                        {t('activityType.form.name', 'Aktivite Tipi Adı')} <span className="text-red-500">*</span>
+                      </FormLabel>
+                      <FormControl>
+                        <Input 
+                            {...field} 
+                            className={INPUT_STYLE} 
+                            placeholder={t('activityType.form.namePlaceholder', 'Örn: Toplantı, Ziyaret...')} 
+                            maxLength={100}
+                        />
+                      </FormControl>
+                      <FormMessage className="text-xs" />
+                    </FormItem>
+                  )}
+                />
 
-              <FormField
-                control={form.control}
-                name="description"
-                render={({ field }) => (
-                  <FormItem className="space-y-0">
-                    <FormLabel className={LABEL_STYLE}>
-                      <FileText size={12} className="text-pink-500" />
-                      {t('activityType.form.description', 'Açıklama')}
-                    </FormLabel>
-                    <FormControl>
-                      <Textarea
-                        {...field}
-                        value={field.value || ''}
-                        className={`${INPUT_STYLE} h-auto min-h-[120px] py-3`}
-                        placeholder={t('activityType.form.descriptionPlaceholder', 'Açıklama girin (opsiyonel)')}
-                        maxLength={500}
-                        rows={5}
-                      />
-                    </FormControl>
-                    <FormMessage className="text-red-500 text-[10px] mt-1" />
-                  </FormItem>
-                )}
-              />
+                <FormField
+                  control={form.control}
+                  name="description"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className={LABEL_STYLE}>
+                        <FileText size={16} className="text-pink-500" />
+                        {t('activityType.form.description', 'Açıklama')}
+                      </FormLabel>
+                      <FormControl>
+                        <Textarea
+                          {...field}
+                          value={field.value || ''}
+                          className={`${INPUT_STYLE} min-h-[120px] h-auto py-3 resize-none`}
+                          placeholder={t('activityType.form.descriptionPlaceholder', 'Açıklama girin (opsiyonel)')}
+                          maxLength={500}
+                        />
+                      </FormControl>
+                      <FormMessage className="text-xs" />
+                    </FormItem>
+                  )}
+                />
+
+              </div>
 
             </form>
           </Form>
         </div>
 
-        {/* FOOTER: Sabit */}
-        <DialogFooter className="border-t border-slate-100 dark:border-white/5 px-6 py-4 bg-white/80 dark:bg-[#130822]/90 backdrop-blur-md shrink-0 gap-3">
+        {/* FOOTER: ContactForm ile Birebir Aynı Tasarım */}
+        <DialogFooter className="px-6 py-5 border-t border-slate-100 dark:border-white/5 bg-slate-50/50 dark:bg-[#1a1025]/50 flex-col sm:flex-row gap-3 sticky bottom-0 z-10 backdrop-blur-sm">
           <Button
             type="button"
             variant="outline"
             onClick={() => onOpenChange(false)}
             disabled={isLoading}
-            className="bg-white dark:bg-transparent border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white"
+            className="w-full sm:w-auto h-11 border-slate-200 dark:border-white/10 hover:bg-slate-100 dark:hover:bg-white/5"
           >
             {t('activityType.cancel', 'İptal')}
           </Button>
@@ -188,7 +195,7 @@ export function ActivityTypeForm({
             type="submit" 
             form="activity-type-form"
             disabled={isLoading}
-            className="bg-gradient-to-r from-pink-600 to-orange-600 text-white font-bold border-0 hover:shadow-lg hover:shadow-pink-500/20 transition-all transform active:scale-95 px-8"
+            className="w-full sm:w-auto h-11 bg-gradient-to-r from-pink-600 to-orange-600 hover:from-pink-700 hover:to-orange-700 text-white font-semibold shadow-md hover:shadow-lg transition-all"
           >
             {isLoading
               ? t('activityType.saving', 'Kaydediliyor...')

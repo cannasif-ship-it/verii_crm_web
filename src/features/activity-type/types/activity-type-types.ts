@@ -3,7 +3,7 @@ import { z } from 'zod';
 export interface ActivityTypeDto {
   id: number;
   name: string;
-  description?: string;
+  description?: string | null;
   createdDate: string;
   updatedDate?: string;
   createdBy?: string;
@@ -13,12 +13,12 @@ export interface ActivityTypeDto {
 
 export interface CreateActivityTypeDto {
   name: string;
-  description?: string;
+  description?: string | null;
 }
 
 export interface UpdateActivityTypeDto {
   name: string;
-  description?: string;
+  description?: string | null;
 }
 
 export interface ActivityTypeListFilters {
@@ -28,7 +28,7 @@ export interface ActivityTypeListFilters {
 
 export interface ActivityTypeFormData {
   name: string;
-  description?: string;
+  description?: string | null;
 }
 
 export const activityTypeFormSchema = z.object({
