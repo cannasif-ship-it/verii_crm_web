@@ -69,7 +69,7 @@ function DraggablePaletteItem({
 }: {
   field: FieldPaletteItem;
   id: string;
-}): JSX.Element {
+}): ReactElement {
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
     id,
     data: {
@@ -80,7 +80,7 @@ function DraggablePaletteItem({
     } satisfies SidebarDragData,
   });
 
-  const style: React.CSSProperties = transform
+  const style: React.CSSProperties | undefined = transform
     ? { transform: CSS.Translate.toString(transform) }
     : undefined;
 

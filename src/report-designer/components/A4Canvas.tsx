@@ -99,7 +99,7 @@ function TableElementBlock({ table }: { table: TableElement }): ReactElement {
 const DEFAULT_FONT_SIZE = 14;
 const DEFAULT_FONT_FAMILY = 'Arial';
 
-function TextElementBlock({ element }: { element: ReportElement }): ReactElement {
+function TextElementBlock({ element }: { element: ReportElement }): ReactElement | null {
   const updateElementText = useReportStore((s) => s.updateElementText);
   const setSelectedElement = useReportStore((s) => s.setSelectedElement);
   if (element.type !== 'text') return null;
@@ -188,7 +188,7 @@ function ImageElementBlock({ element }: { element: ReportElement }): ReactElemen
   );
 }
 
-function FieldElementBlock({ element }: { element: ReportElement }): JSX.Element {
+function FieldElementBlock({ element }: { element: ReportElement }): ReactElement {
   if (element.type === 'text') {
     return <TextElementBlock element={element} />;
   }
@@ -214,7 +214,7 @@ function FieldElementBlock({ element }: { element: ReportElement }): JSX.Element
   );
 }
 
-function ElementSettingsPopover({ element }: { element: CanvasElement }): ReactElement {
+function ElementSettingsPopover({ element }: { element: CanvasElement }): ReactElement | null {
   const updateReportElement = useReportStore((s) => s.updateReportElement);
 
   if (isTableElement(element)) {

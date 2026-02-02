@@ -1,8 +1,7 @@
 export type ReportSection = 'header' | 'content' | 'footer';
 
-export interface ReportElement {
+interface ReportElementBase {
   id: string;
-  type: 'text' | 'field' | 'image';
   section: ReportSection;
   x: number;
   y: number;
@@ -15,12 +14,16 @@ export interface ReportElement {
   color?: string;
 }
 
+export interface ReportElement extends ReportElementBase {
+  type: 'text' | 'field' | 'image';
+}
+
 export interface TableColumn {
   label: string;
   path: string;
 }
 
-export interface TableElement extends ReportElement {
+export interface TableElement extends ReportElementBase {
   type: 'table';
   columns: TableColumn[];
 }
