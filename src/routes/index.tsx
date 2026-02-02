@@ -41,6 +41,7 @@ import {
 import { PricingRuleManagementPage } from '@/features/pricing-rule';
 import { StockListPage, StockDetailPage } from '@/features/stock';
 import { DocumentSerialTypeManagementPage } from '@/features/document-serial-type-management';
+import { ReportDesignerListPage, ReportDesignerCreatePage } from '@/report-designer';
 
 export const router = createBrowserRouter([
   {
@@ -54,6 +55,14 @@ export const router = createBrowserRouter([
       {
         index: true,
         element: <DashboardPage />,
+      },
+      {
+        path: 'report-designer',
+        element: <ReportDesignerListPage />,
+      },
+      {
+        path: 'report-designer/create',
+        element: <ReportDesignerCreatePage />,
       },
       {
         path: 'title-management',

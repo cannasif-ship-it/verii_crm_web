@@ -14,7 +14,8 @@ import {
   CheckmarkCircle02Icon, 
   SlidersHorizontalIcon, 
   UserCircleIcon, 
-  Settings02Icon 
+  Settings02Icon,
+  File01Icon
 } from 'hugeicons-react';
 
 interface NavItem {
@@ -61,6 +62,14 @@ export function MainLayout({ navItems }: MainLayoutProps): ReactElement {
         icon: <DashboardSquare02Icon size={iconSize} className="text-blue-500" />,
       },
 
+      {
+        title: 'Report Designer',
+        icon: <File01Icon size={iconSize} className="text-amber-500" />,
+        children: [
+          { title: 'Liste', href: '/report-designer' },
+          { title: 'Yeni Oluştur', href: '/report-designer/create' },
+        ],
+      },
 
       {
         title: t('sidebar.customers', 'Müşteriler'),
