@@ -135,7 +135,7 @@ export function DemandCreateForm(): ReactElement {
         ? data.demand.currency 
         : String(data.demand.currency);
       
-      if (!currencyValue || currencyValue === '0') {
+      if (currencyValue == null || currencyValue === '' || Number.isNaN(Number(currencyValue))) {
         throw new Error(t('demand.create.invalidCurrency', 'Geçerli bir para birimi seçilmelidir'));
       }
 

@@ -247,7 +247,7 @@ export function OrderDetailPage(): ReactElement {
         ? data.order.currency 
         : String(data.order.currency);
       
-      if (!currencyValue || currencyValue === '0') {
+      if (currencyValue == null || currencyValue === '' || Number.isNaN(Number(currencyValue))) {
         throw new Error(t('order.update.invalidCurrency', 'Geçerli bir para birimi seçilmelidir'));
       }
 

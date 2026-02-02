@@ -135,7 +135,7 @@ export function QuotationCreateForm(): ReactElement {
         ? data.quotation.currency 
         : String(data.quotation.currency);
       
-      if (!currencyValue || currencyValue === '0') {
+      if (currencyValue == null || currencyValue === '' || Number.isNaN(Number(currencyValue))) {
         throw new Error(t('quotation.create.invalidCurrency', 'Geçerli bir para birimi seçilmelidir'));
       }
 

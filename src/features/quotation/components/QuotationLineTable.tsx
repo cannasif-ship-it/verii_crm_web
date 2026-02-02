@@ -183,8 +183,10 @@ export function QuotationLineTable({
     return found?.code || 'TRY';
   }, [currency, currencyOptions]);
 
+  const isCurrencySelected = currency !== undefined && currency !== null && !Number.isNaN(currency);
+
   const handleAddLine = (): void => {
-    if ((!customerId && !erpCustomerCode) || !representativeId || !currency) {
+    if ((!customerId && !erpCustomerCode) || !representativeId || !isCurrencySelected) {
       toast.error(t('quotation.error', 'Hata'), {
         description: t('quotation.lines.requiredFieldsMissing', 'Lütfen müşteri, temsilci ve para birimi seçimlerini yapınız.'),
       });
@@ -265,7 +267,7 @@ export function QuotationLineTable({
   };
 
   const handleProductSelect = async (product: ProductSelectionResult): Promise<void> => {
-     if ((!customerId && !erpCustomerCode) || !representativeId || !currency) {
+    if ((!customerId && !erpCustomerCode) || !representativeId || !isCurrencySelected) {
       toast.error(t('quotation.error', 'Hata'), {
         description: t('quotation.lines.requiredFieldsMissing', 'Lütfen müşteri, temsilci ve para birimi seçimlerini yapınız.'),
       });

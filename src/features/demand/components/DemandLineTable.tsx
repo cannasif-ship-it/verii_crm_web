@@ -181,8 +181,10 @@ export function DemandLineTable({
     return found?.code || 'TRY';
   }, [currency, currencyOptions]);
 
+  const isCurrencySelected = currency !== undefined && currency !== null && !Number.isNaN(currency);
+
   const handleAddLine = (): void => {
-    if ((!customerId && !erpCustomerCode) || !representativeId || !currency) {
+    if ((!customerId && !erpCustomerCode) || !representativeId || !isCurrencySelected) {
       toast.error(t('demand.error', 'Hata'), {
         description: t('demand.lines.requiredFieldsMissing', 'Lütfen müşteri, temsilci ve para birimi seçimlerini yapınız.'),
       });
@@ -263,7 +265,7 @@ export function DemandLineTable({
   };
 
   const handleProductSelect = async (product: ProductSelectionResult): Promise<void> => {
-     if ((!customerId && !erpCustomerCode) || !representativeId || !currency) {
+    if ((!customerId && !erpCustomerCode) || !representativeId || !isCurrencySelected) {
       toast.error(t('demand.error', 'Hata'), {
         description: t('demand.lines.requiredFieldsMissing', 'Lütfen müşteri, temsilci ve para birimi seçimlerini yapınız.'),
       });
