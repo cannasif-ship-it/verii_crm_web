@@ -1,4 +1,4 @@
-import { type ReactElement, useState } from 'react';
+import { type ReactElement, useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Table,
@@ -17,15 +17,19 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { useActivities } from '../hooks/useActivities';
+import { 
+    DropdownMenu, 
+    DropdownMenuCheckboxItem, 
+    DropdownMenuContent, 
+    DropdownMenuTrigger,
+    DropdownMenuLabel,
+    DropdownMenuSeparator
+} from '@/components/ui/dropdown-menu';
 import { useDeleteActivity } from '../hooks/useDeleteActivity';
 import { useUpdateActivity } from '../hooks/useUpdateActivity';
+import type { ActivityDto } from '../types/activity-types';
 import { ActivityStatusBadge } from './ActivityStatusBadge';
 import { ActivityPriorityBadge } from './ActivityPriorityBadge';
-import type { ActivityDto } from '../types/activity-types';
-import type { PagedFilter } from '@/types/api';
-import { useCustomerOptions } from '@/features/customer-management/hooks/useCustomerOptions';
-import { useUserOptions } from '@/features/user-discount-limit-management/hooks/useUserOptions';
 import { 
   Edit2, 
   Trash2, 
@@ -39,46 +43,100 @@ import {
   User, 
   Building2, 
   Briefcase,
-  List
+  List,
+  EyeOff,
+  ChevronDown
 } from 'lucide-react';
+import { Alert02Icon } from 'hugeicons-react';
 
-interface ActivityTableProps {
-  onEdit: (activity: ActivityDto) => void;
-  pageNumber: number;
-  pageSize: number;
-  sortBy?: string;
-  sortDirection?: 'asc' | 'desc';
-  filters?: PagedFilter[] | Record<string, unknown>;
-  onPageChange: (page: number) => void;
-  onSortChange: (sortBy: string, sortDirection: 'asc' | 'desc') => void;
+export interface ColumnDef<T> {
+  key: keyof T | string; 
+  label: string;
+  type: 'text' | 'date' | 'user' | 'status' | 'priority' | 'customer' | 'contact' | 'actions';
+  className?: string;
 }
 
+interface ActivityTableProps {
+  activities: ActivityDto[];
+  isLoading: boolean;
+  onEdit: (activity: ActivityDto) => void;
+  pageNumber?: number;
+  pageSize?: number;
+  sortBy?: string;
+  sortDirection?: 'asc' | 'desc';
+  filters?: Record<string, unknown>;
+  onPageChange?: (page: number) => void;
+  onSortChange?: (sortBy: string, sortDirection: 'asc' | 'desc') => void;
+}
+
+const getColumnsConfig = (t: any): ColumnDef<ActivityDto>[] => [
+    { key: 'id', label: t('activityManagement.id', 'ID'), type: 'text', className: 'font-medium w-[60px]' },
+    { key: 'subject', label: t('activityManagement.subject', 'Konu'), type: 'text', className: 'font-semibold text-slate-900 dark:text-white min-w-[200px]' },
+    { key: 'activityType', label: t('activityManagement.activityType', 'Tip'), type: 'text', className: 'whitespace-nowrap' },
+    { key: 'status', label: t('activityManagement.status', 'Durum'), type: 'status', className: 'whitespace-nowrap' },
+    { key: 'priority', label: t('activityManagement.priority', 'Öncelik'), type: 'priority', className: 'whitespace-nowrap' },
+    { key: 'potentialCustomer', label: t('activityManagement.customer', 'Müşteri'), type: 'customer', className: 'min-w-[150px]' },
+    { key: 'contact', label: t('activityManagement.contact', 'Kişi'), type: 'contact', className: 'min-w-[150px]' },
+    { key: 'assignedUser', label: t('activityManagement.assignedUser', 'Sorumlu'), type: 'user', className: 'whitespace-nowrap' },
+    { key: 'activityDate', label: t('activityManagement.activityDate', 'Tarih'), type: 'date', className: 'whitespace-nowrap' },
+];
+
 export function ActivityTable({
+  activities,
+  isLoading,
   onEdit,
-  pageNumber,
-  pageSize,
-  sortBy = 'Id',
-  sortDirection = 'desc',
-  filters = {},
-  onPageChange,
-  onSortChange,
 }: ActivityTableProps): ReactElement {
   const { t, i18n } = useTranslation();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedActivity, setSelectedActivity] = useState<ActivityDto | null>(null);
-  const { data: customerOptions = [] } = useCustomerOptions();
-  const { data: userOptions = [] } = useUserOptions();
+  
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 10;
+  const [sortConfig, setSortConfig] = useState<{ key: string; direction: 'asc' | 'desc' } | null>(null);
 
-  const { data, isLoading, isFetching } = useActivities({
-    pageNumber,
-    pageSize,
-    sortBy,
-    sortDirection,
-    filters: filters as PagedFilter[] | undefined,
-  });
+  const tableColumns = useMemo(() => getColumnsConfig(t), [t]);
+  
+  const [visibleColumns, setVisibleColumns] = useState<string[]>(
+    tableColumns.map(col => col.key as string)
+  );
 
   const deleteActivity = useDeleteActivity();
   const updateActivity = useUpdateActivity();
+
+  const processedData = useMemo(() => {
+    if (!Array.isArray(activities)) return [];
+
+    let result = [...activities];
+
+    if (sortConfig) {
+      result.sort((a: any, b: any) => {
+        let aValue = a[sortConfig.key];
+        let bValue = b[sortConfig.key];
+
+        if (sortConfig.key === 'potentialCustomer') {
+             aValue = a.potentialCustomer?.name || '';
+             bValue = b.potentialCustomer?.name || '';
+        } else if (sortConfig.key === 'contact') {
+             aValue = a.contact?.fullName || '';
+             bValue = b.contact?.fullName || '';
+        } else if (sortConfig.key === 'assignedUser') {
+             aValue = a.assignedUser?.fullName || '';
+             bValue = b.assignedUser?.fullName || '';
+        }
+
+        const aString = aValue ? String(aValue).toLowerCase() : '';
+        const bString = bValue ? String(bValue).toLowerCase() : '';
+
+        if (aString < bString) return sortConfig.direction === 'asc' ? -1 : 1;
+        if (aString > bString) return sortConfig.direction === 'asc' ? 1 : -1;
+        return 0;
+      });
+    }
+    return result;
+  }, [activities, sortConfig]);
+
+  const totalPages = Math.ceil(processedData.length / pageSize);
+  const paginatedData = processedData.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
   const handleDeleteClick = (activity: ActivityDto): void => {
     setSelectedActivity(activity);
@@ -93,385 +151,230 @@ export function ActivityTable({
     }
   };
 
-  const handleMarkAsCompleted = async (activity: ActivityDto): Promise<void> => {
-    await updateActivity.mutateAsync({
-      id: activity.id,
-      data: {
-        ...activity,
-        status: 'Completed',
-        isCompleted: true,
-      },
-    });
+  const handleStatusChange = async (activity: ActivityDto, newStatus: string, isCompleted: boolean) => {
+      await updateActivity.mutateAsync({
+          id: activity.id,
+          data: { ...activity, status: newStatus, isCompleted },
+      });
   };
 
-  const handleMarkAsInProgress = async (activity: ActivityDto): Promise<void> => {
-    await updateActivity.mutateAsync({
-      id: activity.id,
-      data: {
-        ...activity,
-        status: 'In Progress',
-        isCompleted: false,
-      },
-    });
+  const handleSort = (key: string) => {
+    let direction: 'asc' | 'desc' = 'asc';
+    if (sortConfig && sortConfig.key === key && sortConfig.direction === 'asc') {
+      direction = 'desc';
+    }
+    setSortConfig({ key, direction });
   };
 
-  const handleCancel = async (activity: ActivityDto): Promise<void> => {
-    await updateActivity.mutateAsync({
-      id: activity.id,
-      data: {
-        ...activity,
-        status: 'Canceled',
-        isCompleted: false,
-      },
-    });
+  const toggleColumn = (key: string) => {
+    setVisibleColumns(prev => 
+      prev.includes(key) ? prev.filter(c => c !== key) : [...prev, key]
+    );
   };
 
-  const handleSort = (column: string): void => {
-    const newDirection =
-      sortBy === column && sortDirection === 'asc' ? 'desc' : 'asc';
-    onSortChange(column, newDirection);
+  const renderCellContent = (item: ActivityDto, column: ColumnDef<ActivityDto>) => {
+    const value = (item as any)[column.key];
+
+    switch (column.type) {
+        case 'status':
+            return <ActivityStatusBadge status={item.status} />;
+        case 'priority':
+            return <ActivityPriorityBadge priority={item.priority} />;
+        case 'date':
+            return (
+                <div className="flex items-center gap-2 text-xs">
+                    <Calendar size={14} className="text-pink-500/50" />
+                    {value ? new Date(value).toLocaleDateString(i18n.language) : '-'}
+                </div>
+            );
+        case 'customer':
+            return item.potentialCustomer ? (
+                <div className="flex items-start gap-2">
+                    <Building2 size={14} className="text-slate-400 mt-0.5 shrink-0" />
+                    <span className="truncate max-w-[150px]" title={item.potentialCustomer.name}>
+                        {item.potentialCustomer.name}
+                    </span>
+                </div>
+            ) : '-';
+        case 'contact':
+            return item.contact ? (
+                <div className="flex items-start gap-2">
+                    <Briefcase size={14} className="text-slate-400 mt-0.5 shrink-0" />
+                    <span className="truncate max-w-[150px]" title={item.contact.fullName || item.contact.firstName}>
+                        {item.contact.fullName || `${item.contact.firstName || ''} ${item.contact.lastName || ''}`}
+                    </span>
+                </div>
+            ) : '-';
+        case 'user':
+             return item.assignedUser ? (
+                <div className="flex items-center gap-2 text-xs">
+                    <User size={14} className="text-indigo-500/50" />
+                    {item.assignedUser.fullName || item.assignedUser.userName}
+                </div>
+             ) : '-';
+        default:
+             if (column.key === 'activityType') {
+                 return <div className="flex items-center gap-2"><List size={14} className="text-pink-500" />{String(value)}</div>;
+             }
+             return String(value || '-');
+    }
   };
 
   const SortIcon = ({ column }: { column: string }): ReactElement => {
-    if (sortBy !== column) {
-      return <ArrowUpDown size={14} className="ml-2 inline-block text-slate-400 opacity-50" />;
+    if (sortConfig?.key !== column) {
+      return <ArrowUpDown size={14} className="ml-2 inline-block text-slate-400 opacity-50 group-hover:opacity-100 transition-opacity" />;
     }
-    return sortDirection === 'asc' ? (
+    return sortConfig.direction === 'asc' ? (
       <ArrowUp size={14} className="ml-2 inline-block text-pink-600 dark:text-pink-400" />
     ) : (
       <ArrowDown size={14} className="ml-2 inline-block text-pink-600 dark:text-pink-400" />
     );
   };
 
-  const getCustomerName = (customerId?: number): string => {
-    if (!customerId) return '-';
-    const customer = customerOptions.find((c) => c.id === customerId);
-    return customer?.name || '-';
-  };
-
-  const getContactName = (contact?: { id: number; firstName?: string; lastName?: string; fullName?: string }): string => {
-    if (!contact) return '-';
-    return contact.fullName || `${contact.firstName || ''} ${contact.lastName || ''}`.trim() || '-';
-  };
-
-  const getUserName = (userId?: number): string => {
-    if (!userId) return '-';
-    const user = userOptions.find((u) => u.id === userId);
-    return user?.fullName || user?.username || '-';
-  };
-
-  if (isLoading || isFetching) {
+  if (isLoading) {
     return (
-      <div className="flex items-center justify-center py-20 min-h-[500px]">
-        <div className="flex flex-col items-center gap-3">
+      <div className="flex items-center justify-center py-20 min-h-[400px]">
+        <div className="flex flex-col items-center gap-2">
            <div className="h-10 w-10 animate-spin rounded-full border-b-2 border-current text-pink-500" />
-           <span className="text-sm font-medium text-muted-foreground animate-pulse">
-             {t('activityManagement.loading', 'Yükleniyor...')}
-           </span>
+           <div className="text-sm text-muted-foreground animate-pulse">{t('common.loading', 'Yükleniyor...')}</div>
         </div>
       </div>
     );
   }
 
-  const activities = data?.data || (data as any)?.items || [];
-
-  if (!data || activities.length === 0) {
+  if (!activities || activities.length === 0) {
     return (
-      <div className="flex items-center justify-center py-20 min-h-[500px]">
+      <div className="flex items-center justify-center py-20 min-h-[400px]">
         <div className="text-muted-foreground bg-slate-50 dark:bg-white/5 px-8 py-6 rounded-xl border border-dashed border-slate-200 dark:border-white/10 text-sm font-medium">
-          {t('activityManagement.noData', 'Veri bulunamadı')}
+          {t('common.noData', 'Veri yok')}
         </div>
       </div>
     );
   }
 
-  const totalPages = Math.ceil((data.totalCount || 0) / pageSize);
-
-  // --- TASARIM STİLLERİ ---
-  const headStyle = `
-    cursor-pointer select-none 
-    text-slate-500 dark:text-slate-400 
-    font-bold text-xs uppercase tracking-wider 
-    py-5 px-5 
-    hover:text-pink-600 dark:hover:text-pink-400 
-    transition-colors 
-    border-r border-slate-200 dark:border-white/[0.03] last:border-r-0
-    bg-slate-50/90 dark:bg-[#130822]/90
-    whitespace-nowrap
-  `;
-
-  const cellStyle = `
-    text-slate-600 dark:text-slate-400 
-    px-5 py-4
-    border-r border-slate-100 dark:border-white/[0.03] last:border-r-0
-    text-sm align-top
-  `;
+  const headStyle = "cursor-pointer select-none text-slate-500 dark:text-slate-400 hover:text-pink-600 dark:hover:text-pink-400 transition-colors py-4 font-bold text-xs uppercase tracking-wider whitespace-nowrap";
+  const cellStyle = "text-slate-600 dark:text-slate-400 text-sm py-4 border-b border-slate-100 dark:border-white/5 align-middle";
 
   return (
-    <>
-      <div className="rounded-xl border border-slate-200 dark:border-white/10 overflow-hidden bg-white/40 dark:bg-[#1a1025]/40 backdrop-blur-sm min-h-[65vh] flex flex-col shadow-sm">
-        <div className="flex-1 overflow-auto custom-scrollbar">
-          <Table>
-            <TableHeader className="sticky top-0 z-20 shadow-sm">
+    <div className="flex flex-col gap-4">
+      <div className="flex justify-end p-2 sm:p-0">
+            <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                    <Button variant="outline" size="sm" className="ml-auto h-9 lg:flex border-dashed border-slate-300 dark:border-white/20 bg-transparent hover:bg-slate-50 dark:hover:bg-white/5 text-xs sm:text-sm">
+                        <EyeOff className="mr-2 h-4 w-4" />
+                        {t('common.editColumns', 'Sütunları Düzenle')}
+                        <ChevronDown className="ml-2 h-4 w-4" />
+                    </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56 max-h-[400px] overflow-y-auto bg-white/95 dark:bg-[#1a1025]/95 backdrop-blur-xl border border-slate-200 dark:border-white/10 shadow-xl rounded-xl p-2 z-50">
+                    <DropdownMenuLabel className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider px-2 py-1.5">
+                        {t('common.visibleColumns', 'Görünür Sütunlar')}
+                    </DropdownMenuLabel>
+                    <DropdownMenuSeparator className="bg-slate-200 dark:bg-white/10 my-1" />
+                    {tableColumns.map((col) => (
+                        <DropdownMenuCheckboxItem
+                            key={col.key as string}
+                            checked={visibleColumns.includes(col.key as string)}
+                            onSelect={(e) => e.preventDefault()} 
+                            onCheckedChange={() => toggleColumn(col.key as string)}
+                            className="text-sm text-slate-700 dark:text-slate-200 focus:bg-pink-50 dark:focus:bg-pink-500/10 focus:text-pink-600 dark:focus:text-pink-400 cursor-pointer rounded-lg px-2 py-1.5 pl-8 relative"
+                        >
+                            {col.label}
+                        </DropdownMenuCheckboxItem>
+                    ))}
+                </DropdownMenuContent>
+            </DropdownMenu>
+      </div>
+
+      <div className="rounded-xl border border-slate-200 dark:border-white/10 overflow-hidden bg-white/50 dark:bg-transparent">
+        <Table>
+            <TableHeader className="bg-slate-50/50 dark:bg-white/5">
               <TableRow className="border-b border-slate-200 dark:border-white/10 hover:bg-transparent">
-                
-                <TableHead onClick={() => handleSort('Id')} className={headStyle}>
-                  <div className="flex items-center">
-                    {t('activityManagement.id', 'ID')}
-                    <SortIcon column="Id" />
-                  </div>
-                </TableHead>
-
-                <TableHead onClick={() => handleSort('Subject')} className={headStyle}>
-                  <div className="flex items-center">
-                    {t('activityManagement.subject', 'Konu')}
-                    <SortIcon column="Subject" />
-                  </div>
-                </TableHead>
-
-                <TableHead className={headStyle}>
-                  {t('activityManagement.activityType', 'Tip')}
-                </TableHead>
-
-                <TableHead className={headStyle}>
-                  {t('activityManagement.status', 'Durum')}
-                </TableHead>
-
-                <TableHead className={headStyle}>
-                  {t('activityManagement.priority', 'Öncelik')}
-                </TableHead>
-
-                <TableHead className={headStyle}>
-                  {t('activityManagement.potentialCustomer', 'Müşteri')}
-                </TableHead>
-
-                <TableHead className={headStyle}>
-                  {t('activityManagement.contact', 'Kişi')}
-                </TableHead>
-
-                <TableHead className={headStyle}>
-                  {t('activityManagement.assignedUser', 'Sorumlu')}
-                </TableHead>
-
-                <TableHead onClick={() => handleSort('ActivityDate')} className={headStyle}>
-                  <div className="flex items-center">
-                    {t('activityManagement.activityDate', 'Tarih')}
-                    <SortIcon column="ActivityDate" />
-                  </div>
-                </TableHead>
-
-                <TableHead className={`${headStyle} text-right`}>
-                  {t('activityManagement.actions', 'İşlemler')}
+                {tableColumns.filter(col => visibleColumns.includes(col.key as string)).map((col) => (
+                    <TableHead key={col.key as string} onClick={() => handleSort(col.key as string)} className={headStyle}>
+                        <div className="flex items-center gap-2">
+                            {col.label}
+                            <SortIcon column={col.key as string} />
+                        </div>
+                    </TableHead>
+                ))}
+                <TableHead className={`${headStyle} text-right w-[140px]`}>
+                  {t('common.actions', 'İşlemler')}
                 </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {activities.map((activity: ActivityDto, index: number) => (
+              {paginatedData.map((item: ActivityDto, index: number) => (
                 <TableRow 
-                  key={activity.id || `activity-${index}`}
+                  key={item.id || `activity-${index}`}
                   className={`
-                    border-b border-slate-100 dark:border-white/5 transition-colors duration-200 group
-                    ${activity.isCompleted 
-                        ? 'bg-slate-50/50 dark:bg-white/5 opacity-70 grayscale-[30%]' 
-                        : 'hover:bg-pink-50/40 dark:hover:bg-pink-500/5'
-                    }
+                    border-b border-slate-100 dark:border-white/5 transition-colors duration-200 group last:border-0
+                    ${item.isCompleted ? 'bg-slate-50/50 dark:bg-white/5 opacity-60 grayscale' : 'hover:bg-pink-50/40 dark:hover:bg-pink-500/5'}
                   `}
                 >
-                  <TableCell className={`${cellStyle} font-medium text-slate-700 dark:text-slate-300`}>
-                    {activity.id}
-                  </TableCell>
-                  
-                  <TableCell className={`${cellStyle} font-semibold text-slate-900 dark:text-white min-w-[200px]`}>
-                    {activity.subject}
-                  </TableCell>
-                  
-                  <TableCell className={`${cellStyle} whitespace-nowrap`}>
-                    <div className="flex items-center gap-2">
-                        <List size={14} className="text-pink-500" />
-                        {activity.activityType}
-                    </div>
-                  </TableCell>
-                  
-                  <TableCell className={`${cellStyle} whitespace-nowrap`}>
-                    <ActivityStatusBadge status={activity.status} />
-                  </TableCell>
-                  
-                  <TableCell className={`${cellStyle} whitespace-nowrap`}>
-                    <ActivityPriorityBadge priority={activity.priority} />
-                  </TableCell>
-                  
-                  <TableCell className={`${cellStyle} min-w-[150px]`}>
-                    {activity.potentialCustomerId ? (
-                        <div className="flex items-start gap-2">
-                            <Building2 size={14} className="text-slate-400 mt-0.5 shrink-0" />
-                            <span>{getCustomerName(activity.potentialCustomerId)}</span>
-                        </div>
-                    ) : '-'}
-                  </TableCell>
-                  
-                  <TableCell className={`${cellStyle} min-w-[150px]`}>
-                      {activity.contact ? (
-                        <div className="flex items-start gap-2">
-                            <Briefcase size={14} className="text-slate-400 mt-0.5 shrink-0" />
-                            <span>{getContactName(activity.contact)}</span>
-                        </div>
-                    ) : '-'}
-                  </TableCell>
-                  
-                  <TableCell className={`${cellStyle} whitespace-nowrap`}>
-                      {activity.assignedUserId ? (
-                        <div className="flex items-center gap-2">
-                            <User size={14} className="text-indigo-500/50" />
-                            <span>{getUserName(activity.assignedUserId)}</span>
-                        </div>
-                    ) : '-'}
-                  </TableCell>
-                  
-                  <TableCell className={`${cellStyle} whitespace-nowrap`}>
-                      {activity.activityDate ? (
-                        <div className="flex items-center gap-2">
-                            <Calendar size={14} className="text-pink-500/50" />
-                            {new Date(activity.activityDate).toLocaleDateString(i18n.language)}
-                        </div>
-                    ) : '-'}
-                  </TableCell>
-                  
+                  {tableColumns.filter(col => visibleColumns.includes(col.key as string)).map((col) => (
+                      <TableCell key={`${item.id}-${col.key}`} className={`${cellStyle} ${col.className || ''}`}>
+                          {renderCellContent(item, col)}
+                      </TableCell>
+                  ))}
+
                   <TableCell className={`${cellStyle} text-right`}>
                     <div className="flex justify-end gap-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
-                      {!activity.isCompleted && activity.status !== 'Canceled' && (
-                        <>
-                          {activity.status !== 'Completed' && (
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              title={t('activityManagement.markAsCompleted', 'Tamamla')}
-                              className="h-8 w-8 text-green-600 hover:text-green-700 hover:bg-green-50 dark:text-green-400 dark:hover:bg-green-500/10"
-                              onClick={() => handleMarkAsCompleted(activity)}
-                              disabled={updateActivity.isPending}
-                            >
-                              <CheckCircle2 size={16} />
-                            </Button>
-                          )}
-                          {activity.status !== 'In Progress' && activity.status !== 'Completed' && (
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              title={t('activityManagement.markAsInProgress', 'Devam Et')}
-                              className="h-8 w-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-500/10"
-                              onClick={() => handleMarkAsInProgress(activity)}
-                              disabled={updateActivity.isPending}
-                            >
-                              <PlayCircle size={16} />
-                            </Button>
-                          )}
-                          {activity.status !== 'Canceled' && (
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              title={t('activityManagement.cancelActivity', 'İptal Et')}
-                              className="h-8 w-8 text-orange-600 hover:text-orange-700 hover:bg-orange-50 dark:text-orange-400 dark:hover:bg-orange-500/10"
-                              onClick={() => handleCancel(activity)}
-                              disabled={updateActivity.isPending}
-                            >
-                              <XCircle size={16} />
-                            </Button>
-                          )}
-                          <div className="w-px h-4 bg-slate-200 dark:bg-white/10 mx-1 self-center" />
-                        </>
+                      {!item.isCompleted && item.status !== 'Canceled' && (
+                          <>
+                            {item.status !== 'Completed' && (
+                                <Button variant="ghost" size="icon" className="h-8 w-8 text-green-600 hover:bg-green-50 dark:text-green-400" onClick={() => handleStatusChange(item, 'Completed', true)} title="Tamamla"><CheckCircle2 size={16} /></Button>
+                            )}
+                            {item.status !== 'In Progress' && item.status !== 'Completed' && (
+                                <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-600 hover:bg-blue-50 dark:text-blue-400" onClick={() => handleStatusChange(item, 'In Progress', false)} title="Başlat"><PlayCircle size={16} /></Button>
+                            )}
+                            <Button variant="ghost" size="icon" className="h-8 w-8 text-orange-600 hover:bg-orange-50 dark:text-orange-400" onClick={() => handleStatusChange(item, 'Canceled', false)} title="İptal Et"><XCircle size={16} /></Button>
+                            <div className="w-px h-4 bg-slate-200 dark:bg-white/10 mx-1 self-center" />
+                          </>
                       )}
-
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        title={t('activityManagement.editButton', 'Düzenle')}
-                        className="h-8 w-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-500/10"
-                        onClick={() => onEdit(activity)}
-                      >
-                        <Edit2 size={16} />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        title={t('activityManagement.delete', 'Sil')}
-                        className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-500/10"
-                        onClick={() => handleDeleteClick(activity)}
-                      >
-                        <Trash2 size={16} />
-                      </Button>
+                      
+                      <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-600 hover:bg-blue-50 dark:text-blue-400" onClick={() => onEdit(item)}><Edit2 size={16} /></Button>
+                      <Button variant="ghost" size="icon" className="h-8 w-8 text-red-600 hover:bg-red-50 dark:text-red-400" onClick={() => handleDeleteClick(item)}><Trash2 size={16} /></Button>
                     </div>
                   </TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
-        </div>
       </div>
 
-      <div className="flex flex-col sm:flex-row items-center justify-between py-4 gap-4 px-2">
-        <div className="text-sm text-slate-500 dark:text-slate-400 font-medium">
-          {t('activityManagement.table.showing', '{{from}}-{{to}} / {{total}} kayıt', {
-            from: (pageNumber - 1) * pageSize + 1,
-            to: Math.min(pageNumber * pageSize, data.totalCount || 0),
-            total: data.totalCount || 0,
+      <div className="flex flex-col sm:flex-row items-center justify-between py-4 gap-4">
+        <div className="text-sm text-slate-500 dark:text-slate-400">
+          {t('common.showing', '{{from}}-{{to}} / {{total}} gösteriliyor', {
+            from: (currentPage - 1) * pageSize + 1,
+            to: Math.min(currentPage * pageSize, processedData.length),
+            total: processedData.length,
           })}
         </div>
         <div className="flex gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => onPageChange(pageNumber - 1)}
-            disabled={pageNumber <= 1}
-            className="bg-white dark:bg-transparent border-slate-200 dark:border-white/10 hover:bg-slate-50 dark:hover:bg-white/5 h-8 px-4"
-          >
-            {t('activityManagement.previous', 'Önceki')}
-          </Button>
-          <div className="flex items-center px-4 text-sm font-bold text-slate-700 dark:text-white bg-white/50 dark:bg-white/5 rounded-lg border border-slate-200 dark:border-white/10 h-8">
-            {pageNumber} / {totalPages}
-          </div>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => onPageChange(pageNumber + 1)}
-            disabled={pageNumber >= totalPages}
-            className="bg-white dark:bg-transparent border-slate-200 dark:border-white/10 hover:bg-slate-50 dark:hover:bg-white/5 h-8 px-4"
-          >
-            {t('activityManagement.next', 'Sonraki')}
-          </Button>
+          <Button variant="outline" size="sm" onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))} disabled={currentPage <= 1} className="bg-white dark:bg-transparent border-slate-200 dark:border-white/10 hover:bg-slate-50 dark:hover:bg-white/5">{t('common.previous', 'Önceki')}</Button>
+          <div className="flex items-center px-4 text-sm font-medium text-slate-700 dark:text-slate-200">{currentPage} / {totalPages || 1}</div>
+          <Button variant="outline" size="sm" onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))} disabled={currentPage >= totalPages} className="bg-white dark:bg-transparent border-slate-200 dark:border-white/10 hover:bg-slate-50 dark:hover:bg-white/5">{t('common.next', 'Sonraki')}</Button>
         </div>
       </div>
 
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <DialogContent className="bg-white dark:bg-[#130822] border border-slate-100 dark:border-white/10 text-slate-900 dark:text-white sm:rounded-2xl shadow-2xl">
-          <DialogHeader>
-            <DialogTitle className="text-slate-900 dark:text-white">
-              {t('activityManagement.deleteTitle', 'Aktiviteyi Sil')}
-            </DialogTitle>
-            <DialogDescription className="text-slate-500 dark:text-slate-400">
-              {t('activityManagement.confirmDelete', 'Bu aktiviteyi silmek istediğinizden emin misiniz?')}
-            </DialogDescription>
+        <DialogContent className="bg-white dark:bg-[#130822] border border-slate-100 dark:border-white/10 text-slate-900 dark:text-white w-[90%] sm:w-full max-w-md rounded-2xl shadow-2xl p-0 gap-0">
+          <DialogHeader className="flex flex-col items-center gap-4 text-center pb-6 pt-10 px-6">
+            <div className="h-20 w-20 rounded-full bg-red-50 dark:bg-red-500/10 flex items-center justify-center mb-2">
+               <Alert02Icon size={36} className="text-red-600 dark:text-red-500" />
+            </div>
+            <div className="space-y-2">
+                <DialogTitle className="text-2xl font-bold text-slate-900 dark:text-white">{t('common.deleteConfirmTitle', 'Silme Onayı')}</DialogTitle>
+                <DialogDescription className="text-slate-500 dark:text-slate-400 max-w-[280px] mx-auto text-sm">{t('common.deleteConfirmMessage', 'Bu kaydı silmek istediğinizden emin misiniz?')}</DialogDescription>
+            </div>
           </DialogHeader>
-          <DialogFooter className="gap-2 sm:gap-0">
-            <Button
-              variant="outline"
-              onClick={() => setDeleteDialogOpen(false)}
-              disabled={deleteActivity.isPending}
-              className="bg-white dark:bg-transparent border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/5"
-            >
-              {t('activityManagement.cancel', 'İptal')}
-            </Button>
-            <Button
-              variant="destructive"
-              onClick={handleDeleteConfirm}
-              disabled={deleteActivity.isPending}
-              className="bg-red-600 hover:bg-red-700 dark:bg-red-900/50 dark:hover:bg-red-900/70 border border-transparent dark:border-red-500/20 text-white"
-            >
-              {deleteActivity.isPending
-                ? t('activityManagement.loading', 'Yükleniyor...')
-                : t('activityManagement.delete', 'Sil')}
-            </Button>
+          <DialogFooter className="flex flex-row gap-3 justify-center p-6 bg-slate-50/50 dark:bg-[#1a1025]/50 border-t border-slate-100 dark:border-white/5">
+            <Button type="button" variant="outline" onClick={() => setDeleteDialogOpen(false)} disabled={deleteActivity.isPending} className="flex-1 h-12 rounded-xl border-slate-200 dark:border-white/10">{t('common.cancel', 'Vazgeç')}</Button>
+            <Button type="button" variant="destructive" onClick={handleDeleteConfirm} disabled={deleteActivity.isPending} className="flex-1 h-12 rounded-xl bg-gradient-to-r from-red-600 to-red-700 text-white font-bold">{deleteActivity.isPending ? t('common.loading', 'Siliniyor...') : t('common.delete', 'Sil')}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </>
+    </div>
   );
 }

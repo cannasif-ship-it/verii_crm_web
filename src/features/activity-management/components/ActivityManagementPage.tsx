@@ -10,6 +10,7 @@ import { ActivityTable } from './ActivityTable';
 import { ActivityForm } from './ActivityForm';
 import { useCreateActivity } from '../hooks/useCreateActivity';
 import { useUpdateActivity } from '../hooks/useUpdateActivity';
+import { useActivities } from '../hooks/useActivities';
 import type { ActivityDto } from '../types/activity-types';
 import type { ActivityFormSchema } from '../types/activity-types';
 
@@ -29,6 +30,13 @@ export function ActivityManagementPage(): ReactElement {
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   const queryClient = useQueryClient();
+  const { data: apiResponse, isLoading } = useActivities({
+    pageNumber,
+    pageSize,
+    sortBy,
+    sortDirection,
+    filters: filters as any
+  });
   const createActivity = useCreateActivity();
   const updateActivity = useUpdateActivity();
 
@@ -203,6 +211,8 @@ export function ActivityManagementPage(): ReactElement {
       {/* Table Section */}
       <div className="bg-white/70 dark:bg-[#1a1025]/60 backdrop-blur-xl border border-white/60 dark:border-white/5 shadow-sm rounded-2xl p-6 transition-all duration-300">
         <ActivityTable
+          activities={apiResponse?.data || []}
+          isLoading={isLoading}
           onEdit={handleEdit}
           pageNumber={pageNumber}
           pageSize={pageSize}
