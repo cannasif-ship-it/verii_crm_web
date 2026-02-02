@@ -15,8 +15,9 @@ import { useCustomerOptions } from '@/features/customer-management/hooks/useCust
 import { useUIStore } from '@/stores/ui-store';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Send, Calculator, Layers, Loader2, FileCheck } from 'lucide-react';
+import { Send, Calculator, Layers, Loader2, FileCheck, FileText } from 'lucide-react';
 import { QuotationApprovalFlowTab } from './QuotationApprovalFlowTab';
+import { ReportTemplateTab, DocumentRuleType } from '@/report-designer';
 import { cn } from '@/lib/utils';
 import { createQuotationSchema, type CreateQuotationSchema } from '../schemas/quotation-schema';
 import type { QuotationLineFormState, QuotationExchangeRateFormState, QuotationBulkCreateDto, CreateQuotationDto, PricingRuleLineGetDto, UserDiscountLimitDto } from '../types/quotation-types';
@@ -416,6 +417,16 @@ export function QuotationDetailPage(): ReactElement {
             <FileCheck className="h-4 w-4 mr-2" />
             {t('quotation.detail.tabApprovalFlow', 'Onay Akışı')}
           </TabsTrigger>
+          <TabsTrigger
+            value="report"
+            className={cn(
+              'rounded-lg px-4 py-2 data-[state=active]:bg-background data-[state=active]:shadow-sm',
+              activeTab === 'report' && 'text-pink-600 dark:text-pink-500 font-medium'
+            )}
+          >
+            <FileText className="h-4 w-4 mr-2" />
+            {t('quotation.detail.tabReport', 'Rapor')}
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="detail" className="mt-6 focus-visible:outline-none">
@@ -512,6 +523,10 @@ export function QuotationDetailPage(): ReactElement {
 
         <TabsContent value="approval-flow" className="mt-6 focus-visible:outline-none">
           <QuotationApprovalFlowTab quotationId={quotationId} />
+        </TabsContent>
+
+        <TabsContent value="report" className="mt-6 focus-visible:outline-none">
+          <ReportTemplateTab entityId={quotationId} ruleType={DocumentRuleType.Quotation} />
         </TabsContent>
       </Tabs>
     </div>

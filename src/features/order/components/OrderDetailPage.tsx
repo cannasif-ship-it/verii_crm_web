@@ -15,8 +15,9 @@ import { useCustomerOptions } from '@/features/customer-management/hooks/useCust
 import { useUIStore } from '@/stores/ui-store';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Send, Calculator, Layers, Loader2, FileCheck } from 'lucide-react';
+import { Send, Calculator, Layers, Loader2, FileCheck, FileText } from 'lucide-react';
 import { OrderApprovalFlowTab } from './OrderApprovalFlowTab';
+import { ReportTemplateTab, DocumentRuleType } from '@/report-designer';
 import { cn } from '@/lib/utils';
 import { createOrderSchema, type CreateOrderSchema } from '../schemas/order-schema';
 import type { OrderLineFormState, OrderExchangeRateFormState, OrderBulkCreateDto, CreateOrderDto, PricingRuleLineGetDto, UserDiscountLimitDto } from '../types/order-types';
@@ -410,6 +411,16 @@ export function OrderDetailPage(): ReactElement {
             <FileCheck className="h-4 w-4 mr-2" />
             {t('order.detail.tabApprovalFlow', 'Onay Akışı')}
           </TabsTrigger>
+          <TabsTrigger
+            value="report"
+            className={cn(
+              'rounded-lg px-4 py-2 data-[state=active]:bg-background data-[state=active]:shadow-sm',
+              activeTab === 'report' && 'text-pink-600 dark:text-pink-500 font-medium'
+            )}
+          >
+            <FileText className="h-4 w-4 mr-2" />
+            {t('order.detail.tabReport', 'Rapor')}
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="detail" className="mt-6 focus-visible:outline-none">
@@ -506,6 +517,10 @@ export function OrderDetailPage(): ReactElement {
 
         <TabsContent value="approval-flow" className="mt-6 focus-visible:outline-none">
           <OrderApprovalFlowTab orderId={orderId} />
+        </TabsContent>
+
+        <TabsContent value="report" className="mt-6 focus-visible:outline-none">
+          <ReportTemplateTab entityId={orderId} ruleType={DocumentRuleType.Order} />
         </TabsContent>
       </Tabs>
     </div>

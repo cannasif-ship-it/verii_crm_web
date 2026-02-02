@@ -85,6 +85,7 @@ export function ReportDesignerPage(): ReactElement {
         width: DEFAULT_ELEMENT_WIDTH,
         height: DEFAULT_ELEMENT_HEIGHT,
         value: data.label,
+        path: data.path,
       };
       addElement(newElement);
       return;

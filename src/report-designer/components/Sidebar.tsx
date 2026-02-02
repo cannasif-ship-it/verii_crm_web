@@ -32,6 +32,11 @@ export interface SidebarDragData {
   value?: string;
 }
 
+export interface SidebarProps {
+  headerFields?: FieldPaletteItem[];
+  lineFields?: FieldPaletteItem[];
+}
+
 const TEXT_ITEM: FieldPaletteItem = {
   label: 'Text',
   path: '',
@@ -403,15 +408,17 @@ function ImagePropertiesPanel(): ReactElement | null {
   );
 }
 
-export function Sidebar(): ReactElement {
+export function Sidebar({ headerFields, lineFields }: SidebarProps = {}): ReactElement {
+  const fieldsItems = headerFields ?? FIELDS;
+  const tableColumnsItems = lineFields ?? TABLE_COLUMNS;
   return (
     <div className="flex w-64 flex-col gap-6 border-r border-slate-200 bg-slate-50 p-4">
       <span className="text-xs font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400">
         Field Palette
       </span>
       <Section title="Text" items={[TEXT_ITEM]} idPrefix="palette-text" />
-      <Section title="Fields" items={FIELDS} idPrefix="palette-fields" />
-      <Section title="Table Columns" items={TABLE_COLUMNS} idPrefix="palette-table-columns" />
+      <Section title="Fields" items={fieldsItems} idPrefix="palette-fields" />
+      <Section title="Table Columns" items={tableColumnsItems} idPrefix="palette-table-columns" />
       <Section title="Add Table" items={[ADD_TABLE_ITEM]} idPrefix="palette-add-table" />
       <Section title="Images" items={[LOGO_IMAGE_ITEM]} idPrefix="palette-images" />
       <TextPropertiesPanel />
