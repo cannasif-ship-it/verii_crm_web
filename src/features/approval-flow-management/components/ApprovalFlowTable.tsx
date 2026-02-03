@@ -288,7 +288,7 @@ export function ApprovalFlowTable({
                 )}
                 
                 <TableCell className={`${cellStyle} text-right`}>
-                  <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-all duration-200 transform translate-x-2 group-hover:translate-x-0">
+                  <div className="flex items-center justify-end gap-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-all duration-200">
                     <Button
                       variant="ghost"
                       size="icon"

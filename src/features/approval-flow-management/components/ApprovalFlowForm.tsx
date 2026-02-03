@@ -8,6 +8,7 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
+  DialogFooter,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -225,7 +226,8 @@ export function ApprovalFlowForm({
           )}
         </div>
 
-        <div className="border-t border-slate-100 dark:border-white/5 px-6 py-5 bg-slate-50/50 dark:bg-[#130822] sm:justify-between sm:space-x-0 flex items-center gap-2 w-full justify-end">
+        <DialogFooter className="border-t border-slate-100 dark:border-white/5 px-6 py-5 bg-slate-50/50 dark:bg-[#130822] sm:justify-between sm:space-x-0">
+          <div className="flex items-center gap-2 w-full justify-end">
             <Button
               type="button"
               variant="outline"
@@ -244,7 +246,8 @@ export function ApprovalFlowForm({
                 ? t('approvalFlow.form.saving', 'Kaydediliyor...')
                 : t('approvalFlow.form.save', 'Kaydet')}
             </Button>
-        </div>
+          </div>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

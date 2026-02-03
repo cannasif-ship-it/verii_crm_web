@@ -1,4 +1,4 @@
-import { type ReactElement, useState, useEffect } from 'react';
+import { type ReactElement, useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useUIStore } from '@/stores/ui-store';
 import { Button } from '@/components/ui/button';
@@ -7,10 +7,10 @@ import { ApprovalUserRoleTable } from './ApprovalUserRoleTable';
 import { ApprovalUserRoleForm } from './ApprovalUserRoleForm';
 import { useCreateApprovalUserRole } from '../hooks/useCreateApprovalUserRole';
 import { useUpdateApprovalUserRole } from '../hooks/useUpdateApprovalUserRole';
+import { useApprovalUserRoleList } from '../hooks/useApprovalUserRoleList';
 import type { ApprovalUserRoleDto } from '../types/approval-user-role-types';
 import type { ApprovalUserRoleFormSchema } from '../types/approval-user-role-types';
 import { Search, RefreshCw, X, Plus } from 'lucide-react';
-import type { PagedFilter } from '@/types/api';
 import { useQueryClient } from '@tanstack/react-query';
 import { APPROVAL_USER_ROLE_QUERY_KEYS } from '../utils/query-keys';
 
@@ -19,17 +19,28 @@ export function ApprovalUserRoleManagementPage(): ReactElement {
   const { setPageTitle } = useUIStore();
   const [formOpen, setFormOpen] = useState(false);
   const [editingUserRole, setEditingUserRole] = useState<ApprovalUserRoleDto | null>(null);
-  const [pageNumber, setPageNumber] = useState(1);
-  const [pageSize] = useState(20);
-  const [sortBy, setSortBy] = useState('Id');
-  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
   const [searchTerm, setSearchTerm] = useState('');
-  const [filters, setFilters] = useState<Record<string, unknown>>({});
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   const createUserRole = useCreateApprovalUserRole();
   const updateUserRole = useUpdateApprovalUserRole();
   const queryClient = useQueryClient();
+
+  const { data, isLoading } = useApprovalUserRoleList({
+    pageNumber: 1,
+    pageSize: 10000,
+  });
+
+  const filteredUserRoles = useMemo(() => {
+    const userRoles = data?.data || [];
+    if (!searchTerm) return userRoles;
+    
+    const lowerSearch = searchTerm.toLowerCase();
+    return userRoles.filter((role) => 
+      (role.userFullName && role.userFullName.toLowerCase().includes(lowerSearch)) ||
+      (role.approvalRoleName && role.approvalRoleName.toLowerCase().includes(lowerSearch))
+    );
+  }, [data?.data, searchTerm]);
 
   useEffect(() => {
     setPageTitle(t('approvalUserRole.menu', 'Onay Kullanıcı Rolü Yönetimi'));
@@ -37,18 +48,6 @@ export function ApprovalUserRoleManagementPage(): ReactElement {
       setPageTitle(null);
     };
   }, [t, setPageTitle]);
-
-  useEffect(() => {
-    const newFilters: PagedFilter[] = [];
-    if (searchTerm) {
-      newFilters.push(
-        { column: 'userFullName', operator: 'contains', value: searchTerm },
-        { column: 'approvalRoleName', operator: 'contains', value: searchTerm }
-      );
-    }
-    setFilters(newFilters.length > 0 ? { filters: newFilters } : {});
-    setPageNumber(1);
-  }, [searchTerm]);
 
   const handleAddClick = (): void => {
     setEditingUserRole(null);
@@ -71,12 +70,6 @@ export function ApprovalUserRoleManagementPage(): ReactElement {
     }
     setFormOpen(false);
     setEditingUserRole(null);
-  };
-
-  const handleSortChange = (newSortBy: string, newSortDirection: 'asc' | 'desc'): void => {
-    setSortBy(newSortBy);
-    setSortDirection(newSortDirection);
-    setPageNumber(1);
   };
 
   const clearSearch = () => {
@@ -160,14 +153,9 @@ export function ApprovalUserRoleManagementPage(): ReactElement {
 
       <div className="relative z-10 bg-white/50 dark:bg-card/30 backdrop-blur-xl border border-white/20 dark:border-border/50 rounded-2xl shadow-sm dark:shadow-2xl overflow-hidden">
         <ApprovalUserRoleTable
+          userRoles={filteredUserRoles}
+          isLoading={isLoading}
           onEdit={handleEdit}
-          pageNumber={pageNumber}
-          pageSize={pageSize}
-          sortBy={sortBy}
-          sortDirection={sortDirection}
-          filters={filters}
-          onPageChange={setPageNumber}
-          onSortChange={handleSortChange}
         />
       </div>
 
