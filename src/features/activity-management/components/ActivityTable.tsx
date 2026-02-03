@@ -60,13 +60,13 @@ interface ActivityTableProps {
   activities: ActivityDto[];
   isLoading: boolean;
   onEdit: (activity: ActivityDto) => void;
-  pageNumber?: number;
-  pageSize?: number;
-  sortBy?: string;
-  sortDirection?: 'asc' | 'desc';
-  filters?: Record<string, unknown>;
-  onPageChange?: (page: number) => void;
-  onSortChange?: (sortBy: string, sortDirection: 'asc' | 'desc') => void;
+  pageNumber: number;
+  pageSize: number;
+  totalCount: number;
+  sortBy: string;
+  sortDirection: 'asc' | 'desc';
+  onPageChange: (page: number) => void;
+  onSortChange: (sortBy: string, sortDirection: 'asc' | 'desc') => void;
 }
 
 const getColumnsConfig = (t: any): ColumnDef<ActivityDto>[] => [
@@ -85,15 +85,18 @@ export function ActivityTable({
   activities,
   isLoading,
   onEdit,
+  pageNumber,
+  pageSize,
+  totalCount,
+  sortBy,
+  sortDirection,
+  onPageChange,
+  onSortChange,
 }: ActivityTableProps): ReactElement {
   const { t, i18n } = useTranslation();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedActivity, setSelectedActivity] = useState<ActivityDto | null>(null);
   
-  const [currentPage, setCurrentPage] = useState(1);
-  const pageSize = 10;
-  const [sortConfig, setSortConfig] = useState<{ key: string; direction: 'asc' | 'desc' } | null>(null);
-
   const tableColumns = useMemo(() => getColumnsConfig(t), [t]);
   
   const [visibleColumns, setVisibleColumns] = useState<string[]>(
@@ -103,40 +106,7 @@ export function ActivityTable({
   const deleteActivity = useDeleteActivity();
   const updateActivity = useUpdateActivity();
 
-  const processedData = useMemo(() => {
-    if (!Array.isArray(activities)) return [];
-
-    let result = [...activities];
-
-    if (sortConfig) {
-      result.sort((a: any, b: any) => {
-        let aValue = a[sortConfig.key];
-        let bValue = b[sortConfig.key];
-
-        if (sortConfig.key === 'potentialCustomer') {
-             aValue = a.potentialCustomer?.name || '';
-             bValue = b.potentialCustomer?.name || '';
-        } else if (sortConfig.key === 'contact') {
-             aValue = a.contact?.fullName || '';
-             bValue = b.contact?.fullName || '';
-        } else if (sortConfig.key === 'assignedUser') {
-             aValue = a.assignedUser?.fullName || '';
-             bValue = b.assignedUser?.fullName || '';
-        }
-
-        const aString = aValue ? String(aValue).toLowerCase() : '';
-        const bString = bValue ? String(bValue).toLowerCase() : '';
-
-        if (aString < bString) return sortConfig.direction === 'asc' ? -1 : 1;
-        if (aString > bString) return sortConfig.direction === 'asc' ? 1 : -1;
-        return 0;
-      });
-    }
-    return result;
-  }, [activities, sortConfig]);
-
-  const totalPages = Math.ceil(processedData.length / pageSize);
-  const paginatedData = processedData.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+  const totalPages = Math.ceil(totalCount / pageSize);
 
   const handleDeleteClick = (activity: ActivityDto): void => {
     setSelectedActivity(activity);
@@ -159,11 +129,11 @@ export function ActivityTable({
   };
 
   const handleSort = (key: string) => {
-    let direction: 'asc' | 'desc' = 'asc';
-    if (sortConfig && sortConfig.key === key && sortConfig.direction === 'asc') {
-      direction = 'desc';
+    let newDirection: 'asc' | 'desc' = 'asc';
+    if (sortBy === key && sortDirection === 'asc') {
+      newDirection = 'desc';
     }
-    setSortConfig({ key, direction });
+    onSortChange(key, newDirection);
   };
 
   const toggleColumn = (key: string) => {
@@ -221,10 +191,10 @@ export function ActivityTable({
   };
 
   const SortIcon = ({ column }: { column: string }): ReactElement => {
-    if (sortConfig?.key !== column) {
+    if (sortBy !== column) {
       return <ArrowUpDown size={14} className="ml-2 inline-block text-slate-400 opacity-50 group-hover:opacity-100 transition-opacity" />;
     }
-    return sortConfig.direction === 'asc' ? (
+    return sortDirection === 'asc' ? (
       <ArrowUp size={14} className="ml-2 inline-block text-pink-600 dark:text-pink-400" />
     ) : (
       <ArrowDown size={14} className="ml-2 inline-block text-pink-600 dark:text-pink-400" />
@@ -304,7 +274,7 @@ export function ActivityTable({
               </TableRow>
             </TableHeader>
             <TableBody>
-              {paginatedData.map((item: ActivityDto, index: number) => (
+              {activities.map((item: ActivityDto, index: number) => (
                 <TableRow 
                   key={item.id || `activity-${index}`}
                   className={`
@@ -346,15 +316,15 @@ export function ActivityTable({
       <div className="flex flex-col sm:flex-row items-center justify-between py-4 gap-4">
         <div className="text-sm text-slate-500 dark:text-slate-400">
           {t('common.showing', '{{from}}-{{to}} / {{total}} gösteriliyor', {
-            from: (currentPage - 1) * pageSize + 1,
-            to: Math.min(currentPage * pageSize, processedData.length),
-            total: processedData.length,
+            from: (pageNumber - 1) * pageSize + 1,
+            to: Math.min(pageNumber * pageSize, totalCount),
+            total: totalCount,
           })}
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" size="sm" onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))} disabled={currentPage <= 1} className="bg-white dark:bg-transparent border-slate-200 dark:border-white/10 hover:bg-slate-50 dark:hover:bg-white/5">{t('common.previous', 'Önceki')}</Button>
-          <div className="flex items-center px-4 text-sm font-medium text-slate-700 dark:text-slate-200">{currentPage} / {totalPages || 1}</div>
-          <Button variant="outline" size="sm" onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))} disabled={currentPage >= totalPages} className="bg-white dark:bg-transparent border-slate-200 dark:border-white/10 hover:bg-slate-50 dark:hover:bg-white/5">{t('common.next', 'Sonraki')}</Button>
+          <Button variant="outline" size="sm" onClick={() => onPageChange(Math.max(pageNumber - 1, 1))} disabled={pageNumber <= 1} className="bg-white dark:bg-transparent border-slate-200 dark:border-white/10 hover:bg-slate-50 dark:hover:bg-white/5">{t('common.previous', 'Önceki')}</Button>
+          <div className="flex items-center px-4 text-sm font-medium text-slate-700 dark:text-slate-200">{pageNumber} / {totalPages || 1}</div>
+          <Button variant="outline" size="sm" onClick={() => onPageChange(Math.min(pageNumber + 1, totalPages))} disabled={pageNumber >= totalPages} className="bg-white dark:bg-transparent border-slate-200 dark:border-white/10 hover:bg-slate-50 dark:hover:bg-white/5">{t('common.next', 'Sonraki')}</Button>
         </div>
       </div>
 

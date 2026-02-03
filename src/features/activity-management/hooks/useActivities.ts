@@ -7,7 +7,7 @@ import type { PagedResponse } from '@/types/api';
 import { normalizeQueryParams } from '@/utils/query-params';
 
 export const useActivities = (
-  params: PagedParams & { filters?: PagedFilter[] | Record<string, unknown> }
+  params: Omit<PagedParams, 'filters'> & { filters?: PagedFilter[] | Record<string, unknown> }
 ): ReturnType<typeof useQuery<PagedResponse<ActivityDto>>> => {
   return useQuery({
     queryKey: queryKeys.list(normalizeQueryParams(params)),

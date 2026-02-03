@@ -41,7 +41,7 @@ import { useCreateReportTemplate } from './hooks/useCreateReportTemplate';
 import { useUpdateReportTemplate } from './hooks/useUpdateReportTemplate';
 import { useReportTemplateById } from './hooks/useReportTemplateById';
 import { dtoElementsToCanvasElements } from './utils/dto-to-canvas';
-import type { ReportTemplateCreateDto, ReportTemplateElementDto } from './types/report-template-types';
+import { DocumentRuleType, type ReportTemplateCreateDto, type ReportTemplateElementDto } from './types/report-template-types';
 import type { ReportTemplateGetDto } from './types/report-template-types';
 
 const RULE_TYPE_OPTIONS: { value: PricingRuleType; label: string }[] = [
@@ -55,8 +55,8 @@ const DEFAULT_ELEMENT_HEIGHT = 50;
 const A4_WIDTH = 794;
 const A4_HEIGHT = 1123;
 
-function ruleTypeForApi(ruleType: PricingRuleType): number {
-  return ruleType - 1;
+function ruleTypeForApi(ruleType: PricingRuleType): DocumentRuleType {
+  return (ruleType - 1) as DocumentRuleType;
 }
 
 function apiRuleTypeToForm(apiRuleType: number): PricingRuleType {

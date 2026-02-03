@@ -3,7 +3,7 @@ import type { ApiResponse, PagedResponse, PagedParams, PagedFilter } from '@/typ
 import type { ActivityDto, CreateActivityDto, UpdateActivityDto } from '../types/activity-types';
 
 export const activityApi = {
-  getList: async (params: PagedParams & { filters?: PagedFilter[] | Record<string, unknown> }): Promise<PagedResponse<ActivityDto>> => {
+  getList: async (params: Omit<PagedParams, 'filters'> & { filters?: PagedFilter[] | Record<string, unknown> }): Promise<PagedResponse<ActivityDto>> => {
     const queryParams = new URLSearchParams();
     if (params.pageNumber) queryParams.append('pageNumber', params.pageNumber.toString());
     if (params.pageSize) queryParams.append('pageSize', params.pageSize.toString());

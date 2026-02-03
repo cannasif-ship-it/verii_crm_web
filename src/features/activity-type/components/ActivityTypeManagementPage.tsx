@@ -11,7 +11,7 @@ import { ActivityTypeForm } from './ActivityTypeForm';
 import { useCreateActivityType } from '../hooks/useCreateActivityType';
 import { useUpdateActivityType } from '../hooks/useUpdateActivityType';
 import { useActivityTypeList } from '../hooks/useActivityTypeList';
-import type { ActivityTypeDto, ActivityTypeFormData } from '../types/activity-type-types';
+import type { ActivityTypeDto, ActivityTypeFormSchema } from '../types/activity-type-types';
 
 export function ActivityTypeManagementPage(): ReactElement {
   const { t } = useTranslation();
@@ -28,18 +28,23 @@ export function ActivityTypeManagementPage(): ReactElement {
   const createActivityType = useCreateActivityType();
   const updateActivityType = useUpdateActivityType();
 
-  const { data: apiResponse, isLoading } = useActivityTypeList({ pageNumber: 1, pageSize: 1000 });
+  const { data: apiResponse, isLoading } = useActivityTypeList({ 
+    pageNumber: 1, 
+    pageSize: 10000,
+    sortBy: 'Id',
+    sortDirection: 'desc'
+  });
 
-  // Handle API response which might be wrapped in a data property or be the array directly
   const allActivityTypes = useMemo(() => {
     if (!apiResponse) return [];
     if (Array.isArray(apiResponse)) return apiResponse;
-    if ((apiResponse as any).data && Array.isArray((apiResponse as any).data)) return (apiResponse as any).data;
+    if (apiResponse.data && Array.isArray(apiResponse.data)) return apiResponse.data;
+    if ((apiResponse as any).items && Array.isArray((apiResponse as any).items)) return (apiResponse as any).items;
     return [];
   }, [apiResponse]);
 
   useEffect(() => {
-    setPageTitle(t('activityType.title', 'Aktivite Tipi Yönetimi'));
+    setPageTitle(t('activityType.management.title', 'Aktivite Tipi Yönetimi'));
     return () => {
       setPageTitle(null);
     };
@@ -62,7 +67,8 @@ export function ActivityTypeManagementPage(): ReactElement {
       const lowerSearch = searchTerm.toLowerCase();
       result = result.filter((item) => 
         (item.name && item.name.toLowerCase().includes(lowerSearch)) ||
-        (item.description && item.description.toLowerCase().includes(lowerSearch))
+        (item.description && item.description.toLowerCase().includes(lowerSearch)) ||
+        (item.createdByFullUser && item.createdByFullUser.toLowerCase().includes(lowerSearch))
       );
     }
 
@@ -73,7 +79,7 @@ export function ActivityTypeManagementPage(): ReactElement {
 
   const handleRefresh = async () => {
     setIsRefreshing(true);
-    await queryClient.invalidateQueries({ queryKey: ['activityTypes'] });
+    await queryClient.invalidateQueries({ queryKey: ['activity-types'] });
     setTimeout(() => setIsRefreshing(false), 500);
   };
 
@@ -82,81 +88,92 @@ export function ActivityTypeManagementPage(): ReactElement {
     setFormOpen(true);
   };
 
-  const handleEdit = (activityType: ActivityTypeDto) => {
+  const handleEditClick = (activityType: ActivityTypeDto) => {
     setEditingActivityType(activityType);
     setFormOpen(true);
   };
 
-  const handleFormSubmit = async (data: ActivityTypeFormData) => {
+  const handleFormSubmit = async (data: ActivityTypeFormSchema) => {
     try {
+      const payload = {
+        ...data,
+        description: data.description || undefined
+      };
+
       if (editingActivityType) {
-        await updateActivityType.mutateAsync({
-          id: editingActivityType.id,
-          data: data,
+        await updateActivityType.mutateAsync({ 
+          id: editingActivityType.id, 
+          data: payload
         });
       } else {
-        await createActivityType.mutateAsync(data);
+        await createActivityType.mutateAsync(payload);
       }
       setFormOpen(false);
       setEditingActivityType(null);
     } catch (error) {
-      console.error('Failed to save activity type:', error);
+      console.error('Error saving activity type:', error);
     }
   };
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-500">
-      
-      {/* Header Section */}
-      <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between bg-white/70 dark:bg-[#1a1025]/60 backdrop-blur-xl border border-white/60 dark:border-white/5 shadow-sm rounded-2xl p-4 transition-all duration-300">
-          
-          {/* Search Bar */}
-          <div className="relative w-full sm:w-[320px] group">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-pink-500 transition-colors duration-300" />
-            <Input
-              placeholder={t('activityType.search', 'Aktivite tipi ara...')}
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 h-11 bg-white/50 dark:bg-[#130822]/50 border-slate-200 dark:border-white/10 focus:border-pink-500/50 focus:ring-4 focus:ring-pink-500/10 rounded-xl transition-all duration-300"
-            />
-            {searchTerm && (
-              <button 
-                onClick={clearSearch}
-                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-white p-0.5 rounded-full hover:bg-slate-100 dark:hover:bg-white/10 transition-colors"
-              >
-                <X size={14} />
-              </button>
-            )}
-          </div>
+    <div className="w-full space-y-6">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-5 pt-2">
+        <div className="flex flex-col gap-2">
+          <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white transition-colors">
+            {t('activityType.management.title', 'Aktivite Tipi Yönetimi')}
+          </h1>
+          <p className="text-slate-500 dark:text-slate-400 text-sm font-medium transition-colors">
+            {t('activityType.management.description', 'Aktivite tiplerini yönetin ve düzenleyin')}
+          </p>
+        </div>
+        
+        <Button 
+          onClick={handleAddClick}
+          className="px-6 py-2 bg-gradient-to-r from-pink-600 to-orange-600 rounded-lg text-white text-sm font-bold shadow-lg shadow-pink-500/20 hover:scale-105 transition-transform border-0 hover:text-white"
+        >
+          <Plus size={18} className="mr-2" />
+          {t('activityType.create', 'Yeni Aktivite Tipi')}
+        </Button>
+      </div>
 
-          {/* Action Buttons */}
-          <div className="flex items-center gap-3 w-full sm:w-auto">
-             <Button
-                variant="outline"
-                size="icon"
-                onClick={handleRefresh}
-                className={`h-11 w-11 rounded-xl border-slate-200 dark:border-white/10 bg-white/50 dark:bg-[#130822]/50 hover:bg-slate-100 dark:hover:bg-white/10 hover:border-slate-300 dark:hover:border-white/20 text-slate-600 dark:text-slate-300 transition-all duration-300 ${isRefreshing ? 'animate-spin' : ''}`}
-                title={t('common.refresh', 'Yenile')}
-             >
-               <RefreshCw size={18} />
-             </Button>
-
-             <Button 
-               onClick={handleAddClick}
-               className="h-11 flex-1 sm:flex-none bg-gradient-to-r from-pink-600 to-orange-600 hover:from-pink-700 hover:to-orange-700 text-white shadow-lg shadow-pink-500/20 hover:shadow-pink-500/40 rounded-xl transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
-             >
-               <Plus className="mr-2 h-4 w-4" />
-               {t('activityType.add', 'Yeni Tip Ekle')}
-             </Button>
+      <div className="bg-white/70 dark:bg-[#1a1025]/60 backdrop-blur-xl border border-white/60 dark:border-white/5 shadow-sm rounded-2xl p-5 flex flex-col md:flex-row items-center justify-between gap-5 transition-all duration-300">
+          <div className="flex items-center gap-3 w-full md:w-auto">
+            <div className="relative group w-full md:w-96">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-pink-500 transition-colors" />
+              <Input
+                placeholder={t('common.search', 'Hızlı Ara...')}
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10 h-10 bg-white/50 dark:bg-card/50 border-slate-200 dark:border-white/10 focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-pink-500 dark:focus-visible:border-pink-500 rounded-xl transition-all"
+              />
+              {searchTerm && (
+                <button
+                  onClick={clearSearch}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 p-1 hover:bg-slate-100 dark:hover:bg-white/10 rounded-full transition-colors"
+                >
+                  <X size={14} className="text-slate-400" />
+                </button>
+              )}
+            </div>
+            
+            <div 
+              className="h-10 w-10 flex items-center justify-center bg-white/50 dark:bg-card/50 border border-slate-200 dark:border-white/10 rounded-xl cursor-pointer hover:border-pink-500/30 hover:bg-pink-50/50 dark:hover:bg-pink-500/10 transition-all group shrink-0"
+              onClick={handleRefresh}
+              title={t('common.refresh', 'Yenile')}
+            >
+              <RefreshCw 
+                size={18} 
+                className={`text-slate-500 dark:text-slate-400 group-hover:text-pink-600 dark:group-hover:text-pink-400 transition-colors ${isRefreshing ? 'animate-spin' : ''}`} 
+              />
+            </div>
           </div>
       </div>
 
-      {/* Table Section */}
-      <div className="bg-white/70 dark:bg-[#1a1025]/60 backdrop-blur-xl border border-white/60 dark:border-white/5 shadow-sm rounded-2xl p-6 transition-all duration-300">
-        <ActivityTypeTable
-          activityTypes={filteredActivityTypes}
-          isLoading={isLoading}
-          onEdit={handleEdit}
+      <div className="flex-1 overflow-hidden rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-[#0b0713] shadow-sm">
+        <ActivityTypeTable 
+          activityTypes={filteredActivityTypes} 
+          isLoading={isLoading} 
+          onEdit={handleEditClick}
         />
       </div>
 

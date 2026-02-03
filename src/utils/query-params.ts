@@ -1,7 +1,7 @@
 import type { PagedParams, PagedFilter } from '@/types/api';
 
 export const normalizeQueryParams = (
-  params: PagedParams & { filters?: PagedFilter[] | Record<string, unknown> }
+  params: Omit<PagedParams, 'filters'> & { filters?: PagedFilter[] | Record<string, unknown> }
 ): {
   pageNumber?: number;
   pageSize?: number;

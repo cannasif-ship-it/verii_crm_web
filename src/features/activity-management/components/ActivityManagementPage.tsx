@@ -30,15 +30,19 @@ export function ActivityManagementPage(): ReactElement {
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   const queryClient = useQueryClient();
-  const { data: apiResponse, isLoading } = useActivities({
+  const createActivity = useCreateActivity();
+  const updateActivity = useUpdateActivity();
+  
+  const { data: activitiesResponse, isLoading: activitiesLoading } = useActivities({
     pageNumber,
     pageSize,
     sortBy,
     sortDirection,
-    filters: filters as any
+    filters
   });
-  const createActivity = useCreateActivity();
-  const updateActivity = useUpdateActivity();
+
+  const activities = activitiesResponse?.data || [];
+  const totalCount = activitiesResponse?.totalCount || 0;
 
   useEffect(() => {
     setPageTitle(t('activityManagement.title', 'Aktivite Yönetimi'));
@@ -211,14 +215,14 @@ export function ActivityManagementPage(): ReactElement {
       {/* Table Section */}
       <div className="bg-white/70 dark:bg-[#1a1025]/60 backdrop-blur-xl border border-white/60 dark:border-white/5 shadow-sm rounded-2xl p-6 transition-all duration-300">
         <ActivityTable
-          activities={apiResponse?.data || []}
-          isLoading={isLoading}
+          activities={activities}
+          isLoading={activitiesLoading}
           onEdit={handleEdit}
           pageNumber={pageNumber}
           pageSize={pageSize}
+          totalCount={totalCount}
           sortBy={sortBy}
           sortDirection={sortDirection}
-          filters={filters}
           onPageChange={setPageNumber}
           onSortChange={handleSortChange}
         />

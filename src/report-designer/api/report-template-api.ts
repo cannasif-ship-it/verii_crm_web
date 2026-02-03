@@ -44,10 +44,10 @@ function normalizeTemplateItem(item: unknown): ReportTemplateGetDto {
   }
   const elements =
     templateData.elements ??
-    (templateData as Record<string, unknown>).Elements ??
+    (templateData as unknown as Record<string, unknown>).Elements ??
     [];
   const page =
-    templateData.page ?? (templateData as Record<string, unknown>).Page ?? {
+    templateData.page ?? (templateData as unknown as Record<string, unknown>).Page ?? {
       width: 794,
       height: 1123,
       unit: 'px',

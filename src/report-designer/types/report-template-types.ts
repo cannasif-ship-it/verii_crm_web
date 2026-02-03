@@ -1,8 +1,10 @@
-export enum DocumentRuleType {
-  Demand = 0,
-  Quotation = 1,
-  Order = 2,
-}
+export const DocumentRuleType = {
+  Demand: 0,
+  Quotation: 1,
+  Order: 2,
+} as const;
+
+export type DocumentRuleType = (typeof DocumentRuleType)[keyof typeof DocumentRuleType];
 
 export interface FieldDefinitionDto {
   label: string;
