@@ -92,10 +92,8 @@ export function ApprovalRoleGroupManagementPage(): ReactElement {
   };
 
   return (
-    <div className="relative min-h-screen space-y-6 p-4 md:p-8 overflow-hidden">
-      <div className="absolute top-0 left-1/4 w-96 h-96 bg-pink-500/10 blur-[120px] pointer-events-none dark:block hidden" />
-      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-orange-500/10 blur-[120px] pointer-events-none dark:block hidden" />
-
+    <div className="w-full space-y-6 relative">
+      
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pt-2">
         <div>
           <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white transition-colors">

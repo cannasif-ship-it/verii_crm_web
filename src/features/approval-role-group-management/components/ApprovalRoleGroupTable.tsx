@@ -14,6 +14,7 @@ import {
   DialogContent,
   DialogDescription,
   DialogFooter,
+  DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
 import {
@@ -32,10 +33,9 @@ import {
     ArrowUpDown, 
     ArrowUp, 
     ArrowDown, 
-    ChevronLeft, 
-    ChevronRight,
     ChevronDown,
-    EyeOff
+    EyeOff,
+    Loader2
 } from 'lucide-react';
 import { Alert02Icon } from 'hugeicons-react';
 
@@ -202,7 +202,7 @@ export function ApprovalRoleGroupTable({
         </DropdownMenu>
       </div>
 
-      <div className="rounded-xl border border-slate-200 dark:border-white/10 overflow-hidden bg-white/50 dark:bg-white/5 backdrop-blur-sm">
+      <div className="rounded-xl border border-slate-200 dark:border-white/10 overflow-hidden bg-white/50 dark:bg-transparent">
         <Table>
           <TableHeader className="bg-slate-50/50 dark:bg-white/5">
             <TableRow className="border-b border-slate-200 dark:border-white/10 hover:bg-transparent">
@@ -282,100 +282,63 @@ export function ApprovalRoleGroupTable({
         </Table>
       </div>
 
-      {/* Pagination Controls */}
-      <div className="flex items-center justify-between px-2">
-        <div className="text-sm text-slate-500 dark:text-slate-400 hidden sm:block">
-            {t('common.showing', 'Gösterilen')}: <span className="font-medium text-slate-900 dark:text-white">{(currentPage - 1) * pageSize + 1}</span> - <span className="font-medium text-slate-900 dark:text-white">{Math.min(currentPage * pageSize, processedRoleGroups.length)}</span> / <span className="font-medium text-slate-900 dark:text-white">{processedRoleGroups.length}</span>
+      <div className="flex flex-col sm:flex-row items-center justify-between py-4 gap-4">
+        <div className="text-sm text-slate-500 dark:text-slate-400">
+          {t('common.table.showing', '{{from}}-{{to}} / {{total}} gösteriliyor', {
+            from: (currentPage - 1) * pageSize + 1,
+            to: Math.min(currentPage * pageSize, processedRoleGroups.length),
+            total: processedRoleGroups.length,
+          })}
         </div>
-
-        <div className="flex items-center gap-2 ml-auto">
-            <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                disabled={currentPage === 1}
-                className="h-8 w-8 p-0"
-            >
-                <ChevronLeft size={16} />
-            </Button>
-            
-            <div className="flex items-center gap-1">
-                {Array.from({ length: totalPages }, (_, i) => i + 1)
-                    .filter(p => p === 1 || p === totalPages || (p >= currentPage - 1 && p <= currentPage + 1))
-                    .map((page, i, arr) => (
-                        <>
-                            {i > 0 && arr[i - 1] !== page - 1 && (
-                                <span key={`dots-${i}`} className="px-1 text-slate-400">...</span>
-                            )}
-                            <Button
-                                key={page}
-                                variant={currentPage === page ? "default" : "outline"}
-                                size="sm"
-                                onClick={() => setCurrentPage(page)}
-                                className={`h-8 w-8 p-0 ${currentPage === page ? 'bg-pink-600 hover:bg-pink-700 text-white' : ''}`}
-                            >
-                                {page}
-                            </Button>
-                        </>
-                    ))}
-            </div>
-
-            <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                disabled={currentPage === totalPages}
-                className="h-8 w-8 p-0"
-            >
-                <ChevronRight size={16} />
-            </Button>
+        <div className="flex gap-2">
+          <Button variant="outline" size="sm" onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))} disabled={currentPage <= 1} className="bg-white dark:bg-transparent border-slate-200 dark:border-white/10 hover:bg-slate-50 dark:hover:bg-white/5">{t('common.previous', 'Önceki')}</Button>
+          <div className="flex items-center px-4 text-sm font-medium text-slate-700 dark:text-slate-200">{t('common.table.page', 'Sayfa {{current}} / {{total}}', { current: currentPage, total: totalPages || 1 })}</div>
+          <Button variant="outline" size="sm" onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))} disabled={currentPage >= totalPages} className="bg-white dark:bg-transparent border-slate-200 dark:border-white/10 hover:bg-slate-50 dark:hover:bg-white/5">{t('common.next', 'Sonraki')}</Button>
         </div>
       </div>
 
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <DialogContent className="max-w-[400px] p-0 bg-white dark:bg-[#130822] border border-slate-100 dark:border-white/10 overflow-hidden rounded-2xl">
-          <div className="p-6 flex flex-col items-center text-center gap-4">
-            <div className="h-16 w-16 rounded-2xl bg-red-50 dark:bg-red-500/10 flex items-center justify-center text-red-500 mb-2">
-               <Alert02Icon size={32} />
+        <DialogContent className="bg-white dark:bg-[#130822] border border-slate-100 dark:border-white/10 text-slate-900 dark:text-white w-[90%] sm:w-full max-w-md rounded-2xl shadow-2xl overflow-hidden p-0 gap-0">
+          
+          <DialogHeader className="flex flex-col items-center gap-4 text-center pb-6 pt-10 px-6">
+            <div className="h-20 w-20 rounded-full bg-red-50 dark:bg-red-500/10 flex items-center justify-center mb-2 animate-in zoom-in duration-300">
+               <Alert02Icon size={36} className="text-red-600 dark:text-red-500" />
             </div>
             
             <div className="space-y-2">
-              <DialogTitle className="text-xl font-bold text-slate-900 dark:text-white">
+                <DialogTitle className="text-2xl font-bold text-slate-900 dark:text-white">
                 {t('approvalRoleGroup.delete.title', 'Rol Grubunu Sil')}
-              </DialogTitle>
-              <DialogDescription className="text-slate-500 dark:text-slate-400">
-                {t('approvalRoleGroup.delete.confirmMessage', 'Bu rol grubunu silmek istediğinizden emin misiniz?')}
-              </DialogDescription>
+                </DialogTitle>
+                <DialogDescription className="text-slate-500 dark:text-slate-400 max-w-[280px] mx-auto text-sm leading-relaxed">
+                {t('approvalRoleGroup.delete.confirmMessage', '{{name}} rol grubunu silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.', {
+                    name: selectedRoleGroup?.name || '',
+                })}
+                </DialogDescription>
             </div>
+          </DialogHeader>
 
-            {selectedRoleGroup && (
-              <div className="w-full bg-slate-50 dark:bg-white/5 rounded-xl p-3 border border-slate-100 dark:border-white/5">
-                <div className="text-sm font-medium text-slate-900 dark:text-white">
-                  {selectedRoleGroup.name || '-'}
-                </div>
-                <div className="text-xs text-slate-500 dark:text-slate-400 mt-1 font-mono">
-                  #{selectedRoleGroup.id}
-                </div>
-              </div>
-            )}
-          </div>
-
-          <DialogFooter className="px-6 py-4 bg-slate-50/50 dark:bg-white/5 border-t border-slate-100 dark:border-white/5 flex gap-3">
-             <Button
+          <DialogFooter className="flex flex-row gap-3 justify-center p-6 bg-slate-50/50 dark:bg-[#1a1025]/50 border-t border-slate-100 dark:border-white/5">
+            <Button
+              type="button"
               variant="outline"
               onClick={() => setDeleteDialogOpen(false)}
-              className="flex-1 h-11 rounded-xl border-slate-200 dark:border-white/10"
+              className="flex-1 h-12 rounded-xl border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300 hover:bg-white dark:hover:bg-white/5 font-semibold"
             >
               {t('common.cancel', 'Vazgeç')}
             </Button>
+            
             <Button
+              type="button"
               variant="destructive"
               onClick={handleDeleteConfirm}
-              className="flex-1 h-11 rounded-xl bg-red-600 hover:bg-red-700 text-white shadow-lg shadow-red-500/20"
+              disabled={deleteRoleGroup.isPending}
+              className="flex-1 h-12 rounded-xl bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white border-0 shadow-lg shadow-red-500/20 transition-all hover:scale-[1.02] font-bold"
             >
+              {deleteRoleGroup.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
               {t('common.delete', 'Sil')}
             </Button>
           </DialogFooter>
+
         </DialogContent>
       </Dialog>
     </div>

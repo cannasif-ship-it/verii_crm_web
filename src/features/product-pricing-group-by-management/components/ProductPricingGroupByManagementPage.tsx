@@ -3,14 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useUIStore } from '@/stores/ui-store';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { VoiceSearchButton } from '@/components/ui/voice-search-button';
-import { Package, TriangleAlert, Layers, Plus, Search, RefreshCw, X } from 'lucide-react';
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+import { Plus, Search, RefreshCw, X } from 'lucide-react';
 import { ProductPricingGroupByTable } from './ProductPricingGroupByTable';
 import { ProductPricingGroupByForm } from './ProductPricingGroupByForm';
 import { useCreateProductPricingGroupBy } from '../hooks/useCreateProductPricingGroupBy';
@@ -18,7 +11,6 @@ import { useUpdateProductPricingGroupBy } from '../hooks/useUpdateProductPricing
 import { useProductPricingGroupBys } from '../hooks/useProductPricingGroupBys';
 import type { ProductPricingGroupByDto } from '../types/product-pricing-group-by-types';
 import type { ProductPricingGroupByFormSchema } from '../types/product-pricing-group-by-types';
-import type { PagedFilter } from '@/types/api';
 import { useQueryClient } from '@tanstack/react-query';
 import { queryKeys } from '../utils/query-keys';
 
@@ -27,30 +19,26 @@ export function ProductPricingGroupByManagementPage(): ReactElement {
   const { setPageTitle } = useUIStore();
   const [formOpen, setFormOpen] = useState(false);
   const [editingProductPricingGroupBy, setEditingProductPricingGroupBy] = useState<ProductPricingGroupByDto | null>(null);
-  const [pageNumber, setPageNumber] = useState(1);
-  const [pageSize] = useState(20);
-  const [sortBy, setSortBy] = useState('Id');
-  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
   const [searchTerm, setSearchTerm] = useState('');
   const [activeFilter, setActiveFilter] = useState('all');
-  const [filters, setFilters] = useState<Record<string, unknown>>({});
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   const createProductPricingGroupBy = useCreateProductPricingGroupBy();
   const updateProductPricingGroupBy = useUpdateProductPricingGroupBy();
   const queryClient = useQueryClient();
 
-  const { data: usedGroupsData } = useProductPricingGroupBys({
+  const { data: apiResponse, isLoading } = useProductPricingGroupBys({
     pageNumber: 1,
     pageSize: 10000,
     sortBy: 'Id',
     sortDirection: 'desc',
   });
 
+  const items = apiResponse?.data || [];
+
   const usedErpGroupCodes = useMemo((): string[] => {
-    const items = usedGroupsData?.data ?? [];
     return [...new Set(items.map((x) => x.erpGroupCode))];
-  }, [usedGroupsData]);
+  }, [items]);
 
   const excludeGroupCodes = useMemo((): string[] => {
     if (!editingProductPricingGroupBy) return usedErpGroupCodes;
@@ -64,16 +52,34 @@ export function ProductPricingGroupByManagementPage(): ReactElement {
     };
   }, [t, setPageTitle]);
 
-  useEffect(() => {
-    const newFilters: PagedFilter[] = [];
+  const filteredItems = useMemo(() => {
+    let result = [...items];
+
     if (searchTerm) {
-      newFilters.push(
-        { column: 'erpGroupCode', operator: 'contains', value: searchTerm }
+      const lowerTerm = searchTerm.toLowerCase();
+      result = result.filter((item) =>
+        item.erpGroupCode?.toLowerCase().includes(lowerTerm)
       );
     }
-    setFilters(newFilters.length > 0 ? { filters: newFilters } : {});
-    setPageNumber(1);
-  }, [searchTerm]);
+
+    if (activeFilter === 'inactive') {
+      result = []; // Assuming API only returns active items
+    }
+
+    return result;
+  }, [items, searchTerm, activeFilter]);
+
+  const handleRefresh = async () => {
+    setIsRefreshing(true);
+    await queryClient.invalidateQueries({
+      queryKey: queryKeys.list({ pageNumber: 1, pageSize: 10000, sortBy: 'Id', sortDirection: 'desc' }),
+    });
+    setTimeout(() => setIsRefreshing(false), 500);
+  };
+
+  const clearSearch = () => {
+    setSearchTerm('');
+  };
 
   const handleAddClick = (): void => {
     setEditingProductPricingGroupBy(null);
@@ -114,161 +120,88 @@ export function ProductPricingGroupByManagementPage(): ReactElement {
     setEditingProductPricingGroupBy(null);
   };
 
-  const handleSortChange = (newSortBy: string, newSortDirection: 'asc' | 'desc'): void => {
-    setSortBy(newSortBy);
-    setSortDirection(newSortDirection);
-    setPageNumber(1);
-  };
-
-  const clearSearch = () => {
-    setSearchTerm('');
-  };
-
-  const handleRefresh = async () => {
-    setIsRefreshing(true);
-    await queryClient.invalidateQueries({ queryKey: queryKeys.list({ pageNumber, pageSize, sortBy, sortDirection, filters }) });
-    await queryClient.invalidateQueries({ queryKey: ['product-pricing-group-bys'] });
-    setTimeout(() => setIsRefreshing(false), 500);
-  };
-
-  const cardStyle = `
-    bg-white/60 dark:bg-[#1a1025]/40 
-    hover:bg-white/90 dark:hover:bg-[#1a1025]/80
-    border border-white/60 dark:border-white/5 
-    shadow-sm hover:shadow-md 
-    backdrop-blur-md 
-    transition-all duration-300 
-    hover:border-pink-500/30 
-    group relative overflow-hidden
-  `;
-  
-  const glowStyle = "absolute inset-0 bg-gradient-to-r from-pink-50/0 to-orange-50/0 dark:from-pink-500/0 dark:to-orange-500/0 group-hover:from-pink-50/50 group-hover:to-orange-50/50 dark:group-hover:from-pink-500/5 dark:group-hover:to-orange-500/5 transition-all duration-500 pointer-events-none";
-
-  const stats = [
-    {
-      title: t('productPricingGroupByManagement.stats.totalProducts', 'TOPLAM ÜRÜN'),
-      value: '-',
-      icon: Package,
-      iconContainerClass: 'bg-pink-50 text-pink-600 dark:bg-pink-500/10 dark:text-pink-400 border-pink-100 dark:border-pink-500/20',
-    },
-    {
-      title: t('productPricingGroupByManagement.stats.criticalStock', 'KRİTİK STOK'),
-      value: '-',
-      icon: TriangleAlert,
-      iconContainerClass: 'bg-orange-50 text-orange-600 dark:bg-orange-500/10 dark:text-orange-400 border-orange-100 dark:border-orange-500/20',
-    },
-    {
-      title: t('productPricingGroupByManagement.stats.categories', 'KATEGORİLER'),
-      value: '-',
-      icon: Layers,
-      iconContainerClass: 'bg-blue-50 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400 border-blue-100 dark:border-blue-500/20',
-    },
-  ];
-
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="w-full space-y-6 relative">
+      
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pt-2">
         <div>
-          <h1 className="text-2xl font-bold">
+          <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white transition-colors">
             {t('productPricingGroupByManagement.title', 'Ürün Fiyatlandırma Grubu Yönetimi')}
           </h1>
-          <p className="text-muted-foreground mt-1 text-sm">
-            {t('productPricingGroupByManagement.description', 'Ürün fiyatlandırma gruplarını yönetin ve düzenleyin')}
+          <p className="text-slate-500 dark:text-slate-400 text-sm font-medium transition-colors mt-1">
+            {t('productPricingGroupByManagement.description', 'Ürün fiyatlandırma gruplarını yönetin')}
           </p>
         </div>
+        
         <Button 
           onClick={handleAddClick}
           className="px-6 py-2 bg-gradient-to-r from-pink-600 to-orange-600 rounded-lg text-white text-sm font-bold shadow-lg shadow-pink-500/20 hover:scale-105 transition-transform border-0 hover:text-white"
         >
           <Plus size={18} className="mr-2" />
-          {t('productPricingGroupByManagement.create', 'Yeni Fiyatlandırma Grubu')}
+          {t('productPricingGroupByManagement.add', 'Yeni Grup Ekle')}
         </Button>
       </div>
 
-      <div className="bg-white/70 dark:bg-[#1a1025]/60 backdrop-blur-xl border border-white/60 dark:border-white/5 shadow-sm rounded-2xl p-4 flex flex-col md:flex-row items-center justify-between gap-4 transition-all duration-300">
-        <div className="flex items-center gap-2 w-full md:w-auto">
-          <div className="relative group w-full md:w-96">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-pink-500 transition-colors" />
-            <Input
-              placeholder={t('productPricingGroupByManagement.search', 'Ara...')}
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 h-10 bg-white/50 dark:bg-card/50 border-slate-200 dark:border-white/10 focus:border-pink-500/50 focus:ring-pink-500/20 rounded-xl transition-all"
-            />
-            {searchTerm && (
-              <button
-                onClick={clearSearch}
-                className="absolute right-3 top-1/2 -translate-y-1/2 p-1 hover:bg-slate-100 dark:hover:bg-white/10 rounded-full transition-colors"
-              >
-                <X size={14} className="text-slate-400" />
-              </button>
-            )}
-          </div>
-          
-          <VoiceSearchButton 
-            onResult={setSearchTerm}
-            className="h-10 w-10 bg-white/50 dark:bg-card/50 border border-slate-200 dark:border-white/10 hover:bg-pink-50/50 dark:hover:bg-pink-500/10 hover:border-pink-500/30 rounded-xl transition-all"
-          />
+      <div className="bg-white/70 dark:bg-[#1a1025]/60 backdrop-blur-xl border border-white/60 dark:border-white/5 shadow-sm rounded-2xl p-5 flex flex-col gap-5 transition-all duration-300">
+        
+        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full lg:w-auto">
+                <div className="relative group w-full sm:w-72 lg:w-96">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-pink-500 transition-colors" />
+                    <Input
+                        placeholder={t('common.search', 'Hızlı Ara...')}
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="pl-10 h-10 bg-white/50 dark:bg-card/50 border-slate-200 dark:border-white/10 focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-pink-500 dark:focus-visible:border-pink-500 rounded-xl transition-all w-full"
+                    />
+                    {searchTerm && (
+                        <button
+                            onClick={clearSearch}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 p-1 hover:bg-slate-100 dark:hover:bg-white/10 rounded-full transition-colors"
+                        >
+                            <X size={14} className="text-slate-400" />
+                        </button>
+                    )}
+                </div>
 
-          <div 
-            className="h-10 w-10 flex items-center justify-center bg-white/50 dark:bg-card/50 border border-slate-200 dark:border-white/10 rounded-xl cursor-pointer hover:border-pink-500/30 hover:bg-pink-50/50 dark:hover:bg-pink-500/10 transition-all group"
-            onClick={handleRefresh}
-          >
-            <RefreshCw 
-              size={18} 
-              className={`text-slate-500 dark:text-slate-400 group-hover:text-pink-600 dark:group-hover:text-pink-400 transition-colors ${isRefreshing ? 'animate-spin' : ''}`} 
-            />
-          </div>
-        </div>
+                <div className="flex items-center gap-3">
+                    <div 
+                        className="h-10 w-10 flex items-center justify-center bg-white/50 dark:bg-card/50 border border-slate-200 dark:border-white/10 rounded-xl cursor-pointer hover:border-pink-500/30 hover:bg-pink-50/50 dark:hover:bg-pink-500/10 transition-all group shrink-0"
+                        onClick={handleRefresh}
+                        title={t('common.refresh', 'Yenile')}
+                    >
+                        <RefreshCw 
+                            size={18} 
+                            className={`text-slate-500 dark:text-slate-400 group-hover:text-pink-600 dark:group-hover:text-pink-400 transition-colors ${isRefreshing ? 'animate-spin' : ''}`} 
+                        />
+                    </div>
+                </div>
+            </div>
 
-        <div className="flex items-center gap-2 overflow-x-auto w-full md:w-auto pb-2 md:pb-0 scrollbar-hide">
-           {['all', 'active', 'critical', 'archive'].map((filter) => (
-             <Button
-               key={filter}
-               variant="ghost"
-               onClick={() => setActiveFilter(filter)}
-               className={`
-                 rounded-lg px-4 h-9 text-xs font-bold uppercase tracking-wider transition-all
-                 ${activeFilter === filter 
-                   ? 'bg-pink-500/10 text-pink-600 dark:text-pink-400 border border-pink-500/20' 
-                   : 'text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white border border-transparent'}
-               `}
-             >
-               {filter === 'all' ? 'Tümü' : filter === 'active' ? 'Aktif' : filter === 'critical' ? 'Kritik Stok' : 'Arşiv'}
-             </Button>
-           ))}
+            <div className="flex items-center gap-1 bg-slate-100/50 dark:bg-white/5 p-1 rounded-xl w-full lg:w-auto overflow-x-auto">
+                {['all', 'active', 'inactive'].map((filter) => (
+                    <button
+                        key={filter}
+                        onClick={() => setActiveFilter(filter)}
+                        className={`
+                            flex-1 lg:flex-none px-4 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all whitespace-nowrap
+                            ${activeFilter === filter 
+                                ? 'bg-white dark:bg-[#1a1025] text-pink-600 dark:text-pink-400 shadow-sm border border-slate-200 dark:border-white/10' 
+                                : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'}
+                        `}
+                    >
+                        {filter === 'all' ? t('common.all', 'Tümü') : filter === 'active' ? t('status.active', 'Aktif') : t('status.inactive', 'Pasif')}
+                    </button>
+                ))}
+            </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {stats.map((stat, index) => (
-          <Card key={index} className={cardStyle}>
-            <div className={glowStyle} />
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative z-10">
-              <CardTitle className="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                {stat.title}
-              </CardTitle>
-              <div className={`p-2 rounded-lg shadow-sm border ${stat.iconContainerClass}`}>
-                 <stat.icon size={18} />
-              </div>
-            </CardHeader>
-            <CardContent className="relative z-10">
-              <div className="text-3xl font-bold text-slate-800 dark:text-white">{stat.value}</div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-
-      <div className="bg-white/70 dark:bg-[#1a1025]/60 backdrop-blur-xl border border-white/60 dark:border-white/5 shadow-sm rounded-2xl p-6 transition-all duration-300">
-        <ProductPricingGroupByTable
+      <div className="bg-white/70 dark:bg-[#1a1025]/60 backdrop-blur-xl border border-white/60 dark:border-white/5 shadow-sm rounded-2xl p-0 sm:p-1 transition-all duration-300 overflow-hidden">
+        <ProductPricingGroupByTable 
+          items={filteredItems}
+          isLoading={isLoading}
           onEdit={handleEdit}
-          pageNumber={pageNumber}
-          pageSize={pageSize}
-          sortBy={sortBy}
-          sortDirection={sortDirection}
-          filters={filters}
-          onPageChange={setPageNumber}
-          onSortChange={handleSortChange}
         />
       </div>
 
