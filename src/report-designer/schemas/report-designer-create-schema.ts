@@ -6,7 +6,7 @@ export const reportDesignerCreateSchema = z.object({
     message: 'Belge tipi seçin',
   }),
   title: z.string().min(1, 'Başlık gerekli'),
-  default: z.boolean().optional().default(false),
+  default: z.boolean(),
 });
 
 export type ReportDesignerCreateFormValues = z.infer<typeof reportDesignerCreateSchema>;

@@ -1,5 +1,5 @@
 import type { ReactElement } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, type UseFormReturn } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { useRef, useMemo, useEffect } from 'react';
@@ -54,8 +54,6 @@ const RULE_TYPE_OPTIONS: { value: PricingRuleType; label: string }[] = [
 
 const DEFAULT_ELEMENT_WIDTH = 200;
 const DEFAULT_ELEMENT_HEIGHT = 50;
-const A4_WIDTH = 794;
-const A4_HEIGHT = 1123;
 
 function ruleTypeForApi(ruleType: PricingRuleType): DocumentRuleType {
   return (ruleType - 1) as DocumentRuleType;
@@ -103,7 +101,7 @@ function elementToDto(el: ReportElement | TableElement): ReportTemplateElementDt
 
 function applyTemplateToFormAndStore(
   template: ReportTemplateGetDto,
-  form: ReturnType<typeof useForm<ReportDesignerCreateFormValues>>,
+  form: UseFormReturn<ReportDesignerCreateFormValues>,
   setElements: (elements: import('./models/report-element').CanvasElement[]) => void
 ): void {
   form.reset({
@@ -128,7 +126,7 @@ export function ReportDesignerCreatePage(): ReactElement {
   const addColumnToTable = useReportStore((s) => s.addColumnToTable);
   const setElements = useReportStore((s) => s.setElements);
 
-  const form = useForm<ReportDesignerCreateFormValues>({
+  const form = useForm<ReportDesignerCreateFormValues, unknown, ReportDesignerCreateFormValues>({
     resolver: zodResolver(reportDesignerCreateSchema),
     defaultValues: {
       ruleType: PricingRuleType.Demand,
