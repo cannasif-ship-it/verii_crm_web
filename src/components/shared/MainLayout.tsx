@@ -63,11 +63,20 @@ export function MainLayout({ navItems }: MainLayoutProps): ReactElement {
       },
 
       {
-        title: 'Report Designer',
+        title: 'Report Builder',
         icon: <File01Icon size={iconSize} className="text-amber-500" />,
         children: [
-          { title: 'Liste', href: '/report-designer' },
-          { title: 'Yeni Oluştur', href: '/report-designer/create' },
+          { title: 'Listele', href: '/report-designer' },
+          { title: 'Oluştur', href: '/report-designer/create' },
+        ],
+      },
+
+      {
+        title: t('sidebar.reports', 'Raporlar'),
+        icon: <File01Icon size={iconSize} className="text-cyan-500" />,
+        children: [
+          { title: t('sidebar.reportsList', 'Liste'), href: '/reports' },
+          { title: t('sidebar.reportsCreate', 'Yeni Oluştur'), href: '/reports/new' },
         ],
       },
 
