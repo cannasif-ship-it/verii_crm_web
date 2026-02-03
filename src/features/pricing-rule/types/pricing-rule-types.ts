@@ -1,3 +1,5 @@
+import { z } from 'zod';
+
 export const PricingRuleType = {
   Demand: 1,
   Quotation: 2,
@@ -5,6 +7,53 @@ export const PricingRuleType = {
 } as const;
 
 export type PricingRuleType = (typeof PricingRuleType)[keyof typeof PricingRuleType];
+
+// Zod Schemas
+export const pricingRuleLineSchema = z.object({
+  id: z.string().optional(),
+  stokCode: z.string().min(1, 'Stok kodu zorunludur'),
+  minQuantity: z.number().min(0, 'Min miktar 0 dan küçük olamaz'),
+  maxQuantity: z.number().nullable().optional(),
+  fixedUnitPrice: z.number().nullable().optional(),
+  currencyCode: z.union([z.string(), z.number()]).optional(),
+  discountRate1: z.number(),
+  discountAmount1: z.number(),
+  discountRate2: z.number(),
+  discountAmount2: z.number(),
+  discountRate3: z.number(),
+  discountAmount3: z.number(),
+  isEditing: z.boolean().optional(),
+});
+
+export const pricingRuleSalesmanSchema = z.object({
+  id: z.string().optional(),
+  salesmanId: z.number().min(1, 'Satışçı seçimi zorunludur'),
+});
+
+export const pricingRuleHeaderSchema = z.object({
+  ruleType: z.nativeEnum(PricingRuleType),
+  ruleCode: z.string().min(1, 'Kural kodu zorunludur').max(50, 'Kural kodu en fazla 50 karakter olabilir'),
+  ruleName: z.string().min(1, 'Kural adı zorunludur').max(250, 'Kural adı en fazla 250 karakter olabilir'),
+  validFrom: z.string().min(1, 'Geçerlilik başlangıç tarihi zorunludur'),
+  validTo: z.string().min(1, 'Geçerlilik bitiş tarihi zorunludur'),
+  customerId: z.number().nullable().optional(),
+  erpCustomerCode: z.string().nullable().optional(),
+  branchCode: z.number().nullable().optional(),
+  priceIncludesVat: z.boolean(),
+  isActive: z.boolean(),
+  lines: z.array(pricingRuleLineSchema).optional(),
+  salesmen: z.array(pricingRuleSalesmanSchema).optional(),
+}).refine((data) => {
+  if (!data.customerId && !data.erpCustomerCode) {
+    return true; // Optional customer
+  }
+  return true;
+}, {
+  message: "Müşteri veya ERP Müşteri Kodu seçilmelidir",
+  path: ["customerId"],
+});
+
+export type PricingRuleFormSchema = z.infer<typeof pricingRuleHeaderSchema>;
 
 export interface PricingRuleHeaderGetDto {
   id: number;

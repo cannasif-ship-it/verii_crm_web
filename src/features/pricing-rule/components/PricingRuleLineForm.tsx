@@ -38,36 +38,30 @@ interface PricingRuleLineFormProps {
 
 // --- TASARIM SABİTLERİ ---
 const INPUT_STYLE = `
-  h-11 rounded-lg
-  bg-slate-50 dark:bg-[#0c0516] 
+  h-12 rounded-xl
+  bg-slate-50 dark:bg-[#0f0a18] 
   border border-slate-200 dark:border-white/10 
   text-slate-900 dark:text-white text-sm
   placeholder:text-slate-400 dark:placeholder:text-slate-600 
   
-  focus-visible:ring-0 focus-visible:ring-offset-0 
+  focus-visible:bg-white dark:focus-visible:bg-[#1a1025]
+  focus-visible:border-pink-500 dark:focus-visible:border-pink-500/70
+  focus-visible:ring-2 focus-visible:ring-pink-500/10 focus-visible:ring-offset-0
   
-  /* LIGHT MODE FOCUS */
-  focus:bg-white 
-  focus:border-pink-500 
-  focus:shadow-[0_0_0_3px_rgba(236,72,153,0.15)] 
-
-  /* DARK MODE FOCUS */
-  dark:focus:bg-[#0c0516] 
-  dark:focus:border-pink-500/60 
-  dark:focus:shadow-[0_0_0_3px_rgba(236,72,153,0.1)]
-
+  focus:ring-2 focus:ring-pink-500/10 focus:ring-offset-0 focus:border-pink-500
+  
   transition-all duration-200
 `;
 
 const READONLY_INPUT_STYLE = `
-  h-11 rounded-lg
+  h-12 rounded-xl
   bg-slate-100 dark:bg-white/5 
   border border-slate-200 dark:border-white/5 
   text-slate-500 dark:text-slate-400 text-sm
   cursor-not-allowed
 `;
 
-const LABEL_STYLE = "text-[11px] text-slate-500 dark:text-slate-400 uppercase tracking-wider font-bold ml-1 mb-1.5 block flex items-center gap-1.5";
+const LABEL_STYLE = "text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide ml-1 mb-2 flex items-center gap-2";
 
 export function PricingRuleLineForm({
   line,

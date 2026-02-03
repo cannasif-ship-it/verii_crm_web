@@ -1,6 +1,7 @@
 import { type ReactElement, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
+import { useFormContext, useFieldArray } from 'react-hook-form';
 import {
   Table,
   TableBody,
@@ -31,24 +32,30 @@ import {
   Box,
   Coins
 } from 'lucide-react';
-import type { PricingRuleLineFormState, PricingRuleHeaderGetDto } from '../types/pricing-rule-types';
+import { Alert02Icon } from 'hugeicons-react';
+import type { PricingRuleLineFormState, PricingRuleHeaderGetDto, PricingRuleFormSchema } from '../types/pricing-rule-types';
 import { useExchangeRate } from '@/services/hooks/useExchangeRate';
 import type { KurDto } from '@/services/erp-types';
 import { useCreatePricingRuleLine } from '../hooks/useCreatePricingRuleLine';
 import { useDeletePricingRuleLine } from '../hooks/useDeletePricingRuleLine';
 
 interface PricingRuleLineTableProps {
-  lines: PricingRuleLineFormState[];
-  setLines: (lines: PricingRuleLineFormState[]) => void;
   header?: PricingRuleHeaderGetDto | null;
 }
 
 export function PricingRuleLineTable({
-  lines,
-  setLines,
   header,
 }: PricingRuleLineTableProps): ReactElement {
   const { t, i18n } = useTranslation();
+  const { control } = useFormContext<PricingRuleFormSchema>();
+  const { fields, append, remove, update } = useFieldArray({
+    control,
+    name: "lines",
+    keyName: "_fieldId"
+  });
+
+  const lines = fields as unknown as PricingRuleLineFormState[];
+
   const [editingLineId, setEditingLineId] = useState<string | null>(null);
   const [productDialogOpen, setProductDialogOpen] = useState(false);
   const [addConfirmOpen, setAddConfirmOpen] = useState(false);
@@ -61,7 +68,7 @@ export function PricingRuleLineTable({
 
   const isExistingRecord = !!header?.id;
 
-  // --- Handlers (Mevcut mantık korundu) ---
+  // --- Handlers ---
   const handleProductSelect = (product: ProductSelectionResult): void => {
     if (isExistingRecord) {
       setSelectedProduct(product);
@@ -82,7 +89,7 @@ export function PricingRuleLineTable({
         discountAmount3: 0,
         isEditing: true,
       };
-      setLines([...lines, newLine]);
+      append(newLine);
       setEditingLineId(newLine.id);
     }
   };
@@ -105,7 +112,7 @@ export function PricingRuleLineTable({
       discountAmount3: 0,
       isEditing: true,
     };
-    setLines([...lines, newLine]);
+    append(newLine);
     setEditingLineId(newLine.id);
     setAddConfirmOpen(false);
     setSelectedProduct(null);
@@ -113,11 +120,17 @@ export function PricingRuleLineTable({
 
   const handleEditLine = (id: string): void => {
     setEditingLineId(id);
-    setLines(lines.map((line) => (line.id === id ? { ...line, isEditing: true } : line)));
+    const index = lines.findIndex(l => l.id === id);
+    if (index !== -1) {
+        update(index, { ...lines[index], isEditing: true });
+    }
   };
 
   const handleSaveLine = async (updatedLine: PricingRuleLineFormState): Promise<void> => {
     if (!updatedLine.stokCode || updatedLine.stokCode.trim() === '') return;
+
+    const index = lines.findIndex(l => l.id === updatedLine.id);
+    if (index === -1) return;
 
     if (isExistingRecord && header?.id) {
       const isNewLine = updatedLine.id.startsWith('temp-');
@@ -154,7 +167,7 @@ export function PricingRuleLineTable({
               discountAmount3: response.discountAmount3,
               isEditing: false,
             };
-            setLines(lines.map((line) => (line.id === updatedLine.id ? savedLine : line)));
+            update(index, savedLine);
             setEditingLineId(null);
             toast.success(t('pricingRule.lines.addSuccess', 'Satır Eklendi'), { description: t('pricingRule.lines.addSuccessMessage', 'Satır fiyat kuralına başarıyla eklendi') });
           }
@@ -163,11 +176,11 @@ export function PricingRuleLineTable({
           toast.error(t('pricingRule.lines.addError', 'Hata'), { description: errorMessage });
         }
       } else {
-        setLines(lines.map((line) => (line.id === updatedLine.id ? { ...updatedLine, isEditing: false } : line)));
+        update(index, { ...updatedLine, isEditing: false });
         setEditingLineId(null);
       }
     } else {
-      setLines(lines.map((line) => (line.id === updatedLine.id ? { ...updatedLine, isEditing: false } : line)));
+      update(index, { ...updatedLine, isEditing: false });
       setEditingLineId(null);
     }
   };
@@ -183,16 +196,21 @@ export function PricingRuleLineTable({
         setSelectedLineToDelete({ id, dbId });
         setDeleteConfirmOpen(true);
       } else {
-        setLines(lines.filter((l) => l.id !== id));
+        const index = lines.findIndex((l) => l.id === id);
+        if (index !== -1) remove(index);
       }
     } else {
-      setLines(lines.filter((l) => l.id !== id));
+      const index = lines.findIndex((l) => l.id === id);
+      if (index !== -1) remove(index);
     }
   };
 
   const handleDeleteConfirm = async (): Promise<void> => {
     if (!selectedLineToDelete?.dbId) {
-      if (selectedLineToDelete) setLines(lines.filter((line) => line.id !== selectedLineToDelete.id));
+      if (selectedLineToDelete) {
+          const index = lines.findIndex((line) => line.id === selectedLineToDelete.id);
+          if (index !== -1) remove(index);
+      }
       setDeleteConfirmOpen(false);
       setSelectedLineToDelete(null);
       return;
@@ -200,7 +218,8 @@ export function PricingRuleLineTable({
 
     try {
       await deleteMutation.mutateAsync(selectedLineToDelete.dbId);
-      setLines(lines.filter((line) => line.id !== selectedLineToDelete.id));
+      const index = lines.findIndex((line) => line.id === selectedLineToDelete.id);
+      if (index !== -1) remove(index);
       setDeleteConfirmOpen(false);
       setSelectedLineToDelete(null);
       toast.success(t('pricingRule.lines.deleteSuccess', 'Satır Kaldırıldı'), { description: t('pricingRule.lines.deleteSuccessMessage', 'Satır fiyat kuralından başarıyla kaldırıldı') });
@@ -297,7 +316,7 @@ export function PricingRuleLineTable({
                     </TableCell>
                 </TableRow>
                 ) : (
-                lines.map((line) => (
+                lines.map((line, index) => (
                     <TableRow 
                         key={line.id} 
                         className={`group border-b border-slate-100 dark:border-white/5 transition-colors ${editingLineId === line.id ? 'bg-blue-50/50 dark:bg-blue-900/10' : 'hover:bg-slate-50/80 dark:hover:bg-white/5'}`}
@@ -310,9 +329,9 @@ export function PricingRuleLineTable({
                             onCancel={() => {
                             setEditingLineId(null);
                             if (!line.stokCode || line.stokCode.trim() === '') {
-                                setLines(lines.filter((l) => l.id !== line.id));
+                                remove(index);
                             } else {
-                                setLines(lines.map((l) => (l.id === line.id ? { ...l, isEditing: false } : l)));
+                                update(index, { ...line, isEditing: false });
                             }
                             }}
                         />
@@ -382,6 +401,7 @@ export function PricingRuleLineTable({
         </div>
       </div>
 
+
       <ProductSelectDialog
         open={productDialogOpen}
         onOpenChange={setProductDialogOpen}
@@ -391,21 +411,25 @@ export function PricingRuleLineTable({
 
       {/* Ekleme Onay Dialog */}
       <Dialog open={addConfirmOpen} onOpenChange={setAddConfirmOpen} modal={true}>
-        <DialogContent className="sm:max-w-[425px] bg-white/80 dark:bg-[#1a1025]/80 backdrop-blur-xl border-slate-200 dark:border-white/10">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-slate-900 dark:text-white">
-                <div className="bg-pink-100 dark:bg-pink-900/30 p-2 rounded-full text-pink-600 dark:text-pink-400">
-                    <AlertCircle size={20} />
-                </div>
+        <DialogContent className="bg-white dark:bg-[#130822] border border-slate-100 dark:border-white/10 text-slate-900 dark:text-white w-[90%] sm:w-full max-w-md rounded-2xl shadow-2xl overflow-hidden p-0 gap-0">
+          <DialogHeader className="flex flex-col items-center gap-4 text-center pb-6 pt-10 px-6">
+            <div className="h-20 w-20 rounded-full bg-blue-50 dark:bg-blue-500/10 flex items-center justify-center mb-2 animate-in zoom-in duration-300">
+               <AlertCircle size={36} className="text-blue-600 dark:text-blue-500" />
+            </div>
+            
+            <div className="space-y-2">
+                <DialogTitle className="text-2xl font-bold text-slate-900 dark:text-white">
                 {t('pricingRule.lines.addConfirmTitle', 'Satır Ekle')}
-            </DialogTitle>
-            <DialogDescription className="pt-2 text-slate-500 dark:text-slate-400">
-              {t('pricingRule.lines.addConfirmMessage', '{{code}} stok kodu fiyat kuralına eklenecektir. Onaylıyor musunuz?', {
-                code: selectedProduct?.code || '',
-              })}
-            </DialogDescription>
+                </DialogTitle>
+                <DialogDescription className="text-slate-500 dark:text-slate-400 max-w-[280px] mx-auto text-sm leading-relaxed">
+                  {t('pricingRule.lines.addConfirmMessage', '{{code}} stok kodu fiyat kuralına eklenecektir. Onaylıyor musunuz?', {
+                    code: selectedProduct?.code || '',
+                  })}
+                </DialogDescription>
+            </div>
           </DialogHeader>
-          <DialogFooter className="gap-2 sm:gap-0">
+
+          <DialogFooter className="flex flex-row gap-3 justify-center p-6 bg-slate-50/50 dark:bg-[#1a1025]/50 border-t border-slate-100 dark:border-white/5">
             <Button
               type="button"
               variant="outline"
@@ -414,15 +438,16 @@ export function PricingRuleLineTable({
                 setSelectedProduct(null);
               }}
               disabled={isLoadingAction}
-              className="bg-white dark:bg-transparent border-slate-200 dark:border-white/10"
+              className="flex-1 h-12 rounded-xl border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300 hover:bg-white dark:hover:bg-white/5 font-semibold"
             >
               {t('pricingRule.form.cancel', 'İptal')}
             </Button>
+            
             <Button
               type="button"
               onClick={handleAddConfirm}
               disabled={isLoadingAction}
-              className="bg-blue-600 hover:bg-blue-700 text-white"
+              className="flex-1 h-12 rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white border-0 shadow-lg shadow-blue-500/20 transition-all hover:scale-[1.02] font-bold"
             >
               {t('pricingRule.form.confirm', 'Onayla')}
             </Button>
@@ -432,21 +457,26 @@ export function PricingRuleLineTable({
 
       {/* Silme Onay Dialog */}
       <Dialog open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen} modal={true}>
-        <DialogContent className="sm:max-w-[425px] bg-white dark:bg-[#130822] border-slate-100 dark:border-white/10">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-slate-900 dark:text-white">
-                <div className="bg-red-100 dark:bg-red-900/30 p-2 rounded-full text-red-600 dark:text-red-400">
-                    <Trash2 size={20} />
-                </div>
+        <DialogContent className="bg-white dark:bg-[#130822] border border-slate-100 dark:border-white/10 text-slate-900 dark:text-white w-[90%] sm:w-full max-w-md rounded-2xl shadow-2xl overflow-hidden p-0 gap-0">
+          
+          <DialogHeader className="flex flex-col items-center gap-4 text-center pb-6 pt-10 px-6">
+            <div className="h-20 w-20 rounded-full bg-red-50 dark:bg-red-500/10 flex items-center justify-center mb-2 animate-in zoom-in duration-300">
+               <Alert02Icon size={36} className="text-red-600 dark:text-red-500" />
+            </div>
+            
+            <div className="space-y-2">
+                <DialogTitle className="text-2xl font-bold text-slate-900 dark:text-white">
                 {t('pricingRule.lines.deleteConfirmTitle', 'Satır Kaldır')}
-            </DialogTitle>
-            <DialogDescription className="pt-2 text-slate-500 dark:text-slate-400">
-              {t('pricingRule.lines.deleteConfirmMessage', '{{code}} stok kodlu satır fiyat kuralından kaldırılacaktır. Onaylıyor musunuz?', {
-                code: lineToDelete?.stokCode || '',
-              })}
-            </DialogDescription>
+                </DialogTitle>
+                <DialogDescription className="text-slate-500 dark:text-slate-400 max-w-[280px] mx-auto text-sm leading-relaxed">
+                {t('pricingRule.lines.deleteConfirmMessage', '{{code}} stok kodlu satır fiyat kuralından kaldırılacaktır. Onaylıyor musunuz?', {
+                    code: lineToDelete?.stokCode || '',
+                })}
+                </DialogDescription>
+            </div>
           </DialogHeader>
-          <DialogFooter className="gap-2 sm:gap-0">
+
+          <DialogFooter className="flex flex-row gap-3 justify-center p-6 bg-slate-50/50 dark:bg-[#1a1025]/50 border-t border-slate-100 dark:border-white/5">
             <Button
               type="button"
               variant="outline"
@@ -455,16 +485,17 @@ export function PricingRuleLineTable({
                 setSelectedLineToDelete(null);
               }}
               disabled={isLoadingAction}
-              className="bg-white dark:bg-transparent border-slate-200 dark:border-white/10"
+              className="flex-1 h-12 rounded-xl border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300 hover:bg-white dark:hover:bg-white/5 font-semibold"
             >
               {t('pricingRule.form.cancel', 'İptal')}
             </Button>
+            
             <Button
               type="button"
               variant="destructive"
               onClick={handleDeleteConfirm}
               disabled={isLoadingAction}
-              className="bg-red-600 hover:bg-red-700"
+              className="flex-1 h-12 rounded-xl bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white border-0 shadow-lg shadow-red-500/20 transition-all hover:scale-[1.02] font-bold"
             >
               {isLoadingAction ? (
                 <>
@@ -476,6 +507,7 @@ export function PricingRuleLineTable({
               )}
             </Button>
           </DialogFooter>
+
         </DialogContent>
       </Dialog>
     </div>

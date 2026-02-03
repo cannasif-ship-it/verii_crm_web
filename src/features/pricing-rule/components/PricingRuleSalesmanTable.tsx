@@ -1,6 +1,7 @@
 import { type ReactElement, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
+import { useFormContext, useFieldArray } from 'react-hook-form';
 import {
   Table,
   TableBody,
@@ -23,28 +24,33 @@ import { useUsersForPricingRule } from '../hooks/useUsersForPricingRule';
 import { useCreatePricingRuleSalesman } from '../hooks/useCreatePricingRuleSalesman';
 import { useDeletePricingRuleSalesman } from '../hooks/useDeletePricingRuleSalesman';
 import { usePricingRuleSalesmenByHeaderId } from '../hooks/usePricingRuleSalesmenByHeaderId';
-import type { PricingRuleSalesmanFormState, PricingRuleHeaderGetDto } from '../types/pricing-rule-types';
+import type { PricingRuleSalesmanFormState, PricingRuleHeaderGetDto, PricingRuleFormSchema } from '../types/pricing-rule-types';
 // İkonlar
 import { 
   Trash2, 
   Loader2, 
   UserPlus, 
   User, 
-  
 } from 'lucide-react';
+import { Alert02Icon } from 'hugeicons-react';
 
 interface PricingRuleSalesmanTableProps {
-  salesmen: PricingRuleSalesmanFormState[];
-  setSalesmen: (salesmen: PricingRuleSalesmanFormState[]) => void;
   header?: PricingRuleHeaderGetDto | null;
 }
 
 export function PricingRuleSalesmanTable({
-  salesmen,
-  setSalesmen,
   header,
 }: PricingRuleSalesmanTableProps): ReactElement {
   const { t } = useTranslation();
+  const { control } = useFormContext<PricingRuleFormSchema>();
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "salesmen",
+    keyName: "_fieldId"
+  });
+
+  const salesmen = fields as unknown as PricingRuleSalesmanFormState[];
+
   const { data: users, isLoading } = useUsersForPricingRule();
   const createMutation = useCreatePricingRuleSalesman();
   const deleteMutation = useDeletePricingRuleSalesman();
@@ -57,7 +63,7 @@ export function PricingRuleSalesmanTable({
 
   const isExistingRecord = !!header?.id;
 
-  // --- Handlers (Mevcut mantık korundu) ---
+  // --- Handlers ---
   const handleAddSalesman = (salesmanId: number): void => {
     if (salesmen.some((s) => s.salesmanId === salesmanId)) return;
 
@@ -69,7 +75,7 @@ export function PricingRuleSalesmanTable({
         id: `temp-${Date.now()}`,
         salesmanId,
       };
-      setSalesmen([...salesmen, newSalesman]);
+      append(newSalesman);
     }
   };
 
@@ -87,7 +93,7 @@ export function PricingRuleSalesmanTable({
           id: `existing-${response.id}`,
           salesmanId: response.salesmanId,
         };
-        setSalesmen([...salesmen, newSalesman]);
+        append(newSalesman);
         setAddConfirmOpen(false);
         setSelectedSalesmanId(null);
         toast.success(t('pricingRule.salesmen.addSuccess', 'Satışçı Eklendi'), { description: t('pricingRule.salesmen.addSuccessMessage', 'Satışçı fiyat kuralına başarıyla eklendi') });
@@ -108,16 +114,21 @@ export function PricingRuleSalesmanTable({
         setSelectedSalesmanToDelete({ id, dbId: existingSalesman.id });
         setDeleteConfirmOpen(true);
       } else {
-        setSalesmen(salesmen.filter((salesman) => salesman.id !== id));
+        const index = salesmen.findIndex((s) => s.id === id);
+        if (index !== -1) remove(index);
       }
     } else {
-      setSalesmen(salesmen.filter((salesman) => salesman.id !== id));
+      const index = salesmen.findIndex((s) => s.id === id);
+      if (index !== -1) remove(index);
     }
   };
 
   const handleDeleteConfirm = async (): Promise<void> => {
     if (!selectedSalesmanToDelete?.dbId) {
-      if (selectedSalesmanToDelete) setSalesmen(salesmen.filter((salesman) => salesman.id !== selectedSalesmanToDelete.id));
+      if (selectedSalesmanToDelete) {
+          const index = salesmen.findIndex((salesman) => salesman.id === selectedSalesmanToDelete.id);
+          if (index !== -1) remove(index);
+      }
       setDeleteConfirmOpen(false);
       setSelectedSalesmanToDelete(null);
       return;
@@ -125,7 +136,8 @@ export function PricingRuleSalesmanTable({
 
     try {
       await deleteMutation.mutateAsync(selectedSalesmanToDelete.dbId);
-      setSalesmen(salesmen.filter((salesman) => salesman.id !== selectedSalesmanToDelete.id));
+      const index = salesmen.findIndex((salesman) => salesman.id === selectedSalesmanToDelete.id);
+      if (index !== -1) remove(index);
       setDeleteConfirmOpen(false);
       setSelectedSalesmanToDelete(null);
       toast.success(t('pricingRule.salesmen.deleteSuccess', 'Satışçı Kaldırıldı'), { description: t('pricingRule.salesmen.deleteSuccessMessage', 'Satışçı fiyat kuralından başarıyla kaldırıldı') });
@@ -250,21 +262,25 @@ export function PricingRuleSalesmanTable({
 
       {/* Ekleme Onay Dialog */}
       <Dialog open={addConfirmOpen} onOpenChange={setAddConfirmOpen} modal={true}>
-        <DialogContent className="sm:max-w-[425px] bg-white/80 dark:bg-[#1a1025]/80 backdrop-blur-xl border-slate-200 dark:border-white/10">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-slate-900 dark:text-white">
-                <div className="bg-purple-100 dark:bg-purple-900/30 p-2 rounded-full text-purple-600 dark:text-purple-400">
-                    <UserPlus size={20} />
-                </div>
+        <DialogContent className="bg-white dark:bg-[#130822] border border-slate-100 dark:border-white/10 text-slate-900 dark:text-white w-[90%] sm:w-full max-w-md rounded-2xl shadow-2xl overflow-hidden p-0 gap-0">
+          <DialogHeader className="flex flex-col items-center gap-4 text-center pb-6 pt-10 px-6">
+            <div className="h-20 w-20 rounded-full bg-purple-50 dark:bg-purple-500/10 flex items-center justify-center mb-2 animate-in zoom-in duration-300">
+               <UserPlus size={36} className="text-purple-600 dark:text-purple-500" />
+            </div>
+            
+            <div className="space-y-2">
+                <DialogTitle className="text-2xl font-bold text-slate-900 dark:text-white">
                 {t('pricingRule.salesmen.addConfirmTitle', 'Satışçı Ekle')}
-            </DialogTitle>
-            <DialogDescription className="pt-2 text-slate-500 dark:text-slate-400">
-              {t('pricingRule.salesmen.addConfirmMessage', '{{name}} satışçısı fiyat kuralına eklenecektir. Onaylıyor musunuz?', {
-                name: selectedUser?.fullName || '',
-              })}
-            </DialogDescription>
+                </DialogTitle>
+                <DialogDescription className="text-slate-500 dark:text-slate-400 max-w-[280px] mx-auto text-sm leading-relaxed">
+                  {t('pricingRule.salesmen.addConfirmMessage', '{{name}} satışçısı fiyat kuralına eklenecektir. Onaylıyor musunuz?', {
+                    name: selectedUser?.fullName || '',
+                  })}
+                </DialogDescription>
+            </div>
           </DialogHeader>
-          <DialogFooter className="gap-2 sm:gap-0">
+
+          <DialogFooter className="flex flex-row gap-3 justify-center p-6 bg-slate-50/50 dark:bg-[#1a1025]/50 border-t border-slate-100 dark:border-white/5">
             <Button
               type="button"
               variant="outline"
@@ -273,15 +289,16 @@ export function PricingRuleSalesmanTable({
                 setSelectedSalesmanId(null);
               }}
               disabled={isLoadingAction}
-              className="bg-white dark:bg-transparent border-slate-200 dark:border-white/10"
+              className="flex-1 h-12 rounded-xl border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300 hover:bg-white dark:hover:bg-white/5 font-semibold"
             >
               {t('pricingRule.form.cancel', 'İptal')}
             </Button>
+            
             <Button
               type="button"
               onClick={handleAddConfirm}
               disabled={isLoadingAction}
-              className="bg-purple-600 hover:bg-purple-700 text-white"
+              className="flex-1 h-12 rounded-xl bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white border-0 shadow-lg shadow-purple-500/20 transition-all hover:scale-[1.02] font-bold"
             >
               {t('pricingRule.form.confirm', 'Onayla')}
             </Button>
@@ -291,21 +308,26 @@ export function PricingRuleSalesmanTable({
 
       {/* Silme Onay Dialog */}
       <Dialog open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen} modal={true}>
-        <DialogContent className="sm:max-w-[425px] bg-white/80 dark:bg-[#1a1025]/80 backdrop-blur-xl border-slate-200 dark:border-white/10">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-slate-900 dark:text-white">
-                <div className="bg-red-100 dark:bg-red-900/30 p-2 rounded-full text-red-600 dark:text-red-400">
-                    <Trash2 size={20} />
-                </div>
+        <DialogContent className="bg-white dark:bg-[#130822] border border-slate-100 dark:border-white/10 text-slate-900 dark:text-white w-[90%] sm:w-full max-w-md rounded-2xl shadow-2xl overflow-hidden p-0 gap-0">
+          
+          <DialogHeader className="flex flex-col items-center gap-4 text-center pb-6 pt-10 px-6">
+            <div className="h-20 w-20 rounded-full bg-red-50 dark:bg-red-500/10 flex items-center justify-center mb-2 animate-in zoom-in duration-300">
+               <Alert02Icon size={36} className="text-red-600 dark:text-red-500" />
+            </div>
+            
+            <div className="space-y-2">
+                <DialogTitle className="text-2xl font-bold text-slate-900 dark:text-white">
                 {t('pricingRule.salesmen.deleteConfirmTitle', 'Satışçı Kaldır')}
-            </DialogTitle>
-            <DialogDescription className="pt-2 text-slate-500 dark:text-slate-400">
-              {t('pricingRule.salesmen.deleteConfirmMessage', '{{name}} satışçısı fiyat kuralından kaldırılacaktır. Onaylıyor musunuz?', {
-                name: userToDelete?.fullName || '',
-              })}
-            </DialogDescription>
+                </DialogTitle>
+                <DialogDescription className="text-slate-500 dark:text-slate-400 max-w-[280px] mx-auto text-sm leading-relaxed">
+                {t('pricingRule.salesmen.deleteConfirmMessage', '{{name}} satışçısı fiyat kuralından kaldırılacaktır. Onaylıyor musunuz?', {
+                    name: userToDelete?.fullName || '',
+                })}
+                </DialogDescription>
+            </div>
           </DialogHeader>
-          <DialogFooter className="gap-2 sm:gap-0">
+
+          <DialogFooter className="flex flex-row gap-3 justify-center p-6 bg-slate-50/50 dark:bg-[#1a1025]/50 border-t border-slate-100 dark:border-white/5">
             <Button
               type="button"
               variant="outline"
@@ -314,16 +336,17 @@ export function PricingRuleSalesmanTable({
                 setSelectedSalesmanToDelete(null);
               }}
               disabled={isLoadingAction}
-              className="bg-white dark:bg-transparent border-slate-200 dark:border-white/10"
+              className="flex-1 h-12 rounded-xl border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300 hover:bg-white dark:hover:bg-white/5 font-semibold"
             >
               {t('pricingRule.form.cancel', 'İptal')}
             </Button>
+            
             <Button
               type="button"
               variant="destructive"
               onClick={handleDeleteConfirm}
               disabled={isLoadingAction}
-              className="bg-red-600 hover:bg-red-700"
+              className="flex-1 h-12 rounded-xl bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white border-0 shadow-lg shadow-red-500/20 transition-all hover:scale-[1.02] font-bold"
             >
               {isLoadingAction ? (
                 <>
