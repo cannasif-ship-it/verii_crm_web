@@ -1,4 +1,4 @@
-import { type ReactElement, useState } from 'react';
+import { type ReactElement, useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Table,
@@ -17,315 +17,351 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { useProductPricingGroupBys } from '../hooks/useProductPricingGroupBys';
+import {
+    DropdownMenu,
+    DropdownMenuCheckboxItem,
+    DropdownMenuContent,
+    DropdownMenuTrigger,
+    DropdownMenuLabel,
+    DropdownMenuSeparator
+} from '@/components/ui/dropdown-menu';
 import { useDeleteProductPricingGroupBy } from '../hooks/useDeleteProductPricingGroupBy';
 import type { ProductPricingGroupByDto } from '../types/product-pricing-group-by-types';
-import type { PagedFilter } from '@/types/api';
-import { calculateFinalPrice, formatPrice, formatPercentage } from '../types/product-pricing-group-by-types';
-import { Edit2, Trash2, ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
+import { formatPrice } from '../types/product-pricing-group-by-types';
+import { 
+    Edit2, 
+    Trash2, 
+    ArrowUpDown, 
+    ArrowUp, 
+    ArrowDown, 
+    ChevronDown,
+    EyeOff,
+    Loader2
+} from 'lucide-react';
+import { Alert02Icon } from 'hugeicons-react';
+
+export interface ColumnDef<T> {
+  key: keyof T | 'actions';
+  label: string;
+  className?: string;
+}
 
 interface ProductPricingGroupByTableProps {
-  onEdit: (productPricingGroupBy: ProductPricingGroupByDto) => void;
-  pageNumber: number;
-  pageSize: number;
-  sortBy?: string;
-  sortDirection?: 'asc' | 'desc';
-  filters?: PagedFilter[] | Record<string, unknown>;
-  onPageChange: (page: number) => void;
-  onSortChange: (sortBy: string, sortDirection: 'asc' | 'desc') => void;
+  items: ProductPricingGroupByDto[];
+  isLoading: boolean;
+  onEdit: (item: ProductPricingGroupByDto) => void;
 }
 
 export function ProductPricingGroupByTable({
+  items,
+  isLoading,
   onEdit,
-  pageNumber,
-  pageSize,
-  sortBy = 'Id',
-  sortDirection = 'desc',
-  filters = {},
-  onPageChange,
-  onSortChange,
 }: ProductPricingGroupByTableProps): ReactElement {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [selectedProductPricingGroupBy, setSelectedProductPricingGroupBy] = useState<ProductPricingGroupByDto | null>(null);
+  const [selectedItem, setSelectedItem] = useState<ProductPricingGroupByDto | null>(null);
 
-  const { data, isLoading, isFetching } = useProductPricingGroupBys({
-    pageNumber,
-    pageSize,
-    sortBy,
-    sortDirection,
-    filters: filters as PagedFilter[] | undefined,
-  });
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 10;
+  const [sortConfig, setSortConfig] = useState<{ key: keyof ProductPricingGroupByDto; direction: 'asc' | 'desc' } | null>(null);
 
-  const deleteProductPricingGroupBy = useDeleteProductPricingGroupBy();
+  const deleteMutation = useDeleteProductPricingGroupBy();
 
-  const handleDeleteClick = (productPricingGroupBy: ProductPricingGroupByDto): void => {
-    setSelectedProductPricingGroupBy(productPricingGroupBy);
+  const getColumnsConfig = (t: any): ColumnDef<ProductPricingGroupByDto>[] => [
+    { key: 'erpGroupCode', label: t('productPricingGroupByManagement.erpGroupCode', 'Grup Kodu'), className: 'min-w-[150px]' },
+    { key: 'currency', label: t('productPricingGroupByManagement.currency', 'Para Birimi'), className: 'w-[100px]' },
+    { key: 'listPrice', label: t('productPricingGroupByManagement.listPrice', 'Liste Fiyatı'), className: 'w-[120px]' },
+    { key: 'costPrice', label: t('productPricingGroupByManagement.costPrice', 'Maliyet'), className: 'w-[120px]' },
+    { key: 'discount1', label: t('productPricingGroupByManagement.discount1', 'İskonto 1'), className: 'w-[100px]' },
+    { key: 'discount2', label: t('productPricingGroupByManagement.discount2', 'İskonto 2'), className: 'w-[100px]' },
+    { key: 'discount3', label: t('productPricingGroupByManagement.discount3', 'İskonto 3'), className: 'w-[100px]' },
+  ];
+
+  const tableColumns = useMemo(() => getColumnsConfig(t), [t]);
+  
+  const [visibleColumns, setVisibleColumns] = useState<Array<keyof ProductPricingGroupByDto | 'actions'>>(
+    tableColumns.map(col => col.key).concat(['actions'] as any)
+  );
+
+  const processedItems = useMemo(() => {
+    let result = [...items];
+
+    if (sortConfig) {
+      result.sort((a, b) => {
+        // @ts-ignore
+        const aValue = a[sortConfig.key] ? String(a[sortConfig.key]).toLowerCase() : '';
+        // @ts-ignore
+        const bValue = b[sortConfig.key] ? String(b[sortConfig.key]).toLowerCase() : '';
+
+        if (aValue < bValue) return sortConfig.direction === 'asc' ? -1 : 1;
+        if (aValue > bValue) return sortConfig.direction === 'asc' ? 1 : -1;
+        return 0;
+      });
+    }
+    return result;
+  }, [items, sortConfig]);
+
+  const totalPages = Math.ceil(processedItems.length / pageSize);
+  const paginatedItems = processedItems.slice(
+    (currentPage - 1) * pageSize,
+    currentPage * pageSize
+  );
+
+  const handleDeleteClick = (item: ProductPricingGroupByDto): void => {
+    setSelectedItem(item);
     setDeleteDialogOpen(true);
   };
 
   const handleDeleteConfirm = async (): Promise<void> => {
-    if (selectedProductPricingGroupBy) {
-      await deleteProductPricingGroupBy.mutateAsync(selectedProductPricingGroupBy.id);
+    if (selectedItem) {
+      await deleteMutation.mutateAsync(selectedItem.id);
       setDeleteDialogOpen(false);
-      setSelectedProductPricingGroupBy(null);
+      setSelectedItem(null);
     }
   };
 
-  const handleSort = (column: string): void => {
-    const newDirection =
-      sortBy === column && sortDirection === 'asc' ? 'desc' : 'asc';
-    onSortChange(column, newDirection);
+  const handleSort = (key: keyof ProductPricingGroupByDto) => {
+    setSortConfig(current => ({
+      key,
+      direction: current?.key === key && current.direction === 'asc' ? 'desc' : 'asc'
+    }));
+  };
+
+  const toggleColumn = (key: keyof ProductPricingGroupByDto | 'actions') => {
+    setVisibleColumns(current => 
+      current.includes(key)
+        ? current.filter(c => c !== key)
+        : [...current, key]
+    );
   };
 
   const SortIcon = ({ column }: { column: string }): ReactElement => {
-    if (sortBy !== column) {
-      return <ArrowUpDown size={14} className="ml-2 inline-block text-slate-400 opacity-50" />;
+    if (sortConfig?.key !== column) {
+      return <ArrowUpDown size={14} className="ml-2 inline-block text-slate-400 opacity-50 group-hover:opacity-100 transition-opacity" />;
     }
-    return sortDirection === 'asc' ? (
+    return sortConfig.direction === 'asc' ? (
       <ArrowUp size={14} className="ml-2 inline-block text-pink-600 dark:text-pink-400" />
     ) : (
       <ArrowDown size={14} className="ml-2 inline-block text-pink-600 dark:text-pink-400" />
     );
   };
 
-  const headStyle = "cursor-pointer select-none text-slate-500 dark:text-slate-400 hover:text-pink-600 dark:hover:text-pink-400 transition-colors py-4";
+  const headStyle = "cursor-pointer select-none text-slate-500 dark:text-slate-400 hover:text-pink-600 dark:hover:text-pink-400 transition-colors py-4 font-bold text-xs uppercase tracking-wider whitespace-nowrap";
+  const cellStyle = "text-slate-600 dark:text-slate-400 text-sm py-4 border-b border-slate-100 dark:border-white/5 align-middle";
 
-
-  if (isLoading || isFetching) {
+  if (isLoading) {
     return (
-      <div className="flex items-center justify-center py-12">
+      <div className="flex items-center justify-center py-20 min-h-[400px]">
         <div className="flex flex-col items-center gap-2">
-          <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-current text-pink-500" />
+          <div className="h-10 w-10 animate-spin rounded-full border-b-2 border-current text-pink-500" />
           <div className="text-sm text-muted-foreground animate-pulse">
-            {t('productPricingGroupByManagement.loading', 'Yükleniyor...')}
+            {t('common.loading', 'Yükleniyor...')}
           </div>
         </div>
       </div>
     );
   }
 
-  const productPricingGroupBys = data?.data || [];
-
-  if (!data || productPricingGroupBys.length === 0) {
+  if (items.length === 0) {
     return (
-      <div className="flex items-center justify-center py-12">
-        <div className="text-muted-foreground bg-slate-50 dark:bg-white/5 px-6 py-4 rounded-xl border border-dashed border-slate-200 dark:border-white/10">
-          {t('productPricingGroupByManagement.noData', 'Veri bulunamadı')}
+      <div className="flex items-center justify-center py-20 min-h-[400px]">
+        <div className="text-muted-foreground bg-slate-50 dark:bg-white/5 px-8 py-6 rounded-xl border border-dashed border-slate-200 dark:border-white/10 text-sm font-medium">
+          {t('common.noData', 'Kayıt bulunamadı')}
         </div>
       </div>
     );
   }
 
-  const totalPages = Math.ceil((data?.totalCount || 0) / pageSize);
-
   return (
-    <>
-      <div className="rounded-xl border border-slate-200 dark:border-white/10 overflow-hidden">
+    <div className="flex flex-col gap-4">
+      <div className="flex justify-end p-2 sm:p-0">
+         <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button 
+                variant="outline" 
+                size="sm" 
+                className="ml-auto h-9 lg:flex border-dashed border-slate-300 dark:border-white/20 bg-transparent hover:bg-slate-50 dark:hover:bg-white/5 text-xs sm:text-sm"
+            >
+              <EyeOff className="mr-2 h-4 w-4" />
+              {t('common.editColumns', 'Sütunları Düzenle')}
+              <ChevronDown className="ml-2 h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent 
+            align="end" 
+            className="w-56 max-h-[400px] overflow-y-auto bg-white/95 dark:bg-[#1a1025]/95 backdrop-blur-xl border border-slate-200 dark:border-white/10 shadow-xl rounded-xl p-2 z-50"
+          >
+            <DropdownMenuLabel className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider px-2 py-1.5">
+              {t('common.visibleColumns', 'Görünür Sütunlar')}
+            </DropdownMenuLabel>
+            <DropdownMenuSeparator className="bg-slate-200 dark:bg-white/10 my-1" />
+            {tableColumns.map((column) => (
+              <DropdownMenuCheckboxItem
+                key={column.key as string}
+                checked={visibleColumns.includes(column.key)}
+                onCheckedChange={() => toggleColumn(column.key)}
+                onSelect={(e) => e.preventDefault()}
+                className="text-sm text-slate-700 dark:text-slate-200 focus:bg-pink-50 dark:focus:bg-pink-500/10 focus:text-pink-600 dark:focus:text-pink-400 cursor-pointer rounded-lg px-2 py-1.5 pl-8 relative"
+              >
+                {column.label}
+              </DropdownMenuCheckboxItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+
+      <div className="rounded-xl border border-slate-200 dark:border-white/10 overflow-hidden bg-white/50 dark:bg-transparent">
         <Table>
           <TableHeader className="bg-slate-50/50 dark:bg-white/5">
             <TableRow className="border-b border-slate-200 dark:border-white/10 hover:bg-transparent">
-              <TableHead onClick={() => handleSort('Id')} className={headStyle}>
-                <div className="flex items-center">
-                  {t('productPricingGroupByManagement.table.id', 'ID')}
-                  <SortIcon column="Id" />
-                </div>
-              </TableHead>
-              <TableHead onClick={() => handleSort('ErpGroupCode')} className={headStyle}>
-                <div className="flex items-center">
-                  {t('productPricingGroupByManagement.erpGroupCode', 'ERP Ürün Grubu Kodu')}
-                  <SortIcon column="ErpGroupCode" />
-                </div>
-              </TableHead>
-              <TableHead onClick={() => handleSort('Currency')} className={headStyle}>
-                <div className="flex items-center">
-                  {t('productPricingGroupByManagement.currency', 'Para Birimi')}
-                  <SortIcon column="Currency" />
-                </div>
-              </TableHead>
-              <TableHead onClick={() => handleSort('ListPrice')} className={headStyle}>
-                <div className="flex items-center">
-                  {t('productPricingGroupByManagement.listPrice', 'Liste Fiyatı')}
-                  <SortIcon column="ListPrice" />
-                </div>
-              </TableHead>
-              <TableHead onClick={() => handleSort('CostPrice')} className={headStyle}>
-                <div className="flex items-center">
-                  {t('productPricingGroupByManagement.costPrice', 'Maliyet Fiyatı')}
-                  <SortIcon column="CostPrice" />
-                </div>
-              </TableHead>
-              <TableHead onClick={() => handleSort('Discount1')} className={headStyle}>
-                <div className="flex items-center">
-                  {t('productPricingGroupByManagement.discount1', 'İskonto 1')}
-                  <SortIcon column="Discount1" />
-                </div>
-              </TableHead>
-              <TableHead onClick={() => handleSort('Discount2')} className={headStyle}>
-                <div className="flex items-center">
-                  {t('productPricingGroupByManagement.discount2', 'İskonto 2')}
-                  <SortIcon column="Discount2" />
-                </div>
-              </TableHead>
-              <TableHead onClick={() => handleSort('Discount3')} className={headStyle}>
-                <div className="flex items-center">
-                  {t('productPricingGroupByManagement.discount3', 'İskonto 3')}
-                  <SortIcon column="Discount3" />
-                </div>
-              </TableHead>
-              <TableHead className="text-slate-500 dark:text-slate-400 py-4">
-                {t('productPricingGroupByManagement.finalPrice', 'Son Fiyat')}
-              </TableHead>
-              <TableHead onClick={() => handleSort('CreatedDate')} className={headStyle}>
-                <div className="flex items-center">
-                  {t('productPricingGroupByManagement.createdDate', 'Oluşturulma Tarihi')}
-                  <SortIcon column="CreatedDate" />
-                </div>
-              </TableHead>
-              <TableHead className="text-right text-slate-500 dark:text-slate-400 py-4">
-                {t('productPricingGroupByManagement.actions', 'İşlemler')}
+              {tableColumns.map((column) => (
+                visibleColumns.includes(column.key) && (
+                  <TableHead 
+                    key={column.key as string}
+                    className={`${headStyle} ${column.className}`}
+                    onClick={() => column.key !== 'actions' && handleSort(column.key as keyof ProductPricingGroupByDto)}
+                  >
+                    <div className="flex items-center gap-2">
+                      {column.label}
+                      <SortIcon column={column.key as string} />
+                    </div>
+                  </TableHead>
+                )
+              ))}
+              <TableHead className={`${headStyle} text-right w-[100px]`}>
+                  {t('common.actions', 'İşlemler')}
               </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {productPricingGroupBys.map((productPricingGroupBy: ProductPricingGroupByDto, index: number) => {
-              const finalPrice = calculateFinalPrice(
-                productPricingGroupBy.listPrice,
-                productPricingGroupBy.discount1,
-                productPricingGroupBy.discount2,
-                productPricingGroupBy.discount3
-              );
-
-              return (
+            {paginatedItems.map((item) => (
                 <TableRow 
-                  key={productPricingGroupBy.id || `product-pricing-group-by-${index}`}
-                  className="border-b border-slate-100 dark:border-white/5 transition-colors duration-200 hover:bg-pink-50/40 dark:hover:bg-pink-500/5 group"
+                  key={item.id}
+                  className="border-b border-slate-100 dark:border-white/5 transition-colors duration-200 hover:bg-pink-50/40 dark:hover:bg-pink-500/5 group last:border-0"
                 >
-                  <TableCell className="font-medium text-slate-700 dark:text-slate-300 group-hover:text-pink-600 dark:group-hover:text-pink-400 transition-colors">
-                    {productPricingGroupBy.id}
-                  </TableCell>
-                  <TableCell className="font-medium text-slate-900 dark:text-white">
-                    {productPricingGroupBy.erpGroupCode}
-                  </TableCell>
-                  <TableCell className="text-slate-600 dark:text-slate-400">
-                    {productPricingGroupBy.currency}
-                  </TableCell>
-                  <TableCell className="text-slate-600 dark:text-slate-400">
-                    {formatPrice(productPricingGroupBy.listPrice, productPricingGroupBy.currency)}
-                  </TableCell>
-                  <TableCell className="text-slate-600 dark:text-slate-400">
-                    {formatPrice(productPricingGroupBy.costPrice, productPricingGroupBy.currency)}
-                  </TableCell>
-                  <TableCell className="text-slate-600 dark:text-slate-400">
-                    {formatPercentage(productPricingGroupBy.discount1)}
-                  </TableCell>
-                  <TableCell className="text-slate-600 dark:text-slate-400">
-                    {formatPercentage(productPricingGroupBy.discount2)}
-                  </TableCell>
-                  <TableCell className="text-slate-600 dark:text-slate-400">
-                    {formatPercentage(productPricingGroupBy.discount3)}
-                  </TableCell>
-                  <TableCell className="font-semibold text-slate-900 dark:text-white">
-                    {formatPrice(finalPrice, productPricingGroupBy.currency)}
-                  </TableCell>
-                  <TableCell className="text-slate-600 dark:text-slate-400 text-sm">
-                    {new Date(productPricingGroupBy.createdDate).toLocaleDateString(i18n.language)}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex justify-end gap-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
+                  {visibleColumns.includes('erpGroupCode') && (
+                    <TableCell className={`${cellStyle} font-medium`}>
+                      {item.erpGroupCode}
+                    </TableCell>
+                  )}
+                  {visibleColumns.includes('currency') && (
+                    <TableCell className={cellStyle}>
+                      <span className="inline-flex items-center px-2 py-1 rounded-md bg-slate-100 dark:bg-white/10 text-xs font-medium text-slate-700 dark:text-slate-300">
+                        {item.currency}
+                      </span>
+                    </TableCell>
+                  )}
+                  {visibleColumns.includes('listPrice') && (
+                    <TableCell className={`${cellStyle} font-mono`}>
+                      {formatPrice(item.listPrice, item.currency)}
+                    </TableCell>
+                  )}
+                  {visibleColumns.includes('costPrice') && (
+                    <TableCell className={`${cellStyle} font-mono`}>
+                      {formatPrice(item.costPrice, item.currency)}
+                    </TableCell>
+                  )}
+                  {visibleColumns.includes('discount1') && (
+                    <TableCell className={`${cellStyle} text-center`}>
+                      {item.discount1 ? `%${item.discount1}` : '-'}
+                    </TableCell>
+                  )}
+                  {visibleColumns.includes('discount2') && (
+                    <TableCell className={`${cellStyle} text-center`}>
+                      {item.discount2 ? `%${item.discount2}` : '-'}
+                    </TableCell>
+                  )}
+                  {visibleColumns.includes('discount3') && (
+                    <TableCell className={`${cellStyle} text-center`}>
+                      {item.discount3 ? `%${item.discount3}` : '-'}
+                    </TableCell>
+                  )}
+                  
+                  <TableCell className={`${cellStyle} text-right`}>
+                    <div className="flex items-center justify-end gap-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
                       <Button
                         variant="ghost"
                         size="icon"
+                        onClick={() => onEdit(item)}
                         className="h-8 w-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-500/10"
-                        onClick={() => onEdit(productPricingGroupBy)}
                       >
                         <Edit2 size={16} />
                       </Button>
                       <Button
                         variant="ghost"
                         size="icon"
+                        onClick={() => handleDeleteClick(item)}
                         className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-500/10"
-                        onClick={() => handleDeleteClick(productPricingGroupBy)}
                       >
                         <Trash2 size={16} />
                       </Button>
                     </div>
                   </TableCell>
                 </TableRow>
-              );
-            })}
+              ))}
           </TableBody>
         </Table>
       </div>
 
       <div className="flex flex-col sm:flex-row items-center justify-between py-4 gap-4">
         <div className="text-sm text-slate-500 dark:text-slate-400">
-          {t('productPricingGroupByManagement.table.showing', '{{from}}-{{to}} / {{total}} gösteriliyor', {
-            from: (pageNumber - 1) * pageSize + 1,
-            to: Math.min(pageNumber * pageSize, data.totalCount || 0),
-            total: data.totalCount || 0,
+          {t('common.table.showing', '{{from}}-{{to}} / {{total}} gösteriliyor', {
+            from: (currentPage - 1) * pageSize + 1,
+            to: Math.min(currentPage * pageSize, processedItems.length),
+            total: processedItems.length,
           })}
         </div>
         <div className="flex gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => onPageChange(pageNumber - 1)}
-            disabled={pageNumber <= 1}
-            className="bg-white dark:bg-transparent border-slate-200 dark:border-white/10 hover:bg-slate-50 dark:hover:bg-white/5"
-          >
-            {t('productPricingGroupByManagement.previous', 'Önceki')}
-          </Button>
-          <div className="flex items-center px-4 text-sm font-medium text-slate-700 dark:text-slate-200">
-            {t('productPricingGroupByManagement.table.page', 'Sayfa {{current}} / {{total}}', {
-              current: pageNumber,
-              total: totalPages,
-            })}
-          </div>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => onPageChange(pageNumber + 1)}
-            disabled={pageNumber >= totalPages}
-            className="bg-white dark:bg-transparent border-slate-200 dark:border-white/10 hover:bg-slate-50 dark:hover:bg-white/5"
-          >
-            {t('productPricingGroupByManagement.next', 'Sonraki')}
-          </Button>
+          <Button variant="outline" size="sm" onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))} disabled={currentPage <= 1} className="bg-white dark:bg-transparent border-slate-200 dark:border-white/10 hover:bg-slate-50 dark:hover:bg-white/5">{t('common.previous', 'Önceki')}</Button>
+          <div className="flex items-center px-4 text-sm font-medium text-slate-700 dark:text-slate-200">{t('common.table.page', 'Sayfa {{current}} / {{total}}', { current: currentPage, total: totalPages || 1 })}</div>
+          <Button variant="outline" size="sm" onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))} disabled={currentPage >= totalPages} className="bg-white dark:bg-transparent border-slate-200 dark:border-white/10 hover:bg-slate-50 dark:hover:bg-white/5">{t('common.next', 'Sonraki')}</Button>
         </div>
       </div>
 
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <DialogContent className="bg-white dark:bg-[#130822] border border-slate-100 dark:border-white/10 text-slate-900 dark:text-white sm:rounded-2xl">
-          <DialogHeader>
-            <DialogTitle className="text-slate-900 dark:text-white">
-              {t('productPricingGroupByManagement.deleteTitle', 'Fiyatlandırma Grubunu Sil')}
-            </DialogTitle>
-            <DialogDescription className="text-slate-500 dark:text-slate-400">
-              {t('productPricingGroupByManagement.confirmDelete', 'Bu fiyatlandırma grubunu silmek istediğinizden emin misiniz?')}
-            </DialogDescription>
+        <DialogContent className="bg-white dark:bg-[#130822] border border-slate-100 dark:border-white/10 text-slate-900 dark:text-white w-[90%] sm:w-full max-w-md rounded-2xl shadow-2xl overflow-hidden p-0 gap-0">
+          
+          <DialogHeader className="flex flex-col items-center gap-4 text-center pb-6 pt-10 px-6">
+            <div className="h-20 w-20 rounded-full bg-red-50 dark:bg-red-500/10 flex items-center justify-center mb-2 animate-in zoom-in duration-300">
+               <Alert02Icon size={36} className="text-red-600 dark:text-red-500" />
+            </div>
+            
+            <div className="space-y-2">
+                <DialogTitle className="text-2xl font-bold text-slate-900 dark:text-white">
+                {t('common.delete.confirmTitle', 'Kaydı Sil')}
+                </DialogTitle>
+                <DialogDescription className="text-slate-500 dark:text-slate-400 max-w-[280px] mx-auto text-sm leading-relaxed">
+                {t('common.delete.confirmMessage', '{{name}} kaydını silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.', {
+                    name: selectedItem?.erpGroupCode || '',
+                })}
+                </DialogDescription>
+            </div>
           </DialogHeader>
-          <DialogFooter className="gap-2 sm:gap-0">
+
+          <DialogFooter className="flex flex-row gap-3 justify-center p-6 bg-slate-50/50 dark:bg-[#1a1025]/50 border-t border-slate-100 dark:border-white/5">
             <Button
+              type="button"
               variant="outline"
               onClick={() => setDeleteDialogOpen(false)}
-              disabled={deleteProductPricingGroupBy.isPending}
-              className="bg-white dark:bg-transparent border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/5"
+              className="flex-1 h-12 rounded-xl border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300 hover:bg-white dark:hover:bg-white/5 font-semibold"
             >
-              {t('productPricingGroupByManagement.cancel', 'İptal')}
+              {t('common.cancel', 'Vazgeç')}
             </Button>
+            
             <Button
+              type="button"
               variant="destructive"
               onClick={handleDeleteConfirm}
-              disabled={deleteProductPricingGroupBy.isPending}
-              className="bg-red-600 hover:bg-red-700 dark:bg-red-900/50 dark:hover:bg-red-900/70 border border-transparent dark:border-red-500/20 text-white"
+              disabled={deleteMutation.isPending}
+              className="flex-1 h-12 rounded-xl bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white border-0 shadow-lg shadow-red-500/20 transition-all hover:scale-[1.02] font-bold"
             >
-              {deleteProductPricingGroupBy.isPending
-                ? t('productPricingGroupByManagement.loading', 'Yükleniyor...')
-                : t('productPricingGroupByManagement.delete', 'Sil')}
+              {deleteMutation.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+              {t('common.delete.action', 'Evet, Sil')}
             </Button>
           </DialogFooter>
+
         </DialogContent>
       </Dialog>
-    </>
+    </div>
   );
 }

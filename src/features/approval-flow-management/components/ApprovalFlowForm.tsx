@@ -8,6 +8,7 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
+  DialogFooter,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -118,9 +119,11 @@ export function ApprovalFlowForm({
         
         <DialogHeader className="border-b border-slate-100 dark:border-white/5 px-6 py-5 bg-white/80 dark:bg-[#130822]/90 backdrop-blur-md shrink-0 flex-row items-center justify-between space-y-0">
           <div className="flex items-center gap-3">
-             <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-pink-500/20 to-orange-500/20 border border-pink-500/10 flex items-center justify-center text-pink-500 shrink-0">
-               <Package size={20} />
-             </div>
+             <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-pink-500 to-orange-500 p-0.5 shadow-lg shadow-pink-500/20">
+                <div className="h-full w-full bg-white dark:bg-[#130822] rounded-[14px] flex items-center justify-center">
+                  <Package size={24} className="text-pink-600 dark:text-pink-500" />
+                </div>
+              </div>
              <div>
                 <DialogTitle className="text-lg font-bold text-slate-900 dark:text-white">
                   {approvalFlow
@@ -212,27 +215,6 @@ export function ApprovalFlowForm({
                   </FormItem>
                 )}
               />
-
-              <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100 dark:border-white/5">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => onOpenChange(false)}
-                  disabled={isLoading}
-                  className="h-10 px-4 rounded-lg border-slate-200 dark:border-white/10 hover:bg-slate-50 dark:hover:bg-white/5 text-slate-700 dark:text-slate-300"
-                >
-                  {t('approvalFlow.form.cancel', 'İptal')}
-                </Button>
-                <Button 
-                  type="submit" 
-                  disabled={isLoading}
-                  className="h-10 px-6 rounded-lg bg-gradient-to-r from-pink-600 to-orange-600 hover:from-pink-700 hover:to-orange-700 text-white font-medium shadow-lg shadow-pink-500/20 border-0"
-                >
-                  {isLoading
-                    ? t('approvalFlow.form.saving', 'Kaydediliyor...')
-                    : t('approvalFlow.form.save', 'Kaydet')}
-                </Button>
-              </div>
             </form>
           </Form>
 
@@ -243,6 +225,29 @@ export function ApprovalFlowForm({
             </>
           )}
         </div>
+
+        <DialogFooter className="border-t border-slate-100 dark:border-white/5 px-6 py-5 bg-slate-50/50 dark:bg-[#130822] sm:justify-between sm:space-x-0">
+          <div className="flex items-center gap-2 w-full justify-end">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => onOpenChange(false)}
+              disabled={isLoading}
+              className="bg-white dark:bg-transparent border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/5 h-11 px-6 rounded-xl"
+            >
+              {t('approvalFlow.form.cancel', 'İptal')}
+            </Button>
+            <Button 
+              onClick={form.handleSubmit(handleSubmit)}
+              disabled={isLoading}
+              className="bg-gradient-to-r from-pink-600 to-orange-600 hover:from-pink-700 hover:to-orange-700 text-white border-0 shadow-lg shadow-pink-500/20 h-11 px-8 rounded-xl font-bold tracking-wide transition-all hover:scale-105"
+            >
+              {isLoading
+                ? t('approvalFlow.form.saving', 'Kaydediliyor...')
+                : t('approvalFlow.form.save', 'Kaydet')}
+            </Button>
+          </div>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

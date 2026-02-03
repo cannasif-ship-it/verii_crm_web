@@ -1,4 +1,4 @@
-import { type ReactElement, useState, useEffect } from 'react';
+import { type ReactElement, useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useUIStore } from '@/stores/ui-store';
 import { Button } from '@/components/ui/button';
@@ -8,9 +8,9 @@ import { ApprovalFlowTable } from './ApprovalFlowTable';
 import { ApprovalFlowForm } from './ApprovalFlowForm';
 import { useCreateApprovalFlow } from '../hooks/useCreateApprovalFlow';
 import { useUpdateApprovalFlow } from '../hooks/useUpdateApprovalFlow';
+import { useApprovalFlowList } from '../hooks/useApprovalFlowList';
 import type { ApprovalFlowDto } from '../types/approval-flow-types';
 import type { ApprovalFlowFormSchema } from '../types/approval-flow-types';
-import type { PagedFilter } from '@/types/api';
 import { useQueryClient } from '@tanstack/react-query';
 import { queryKeys } from '../utils/query-keys';
 
@@ -19,11 +19,8 @@ export function ApprovalFlowManagementPage(): ReactElement {
   const { setPageTitle } = useUIStore();
   const [formOpen, setFormOpen] = useState(false);
   const [editingApprovalFlow, setEditingApprovalFlow] = useState<ApprovalFlowDto | null>(null);
-  const [pageNumber, setPageNumber] = useState(1);
-  const [pageSize] = useState(20);
-  const [sortBy, setSortBy] = useState('Id');
-  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
-  const [filters, setFilters] = useState<PagedFilter[]>([]);
+  
+  // Client-side filtering state
   const [searchTerm, setSearchTerm] = useState('');
   const [activeFilter, setActiveFilter] = useState('all');
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -32,30 +29,42 @@ export function ApprovalFlowManagementPage(): ReactElement {
   const updateApprovalFlow = useUpdateApprovalFlow();
   const queryClient = useQueryClient();
 
+  // Fetch all approval flows for client-side filtering
+  const { data: apiResponse, isLoading } = useApprovalFlowList({
+    pageNumber: 1,
+    pageSize: 10000
+  });
+
+  const approvalFlows = apiResponse?.data || [];
+
+  const filteredApprovalFlows = useMemo(() => {
+    let result = [...approvalFlows];
+
+    // Filter by search term
+    if (searchTerm) {
+      const lowerSearch = searchTerm.toLowerCase();
+      result = result.filter((flow) => 
+        (flow.description && flow.description.toLowerCase().includes(lowerSearch)) ||
+        (String(flow.id).includes(lowerSearch))
+      );
+    }
+
+    // Filter by status
+    if (activeFilter === 'active') {
+        result = result.filter(flow => flow.isActive);
+    } else if (activeFilter === 'inactive') {
+        result = result.filter(flow => !flow.isActive);
+    }
+
+    return result;
+  }, [approvalFlows, searchTerm, activeFilter]);
+
   useEffect(() => {
     setPageTitle(t('approvalFlow.menu', 'Onay Akışı Yönetimi'));
     return () => {
       setPageTitle(null);
     };
   }, [t, setPageTitle]);
-
-  useEffect(() => {
-    const newFilters: PagedFilter[] = [];
-    if (searchTerm) {
-      newFilters.push(
-        { column: 'description', operator: 'contains', value: searchTerm }
-      );
-    }
-    
-    if (activeFilter === 'active') {
-        newFilters.push({ column: 'IsActive', operator: 'eq', value: 'true' });
-    } else if (activeFilter === 'inactive') {
-        newFilters.push({ column: 'IsActive', operator: 'eq', value: 'false' });
-    }
-    
-    setFilters(newFilters);
-    setPageNumber(1);
-  }, [searchTerm, activeFilter]);
 
   const handleAddClick = (): void => {
     setEditingApprovalFlow(null);
@@ -88,19 +97,13 @@ export function ApprovalFlowManagementPage(): ReactElement {
     setEditingApprovalFlow(null);
   };
 
-  const handleSortChange = (newSortBy: string, newSortDirection: 'asc' | 'desc'): void => {
-    setSortBy(newSortBy);
-    setSortDirection(newSortDirection);
-    setPageNumber(1);
-  };
-
   const clearSearch = () => {
     setSearchTerm('');
   };
 
   const handleRefresh = async () => {
     setIsRefreshing(true);
-    await queryClient.invalidateQueries({ queryKey: queryKeys.list({ pageNumber, pageSize, sortBy, sortDirection, filters }) });
+    await queryClient.invalidateQueries({ queryKey: queryKeys.list({ pageNumber: 1, pageSize: 10000 }) });
     setTimeout(() => setIsRefreshing(false), 500);
   };
 
@@ -176,14 +179,9 @@ export function ApprovalFlowManagementPage(): ReactElement {
 
       <div className="bg-white/70 dark:bg-[#1a1025]/60 backdrop-blur-xl border border-white/60 dark:border-white/5 shadow-sm rounded-2xl p-6 transition-all duration-300">
         <ApprovalFlowTable
+          approvalFlows={filteredApprovalFlows}
+          isLoading={isLoading}
           onEdit={handleEdit}
-          pageNumber={pageNumber}
-          pageSize={pageSize}
-          sortBy={sortBy}
-          sortDirection={sortDirection}
-          filters={filters}
-          onPageChange={setPageNumber}
-          onSortChange={handleSortChange}
         />
       </div>
 

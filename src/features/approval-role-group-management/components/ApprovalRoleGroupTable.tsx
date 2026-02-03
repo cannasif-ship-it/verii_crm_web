@@ -1,4 +1,4 @@
-import { type ReactElement, useState } from 'react';
+import { type ReactElement, useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Table,
@@ -13,193 +13,266 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
+  DialogFooter,
+  DialogHeader,
   DialogTitle,
-  DialogClose,
 } from '@/components/ui/dialog';
-import { useApprovalRoleGroupList } from '../hooks/useApprovalRoleGroupList';
+import {
+    DropdownMenu,
+    DropdownMenuCheckboxItem,
+    DropdownMenuContent,
+    DropdownMenuTrigger,
+    DropdownMenuLabel,
+    DropdownMenuSeparator
+} from '@/components/ui/dropdown-menu';
 import { useDeleteApprovalRoleGroup } from '../hooks/useDeleteApprovalRoleGroup';
 import type { ApprovalRoleGroupDto } from '../types/approval-role-group-types';
-import type { PagedFilter } from '@/types/api';
-import { Edit2, Trash2, ArrowUpDown, ArrowUp, ArrowDown, ChevronLeft, ChevronRight, AlertCircle, Search } from 'lucide-react';
+import { 
+    Edit2, 
+    Trash2, 
+    ArrowUpDown, 
+    ArrowUp, 
+    ArrowDown, 
+    ChevronDown,
+    EyeOff,
+    Loader2
+} from 'lucide-react';
+import { Alert02Icon } from 'hugeicons-react';
+
+export interface ColumnDef<T> {
+  key: keyof T | 'actions';
+  label: string;
+  className?: string;
+}
 
 interface ApprovalRoleGroupTableProps {
-  onEdit: (group: ApprovalRoleGroupDto) => void;
-  pageNumber: number;
-  pageSize: number;
-  sortBy?: string;
-  sortDirection?: 'asc' | 'desc';
-  filters?: PagedFilter[] | Record<string, unknown>;
-  onPageChange: (page: number) => void;
-  onSortChange: (sortBy: string, sortDirection: 'asc' | 'desc') => void;
+  roleGroups: ApprovalRoleGroupDto[];
+  isLoading: boolean;
+  onEdit: (roleGroup: ApprovalRoleGroupDto) => void;
 }
 
 export function ApprovalRoleGroupTable({
+  roleGroups,
+  isLoading,
   onEdit,
-  pageNumber,
-  pageSize,
-  sortBy = 'Id',
-  sortDirection = 'desc',
-  filters = {},
-  onPageChange,
-  onSortChange,
 }: ApprovalRoleGroupTableProps): ReactElement {
   const { t, i18n } = useTranslation();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [selectedGroup, setSelectedGroup] = useState<ApprovalRoleGroupDto | null>(null);
+  const [selectedRoleGroup, setSelectedRoleGroup] = useState<ApprovalRoleGroupDto | null>(null);
 
-  const { data, isLoading } = useApprovalRoleGroupList({
-    pageNumber,
-    pageSize,
-    sortBy,
-    sortDirection,
-    filters: filters as PagedFilter[] | undefined,
-  });
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 10;
+  const [sortConfig, setSortConfig] = useState<{ key: keyof ApprovalRoleGroupDto; direction: 'asc' | 'desc' } | null>(null);
 
-  const deleteGroup = useDeleteApprovalRoleGroup();
+  const deleteRoleGroup = useDeleteApprovalRoleGroup();
 
-  const handleDeleteClick = (group: ApprovalRoleGroupDto): void => {
-    setSelectedGroup(group);
+  const getColumnsConfig = (t: any): ColumnDef<ApprovalRoleGroupDto>[] => [
+    { key: 'id', label: t('approvalRoleGroup.table.id', 'ID'), className: 'w-[100px]' },
+    { key: 'name', label: t('approvalRoleGroup.table.name', 'Grup Adı'), className: 'min-w-[200px]' },
+    { key: 'createdDate', label: t('approvalRoleGroup.table.createdDate', 'Oluşturulma Tarihi'), className: 'w-[160px]' },
+    { key: 'createdByFullUser', label: t('approvalRoleGroup.table.createdBy', 'Oluşturan'), className: 'w-[160px]' },
+  ];
+
+  const tableColumns = useMemo(() => getColumnsConfig(t), [t]);
+  
+  const [visibleColumns, setVisibleColumns] = useState<Array<keyof ApprovalRoleGroupDto | 'actions'>>(
+    tableColumns.map(col => col.key).concat(['actions'] as any)
+  );
+
+  const processedRoleGroups = useMemo(() => {
+    let result = [...roleGroups];
+
+    if (sortConfig) {
+      result.sort((a, b) => {
+        // @ts-ignore
+        const aValue = a[sortConfig.key] ? String(a[sortConfig.key]).toLowerCase() : '';
+        // @ts-ignore
+        const bValue = b[sortConfig.key] ? String(b[sortConfig.key]).toLowerCase() : '';
+
+        if (aValue < bValue) return sortConfig.direction === 'asc' ? -1 : 1;
+        if (aValue > bValue) return sortConfig.direction === 'asc' ? 1 : -1;
+        return 0;
+      });
+    }
+    return result;
+  }, [roleGroups, sortConfig]);
+
+  const totalPages = Math.ceil(processedRoleGroups.length / pageSize);
+  const paginatedRoleGroups = processedRoleGroups.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+
+  const handleDeleteClick = (roleGroup: ApprovalRoleGroupDto): void => {
+    setSelectedRoleGroup(roleGroup);
     setDeleteDialogOpen(true);
   };
 
   const handleDeleteConfirm = async (): Promise<void> => {
-    if (selectedGroup) {
-      await deleteGroup.mutateAsync(selectedGroup.id);
+    if (selectedRoleGroup) {
+      await deleteRoleGroup.mutateAsync(selectedRoleGroup.id);
       setDeleteDialogOpen(false);
-      setSelectedGroup(null);
+      setSelectedRoleGroup(null);
     }
   };
 
   const handleSort = (column: string): void => {
     const newDirection =
-      sortBy === column && sortDirection === 'asc' ? 'desc' : 'asc';
-    onSortChange(column, newDirection);
+      sortConfig?.key === column && sortConfig.direction === 'asc' ? 'desc' : 'asc';
+    setSortConfig({ key: column as keyof ApprovalRoleGroupDto, direction: newDirection });
+  };
+
+  const toggleColumn = (key: keyof ApprovalRoleGroupDto | 'actions') => {
+    setVisibleColumns(prev => 
+      prev.includes(key) 
+        ? prev.filter(c => c !== key)
+        : [...prev, key]
+    );
   };
 
   const SortIcon = ({ column }: { column: string }): ReactElement => {
-    if (sortBy !== column) {
-      return <ArrowUpDown className="ml-2 h-4 w-4 text-muted-foreground/50" />;
+    if (sortConfig?.key !== column) {
+      return <ArrowUpDown size={14} className="ml-2 inline-block text-slate-400 opacity-50 group-hover:opacity-100 transition-opacity" />;
     }
-    return sortDirection === 'asc' ? (
-      <ArrowUp className="ml-2 h-4 w-4 text-pink-600" />
+    return sortConfig.direction === 'asc' ? (
+      <ArrowUp size={14} className="ml-2 inline-block text-pink-600 dark:text-pink-400" />
     ) : (
-      <ArrowDown className="ml-2 h-4 w-4 text-pink-600" />
+      <ArrowDown size={14} className="ml-2 inline-block text-pink-600 dark:text-pink-400" />
     );
   };
 
+  const headStyle = "cursor-pointer select-none text-slate-500 dark:text-slate-400 hover:text-pink-600 dark:hover:text-pink-400 transition-colors py-4 font-bold text-xs uppercase tracking-wider whitespace-nowrap";
+  const cellStyle = "text-slate-600 dark:text-slate-400 text-sm py-4 border-b border-slate-100 dark:border-white/5 align-middle";
+
   if (isLoading) {
     return (
-      <div className="flex flex-col items-center justify-center py-12 space-y-4">
-        <div className="w-8 h-8 border-4 border-pink-500/30 border-t-pink-500 rounded-full animate-spin" />
-        <div className="text-muted-foreground text-sm font-medium">
-          {t('approvalRoleGroup.loading', 'Yükleniyor...')}
+      <div className="flex justify-center items-center py-20 min-h-[400px]">
+        <div className="flex flex-col items-center gap-2">
+           <div className="h-10 w-10 animate-spin rounded-full border-b-2 border-current text-pink-500" />
+           <div className="text-sm text-muted-foreground animate-pulse">
+             {t('common.loading', 'Yükleniyor...')}
+           </div>
         </div>
       </div>
     );
   }
 
-  const groups = data?.data || [];
-  
-  if (!data || groups.length === 0) {
+  if (roleGroups.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-16 px-4">
-        <div className="w-16 h-16 bg-zinc-100 dark:bg-zinc-800 rounded-full flex items-center justify-center mb-4">
-          <Search className="w-8 h-8 text-muted-foreground/50" />
+      <div className="flex items-center justify-center py-20 min-h-[400px]">
+        <div className="text-muted-foreground bg-slate-50 dark:bg-white/5 px-8 py-6 rounded-xl border border-dashed border-slate-200 dark:border-white/10 text-sm font-medium">
+          {t('approvalRoleGroup.noData', 'Kayıt Bulunamadı')}
         </div>
-        <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">
-          {t('approvalRoleGroup.noData', 'Veri bulunamadı')}
-        </h3>
-        <p className="text-muted-foreground text-sm mt-1 text-center max-w-sm">
-          {t('approvalRoleGroup.noDataDescription', 'Arama kriterlerinize uygun kayıt bulunamadı veya henüz hiç kayıt eklenmemiş.')}
-        </p>
       </div>
     );
   }
-
-  const totalPages = Math.ceil((data?.totalCount || 0) / pageSize);
 
   return (
-    <>
-      <div className="w-full overflow-x-auto">
+    <div className="flex flex-col gap-4">
+      <div className="flex justify-end p-2 sm:p-0">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button 
+                variant="outline" 
+                size="sm" 
+                className="ml-auto h-9 lg:flex border-dashed border-slate-300 dark:border-white/20 bg-transparent hover:bg-slate-50 dark:hover:bg-white/5 text-xs sm:text-sm"
+            >
+              <EyeOff className="mr-2 h-4 w-4" />
+              {t('common.editColumns', 'Sütunları Düzenle')}
+              <ChevronDown className="ml-2 h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent 
+            align="end" 
+            className="w-56 max-h-[400px] overflow-y-auto bg-white/95 dark:bg-[#1a1025]/95 backdrop-blur-xl border border-slate-200 dark:border-white/10 shadow-xl rounded-xl p-2 z-50"
+          >
+            <DropdownMenuLabel className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider px-2 py-1.5">
+                {t('common.visibleColumns', 'Görünür Sütunlar')}
+            </DropdownMenuLabel>
+            <DropdownMenuSeparator className="bg-slate-200 dark:bg-white/10 my-1" />
+            {tableColumns.map((column) => (
+              <DropdownMenuCheckboxItem
+                key={column.key}
+                checked={visibleColumns.includes(column.key)}
+                onCheckedChange={() => toggleColumn(column.key)}
+                onSelect={(e) => e.preventDefault()}
+                className="text-sm text-slate-700 dark:text-slate-200 focus:bg-pink-50 dark:focus:bg-pink-500/10 focus:text-pink-600 dark:focus:text-pink-400 cursor-pointer rounded-lg px-2 py-1.5 pl-8 relative"
+              >
+                {column.label}
+              </DropdownMenuCheckboxItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+
+      <div className="rounded-xl border border-slate-200 dark:border-white/10 overflow-hidden bg-white/50 dark:bg-transparent">
         <Table>
-          <TableHeader>
-            <TableRow className="hover:bg-transparent border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/50">
-              <TableHead
-                className="cursor-pointer select-none py-4 font-semibold text-zinc-900 dark:text-zinc-100"
-                onClick={() => handleSort('Id')}
-              >
-                <div className="flex items-center">
-                  {t('approvalRoleGroup.table.id', 'ID')}
-                  <SortIcon column="Id" />
-                </div>
-              </TableHead>
-              <TableHead
-                className="cursor-pointer select-none py-4 font-semibold text-zinc-900 dark:text-zinc-100"
-                onClick={() => handleSort('Name')}
-              >
-                <div className="flex items-center">
-                  {t('approvalRoleGroup.table.name', 'Grup Adı')}
-                  <SortIcon column="Name" />
-                </div>
-              </TableHead>
-              <TableHead
-                className="cursor-pointer select-none py-4 font-semibold text-zinc-900 dark:text-zinc-100"
-                onClick={() => handleSort('CreatedDate')}
-              >
-                <div className="flex items-center">
-                  {t('approvalRoleGroup.table.createdDate', 'Oluşturulma Tarihi')}
-                  <SortIcon column="CreatedDate" />
-                </div>
-              </TableHead>
-              <TableHead
-                className="cursor-pointer select-none py-4 font-semibold text-zinc-900 dark:text-zinc-100"
-                onClick={() => handleSort('CreatedBy')}
-              >
-                <div className="flex items-center">
-                  {t('approvalRoleGroup.table.createdBy', 'Oluşturan Kullanıcı')}
-                  <SortIcon column="CreatedBy" />
-                </div>
-              </TableHead>
-              <TableHead className="text-right py-4 font-semibold text-zinc-900 dark:text-zinc-100">
+          <TableHeader className="bg-slate-50/50 dark:bg-white/5">
+            <TableRow className="border-b border-slate-200 dark:border-white/10 hover:bg-transparent">
+              {tableColumns.map((column) => (
+                visibleColumns.includes(column.key) && (
+                    <TableHead
+                        key={column.key}
+                        className={`${headStyle} ${column.className}`}
+                        onClick={() => handleSort(column.key as string)}
+                    >
+                        <div className="flex items-center gap-1 group">
+                        {column.label}
+                        <SortIcon column={column.key as string} />
+                        </div>
+                    </TableHead>
+                )
+              ))}
+              <TableHead className={`${headStyle} text-right w-[100px]`}>
                 {t('approvalRoleGroup.table.actions', 'İşlemler')}
               </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {groups.map((group: ApprovalRoleGroupDto) => (
+            {paginatedRoleGroups.map((roleGroup) => (
               <TableRow 
-                key={group.id}
-                className="hover:bg-zinc-50/50 dark:hover:bg-zinc-900/50 border-b border-zinc-100 dark:border-zinc-800/50 transition-colors"
+                key={roleGroup.id}
+                className="border-b border-slate-100 dark:border-white/5 transition-colors duration-200 hover:bg-pink-50/40 dark:hover:bg-pink-500/5 group"
               >
-                <TableCell className="font-medium text-zinc-700 dark:text-zinc-300">
-                  #{group.id}
-                </TableCell>
-                <TableCell className="font-medium text-zinc-900 dark:text-zinc-100">
-                  {group.name}
-                </TableCell>
-                <TableCell className="text-zinc-600 dark:text-zinc-400">
-                  {new Date(group.createdDate).toLocaleDateString(i18n.language)}
-                </TableCell>
-                <TableCell className="text-zinc-600 dark:text-zinc-400">
-                  {group.createdByFullUser || group.createdByFullName || group.createdBy || '-'}
-                </TableCell>
-                <TableCell className="text-right">
-                  <div className="flex justify-end items-center gap-1">
+                {visibleColumns.includes('id') && (
+                    <TableCell className={cellStyle}>
+                        <span className="font-mono text-xs bg-slate-100 dark:bg-white/10 px-2 py-1 rounded text-slate-700 dark:text-slate-300">
+                            #{roleGroup.id}
+                        </span>
+                    </TableCell>
+                )}
+                {visibleColumns.includes('name') && (
+                    <TableCell className={`${cellStyle} font-medium text-slate-900 dark:text-white`}>
+                        {roleGroup.name || '-'}
+                    </TableCell>
+                )}
+                {visibleColumns.includes('createdDate') && (
+                    <TableCell className={cellStyle}>
+                        {new Date(roleGroup.createdDate).toLocaleDateString(i18n.language)}
+                    </TableCell>
+                )}
+                {visibleColumns.includes('createdByFullUser') && (
+                    <TableCell className={cellStyle}>
+                         {roleGroup.createdByFullUser || roleGroup.createdByFullName || roleGroup.createdBy || '-'}
+                    </TableCell>
+                )}
+                
+                <TableCell className={`${cellStyle} text-right`}>
+                  <div className="flex items-center justify-end gap-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-all duration-200">
                     <Button
                       variant="ghost"
                       size="icon"
-                      onClick={() => onEdit(group)}
-                      className="h-8 w-8 text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50 dark:text-indigo-400 dark:hover:bg-indigo-900/20"
+                      onClick={() => onEdit(roleGroup)}
+                      className="h-8 w-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-900/20 transition-colors"
+                      title={t('common.edit', 'Düzenle')}
                     >
-                      <Edit2 className="h-4 w-4" />
+                      <Edit2 size={15} />
                     </Button>
                     <Button
                       variant="ghost"
                       size="icon"
-                      onClick={() => handleDeleteClick(group)}
-                      className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20"
+                      onClick={() => handleDeleteClick(roleGroup)}
+                      className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20 transition-colors"
+                      title={t('common.delete', 'Sil')}
                     >
-                      <Trash2 className="h-4 w-4" />
+                      <Trash2 size={15} />
                     </Button>
                   </div>
                 </TableCell>
@@ -209,102 +282,65 @@ export function ApprovalRoleGroupTable({
         </Table>
       </div>
 
-      {/* Pagination */}
-      {totalPages > 1 && (
-        <div className="flex items-center justify-between px-4 py-4 border-t border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50">
-          <div className="text-sm text-muted-foreground">
-             <span dangerouslySetInnerHTML={{ __html: t('approvalRoleGroup.table.showing', 'Toplam {{total}} kayıttan {{from}}-{{to}} arası gösteriliyor', {
-                from: (pageNumber - 1) * pageSize + 1,
-                to: Math.min(pageNumber * pageSize, data?.totalCount || 0),
-                total: data?.totalCount || 0
-             }) }} />
-          </div>
-          <div className="flex items-center space-x-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => onPageChange(pageNumber - 1)}
-              disabled={pageNumber <= 1}
-              className="h-8 w-8 p-0"
-            >
-              <ChevronLeft className="h-4 w-4" />
-            </Button>
-            {Array.from({ length: totalPages }, (_, i) => i + 1)
-              .filter(page => {
-                const distance = Math.abs(page - pageNumber);
-                return distance === 0 || distance === 1 || page === 1 || page === totalPages;
-              })
-              .map((page, index, array) => {
-                const showEllipsis = index > 0 && page - array[index - 1] > 1;
-                return (
-                  <div key={page} className="flex items-center">
-                    {showEllipsis && <span className="mx-1 text-muted-foreground">...</span>}
-                    <Button
-                      variant={pageNumber === page ? "default" : "outline"}
-                      size="sm"
-                      onClick={() => onPageChange(page)}
-                      className={`h-8 w-8 p-0 ${
-                        pageNumber === page 
-                          ? 'bg-pink-600 hover:bg-pink-700 text-white border-pink-600' 
-                          : 'text-muted-foreground hover:text-foreground'
-                      }`}
-                    >
-                      {page}
-                    </Button>
-                  </div>
-                );
-              })}
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => onPageChange(pageNumber + 1)}
-              disabled={pageNumber >= totalPages}
-              className="h-8 w-8 p-0"
-            >
-              <ChevronRight className="h-4 w-4" />
-            </Button>
-          </div>
+      <div className="flex flex-col sm:flex-row items-center justify-between py-4 gap-4">
+        <div className="text-sm text-slate-500 dark:text-slate-400">
+          {t('common.table.showing', '{{from}}-{{to}} / {{total}} gösteriliyor', {
+            from: (currentPage - 1) * pageSize + 1,
+            to: Math.min(currentPage * pageSize, processedRoleGroups.length),
+            total: processedRoleGroups.length,
+          })}
         </div>
-      )}
+        <div className="flex gap-2">
+          <Button variant="outline" size="sm" onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))} disabled={currentPage <= 1} className="bg-white dark:bg-transparent border-slate-200 dark:border-white/10 hover:bg-slate-50 dark:hover:bg-white/5">{t('common.previous', 'Önceki')}</Button>
+          <div className="flex items-center px-4 text-sm font-medium text-slate-700 dark:text-slate-200">{t('common.table.page', 'Sayfa {{current}} / {{total}}', { current: currentPage, total: totalPages || 1 })}</div>
+          <Button variant="outline" size="sm" onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))} disabled={currentPage >= totalPages} className="bg-white dark:bg-transparent border-slate-200 dark:border-white/10 hover:bg-slate-50 dark:hover:bg-white/5">{t('common.next', 'Sonraki')}</Button>
+        </div>
+      </div>
 
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <DialogContent className="sm:max-w-[425px] border-0 bg-white dark:bg-[#130822] shadow-2xl p-0 overflow-hidden rounded-2xl">
-          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-pink-500 to-orange-500" />
+        <DialogContent className="bg-white dark:bg-[#130822] border border-slate-100 dark:border-white/10 text-slate-900 dark:text-white w-[90%] sm:w-full max-w-md rounded-2xl shadow-2xl overflow-hidden p-0 gap-0">
           
-          <div className="p-6 pb-0">
-            <div className="flex items-center gap-4">
-              <div className="flex-shrink-0 w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
-                <AlertCircle className="w-6 h-6 text-red-600 dark:text-red-500" />
-              </div>
-              <div>
-                <DialogTitle className="text-xl font-bold text-zinc-900 dark:text-zinc-100">
-                  {t('approvalRoleGroup.delete.confirmTitle', 'Silme Onayı')}
-                </DialogTitle>
-                <DialogDescription className="mt-1 text-zinc-500 dark:text-zinc-400">
-                  {t('approvalRoleGroup.delete.confirmMessage', 'Bu işlem geri alınamaz. Devam etmek istiyor musunuz?')}
-                </DialogDescription>
-              </div>
+          <DialogHeader className="flex flex-col items-center gap-4 text-center pb-6 pt-10 px-6">
+            <div className="h-20 w-20 rounded-full bg-red-50 dark:bg-red-500/10 flex items-center justify-center mb-2 animate-in zoom-in duration-300">
+               <Alert02Icon size={36} className="text-red-600 dark:text-red-500" />
             </div>
-          </div>
+            
+            <div className="space-y-2">
+                <DialogTitle className="text-2xl font-bold text-slate-900 dark:text-white">
+                {t('approvalRoleGroup.delete.title', 'Rol Grubunu Sil')}
+                </DialogTitle>
+                <DialogDescription className="text-slate-500 dark:text-slate-400 max-w-[280px] mx-auto text-sm leading-relaxed">
+                {t('approvalRoleGroup.delete.confirmMessage', '{{name}} rol grubunu silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.', {
+                    name: selectedRoleGroup?.name || '',
+                })}
+                </DialogDescription>
+            </div>
+          </DialogHeader>
 
-          <div className="p-6 bg-zinc-50/50 dark:bg-zinc-900/50 mt-6 border-t border-zinc-100 dark:border-zinc-800">
-             <div className="flex justify-end gap-3">
-               <DialogClose asChild>
-                 <Button variant="outline" className="border-zinc-200 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300">
-                   {t('approvalRoleGroup.cancel', 'İptal')}
-                 </Button>
-               </DialogClose>
-               <Button 
-                 variant="destructive" 
-                 onClick={handleDeleteConfirm}
-                 className="bg-red-600 hover:bg-red-700 text-white shadow-lg shadow-red-500/20"
-               >
-                 {t('approvalRoleGroup.deleteButton', 'Sil')}
-               </Button>
-             </div>
-          </div>
+          <DialogFooter className="flex flex-row gap-3 justify-center p-6 bg-slate-50/50 dark:bg-[#1a1025]/50 border-t border-slate-100 dark:border-white/5">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setDeleteDialogOpen(false)}
+              className="flex-1 h-12 rounded-xl border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300 hover:bg-white dark:hover:bg-white/5 font-semibold"
+            >
+              {t('common.cancel', 'Vazgeç')}
+            </Button>
+            
+            <Button
+              type="button"
+              variant="destructive"
+              onClick={handleDeleteConfirm}
+              disabled={deleteRoleGroup.isPending}
+              className="flex-1 h-12 rounded-xl bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white border-0 shadow-lg shadow-red-500/20 transition-all hover:scale-[1.02] font-bold"
+            >
+              {deleteRoleGroup.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+              {t('common.delete', 'Sil')}
+            </Button>
+          </DialogFooter>
+
         </DialogContent>
       </Dialog>
-    </>
+    </div>
   );
 }

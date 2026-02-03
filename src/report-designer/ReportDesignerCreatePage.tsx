@@ -141,7 +141,7 @@ export function ReportDesignerCreatePage(): ReactElement {
 
   useEffect(() => {
     if (copyFrom) {
-      applyTemplateToFormAndStore(copyFrom, form, setElements);
+      applyTemplateToFormAndStore(copyFrom, form as any, setElements);
       justAppliedCopyRef.current = true;
       navigate(location.pathname, { replace: true, state: {} });
       return;
@@ -162,7 +162,7 @@ export function ReportDesignerCreatePage(): ReactElement {
     if (!isEdit || !templateById || editId == null) return;
     if (appliedEditIdRef.current === editId) return;
     appliedEditIdRef.current = editId;
-    applyTemplateToFormAndStore(templateById, form, setElements);
+    applyTemplateToFormAndStore(templateById, form as any, setElements);
   }, [isEdit, editId, templateById]);
 
   useEffect(() => {
@@ -332,13 +332,13 @@ export function ReportDesignerCreatePage(): ReactElement {
         <h1 className="mb-4 text-xl font-semibold text-slate-900 dark:text-white">
           {isEdit ? 'Şablonu Düzenle' : 'Yeni Rapor Şablonu'}
         </h1>
-        <Form {...form}>
+        <Form {...(form as any)}>
           <form
-            onSubmit={form.handleSubmit(onSubmit)}
+            onSubmit={(form as any).handleSubmit(onSubmit)}
             className="flex flex-wrap items-end gap-4"
           >
             <FormField
-              control={form.control}
+              control={form.control as any}
               name="ruleType"
               render={({ field }) => (
                 <FormItem className="w-48">
@@ -365,7 +365,7 @@ export function ReportDesignerCreatePage(): ReactElement {
               )}
             />
             <FormField
-              control={form.control}
+              control={form.control as any}
               name="title"
               render={({ field }) => (
                 <FormItem className="min-w-[200px] flex-1">
@@ -378,7 +378,7 @@ export function ReportDesignerCreatePage(): ReactElement {
               )}
             />
             <FormField
-              control={form.control}
+              control={form.control as any}
               name="default"
               render={({ field }) => (
                 <FormItem className="flex flex-row items-center gap-2 space-y-0">
