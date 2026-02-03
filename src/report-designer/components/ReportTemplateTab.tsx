@@ -4,7 +4,6 @@ import { useReportTemplateList } from '../hooks/useReportTemplateList';
 import { useGenerateReportPdf } from '../hooks/useGenerateReportPdf';
 import { DocumentRuleType } from '../types/report-template-types';
 import type { ReportTemplateGetDto } from '../types/report-template-types';
-import { Button } from '@/components/ui/button';
 import {
   Select,
   SelectContent,
@@ -13,42 +12,13 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
-import { FileDown, Loader2, Printer } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
-
-function downloadBlobAsPdf(blob: Blob, filename: string): void {
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = filename;
-  a.click();
-  URL.revokeObjectURL(url);
-}
-
-function printBlobPdf(blob: Blob): void {
-  const url = URL.createObjectURL(blob);
-  const w = window.open(url, '_blank', 'noopener,noreferrer');
-  if (w) {
-    w.onload = () => {
-      w.print();
-      w.onafterprint = () => w.close();
-    };
-  } else {
-    URL.revokeObjectURL(url);
-    toast.error('Yazdırma penceresi açılamadı. Açılır pencereleri etkinleştirin.');
-  }
-}
 
 const RULE_TYPE_EMPTY_LABELS: Record<DocumentRuleType, string> = {
   [DocumentRuleType.Demand]: 'Talep şablonu bulunamadı',
   [DocumentRuleType.Quotation]: 'Teklif şablonu bulunamadı',
   [DocumentRuleType.Order]: 'Sipariş şablonu bulunamadı',
-};
-
-const RULE_TYPE_FILE_PREFIX: Record<DocumentRuleType, string> = {
-  [DocumentRuleType.Demand]: 'talep',
-  [DocumentRuleType.Quotation]: 'teklif',
-  [DocumentRuleType.Order]: 'siparis',
 };
 
 interface ReportTemplateTabProps {
@@ -115,30 +85,9 @@ export function ReportTemplateTab({ entityId, ruleType }: ReportTemplateTabProps
     };
   }, []);
 
-  const selectedTemplate = filteredTemplates.find(
-    (t) => String(t.id) === selectedTemplateId
-  );
   const isGenerating =
     Boolean(selectedTemplateId) && (generatePdfMutation.isPending || !pdfBlobUrl);
-  const filePrefix = RULE_TYPE_FILE_PREFIX[ruleType];
   const emptyLabel = RULE_TYPE_EMPTY_LABELS[ruleType];
-
-  const handleDownload = (): void => {
-    if (!pdfBlobUrl || !selectedTemplate) return;
-    fetch(pdfBlobUrl)
-      .then((r) => r.blob())
-      .then((blob) =>
-        downloadBlobAsPdf(blob, `${filePrefix}-${selectedTemplate.title}-${entityId}.pdf`)
-      );
-    toast.success('İndiriliyor');
-  };
-
-  const handlePrint = (): void => {
-    if (!pdfBlobUrl) return;
-    fetch(pdfBlobUrl)
-      .then((r) => r.blob())
-      .then(printBlobPdf);
-  };
 
   return (
     <div className="space-y-6">
@@ -180,37 +129,13 @@ export function ReportTemplateTab({ entityId, ruleType }: ReportTemplateTabProps
               </p>
             </div>
           ) : pdfBlobUrl ? (
-            <>
-              <div className="flex items-center justify-end gap-2 p-2 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900/50">
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={handleDownload}
-                  className="gap-2"
-                >
-                  <FileDown className="size-4" />
-                  İndir
-                </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={handlePrint}
-                  className="gap-2"
-                >
-                  <Printer className="size-4" />
-                  Yazdır
-                </Button>
-              </div>
-              <div className="min-h-[480px] bg-slate-200 dark:bg-slate-800">
-                <iframe
-                  title="Rapor önizleme"
-                  src={pdfBlobUrl}
-                  className="w-full h-[calc(100vh-280px)] min-h-[480px] border-0"
-                />
-              </div>
-            </>
+            <div className="min-h-[480px] bg-slate-200 dark:bg-slate-800">
+              <iframe
+                title="Rapor önizleme"
+                src={pdfBlobUrl}
+                className="w-full h-[calc(100vh-280px)] min-h-[480px] border-0"
+              />
+            </div>
           ) : null}
         </div>
       )}
