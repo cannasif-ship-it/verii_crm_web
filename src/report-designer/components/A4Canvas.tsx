@@ -16,17 +16,18 @@ import {
 import { useReportStore } from '../store/useReportStore';
 import { isTableElement, type CanvasElement, type ReportElement, type TableElement } from '../models/report-element';
 import type { ReportSection } from '../models/report-element';
-import { FONT_FAMILIES, FONT_SIZES } from '../constants';
+import {
+  FONT_FAMILIES,
+  FONT_SIZES,
+  A4_CANVAS_WIDTH,
+  A4_CANVAS_HEIGHT,
+  A4_HEADER_HEIGHT,
+  A4_FOOTER_HEIGHT,
+  A4_CONTENT_TOP,
+  A4_CONTENT_HEIGHT,
+} from '../constants';
 
 const MAX_IMAGE_SIZE_BYTES = 2 * 1024 * 1024;
-
-const A4_WIDTH = 794;
-const A4_HEIGHT = 1123;
-
-const HEADER_HEIGHT = Math.round(A4_HEIGHT * 0.15);
-const FOOTER_HEIGHT = Math.round(A4_HEIGHT * 0.15);
-const CONTENT_TOP = HEADER_HEIGHT;
-const CONTENT_HEIGHT = A4_HEIGHT - HEADER_HEIGHT - FOOTER_HEIGHT;
 
 export const A4_HEADER_DROPPABLE_ID = 'a4-header';
 export const A4_CONTENT_DROPPABLE_ID = 'a4-content';
@@ -480,11 +481,11 @@ export function A4Canvas({ canvasRef }: A4CanvasProps): ReactElement {
   };
 
   return (
-    <div className="flex min-h-full flex-1 items-center justify-center bg-slate-200/80 p-8">
+    <div className="flex flex-1 items-start justify-center overflow-auto bg-slate-200/80 p-8">
       <div
         ref={setPaperRef}
-        className="relative bg-white shadow-lg"
-        style={{ width: A4_WIDTH, height: A4_HEIGHT }}
+        className="relative shrink-0 bg-white shadow-lg"
+        style={{ width: A4_CANVAS_WIDTH, height: A4_CANVAS_HEIGHT }}
         onClick={() => setSelectedElement(null)}
         role="presentation"
       >
@@ -492,7 +493,7 @@ export function A4Canvas({ canvasRef }: A4CanvasProps): ReactElement {
           setNodeRef={headerDroppable.setNodeRef}
           isOver={headerDroppable.isOver ?? false}
           className="absolute left-0 top-0 z-0 flex items-center justify-center border-b border-slate-200 bg-slate-50/50 text-xs text-slate-400"
-          style={{ width: A4_WIDTH, height: HEADER_HEIGHT }}
+          style={{ width: A4_CANVAS_WIDTH, height: A4_HEADER_HEIGHT }}
         >
           Header
         </DroppableSection>
@@ -500,7 +501,7 @@ export function A4Canvas({ canvasRef }: A4CanvasProps): ReactElement {
           setNodeRef={contentDroppable.setNodeRef}
           isOver={contentDroppable.isOver ?? false}
           className="absolute left-0 z-0 flex items-center justify-center border-b border-slate-200 bg-white/50 text-xs text-slate-400"
-          style={{ width: A4_WIDTH, height: CONTENT_HEIGHT, top: CONTENT_TOP }}
+          style={{ width: A4_CANVAS_WIDTH, height: A4_CONTENT_HEIGHT, top: A4_CONTENT_TOP }}
         >
           Content
         </DroppableSection>
@@ -508,7 +509,7 @@ export function A4Canvas({ canvasRef }: A4CanvasProps): ReactElement {
           setNodeRef={footerDroppable.setNodeRef}
           isOver={footerDroppable.isOver ?? false}
           className="absolute bottom-0 left-0 z-0 flex items-center justify-center border-t border-slate-200 bg-slate-50/50 text-xs text-slate-400"
-          style={{ width: A4_WIDTH, height: FOOTER_HEIGHT }}
+          style={{ width: A4_CANVAS_WIDTH, height: A4_FOOTER_HEIGHT }}
         >
           Footer
         </DroppableSection>

@@ -22,6 +22,7 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
+import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from 'sonner';
 import {
   reportDesignerCreateSchema,
@@ -43,6 +44,7 @@ import { useReportTemplateById } from './hooks/useReportTemplateById';
 import { dtoElementsToCanvasElements } from './utils/dto-to-canvas';
 import { DocumentRuleType, type ReportTemplateCreateDto, type ReportTemplateElementDto } from './types/report-template-types';
 import type { ReportTemplateGetDto } from './types/report-template-types';
+import { A4_CANVAS_WIDTH, A4_CANVAS_HEIGHT } from './constants';
 
 const RULE_TYPE_OPTIONS: { value: PricingRuleType; label: string }[] = [
   { value: PricingRuleType.Demand, label: 'Talep' },
@@ -107,6 +109,7 @@ function applyTemplateToFormAndStore(
   form.reset({
     ruleType: apiRuleTypeToForm(template.ruleType as number),
     title: template.title,
+    default: template.default ?? false,
   });
   setElements(dtoElementsToCanvasElements(template.templateData.elements));
 }
@@ -130,6 +133,7 @@ export function ReportDesignerCreatePage(): ReactElement {
     defaultValues: {
       ruleType: PricingRuleType.Demand,
       title: '',
+      default: false,
     },
   });
 
@@ -188,6 +192,15 @@ export function ReportDesignerCreatePage(): ReactElement {
       })),
     [fieldsData?.lineFields]
   );
+  const exchangeRateFields: FieldPaletteItem[] = useMemo(
+    () =>
+      (fieldsData?.exchangeRateFields ?? []).map((f) => ({
+        label: f.label,
+        path: f.path,
+        type: 'table-column' as const,
+      })),
+    [fieldsData?.exchangeRateFields]
+  );
 
   const createMutation = useCreateReportTemplate();
   const updateMutation = useUpdateReportTemplate();
@@ -197,10 +210,11 @@ export function ReportDesignerCreatePage(): ReactElement {
       ruleType: ruleTypeForApi(values.ruleType),
       title: values.title,
       templateData: {
-        page: { width: A4_WIDTH, height: A4_HEIGHT, unit: 'px' },
+        page: { width: A4_CANVAS_WIDTH, height: A4_CANVAS_HEIGHT, unit: 'px' },
         elements: elements.map(elementToDto),
       },
       isActive: true,
+      default: values.default ?? false,
     };
     try {
       if (isEdit && editId != null) {
@@ -365,6 +379,21 @@ export function ReportDesignerCreatePage(): ReactElement {
                 </FormItem>
               )}
             />
+            <FormField
+              control={form.control}
+              name="default"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-center gap-2 space-y-0">
+                  <FormControl>
+                    <Checkbox
+                      checked={field.value ?? false}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                  <FormLabel className="font-normal">Varsayılan şablon yap</FormLabel>
+                </FormItem>
+              )}
+            />
             <Button
               type="submit"
               disabled={isEdit && (updateMutation.isPending || !templateByIdLoaded)}
@@ -374,10 +403,10 @@ export function ReportDesignerCreatePage(): ReactElement {
           </form>
         </Form>
       </div>
-      <div className="flex-1 min-h-[600px] overflow-hidden">
+      <div className="flex min-h-0 flex-1 flex-col">
         <DndContext onDragEnd={handleDragEnd}>
-          <div className="flex h-full w-full">
-            <Sidebar headerFields={headerFields} lineFields={lineFields} />
+          <div className="flex min-h-0 flex-1">
+            <Sidebar headerFields={headerFields} lineFields={lineFields} exchangeRateFields={exchangeRateFields} />
             <A4Canvas canvasRef={canvasRef} />
           </div>
         </DndContext>
