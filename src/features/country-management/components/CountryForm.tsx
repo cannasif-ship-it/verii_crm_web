@@ -1,4 +1,4 @@
-import { type ReactElement, useEffect } from 'react';
+import { type ReactElement, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslation } from 'react-i18next';
@@ -20,48 +20,50 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { countryFormSchema, type CountryFormSchema } from '../types/country-types';
 import type { CountryDto } from '../types/country-types';
-import { Globe } from 'lucide-react';
+import { useCreateCountry } from '../hooks/useCreateCountry';
+import { useUpdateCountry } from '../hooks/useUpdateCountry';
+import { Map, Hash, Globe, Loader2, FileText, Code } from 'lucide-react';
+import { Cancel01Icon } from 'hugeicons-react';
 
 interface CountryFormProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSubmit: (data: CountryFormSchema) => void | Promise<void>;
   country?: CountryDto | null;
-  isLoading?: boolean;
 }
 
 const INPUT_STYLE = `
-  h-11 rounded-lg
-  bg-slate-50 dark:bg-[#0c0516] 
+  h-12 rounded-xl
+  bg-slate-50 dark:bg-[#0f0a18] 
   border border-slate-200 dark:border-white/10 
   text-slate-900 dark:text-white text-sm
   placeholder:text-slate-400 dark:placeholder:text-slate-600 
   
-  focus-visible:ring-0 focus-visible:ring-offset-0 
+  focus-visible:bg-white dark:focus-visible:bg-[#1a1025]
+  focus-visible:border-pink-500 dark:focus-visible:border-pink-500/70
+  focus-visible:ring-2 focus-visible:ring-pink-500/10 focus-visible:ring-offset-0
   
-  focus:bg-white 
-  focus:border-pink-500 
-  focus:shadow-[0_0_0_3px_rgba(236,72,153,0.15)] 
-
-  dark:focus:bg-[#0c0516] 
-  dark:focus:border-pink-500/60 
-  dark:focus:shadow-[0_0_0_3px_rgba(236,72,153,0.1)]
-
+  focus:ring-2 focus:ring-pink-500/10 focus:ring-offset-0 focus:border-pink-500
+  
   transition-all duration-200
 `;
 
-const LABEL_STYLE = "text-[11px] text-slate-500 dark:text-slate-400 uppercase tracking-wider font-bold ml-1 mb-1.5 block";
+const LABEL_STYLE = "text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide ml-1 mb-2 flex items-center gap-2";
 
 export function CountryForm({
   open,
   onOpenChange,
-  onSubmit,
   country,
-  isLoading = false,
 }: CountryFormProps): ReactElement {
   const { t } = useTranslation();
+  const [activeTab, setActiveTab] = useState<'header'>('header');
+
+  const createMutation = useCreateCountry();
+  const updateMutation = useUpdateCountry();
+
+  const isLoading = createMutation.isPending || updateMutation.isPending;
 
   const form = useForm<CountryFormSchema>({
     resolver: zodResolver(countryFormSchema),
@@ -86,133 +88,186 @@ export function CountryForm({
         erpCode: '',
       });
     }
-  }, [country, form]);
+  }, [country, form, open]);
+
+  // Reset tab when opening
+  useEffect(() => {
+    if (open) {
+      setActiveTab('header');
+    }
+  }, [open]);
 
   const handleSubmit = async (data: CountryFormSchema): Promise<void> => {
-    await onSubmit(data);
-    if (!isLoading) {
+    try {
+      if (country) {
+        await updateMutation.mutateAsync({ 
+          id: country.id, 
+          data: {
+            name: data.name,
+            code: data.code,
+            erpCode: data.erpCode || undefined,
+          } 
+        });
+      } else {
+        await createMutation.mutateAsync({
+          name: data.name,
+          code: data.code,
+          erpCode: data.erpCode || undefined,
+        });
+      }
       form.reset();
       onOpenChange(false);
+    } catch (error) {
+      console.error(error);
     }
   };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-white dark:bg-[#130822] border border-slate-100 dark:border-white/10 text-slate-900 dark:text-white max-w-lg shadow-2xl shadow-slate-200/50 dark:shadow-black/50 sm:rounded-2xl max-h-[90vh] h-auto flex flex-col gap-0 p-0 overflow-hidden transition-colors duration-300">
-        <DialogHeader className="border-b border-slate-100 dark:border-white/5 px-6 py-5 bg-white/80 dark:bg-[#130822]/90 backdrop-blur-md shrink-0 flex-row items-center justify-between space-y-0">
-          <div className="flex items-center gap-3">
-             <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-pink-500/20 to-orange-500/20 border border-pink-500/10 flex items-center justify-center text-pink-500 shrink-0">
-               <Globe size={20} />
+      <DialogContent className="max-w-2xl flex flex-col p-0 bg-white dark:bg-[#130822] border border-slate-100 dark:border-white/10 text-slate-900 dark:text-white shadow-2xl shadow-slate-200/50 dark:shadow-black/50 sm:rounded-2xl overflow-hidden transition-colors duration-300">
+        
+        <DialogHeader className="px-6 py-5 bg-slate-50/50 dark:bg-[#1a1025]/50 backdrop-blur-sm border-b border-slate-100 dark:border-white/5 flex-shrink-0 flex-row items-center justify-between space-y-0 sticky top-0 z-10">
+          <div className="flex items-center gap-4">
+             <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-pink-500 to-orange-500 p-0.5 shadow-lg shadow-pink-500/20">
+               <div className="h-full w-full bg-white dark:bg-[#130822] rounded-[14px] flex items-center justify-center">
+                 <Globe size={24} className="text-pink-600 dark:text-pink-500" />
+               </div>
              </div>
-             <div>
-                <DialogTitle className="text-lg font-bold text-slate-900 dark:text-white">
+             <div className="space-y-1">
+                <DialogTitle className="text-xl font-bold tracking-tight text-slate-900 dark:text-white">
                   {country
                     ? t('countryManagement.form.editCountry', 'Ülke Düzenle')
                     : t('countryManagement.form.addCountry', 'Yeni Ülke Ekle')}
                 </DialogTitle>
-                <DialogDescription className="text-slate-500 dark:text-slate-400 text-xs mt-0.5">
+                <DialogDescription className="text-slate-500 dark:text-slate-400 text-sm mt-0.5">
                   {country
                     ? t('countryManagement.form.editDescription', 'Ülke bilgilerini düzenleyin')
                     : t('countryManagement.form.addDescription', 'Yeni ülke bilgilerini girin')}
                 </DialogDescription>
              </div>
           </div>
+          <Button variant="ghost" size="icon" onClick={() => onOpenChange(false)} className="text-slate-400 hover:text-slate-600 dark:hover:text-white rounded-full">
+            <Cancel01Icon size={20} />
+          </Button>
         </DialogHeader>
 
-        <div className="flex-1 overflow-y-auto p-6 custom-scrollbar">
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-5">
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem className="space-y-0">
-                    <FormLabel className={LABEL_STYLE}>
-                      {t('countryManagement.form.name', 'Ülke Adı')} *
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        placeholder={t('countryManagement.form.namePlaceholder', 'Ülke adını girin')}
-                        maxLength={100}
-                        className={INPUT_STYLE}
-                      />
-                    </FormControl>
-                    <FormMessage className="text-red-500 text-[10px] mt-1" />
-                  </FormItem>
-                )}
-              />
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(handleSubmit)} className="flex-1 flex flex-col min-h-0">
+            <div className="flex-1 flex flex-col min-h-0">
+              <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as 'header')} className="w-full flex-1 flex flex-col min-h-0">
+                
+                <div className="px-6 pt-4 pb-2 bg-slate-50/50 dark:bg-white/5 border-b border-slate-100 dark:border-white/5">
+                  <TabsList className="bg-slate-200/50 dark:bg-white/10 p-1 rounded-lg h-auto grid grid-cols-1 w-full max-w-md">
+                    <TabsTrigger value="header" className="rounded-md data-[state=active]:bg-white dark:data-[state=active]:bg-[#1a1025] data-[state=active]:text-pink-600 dark:data-[state=active]:text-pink-400 data-[state=active]:shadow-sm py-2 text-xs font-medium transition-all">
+                      <FileText size={14} className="mr-2" />
+                      {t('countryManagement.form.tabs.header', 'Genel Bilgiler')}
+                    </TabsTrigger>
+                  </TabsList>
+                </div>
 
-              <FormField
-                control={form.control}
-                name="code"
-                render={({ field }) => (
-                  <FormItem className="space-y-0">
-                    <FormLabel className={LABEL_STYLE}>
-                      {t('countryManagement.form.code', 'Ülke Kodu')} *
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        placeholder={t('countryManagement.form.codePlaceholder', 'Ülke kodunu girin (örn: TR, US)')}
-                        maxLength={5}
-                        className={INPUT_STYLE}
-                        onChange={(e) => {
-                          field.onChange(e.target.value.toUpperCase());
-                        }}
-                      />
-                    </FormControl>
-                    <FormMessage className="text-red-500 text-[10px] mt-1" />
-                  </FormItem>
-                )}
-              />
+                <div className="flex-1 overflow-y-auto p-6 custom-scrollbar">
+                  <TabsContent value="header" className="mt-0 h-full focus-visible:outline-none data-[state=inactive]:hidden">
+                    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <FormField
+                          control={form.control}
+                          name="name"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className={LABEL_STYLE}>
+                                <Map size={12} className="text-pink-500" />
+                                {t('countryManagement.form.name', 'Ülke Adı')} *
+                              </FormLabel>
+                              <FormControl>
+                                <Input
+                                  {...field}
+                                  placeholder={t('countryManagement.form.namePlaceholder', 'Ülke adını girin')}
+                                  maxLength={100}
+                                  className={INPUT_STYLE}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
 
-              <FormField
-                control={form.control}
-                name="erpCode"
-                render={({ field }) => (
-                  <FormItem className="space-y-0">
-                    <FormLabel className={LABEL_STYLE}>
-                      {t('countryManagement.form.erpCode', 'ERP Kodu')}
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        placeholder={t('countryManagement.form.erpCodePlaceholder', 'ERP kodunu girin (opsiyonel)')}
-                        maxLength={10}
-                        className={INPUT_STYLE}
-                      />
-                    </FormControl>
-                    <FormMessage className="text-red-500 text-[10px] mt-1" />
-                  </FormItem>
-                )}
-              />
-            </form>
-          </Form>
-        </div>
+                        <FormField
+                          control={form.control}
+                          name="code"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className={LABEL_STYLE}>
+                                <Code size={12} className="text-pink-500" />
+                                {t('countryManagement.form.code', 'Ülke Kodu')} *
+                              </FormLabel>
+                              <FormControl>
+                                <Input
+                                  {...field}
+                                  placeholder={t('countryManagement.form.codePlaceholder', 'Ülke kodunu girin (örn: TR, US)')}
+                                  maxLength={5}
+                                  className={INPUT_STYLE}
+                                  onChange={(e) => {
+                                    field.onChange(e.target.value.toUpperCase());
+                                  }}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
 
-        <DialogFooter className="border-t border-slate-100 dark:border-white/5 px-6 py-5 bg-slate-50/50 dark:bg-[#130822] sm:justify-between sm:space-x-0">
-          <div className="flex items-center gap-2 w-full justify-end">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => onOpenChange(false)}
-              disabled={isLoading}
-              className="bg-white dark:bg-transparent border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/5 h-11 px-6 rounded-lg"
-            >
-              {t('countryManagement.cancel', 'İptal')}
-            </Button>
-            <Button 
-              onClick={form.handleSubmit(handleSubmit)}
-              disabled={isLoading}
-              className="bg-gradient-to-r from-pink-600 to-orange-600 hover:from-pink-700 hover:to-orange-700 text-white border-0 shadow-lg shadow-pink-500/20 h-11 px-8 rounded-lg font-bold tracking-wide transition-all hover:scale-105"
-            >
-              {isLoading
-                ? t('countryManagement.saving', 'Kaydediliyor...')
-                : t('countryManagement.save', 'Kaydet')}
-            </Button>
-          </div>
-        </DialogFooter>
+                      <FormField
+                        control={form.control}
+                        name="erpCode"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className={LABEL_STYLE}>
+                              <Hash size={12} className="text-pink-500" />
+                              {t('countryManagement.form.erpCode', 'ERP Kodu')}
+                            </FormLabel>
+                            <FormControl>
+                              <Input
+                                {...field}
+                                value={field.value || ''}
+                                placeholder={t('countryManagement.form.erpCodePlaceholder', 'ERP kodunu girin (opsiyonel)')}
+                                maxLength={10}
+                                className={INPUT_STYLE}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                    </div>
+                  </TabsContent>
+                </div>
+              </Tabs>
+            </div>
+
+            <DialogFooter className="px-6 py-4 border-t border-slate-100 dark:border-white/5 bg-slate-50/50 dark:bg-[#1a1025]/50 flex-shrink-0 backdrop-blur-sm">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => onOpenChange(false)}
+                disabled={isLoading}
+                className="h-11 rounded-xl border-slate-200 dark:border-white/10 hover:bg-slate-100 dark:hover:bg-white/5"
+              >
+                {t('countryManagement.form.cancel', 'İptal')}
+              </Button>
+              <Button 
+                type="submit" 
+                disabled={isLoading}
+                className="h-11 rounded-xl bg-gradient-to-r from-pink-600 to-orange-500 hover:from-pink-700 hover:to-orange-600 text-white shadow-lg shadow-pink-500/20 border-0"
+              >
+                {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                {t('countryManagement.form.save', 'Kaydet')}
+              </Button>
+            </DialogFooter>
+          </form>
+        </Form>
       </DialogContent>
     </Dialog>
   );
