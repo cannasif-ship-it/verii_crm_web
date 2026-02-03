@@ -56,12 +56,14 @@ function normalizeTemplateItem(item: unknown): ReportTemplateGetDto {
     page: page as ReportTemplateDataDto['page'],
     elements: Array.isArray(elements) ? elements : [],
   };
+  const isDefault = Boolean(r.default ?? r.Default ?? false);
   return {
     id: Number(id),
     ruleType: Number(ruleType) as DocumentRuleType,
     title: String(title),
     templateData: normalizedData,
     isActive: Boolean(isActive),
+    default: isDefault,
   };
 }
 

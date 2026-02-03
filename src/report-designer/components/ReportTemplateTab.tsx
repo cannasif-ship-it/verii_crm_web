@@ -38,6 +38,15 @@ export function ReportTemplateTab({ entityId, ruleType }: ReportTemplateTabProps
   const filteredTemplates: ReportTemplateGetDto[] = templates.filter(
     (t) => Number(t.ruleType) === ruleType
   );
+  const defaultTemplateRef = useRef(false);
+  useEffect(() => {
+    if (defaultTemplateRef.current || filteredTemplates.length === 0) return;
+    const defaultT = filteredTemplates.find((t) => t.default === true);
+    if (defaultT != null) {
+      defaultTemplateRef.current = true;
+      setSelectedTemplateId(String(defaultT.id));
+    }
+  }, [filteredTemplates]);
 
   useEffect(() => {
     if (!selectedTemplateId) {
@@ -111,6 +120,7 @@ export function ReportTemplateTab({ entityId, ruleType }: ReportTemplateTabProps
                 filteredTemplates.map((t) => (
                   <SelectItem key={t.id} value={String(t.id)}>
                     {t.title}
+                    {t.default === true ? ' (Varsayılan)' : ''}
                   </SelectItem>
                 ))
               )}

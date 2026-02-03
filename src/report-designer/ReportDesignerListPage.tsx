@@ -26,6 +26,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Badge } from '@/components/ui/badge';
 import { Plus, MoreHorizontal, Pencil, Copy, Trash2, FileDown } from 'lucide-react';
 import { toast } from 'sonner';
 import { useReportTemplateList } from './hooks/useReportTemplateList';
@@ -143,6 +144,7 @@ export function ReportDesignerListPage(): ReactElement {
                 <TableHead>Başlık</TableHead>
                 <TableHead>Belge tipi</TableHead>
                 <TableHead className="w-[80px]">Aktif</TableHead>
+                <TableHead className="w-[100px]">Varsayılan</TableHead>
                 <TableHead className="w-[100px] text-right">İşlem</TableHead>
               </TableRow>
             </TableHeader>
@@ -153,6 +155,13 @@ export function ReportDesignerListPage(): ReactElement {
                   <TableCell className="font-medium">{t.title}</TableCell>
                   <TableCell>{RULE_TYPE_LABELS[t.ruleType] ?? t.ruleType}</TableCell>
                   <TableCell>{t.isActive ? 'Evet' : 'Hayır'}</TableCell>
+                  <TableCell>
+                    {t.default === true ? (
+                      <Badge variant="secondary">Varsayılan</Badge>
+                    ) : (
+                      '—'
+                    )}
+                  </TableCell>
                   <TableCell className="text-right">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>

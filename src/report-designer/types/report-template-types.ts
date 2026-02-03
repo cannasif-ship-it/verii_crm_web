@@ -10,11 +10,15 @@ export interface FieldDefinitionDto {
   label: string;
   path: string;
   type?: string;
+  dataType?: string;
+  description?: string;
+  exampleValue?: string;
 }
 
 export interface ReportTemplateFieldsDto {
   headerFields: FieldDefinitionDto[];
   lineFields: FieldDefinitionDto[];
+  exchangeRateFields?: FieldDefinitionDto[];
 }
 
 export interface ReportTemplatePageDto {
@@ -51,6 +55,7 @@ export interface ReportTemplateGetDto {
   title: string;
   templateData: ReportTemplateDataDto;
   isActive: boolean;
+  default?: boolean;
 }
 
 export interface ReportTemplateCreateDto {
@@ -58,6 +63,7 @@ export interface ReportTemplateCreateDto {
   title: string;
   templateData: ReportTemplateDataDto;
   isActive: boolean;
+  default?: boolean;
 }
 
 export interface ReportTemplateUpdateDto extends ReportTemplateCreateDto {}

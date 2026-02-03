@@ -35,6 +35,7 @@ export interface SidebarDragData {
 export interface SidebarProps {
   headerFields?: FieldPaletteItem[];
   lineFields?: FieldPaletteItem[];
+  exchangeRateFields?: FieldPaletteItem[];
 }
 
 const TEXT_ITEM: FieldPaletteItem = {
@@ -408,9 +409,10 @@ function ImagePropertiesPanel(): ReactElement | null {
   );
 }
 
-export function Sidebar({ headerFields, lineFields }: SidebarProps = {}): ReactElement {
+export function Sidebar({ headerFields, lineFields, exchangeRateFields }: SidebarProps = {}): ReactElement {
   const fieldsItems = headerFields ?? FIELDS;
   const tableColumnsItems = lineFields ?? TABLE_COLUMNS;
+  const exchangeRateColumnsItems = exchangeRateFields ?? [];
   return (
     <div className="flex w-64 flex-col gap-6 border-r border-slate-200 bg-slate-50 p-4">
       <span className="text-xs font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400">
@@ -419,6 +421,9 @@ export function Sidebar({ headerFields, lineFields }: SidebarProps = {}): ReactE
       <Section title="Text" items={[TEXT_ITEM]} idPrefix="palette-text" />
       <Section title="Fields" items={fieldsItems} idPrefix="palette-fields" />
       <Section title="Table Columns" items={tableColumnsItems} idPrefix="palette-table-columns" />
+      {exchangeRateColumnsItems.length > 0 && (
+        <Section title="Döviz kurları" items={exchangeRateColumnsItems} idPrefix="palette-exchange-rates" />
+      )}
       <Section title="Add Table" items={[ADD_TABLE_ITEM]} idPrefix="palette-add-table" />
       <Section title="Images" items={[LOGO_IMAGE_ITEM]} idPrefix="palette-images" />
       <TextPropertiesPanel />
