@@ -1,0 +1,101 @@
+import type { ReactElement } from 'react';
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { useReportsStore } from '../store';
+import { reportsApi } from '../api';
+import { Card, CardContent } from '@/components/ui/card';
+import { Loader2, Plus, Search } from 'lucide-react';
+
+export function ReportsListPage(): ReactElement {
+  const navigate = useNavigate();
+  const { search, items, loading, error, setSearch, setItems, setLoading, setError } = useReportsStore();
+
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+    setError(null);
+    reportsApi
+      .list(search || undefined)
+      .then((list) => {
+        if (!cancelled) setItems(Array.isArray(list) ? list : []);
+      })
+      .catch((e) => {
+        if (!cancelled) setError(e instanceof Error ? e.message : 'Failed to load');
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [search, setItems, setLoading, setError]);
+
+  return (
+    <div className="space-y-6 p-6">
+      <div className="flex items-center justify-between gap-4">
+        <h1 className="text-2xl font-bold">Raporlar</h1>
+        <Button onClick={() => navigate('/reports/new')}>
+          <Plus className="mr-2 size-4" />
+          Yeni Oluştur
+        </Button>
+      </div>
+
+      <div className="flex gap-2">
+        <div className="relative flex-1">
+          <Search className="text-muted-foreground absolute left-3 top-1/2 size-4 -translate-y-1/2" />
+          <Input
+            placeholder="Rapor ara..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="pl-9"
+          />
+        </div>
+      </div>
+
+      {error && <p className="text-destructive text-sm">{error}</p>}
+
+      {loading && (
+        <div className="flex items-center justify-center py-12">
+          <Loader2 className="size-8 animate-spin text-muted-foreground" />
+        </div>
+      )}
+
+      {!loading && items.length === 0 && !error && (
+        <Card>
+          <CardContent className="flex flex-col items-center justify-center py-12 text-muted-foreground">
+            <p>Henüz rapor yok.</p>
+            <Button variant="outline" className="mt-2" onClick={() => navigate('/reports/new')}>
+              Yeni Oluştur
+            </Button>
+          </CardContent>
+        </Card>
+      )}
+
+      {!loading && items.length > 0 && (
+        <div className="space-y-2">
+          {items.map((r) => (
+            <Card
+              key={r.id}
+              className="cursor-pointer transition-colors hover:bg-muted/50"
+              onClick={() => navigate(`/reports/${r.id}`)}
+            >
+              <CardContent className="flex flex-row items-center justify-between py-4">
+                <div>
+                  <p className="font-medium">{r.name}</p>
+                  <p className="text-muted-foreground text-sm">
+                    {r.connectionKey} / {r.dataSourceType} / {r.dataSourceName}
+                  </p>
+                </div>
+                <p className="text-muted-foreground text-xs">
+                  {r.updatedAt ? new Date(r.updatedAt).toLocaleDateString() : ''}
+                </p>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
