@@ -105,16 +105,18 @@ export function PaymentTypeManagementPage(): ReactElement {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="w-full space-y-6 relative">
+      
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pt-2">
         <div>
-          <h1 className="text-2xl font-bold">
+          <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white transition-colors">
             {t('paymentTypeManagement.title', 'Ödeme Tipi Yönetimi')}
           </h1>
-          <p className="text-muted-foreground mt-1 text-sm">
+          <p className="text-slate-500 dark:text-slate-400 text-sm font-medium transition-colors mt-1">
             {t('paymentTypeManagement.description', 'Ödeme tiplerini yönetin ve düzenleyin')}
           </p>
         </div>
+        
         <Button 
           onClick={handleAddClick}
           className="px-6 py-2 bg-gradient-to-r from-pink-600 to-orange-600 rounded-lg text-white text-sm font-bold shadow-lg shadow-pink-500/20 hover:scale-105 transition-transform border-0 hover:text-white"

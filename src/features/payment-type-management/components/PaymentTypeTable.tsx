@@ -260,7 +260,7 @@ export function PaymentTypeTable({
                 .map((column) => (
                   <TableHead
                     key={column.key}
-                    className={`${headStyle} ${column.className || ''}`}
+                    className={headStyle}
                     onClick={() => handleSort(column.key)}
                   >
                     <div className="flex items-center gap-2 group">
