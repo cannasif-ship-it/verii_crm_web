@@ -28,6 +28,7 @@ interface ExchangeRateDialogProps {
   currentCurrency?: number;
   quotationId?: number | null;
   quotationOfferNo?: string | null;
+  readOnly?: boolean;
 }
 
 function parseRateId(id: string): number {
@@ -48,6 +49,7 @@ export function ExchangeRateDialog({
   currentCurrency,
   quotationId,
   quotationOfferNo,
+  readOnly = false,
 }: ExchangeRateDialogProps): ReactElement {
   const { t } = useTranslation();
   const { data: erpRates = [], isLoading } = useExchangeRate();
@@ -114,6 +116,7 @@ export function ExchangeRateDialog({
   }, [localRates, quotationId, quotationOfferNo]);
 
   const handleSave = async (): Promise<void> => {
+    if (readOnly) return;
     if (isUpdateMode) {
       try {
         await updateMutation.mutateAsync(mapToUpdateDtos());
@@ -312,7 +315,7 @@ export function ExchangeRateDialog({
           <Button
             type="button"
             onClick={() => void handleSave()}
-            disabled={isLoading || isSaving}
+            disabled={readOnly || isLoading || isSaving}
             className="h-11 px-6 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/40 border-0 font-medium transition-all"
           >
             {isSaving ? (

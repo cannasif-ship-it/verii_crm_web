@@ -51,6 +51,7 @@ interface QuotationHeaderFormProps {
   revisionNo?: string | null;
   quotationId?: number | null;
   quotationOfferNo?: string | null;
+  readOnly?: boolean;
 }
 
 export function QuotationHeaderForm({
@@ -62,6 +63,7 @@ export function QuotationHeaderForm({
   revisionNo,
   quotationId,
   quotationOfferNo,
+  readOnly = false,
 }: QuotationHeaderFormProps = {}): ReactElement {
   const { t } = useTranslation();
   const form = useFormContext<CreateQuotationSchema>();
@@ -240,13 +242,15 @@ export function QuotationHeaderForm({
                             value={customerDisplayValue}
                             placeholder={t('quotation.header.selectCustomer', 'Müşteri seçiniz...')}
                             readOnly
-                            onClick={() => setCustomerSelectDialogOpen(true)}
+                            onClick={() => !readOnly && setCustomerSelectDialogOpen(true)}
+                            disabled={readOnly}
                           />
                         </FormControl>
                       </div>
                       <Button
                         type="button"
                         onClick={() => setCustomerSelectDialogOpen(true)}
+                        disabled={readOnly}
                         className="h-11 px-6 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-white shadow-md hover:shadow-lg transition-all border border-zinc-800 active:scale-95"
                       >
                         <Search className="h-4 w-4 mr-2" />
@@ -280,6 +284,7 @@ export function QuotationHeaderForm({
                           }))}
                           placeholder={t('quotation.select', 'Seçiniz')}
                           searchPlaceholder={t('common.search', 'Ara...')}
+                          disabled={readOnly}
                         />
                     </div>
                     <FormMessage className="mt-1.5" />
@@ -311,6 +316,7 @@ export function QuotationHeaderForm({
                             }))}
                             placeholder={t('quotation.header.selectShippingAddress', 'Sevk adresi seçin')}
                             searchPlaceholder={t('common.search', 'Ara...')}
+                            disabled={readOnly}
                           />
                       </div>
                       <FormMessage className="mt-1.5" />
@@ -367,6 +373,7 @@ export function QuotationHeaderForm({
                         }))}
                         placeholder={t('quotation.select', 'Seçiniz')}
                         searchPlaceholder={t('common.search', 'Ara...')}
+                        disabled={readOnly}
                       />
                     </div>
                     <FormMessage className="mt-1" />
@@ -392,6 +399,7 @@ export function QuotationHeaderForm({
                          }))}
                          placeholder={t('quotation.select', 'Seçiniz')}
                          searchPlaceholder={t('common.search', 'Ara...')}
+                         disabled={readOnly}
                        />
                     </div>
                     <FormMessage className="mt-1" />
@@ -432,6 +440,7 @@ export function QuotationHeaderForm({
                          ]}
                          placeholder={t('quotation.select', 'Seçiniz')}
                          searchPlaceholder={t('common.search', 'Ara...')}
+                         disabled={readOnly}
                        />
                     </div>
                     <FormMessage className="mt-1" />
@@ -456,6 +465,7 @@ export function QuotationHeaderForm({
                             {...field}
                             value={field.value ? new Date(field.value).toISOString().split('T')[0] : ''}
                             onChange={(e) => field.onChange(e.target.value)}
+                            disabled={readOnly}
                           />
                         </FormControl>
                       </div>
@@ -479,6 +489,7 @@ export function QuotationHeaderForm({
                             {...field}
                             value={field.value ? new Date(field.value).toISOString().split('T')[0] : ''}
                             onChange={(e) => field.onChange(e.target.value)}
+                            disabled={readOnly}
                           />
                         </FormControl>
                       </div>
@@ -521,7 +532,7 @@ export function QuotationHeaderForm({
                             }))}
                           placeholder={t('quotation.select', 'Seç')}
                           searchPlaceholder={t('common.search', 'Ara...')}
-                          disabled={customerTypeId === undefined || !watchedRepresentativeId}
+                          disabled={readOnly || customerTypeId === undefined || !watchedRepresentativeId}
                         />
                       </div>
                       <FormMessage className="mt-1" />
@@ -543,6 +554,7 @@ export function QuotationHeaderForm({
                           value={field.value || ''}
                           placeholder={t('quotation.header.descriptionPlaceholder', 'Özel koşullar...')}
                           className="min-h-[80px] rounded-xl border-zinc-200 dark:border-zinc-800 bg-white/50 dark:bg-zinc-950/30 resize-none focus-visible:border-pink-500 focus-visible:ring-4 focus-visible:ring-pink-500/20 transition-all text-sm"
+                          disabled={readOnly}
                         />
                       </FormControl>
                       <FormMessage className="mt-1" />
@@ -578,6 +590,7 @@ export function QuotationHeaderForm({
           currentCurrency={watchedCurrency ? (typeof watchedCurrency === 'string' ? Number(watchedCurrency) : watchedCurrency) : undefined}
           quotationId={quotationId}
           quotationOfferNo={quotationOfferNo}
+          readOnly={readOnly}
         />
       )}
 

@@ -54,6 +54,9 @@ export function QuotationDetailPage(): ReactElement {
   const exchangeRatesInitializedRef = useRef(false);
   const formInitializedRef = useRef(false);
   const [activeTab, setActiveTab] = useState('detail');
+  const quotationStatus = Number((quotation as { status?: number; Status?: number })?.status ?? (quotation as { status?: number; Status?: number })?.Status);
+  const isReadOnly = quotationStatus === 2 || quotationStatus === 3;
+  const linesEnabled = !isReadOnly;
 
   const form = useForm<CreateQuotationSchema>({
     resolver: zodResolver(createQuotationSchema),
@@ -217,6 +220,7 @@ export function QuotationDetailPage(): ReactElement {
 
   // Submit İşlemi
   const onSubmit = async (data: CreateQuotationSchema): Promise<void> => {
+    if (isReadOnly) return;
     if (lines.length === 0) {
       toast.error(t('quotation.update.error', 'Teklif Güncellenemedi'), {
         description: t('quotation.lines.required', 'En az 1 satır eklenmelidir'),
@@ -337,6 +341,7 @@ export function QuotationDetailPage(): ReactElement {
 
   const handleFormSubmit = async (e: React.FormEvent): Promise<void> => {
     e.preventDefault();
+    if (isReadOnly) return;
     const isValid = await form.trigger();
     if (!isValid) {
       toast.error(t('quotation.update.error', 'Form Hatalı'), {
@@ -456,6 +461,7 @@ export function QuotationDetailPage(): ReactElement {
                     revisionNo={quotation?.revisionNo}
                     quotationId={quotation?.id}
                     quotationOfferNo={quotation?.offerNo}
+                    readOnly={isReadOnly}
                 />
             </div>
 
@@ -471,6 +477,7 @@ export function QuotationDetailPage(): ReactElement {
                 erpCustomerCode={watchedErpCustomerCode}
                 representativeId={watchedRepresentativeId}
                 quotationId={quotationId}
+                enabled={linesEnabled}
               />
             </div>
 
@@ -494,7 +501,7 @@ export function QuotationDetailPage(): ReactElement {
 
             {/* ACTION BUTTONS */}
             <div className="flex items-center justify-end gap-3 pt-6 border-t border-zinc-200 dark:border-white/10">
-              {quotation?.status === 0 && (
+              {quotation?.status === 0 && !isReadOnly && (
                 <Button 
                   type="button"
                   variant="secondary"

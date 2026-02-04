@@ -132,6 +132,7 @@ interface QuotationLineTableProps {
   erpCustomerCode?: string | null;
   representativeId?: number | null;
   quotationId?: number | null;
+  enabled?: boolean;
 }
 
 export function QuotationLineTable({
@@ -145,7 +146,9 @@ export function QuotationLineTable({
   erpCustomerCode,
   representativeId,
   quotationId,
+  enabled = true,
 }: QuotationLineTableProps): ReactElement {
+  const linesEditable = enabled;
   const { t } = useTranslation();
   const [productDialogOpen, setProductDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -186,6 +189,7 @@ export function QuotationLineTable({
   const isCurrencySelected = currency !== undefined && currency !== null && !Number.isNaN(currency);
 
   const handleAddLine = (): void => {
+    if (!linesEditable) return;
     if ((!customerId && !erpCustomerCode) || !representativeId || !isCurrencySelected) {
       toast.error(t('quotation.error', 'Hata'), {
         description: t('quotation.lines.requiredFieldsMissing', 'Lütfen müşteri, temsilci ve para birimi seçimlerini yapınız.'),
@@ -219,6 +223,7 @@ export function QuotationLineTable({
 
   const handleSaveNewLine = useCallback(
     async (line: QuotationLineFormState): Promise<void> => {
+      if (!linesEditable) return;
       const lineToAdd = { ...line, isEditing: false };
       if (isExistingQuotation && quotationId) {
         try {
@@ -236,11 +241,12 @@ export function QuotationLineTable({
       setAddLineDialogOpen(false);
       setNewLine(null);
     },
-    [isExistingQuotation, quotationId, createMutation, lines, setLines]
+    [isExistingQuotation, quotationId, createMutation, lines, setLines, linesEditable]
   );
 
   const handleSaveMultipleLines = useCallback(
     async (newLines: QuotationLineFormState[]): Promise<void> => {
+      if (!linesEditable) return;
       const linesToAdd = newLines.map((l) => ({ ...l, isEditing: false }));
       if (isExistingQuotation && quotationId) {
         try {
@@ -258,7 +264,7 @@ export function QuotationLineTable({
       setAddLineDialogOpen(false);
       setNewLine(null);
     },
-    [isExistingQuotation, quotationId, createMutation, lines, setLines]
+    [isExistingQuotation, quotationId, createMutation, lines, setLines, linesEditable]
   );
 
   const handleCancelNewLine = (): void => {
@@ -291,6 +297,7 @@ export function QuotationLineTable({
   };
 
   const handleEditLine = (id: string): void => {
+    if (!linesEditable) return;
     const line = lines.find((l) => l.id === id);
     if (!line) return;
 
@@ -381,6 +388,7 @@ export function QuotationLineTable({
   };
 
   const handleDeleteClick = (id: string): void => {
+    if (!linesEditable) return;
     const line = lines.find((l) => l.id === id);
     setLineToDelete(id);
     if (line?.relatedProductKey) {
@@ -392,6 +400,7 @@ export function QuotationLineTable({
   };
 
   const handleDeleteConfirm = async (): Promise<void> => {
+    if (!linesEditable) return;
     if (!lineToDelete) return;
     const lineToDeleteObj = lines.find((line) => line.id === lineToDelete);
     if (!lineToDeleteObj) {
@@ -462,6 +471,7 @@ export function QuotationLineTable({
             </div>
           </div>
           
+          {linesEditable && (
           <Button
             type="button"
             onClick={handleAddLine}
@@ -471,6 +481,7 @@ export function QuotationLineTable({
             <Plus className="h-4 w-4 mr-2" />
             {t('quotation.lines.add', 'Satır Ekle')}
           </Button>
+          )}
         </div>
 
         <div className="p-0">
@@ -498,7 +509,9 @@ export function QuotationLineTable({
                     <TableHead className={cn(styles.tableHead, "text-center min-w-[80px]")}>{t('quotation.lines.discount2', 'İnd.2')}</TableHead>
                     <TableHead className={cn(styles.tableHead, "text-center min-w-[80px]")}>{t('quotation.lines.discount3', 'İnd.3')}</TableHead>
                     <TableHead className={cn(styles.tableHead, "text-right min-w-[120px]")}>{t('quotation.lines.netPrice', 'Tutar')}</TableHead>
+                    {linesEditable && (
                     <TableHead className={cn(styles.tableHead, "text-center w-[100px]")}>{t('quotation.actions', 'İşlem')}</TableHead>
+                    )}
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -584,6 +597,7 @@ export function QuotationLineTable({
                           </div>
                         </TableCell>
 
+                        {linesEditable && (
                         <TableCell className={cn(styles.tableCell, "text-center pr-4")}>
                           <div className="flex items-center justify-center gap-2">
                             <Button
@@ -600,7 +614,6 @@ export function QuotationLineTable({
                                 !isMainStock && isRelatedProduct ? "text-zinc-300" : "text-blue-600"
                               )} />
                             </Button>
-                            
                             <Button
                               type="button"
                               variant="ghost"
@@ -613,6 +626,7 @@ export function QuotationLineTable({
                             </Button>
                           </div>
                         </TableCell>
+                        )}
                       </TableRow>
                     );
                   })}
