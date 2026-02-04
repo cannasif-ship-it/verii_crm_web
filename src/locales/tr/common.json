@@ -77,6 +77,8 @@
     "orders": "Siparişler",
     "campaigns": "Kampanyalar",
     "reports": "Raporlar",
+    "reportBuilder": "Report Builder",
+    "pdfBuilder": "PDF Builder",
     "powerbi": "PowerBI",
     "titleManagement": "Ünvan Yönetimi",
     "shippingAddressManagement": "Sevk Adresi Yönetimi",

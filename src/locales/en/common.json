@@ -83,6 +83,8 @@
     "orders": "Orders",
     "campaigns": "Campaigns",
     "reports": "Reports",
+    "reportBuilder": "Report Builder",
+    "pdfBuilder": "PDF Builder",
     "powerbi": "PowerBI",
     "titleManagement": "Title Management",
     "shippingAddressManagement": "Shipping Address Management",
