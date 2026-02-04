@@ -84,3 +84,15 @@ export interface ReportPreviewResponse {
   columns: string[];
   rows: unknown[][];
 }
+
+export interface PreviewColumnDto {
+  name: string;
+  sqlType?: string;
+  dotNetType?: string;
+  isNullable?: boolean;
+}
+
+export interface PreviewDataDto {
+  columns: PreviewColumnDto[];
+  rows: Record<string, unknown>[];
+}

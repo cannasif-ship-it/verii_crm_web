@@ -1,7 +1,7 @@
 import { api } from '@/shared/api';
-import type { ReportDto, ReportPreviewRequest, ReportPreviewResponse } from '../types';
+import type { ReportDto, ReportPreviewRequest, ReportPreviewResponse, PreviewColumnDto, PreviewDataDto } from '../types';
 
-const BASE = '/api/reports';
+const BASE = '/api/reportbuilder';
 
 export interface ReportCreateUpdateBody {
   name: string;
@@ -67,19 +67,33 @@ export const reportsApi = {
     return toReportDetail(res);
   },
 
-  create(body: ReportCreateUpdateBody): Promise<ReportDto> {
-    return api.post<ReportDto>(BASE, body);
+  async create(body: ReportCreateUpdateBody): Promise<ReportDto> {
+    const res = await api.post<Record<string, unknown>>(BASE, body);
+    return toReportDetail(res);
   },
 
-  update(id: number, body: ReportCreateUpdateBody): Promise<ReportDto> {
-    return api.put<ReportDto>(`${BASE}/${id}`, body);
+  async update(id: number, body: ReportCreateUpdateBody): Promise<ReportDto> {
+    const res = await api.put<Record<string, unknown>>(`${BASE}/${id}`, body);
+    return toReportDetail(res);
   },
 
   remove(id: number): Promise<void> {
     return api.delete<void>(`${BASE}/${id}`);
   },
 
-  preview(payload: ReportPreviewRequest): Promise<ReportPreviewResponse> {
-    return api.post<ReportPreviewResponse>(`${BASE}/preview`, payload);
+  async preview(payload: ReportPreviewRequest): Promise<ReportPreviewResponse> {
+    const res = await api.post<{ data?: PreviewDataDto; Data?: PreviewDataDto }>(`${BASE}/preview`, payload);
+    const payloadData = res?.data ?? res?.Data;
+    const rawColumns = payloadData?.columns ?? [];
+    const columnNames = rawColumns.map(
+      (c: PreviewColumnDto | string) => (typeof c === 'string' ? c : String(c?.name ?? (c as { Name?: string }).Name ?? ''))
+    );
+    const rawRows = payloadData?.rows ?? [];
+    const rows: unknown[][] = Array.isArray(rawRows)
+      ? rawRows.map((row: unknown) =>
+          Array.isArray(row) ? row : columnNames.map((col) => (row as Record<string, unknown>)[col])
+        )
+      : [];
+    return { columns: columnNames, rows };
   },
 };
