@@ -49,6 +49,7 @@ export function ExchangeRateDialog({
   currentCurrency,
   demandId,
   demandOfferNo,
+  readOnly = false,
 }: ExchangeRateDialogProps): ReactElement {
   const { t } = useTranslation();
   const { data: erpRates = [], isLoading } = useExchangeRate();

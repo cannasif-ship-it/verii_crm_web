@@ -1,6 +1,7 @@
 import type { ReactElement } from 'react';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useReportsStore } from '../store';
@@ -9,6 +10,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Loader2, Plus, Search } from 'lucide-react';
 
 export function ReportsListPage(): ReactElement {
+  const { t } = useTranslation('common');
   const navigate = useNavigate();
   const { search, items, loading, error, setSearch, setItems, setLoading, setError } = useReportsStore();
 
@@ -35,7 +37,7 @@ export function ReportsListPage(): ReactElement {
   return (
     <div className="space-y-6 p-6">
       <div className="flex items-center justify-between gap-4">
-        <h1 className="text-2xl font-bold">Raporlar</h1>
+        <h1 className="text-2xl font-bold">{t('sidebar.reportBuilder', 'Report Builder')}</h1>
         <Button onClick={() => navigate('/reports/new')}>
           <Plus className="mr-2 size-4" />
           Yeni Oluştur

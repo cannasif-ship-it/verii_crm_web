@@ -1,7 +1,7 @@
 import { api } from '@/shared/api';
 import type { ConnectionDto, DataSourceCheckResponseDto, Field } from '../types';
 
-const BASE = '/api/reporting';
+const BASE = '/api/reportbuilder';
 
 function normalizeField(raw: Record<string, unknown>): Field {
   return {

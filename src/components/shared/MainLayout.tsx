@@ -63,7 +63,7 @@ export function MainLayout({ navItems }: MainLayoutProps): ReactElement {
       },
 
       {
-        title: 'Report Builder',
+        title: t('sidebar.pdfBuilder', 'PDF Builder'),
         icon: <File01Icon size={iconSize} className="text-amber-500" />,
         children: [
           { title: 'Listele', href: '/report-designer' },
@@ -72,7 +72,7 @@ export function MainLayout({ navItems }: MainLayoutProps): ReactElement {
       },
 
       {
-        title: t('sidebar.reports', 'Raporlar'),
+        title: t('sidebar.reportBuilder', 'Report Builder'),
         icon: <File01Icon size={iconSize} className="text-cyan-500" />,
         children: [
           { title: t('sidebar.reportsList', 'Liste'), href: '/reports' },
