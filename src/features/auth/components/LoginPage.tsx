@@ -89,10 +89,10 @@ export function LoginPage(): React.JSX.Element {
   };
 
   return (
-    <div className="relative w-full h-screen overflow-hidden bg-[#0f0518] text-white font-['Outfit']">
+    <div className="relative w-full h-screen overflow-hidden bg-[#0f0518] text-white font-['Plus_Jakarta_Sans']">
       
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
         input { color-scheme: dark; }
         input:-webkit-autofill,
         input:-webkit-autofill:hover, 
@@ -260,9 +260,9 @@ export function LoginPage(): React.JSX.Element {
                    
                         <FormMessage className="text-red-500 text-xs font-medium animate-in slide-in-from-top-1" />
                       ) : capsLockActive ? (
-                                             <div className="flex items-center gap-1.5 text-red-500 text-xs font-medium animate-in slide-in-from-top-1">
+                        <div className="flex items-center gap-2 text-orange-400 text-xs font-medium animate-in slide-in-from-top-1 bg-orange-400/10 px-3 py-1.5 rounded-lg border border-orange-400/20 w-fit mt-2">
                           <Alert02Icon size={14} />
-                          CAPS LOCK AÇIK
+                          Büyük harf kilidi açık
                         </div>
                       ) : null}
                     </div>

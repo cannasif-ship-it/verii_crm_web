@@ -8,16 +8,40 @@ export const useForgotPassword = () => {
     onSuccess: (response) => {
       if (response.success) {
         const message = response.message || 'Şifre sıfırlama linki e-posta adresinize gönderildi. Lütfen e-postanızı kontrol edin.';
-        toast.success(message);
+        toast.success(message, {
+          style: {
+            background: '#140a1e', // Sayfanın koyu mor teması
+            borderColor: 'rgba(236, 72, 153, 0.2)', // Pembe border (sayfa aksanı)
+            color: '#fff',
+            backdropFilter: 'blur(10px)'
+          },
+          className: 'text-white border-pink-500/20 shadow-xl shadow-pink-500/10'
+        });
       } else {
-        const errorMessage = response.message || response.exceptionMessage || 'Şifre sıfırlama isteği gönderilemedi';
-        toast.error(errorMessage);
+        const errorMessage = response.message || 'Bu e-posta adresi sistemde kayıtlı değil.';
+        toast.error(errorMessage, {
+          style: {
+            background: '#140a1e',
+            borderColor: 'rgba(239, 68, 68, 0.2)',
+            color: '#fff',
+            backdropFilter: 'blur(10px)'
+          },
+          className: 'text-white border-red-500/20 shadow-xl shadow-red-500/10'
+        });
       }
     },
     onError: (error: Error) => {
       console.error('Forgot password error:', error);
-      const errorMessage = error.message || 'Şifre sıfırlama isteği gönderilirken bir hata oluştu';
-      toast.error(errorMessage);
+      const errorMessage = 'Bu e-posta adresi sistemde kayıtlı değil.';
+      toast.error(errorMessage, {
+        style: {
+          background: '#140a1e',
+          borderColor: 'rgba(239, 68, 68, 0.2)',
+          color: '#fff',
+          backdropFilter: 'blur(10px)'
+        },
+        className: 'text-white border-red-500/20 shadow-xl shadow-red-500/10'
+      });
     },
   });
 };
