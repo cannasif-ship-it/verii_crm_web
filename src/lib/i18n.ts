@@ -247,6 +247,8 @@ import esDashboard from '../locales/es/dashboard.json';
 import arDashboard from '../locales/ar/dashboard.json';
 import trAuth from '../locales/tr/auth.json';
 import enAuth from '../locales/en/auth.json';
+import trMailSettings from '../locales/tr/mail-settings.json';
+import enMailSettings from '../locales/en/mail-settings.json';
 import deAuth from '../locales/de/auth.json';
 import frAuth from '../locales/fr/auth.json';
 import itAuth from '../locales/it/auth.json';
@@ -297,6 +299,7 @@ i18n
           notification: trNotification,
           dashboard: trDashboard,
           auth: trAuth.auth,
+          mailSettings: trMailSettings,
         } as unknown as typeof trCommon & { 
           customerTypeManagement: typeof trCustomerTypeManagement; 
           customerManagement: typeof trCustomerManagement; 
@@ -370,6 +373,7 @@ i18n
           notification: enNotification,
           dashboard: enDashboard,
           auth: enAuth.auth,
+          mailSettings: enMailSettings,
         } as unknown as typeof enCommon & {  
           customerTypeManagement: typeof enCustomerTypeManagement; 
           customerManagement: typeof enCustomerManagement; 
@@ -443,6 +447,7 @@ i18n
           notification: deNotification,
           dashboard: deDashboard,
           auth: deAuth.auth,
+          mailSettings: enMailSettings,
         },
       },
       fr: {
@@ -480,6 +485,7 @@ i18n
           notification: frNotification,
           dashboard: frDashboard,
           auth: frAuth.auth,
+          mailSettings: enMailSettings,
           ...frApprovalFlowManagement,
           ...frApprovalRoleManagement,
           ...frApprovalUserRoleManagement,
@@ -520,6 +526,7 @@ i18n
           notification: itNotification,
           dashboard: itDashboard,
           auth: itAuth.auth,
+          mailSettings: enMailSettings,
           ...itApprovalFlowManagement,
           ...itApprovalRoleManagement,
           ...itApprovalUserRoleManagement,
@@ -600,6 +607,7 @@ i18n
           notification: arNotification,
           dashboard: arDashboard,
           auth: arAuth.auth,
+          mailSettings: enMailSettings,
           ...arApprovalFlowManagement,
           ...arApprovalRoleManagement,
           ...arApprovalUserRoleManagement,

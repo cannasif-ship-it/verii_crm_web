@@ -31,7 +31,8 @@
     "start": "Başla",
     "actions": "İşlemler",
     "processing": "İşleniyor...",
-    "selectDate": "Tarih seçin"
+    "selectDate": "Tarih seçin",
+    "UnexpectedError": "Beklenmeyen bir hata oluştu"
   },
   "auth": {
     "login": {
@@ -92,6 +93,7 @@
     "contactManagement": "Müşteri İletişim Yönetimi",
     "paymentTypeManagement": "Ödeme Tipi Yönetimi",
     "userDiscountLimitManagement": "Kullanıcı İskonto Limiti Yönetimi",
+    "mailSettings": "Mail Ayarları",
     "productPricingGroupByManagement": "Ürün Fiyatlandırma Grubu Yönetimi",
     "quotationLineManagement": "Teklif Satırı Yönetimi",
     "quotationCreateWizard": "Yeni Teklif Oluştur",

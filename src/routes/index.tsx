@@ -6,6 +6,7 @@ import { LoginPage, ResetPasswordPage, ForgotPasswordPage } from '@/features/aut
 import { DashboardPage } from '@/features/dashboard';
 import { TitleManagementPage } from '@/features/title-management';
 import { UserManagementPage } from '@/features/user-management';
+import { MailSettingsPage } from '@/features/mail-settings';
 import { CountryManagementPage } from '@/features/country-management';
 import { CityManagementPage } from '@/features/city-management';
 import { DistrictManagementPage } from '@/features/district-management';
@@ -124,6 +125,10 @@ export const router = createBrowserRouter([
       {
         path: 'user-discount-limit-management',
         element: <UserDiscountLimitManagementPage />,
+      },
+      {
+        path: 'users/mail-settings',
+        element: <MailSettingsPage />,
       },
       {
         path: 'product-pricing-group-by-management',

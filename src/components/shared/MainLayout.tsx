@@ -178,6 +178,7 @@ export function MainLayout({ navItems }: MainLayoutProps): ReactElement {
         children: [
           { title: t('sidebar.userManagement', 'Kullanıcı Yönetimi'), href: '/user-management' },
           { title: t('sidebar.userDiscountLimitManagement', 'Kullanıcı İskonto Limit Yönetimi'), href: '/user-discount-limit-management' },
+          { title: t('sidebar.mailSettings', 'Mail Ayarları'), href: '/users/mail-settings' },
         ]
       },
 

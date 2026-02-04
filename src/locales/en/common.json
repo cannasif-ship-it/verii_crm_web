@@ -31,7 +31,8 @@
     "start": "Start",
     "actions": "Actions",
     "processing": "Processing...",
-    "selectDate": "Select date"
+    "selectDate": "Select date",
+    "UnexpectedError": "An unexpected error occurred"
   },
   "auth": {
     "login": {
@@ -98,6 +99,7 @@
     "contactManagement": "Customer Contact Management",
     "paymentTypeManagement": "Payment Type Management",
     "userDiscountLimitManagement": "User Discount Limit Management",
+    "mailSettings": "Mail Settings",
     "productPricingGroupByManagement": "Product Pricing Group By Management",
     "quotationLineManagement": "Quotation Line Management",
     "quotationCreateWizard": "Create New Quotation",
