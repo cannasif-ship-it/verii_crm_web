@@ -36,7 +36,7 @@ export function MailSettingsForm({
   const { t } = useTranslation();
 
   const form = useForm<SmtpSettingsFormSchema>({
-    resolver: zodResolver(smtpSettingsFormSchema),
+    resolver: zodResolver(smtpSettingsFormSchema) as any,
     defaultValues: {
       host: '',
       port: 587,
@@ -80,7 +80,7 @@ export function MailSettingsForm({
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
+      <form onSubmit={form.handleSubmit(handleSubmit as any)} className="space-y-6">
         <Card>
           <CardHeader>
             <CardTitle>{t('mailSettings.PageTitle', 'Mail Ayarları')}</CardTitle>
@@ -90,7 +90,7 @@ export function MailSettingsForm({
           </CardHeader>
           <CardContent className="space-y-4">
             <FormField
-              control={form.control}
+              control={form.control as any}
               name="host"
               render={({ field }) => (
                 <FormItem>
@@ -103,7 +103,7 @@ export function MailSettingsForm({
               )}
             />
             <FormField
-              control={form.control}
+              control={form.control as any}
               name="port"
               render={({ field }) => (
                 <FormItem>
@@ -122,7 +122,7 @@ export function MailSettingsForm({
               )}
             />
             <FormField
-              control={form.control}
+              control={form.control as any}
               name="enableSsl"
               render={({ field }) => (
                 <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
@@ -138,7 +138,7 @@ export function MailSettingsForm({
               )}
             />
             <FormField
-              control={form.control}
+              control={form.control as any}
               name="username"
               render={({ field }) => (
                 <FormItem>
@@ -151,7 +151,7 @@ export function MailSettingsForm({
               )}
             />
             <FormField
-              control={form.control}
+              control={form.control as any}
               name="password"
               render={({ field }) => (
                 <FormItem>
@@ -168,7 +168,7 @@ export function MailSettingsForm({
               )}
             />
             <FormField
-              control={form.control}
+              control={form.control as any}
               name="fromEmail"
               render={({ field }) => (
                 <FormItem>
@@ -181,7 +181,7 @@ export function MailSettingsForm({
               )}
             />
             <FormField
-              control={form.control}
+              control={form.control as any}
               name="fromName"
               render={({ field }) => (
                 <FormItem>
@@ -194,7 +194,7 @@ export function MailSettingsForm({
               )}
             />
             <FormField
-              control={form.control}
+              control={form.control as any}
               name="timeout"
               render={({ field }) => (
                 <FormItem>
