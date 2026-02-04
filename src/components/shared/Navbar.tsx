@@ -6,6 +6,7 @@ import { useAuthStore } from '@/stores/auth-store';
 import { useUIStore } from '@/stores/ui-store';
 import { NotificationIcon } from '@/features/notification/components/NotificationIcon';
 import { UserDetailDialog } from '@/features/user-detail-management/components/UserDetailDialog';
+import { UserProfileModal } from '@/features/user-detail-management/components/UserProfileModal';
 import { useUserDetailByUserId } from '@/features/user-detail-management/hooks/useUserDetailByUserId';
 import { getImageUrl } from '@/features/user-detail-management/utils/image-url';
 import { cn } from '@/lib/utils';
@@ -17,6 +18,7 @@ export function Navbar(): ReactElement {
   const { user } = useAuthStore();
   const { toggleSidebar, searchQuery, setSearchQuery, setSidebarOpen } = useUIStore(); 
   const [userDetailDialogOpen, setUserDetailDialogOpen] = useState(false);
+  const [userProfileModalOpen, setUserProfileModalOpen] = useState(false);
   const { data: userDetail } = useUserDetailByUserId(user?.id || 0);
 
   const displayName = user?.name || user?.email || 'Kullanıcı';
@@ -108,7 +110,7 @@ export function Navbar(): ReactElement {
 
           {user && (
             <div 
-              onClick={() => setUserDetailDialogOpen(true)} 
+              onClick={() => setUserProfileModalOpen(true)} 
               className="flex items-center gap-3 cursor-pointer group shrink-0"
             >
               <div className="text-right hidden lg:block">
@@ -145,6 +147,15 @@ export function Navbar(): ReactElement {
       <UserDetailDialog 
         open={userDetailDialogOpen} 
         onOpenChange={setUserDetailDialogOpen} 
+      />
+
+      <UserProfileModal 
+        open={userProfileModalOpen} 
+        onOpenChange={setUserProfileModalOpen}
+        onOpenProfileDetails={() => {
+          setUserProfileModalOpen(false);
+          setUserDetailDialogOpen(true);
+        }}
       />
     </>
   );

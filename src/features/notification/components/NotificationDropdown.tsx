@@ -151,7 +151,7 @@ export function NotificationDropdown({ children }: NotificationDropdownProps): R
 
         <div
           ref={scrollContainerRef}
-          className="max-h-64 overflow-y-auto custom-scrollbar"
+          className="max-h-64 overflow-y-auto custom-scrollbar-lg"
         >
           {isLoadingInitial ? (
             <div className="p-8 text-center text-xs text-slate-500">

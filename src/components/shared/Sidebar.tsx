@@ -1,11 +1,8 @@
 import { type ReactElement, useState, useEffect, useMemo, useCallback, useRef } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
+import { Link, useLocation } from 'react-router-dom';
 import { useUIStore } from '@/stores/ui-store';
-import { useAuthStore } from '@/stores/auth-store';
 import { cn } from '@/lib/utils';
-import { toast } from 'sonner';
-import { ChevronDown, ChevronRight, LogOut, X } from 'lucide-react'; 
+import { ChevronDown, ChevronRight, X } from 'lucide-react'; 
 import Logo from '../../../public/v3logo.png';
 import VeriiLogo from '../../../public/veriicrmlogo.png';
 
@@ -287,10 +284,7 @@ function NavItemComponent({
 }
 
 export function Sidebar({ items }: SidebarProps): ReactElement {
-  const { t } = useTranslation();
   const { isSidebarOpen, searchQuery } = useUIStore(); 
-  const { logout } = useAuthStore();
-  const navigate = useNavigate();
   const [expandedItemKey, setExpandedItemKey] = useState<string | null>(null);
   const [isManualClick, setIsManualClick] = useState(false);
   
@@ -361,7 +355,7 @@ export function Sidebar({ items }: SidebarProps): ReactElement {
             )}
         </div>
 
-        <nav className="flex-1 min-h-0 py-6 px-3 space-y-1 overflow-y-auto custom-scrollbar">
+        <nav className="flex-1 min-h-0 pt-12 pb-6 px-3 space-y-2 overflow-y-auto custom-scrollbar">
           {items.map((item, index) => (
             <NavItemComponent
               key={item.href || item.title || index}
@@ -373,37 +367,6 @@ export function Sidebar({ items }: SidebarProps): ReactElement {
             />
           ))}
         </nav>
-
-        <div className="p-3 border-t border-slate-100 dark:border-white/5 shrink-0 bg-white/80 dark:bg-[#130822]/95 backdrop-blur-xl mt-auto">
-          <button
-            type="button"
-            onClick={() => {
-              logout();
-              toast.success(t('auth.logout'));
-              navigate('/auth/login');
-            }}
-            className={cn(
-              "w-full flex items-center gap-3 px-2 py-2 rounded-xl transition-colors group",
-              "hover:bg-slate-100 dark:hover:bg-white/5",
-              !isSidebarOpen && "justify-center"
-            )}
-          >
-            <div className="w-9 h-9 rounded-lg flex items-center justify-center transition-colors shrink-0 bg-slate-100 text-slate-500 group-hover:bg-red-50 group-hover:text-red-600 dark:bg-slate-800 dark:text-slate-400 dark:group-hover:text-red-400 dark:group-hover:bg-slate-800">
-               <LogOut size={18} />
-            </div>
-
-            {isSidebarOpen && (
-               <div className="text-left overflow-hidden">
-                 <span className="text-sm font-medium block truncate text-slate-700 group-hover:text-red-600 dark:text-slate-300 dark:group-hover:text-white">
-                   {t('sidebar.logout', 'Çıkış Yap')}
-                 </span>
-                 <span className="text-[10px] truncate block text-slate-500 dark:text-slate-600">
-                   {t('auth.endSession', 'Oturumu sonlandır')}
-                 </span>
-               </div>
-            )}
-          </button>
-        </div>
       </aside>
     </>
   );
