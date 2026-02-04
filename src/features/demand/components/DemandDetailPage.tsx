@@ -54,6 +54,9 @@ export function DemandDetailPage(): ReactElement {
   const exchangeRatesInitializedRef = useRef(false);
   const formInitializedRef = useRef(false);
   const [activeTab, setActiveTab] = useState('detail');
+  const demandStatus = Number((demand as { status?: number; Status?: number })?.status ?? (demand as { status?: number; Status?: number })?.Status);
+  const isReadOnly = demandStatus === 2 || demandStatus === 3;
+  const linesEnabled = !isReadOnly;
 
   const form = useForm<CreateDemandSchema>({
     resolver: zodResolver(createDemandSchema),
@@ -211,6 +214,7 @@ export function DemandDetailPage(): ReactElement {
 
   // Submit İşlemi
   const onSubmit = async (data: CreateDemandSchema): Promise<void> => {
+    if (isReadOnly) return;
     if (lines.length === 0) {
       toast.error(t('demand.update.error', 'Teklif Güncellenemedi'), {
         description: t('demand.lines.required', 'En az 1 satır eklenmelidir'),
@@ -331,6 +335,7 @@ export function DemandDetailPage(): ReactElement {
 
   const handleFormSubmit = async (e: React.FormEvent): Promise<void> => {
     e.preventDefault();
+    if (isReadOnly) return;
     const isValid = await form.trigger();
     if (!isValid) {
       toast.error(t('demand.update.error', 'Form Hatalı'), {
@@ -450,6 +455,7 @@ export function DemandDetailPage(): ReactElement {
                     revisionNo={demand?.revisionNo}
                     demandId={demandId}
                     demandOfferNo={demand?.offerNo}
+                    readOnly={isReadOnly}
                 />
             </div>
 
@@ -465,6 +471,7 @@ export function DemandDetailPage(): ReactElement {
                 erpCustomerCode={watchedErpCustomerCode}
                 representativeId={watchedRepresentativeId}
                 demandId={demandId}
+                enabled={linesEnabled}
               />
             </div>
 
@@ -488,7 +495,7 @@ export function DemandDetailPage(): ReactElement {
 
             {/* ACTION BUTTONS */}
             <div className="flex items-center justify-end gap-3 pt-6 border-t border-zinc-200 dark:border-white/10">
-              {demand?.status === 0 && (
+              {demand?.status === 0 && !isReadOnly && (
                 <Button 
                   type="button"
                   variant="secondary"

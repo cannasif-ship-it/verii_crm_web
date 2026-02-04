@@ -28,6 +28,7 @@ interface ExchangeRateDialogProps {
   currentCurrency?: number;
   demandId?: number | null;
   demandOfferNo?: string | null;
+  readOnly?: boolean;
 }
 
 function parseRateId(id: string): number {
@@ -114,6 +115,7 @@ export function ExchangeRateDialog({
   }, [localRates, demandId, demandOfferNo]);
 
   const handleSave = async (): Promise<void> => {
+    if (readOnly) return;
     if (isUpdateMode) {
       try {
         await updateMutation.mutateAsync(mapToUpdateDtos());
@@ -310,7 +312,7 @@ export function ExchangeRateDialog({
           <Button
             type="button"
             onClick={() => void handleSave()}
-            disabled={isLoading || isSaving}
+            disabled={readOnly || isLoading || isSaving}
             className="rounded-lg bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white shadow-md hover:shadow-lg transition-all border-0"
           >
             {isSaving ? (

@@ -57,6 +57,7 @@ interface DemandHeaderFormProps {
   revisionNo?: string | null;
   demandId?: number | null;
   demandOfferNo?: string | null;
+  readOnly?: boolean;
 }
 
 export function DemandHeaderForm({
@@ -68,6 +69,7 @@ export function DemandHeaderForm({
   revisionNo,
   demandId,
   demandOfferNo,
+  readOnly = false,
 }: DemandHeaderFormProps = {}): ReactElement {
   const { t } = useTranslation();
   const form = useFormContext<CreateDemandSchema>();
@@ -249,7 +251,8 @@ export function DemandHeaderForm({
                             value={customerDisplayValue}
                             placeholder={t('demand.header.selectCustomer', 'Müşteri seçiniz...')}
                             readOnly
-                            onClick={() => setCustomerSelectDialogOpen(true)}
+                            onClick={() => !readOnly && setCustomerSelectDialogOpen(true)}
+                            disabled={readOnly}
                           />
                         </FormControl>
                       </div>
@@ -281,6 +284,7 @@ export function DemandHeaderForm({
                     <Select
                       onValueChange={(value) => field.onChange(value ? Number(value) : null)}
                       value={field.value?.toString() || ''}
+                      disabled={readOnly}
                     >
                       <FormControl>
                         <div className="relative">
@@ -382,6 +386,7 @@ export function DemandHeaderForm({
                     <Select
                       onValueChange={(value) => handleCurrencyChange(value)}
                       value={field.value ? String(field.value) : ''}
+                      disabled={readOnly}
                     >
                       <FormControl>
                         <div className="relative">
@@ -454,7 +459,7 @@ export function DemandHeaderForm({
                     <FormLabel className={styles.label}>
                       Teklif Tipi <span className="text-pink-500 ml-0.5">*</span>
                     </FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value || ''}>
+                    <Select onValueChange={field.onChange} value={field.value || ''} disabled={readOnly}>
                       <FormControl>
                          <div className="relative">
                             <div className={styles.iconWrapper}><Layers className="h-4 w-4" /></div>
@@ -511,6 +516,7 @@ export function DemandHeaderForm({
                             {...field}
                             value={field.value ? new Date(field.value).toISOString().split('T')[0] : ''}
                             onChange={(e) => field.onChange(e.target.value)}
+                            disabled={readOnly}
                           />
                         </FormControl>
                       </div>
@@ -543,7 +549,7 @@ export function DemandHeaderForm({
                       <Select
                         onValueChange={(value) => field.onChange(value ? Number(value) : null)}
                         value={field.value?.toString() || ''}
-                        disabled={customerTypeId === undefined || !watchedRepresentativeId}
+                        disabled={readOnly || customerTypeId === undefined || !watchedRepresentativeId}
                       >
                         <FormControl>
                           <div className="relative">
@@ -584,6 +590,7 @@ export function DemandHeaderForm({
                           value={field.value || ''}
                           placeholder={t('demand.header.descriptionPlaceholder', 'Özel koşullar...')}
                           className="min-h-[80px] rounded-xl border-zinc-200 dark:border-zinc-800 bg-white/50 dark:bg-zinc-950/30 resize-none focus-visible:border-pink-500 focus-visible:ring-4 focus-visible:ring-pink-500/20 transition-all text-sm"
+                          disabled={readOnly}
                         />
                       </FormControl>
                       <FormMessage className="mt-1" />
@@ -619,6 +626,7 @@ export function DemandHeaderForm({
           currentCurrency={watchedCurrency ? (typeof watchedCurrency === 'string' ? Number(watchedCurrency) : watchedCurrency) : undefined}
           demandId={demandId}
           demandOfferNo={demandOfferNo}
+          readOnly={readOnly}
         />
       )}
 

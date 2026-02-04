@@ -132,6 +132,7 @@ interface DemandLineTableProps {
   erpCustomerCode?: string | null;
   representativeId?: number | null;
   demandId?: number | null;
+  enabled?: boolean;
 }
 
 export function DemandLineTable({
@@ -145,7 +146,9 @@ export function DemandLineTable({
   erpCustomerCode,
   representativeId,
   demandId,
+  enabled = true,
 }: DemandLineTableProps): ReactElement {
+  const linesEditable = enabled;
   const { t } = useTranslation();
   const [productDialogOpen, setProductDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -184,6 +187,7 @@ export function DemandLineTable({
   const isCurrencySelected = currency !== undefined && currency !== null && !Number.isNaN(currency);
 
   const handleAddLine = (): void => {
+    if (!linesEditable) return;
     if ((!customerId && !erpCustomerCode) || !representativeId || !isCurrencySelected) {
       toast.error(t('demand.error', 'Hata'), {
         description: t('demand.lines.requiredFieldsMissing', 'Lütfen müşteri, temsilci ve para birimi seçimlerini yapınız.'),
@@ -234,11 +238,12 @@ export function DemandLineTable({
       setAddLineDialogOpen(false);
       setNewLine(null);
     },
-    [isExistingDemand, demandId, createMutation, lines, setLines]
+    [isExistingDemand, demandId, createMutation, lines, setLines, linesEditable]
   );
 
   const handleSaveMultipleLines = useCallback(
     async (newLines: DemandLineFormState[]): Promise<void> => {
+      if (!linesEditable) return;
       const linesToAdd = newLines.map((l) => ({ ...l, isEditing: false }));
       if (isExistingDemand && demandId) {
         try {
@@ -256,7 +261,7 @@ export function DemandLineTable({
       setAddLineDialogOpen(false);
       setNewLine(null);
     },
-    [isExistingDemand, demandId, createMutation, lines, setLines]
+    [isExistingDemand, demandId, createMutation, lines, setLines, linesEditable]
   );
 
   const handleCancelNewLine = (): void => {
@@ -289,6 +294,7 @@ export function DemandLineTable({
   };
 
   const handleEditLine = (id: string): void => {
+    if (!linesEditable) return;
     const line = lines.find((l) => l.id === id);
     if (!line) return;
 
@@ -379,6 +385,7 @@ export function DemandLineTable({
   };
 
   const handleDeleteClick = (id: string): void => {
+    if (!linesEditable) return;
     const line = lines.find((l) => l.id === id);
     setLineToDelete(id);
     if (line?.relatedProductKey) {
@@ -390,6 +397,7 @@ export function DemandLineTable({
   };
 
   const handleDeleteConfirm = async (): Promise<void> => {
+    if (!linesEditable) return;
     if (!lineToDelete) return;
     const lineToDeleteObj = lines.find((line) => line.id === lineToDelete);
     if (!lineToDeleteObj) {
@@ -460,6 +468,7 @@ export function DemandLineTable({
             </div>
           </div>
           
+          {linesEditable && (
           <Button 
             onClick={handleAddLine} 
             size="sm"
@@ -468,6 +477,7 @@ export function DemandLineTable({
             <Plus className="h-4 w-4 mr-2" />
             {t('demand.lines.add', 'Satır Ekle')}
           </Button>
+          )}
         </div>
 
         <div className="p-0">
@@ -495,7 +505,9 @@ export function DemandLineTable({
                     <TableHead className={cn(styles.tableHead, "text-center min-w-[80px]")}>{t('demand.lines.discount2', 'İnd.2')}</TableHead>
                     <TableHead className={cn(styles.tableHead, "text-center min-w-[80px]")}>{t('demand.lines.discount3', 'İnd.3')}</TableHead>
                     <TableHead className={cn(styles.tableHead, "text-right min-w-[120px]")}>{t('demand.lines.netPrice', 'Tutar')}</TableHead>
+                    {!linesEditable && (
                     <TableHead className={cn(styles.tableHead, "text-center w-[100px]")}>{t('demand.actions', 'İşlem')}</TableHead>
+                    )}
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -581,6 +593,7 @@ export function DemandLineTable({
                           </div>
                         </TableCell>
 
+                        {linesEditable && (
                         <TableCell className={cn(styles.tableCell, "text-center pr-4")}>
                           <div className="flex items-center justify-center gap-2">
                             <Button
@@ -596,7 +609,6 @@ export function DemandLineTable({
                                 !isMainStock && isRelatedProduct ? "text-zinc-300" : "text-blue-600"
                               )} />
                             </Button>
-                            
                             <Button
                               variant="ghost"
                               size="icon"
@@ -608,6 +620,7 @@ export function DemandLineTable({
                             </Button>
                           </div>
                         </TableCell>
+                        )}
                       </TableRow>
                     );
                   })}
