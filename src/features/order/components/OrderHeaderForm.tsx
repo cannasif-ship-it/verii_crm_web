@@ -51,6 +51,7 @@ interface OrderHeaderFormProps {
   revisionNo?: string | null;
   orderId?: number | null;
   orderOfferNo?: string | null;
+  readOnly?: boolean;
 }
 
 export function OrderHeaderForm({
@@ -62,6 +63,7 @@ export function OrderHeaderForm({
   revisionNo,
   orderId,
   orderOfferNo,
+  readOnly = false,
 }: OrderHeaderFormProps = {}): ReactElement {
   const { t } = useTranslation();
   const form = useFormContext<CreateOrderSchema>();
@@ -243,13 +245,15 @@ export function OrderHeaderForm({
                             value={customerDisplayValue}
                             placeholder={t('order.header.selectCustomer', 'Müşteri seçiniz...')}
                             readOnly
-                            onClick={() => setCustomerSelectDialogOpen(true)}
+                            onClick={() => !readOnly && setCustomerSelectDialogOpen(true)}
+                            disabled={readOnly}
                           />
                         </FormControl>
                       </div>
                       <Button
                         type="button"
                         onClick={() => setCustomerSelectDialogOpen(true)}
+                        disabled={readOnly}
                         className="h-11 px-6 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-white shadow-md hover:shadow-lg transition-all border border-zinc-800 active:scale-95"
                       >
                         <Search className="h-4 w-4 mr-2" />
@@ -315,6 +319,7 @@ export function OrderHeaderForm({
                            }))}
                            placeholder={t('order.header.selectShippingAddress', 'Sevk adresi seçin')}
                            searchPlaceholder={t('common.search', 'Ara...')}
+                           disabled={readOnly}
                          />
                       </div>
                       <FormMessage className="mt-1.5" />
@@ -375,6 +380,7 @@ export function OrderHeaderForm({
                         }))}
                         placeholder={t('order.select', 'Seçiniz')}
                         searchPlaceholder={t('common.search', 'Ara...')}
+                        disabled={readOnly}
                       />
                     </div>
                     <FormMessage className="mt-1" />
@@ -400,6 +406,7 @@ export function OrderHeaderForm({
                          })) || []}
                          placeholder={t('order.select', 'Seçiniz')}
                          searchPlaceholder={t('common.search', 'Ara...')}
+                         disabled={readOnly}
                        />
                     </div>
                     <FormMessage className="mt-1" />
@@ -440,6 +447,7 @@ export function OrderHeaderForm({
                          ]}
                          placeholder="Seçiniz"
                          searchPlaceholder={t('common.search', 'Ara...')}
+                         disabled={readOnly}
                        />
                     </div>
                     <FormMessage className="mt-1" />
@@ -485,6 +493,7 @@ export function OrderHeaderForm({
                             {...field}
                             value={field.value ? new Date(field.value).toISOString().split('T')[0] : ''}
                             onChange={(e) => field.onChange(e.target.value)}
+                            disabled={readOnly}
                           />
                         </FormControl>
                       </div>
@@ -526,7 +535,7 @@ export function OrderHeaderForm({
                               value: d.id.toString(),
                               label: d.serialPrefix || ''
                             }))}
-                          disabled={customerTypeId === undefined || !watchedRepresentativeId}
+                          disabled={readOnly || customerTypeId === undefined || !watchedRepresentativeId}
                           placeholder={t('order.select', 'Seç')}
                           searchPlaceholder={t('common.search', 'Ara...')}
                         />
@@ -550,6 +559,7 @@ export function OrderHeaderForm({
                           value={field.value || ''}
                           placeholder={t('order.header.descriptionPlaceholder', 'Özel koşullar...')}
                           className="min-h-[80px] rounded-xl border-zinc-200 dark:border-zinc-800 bg-white/50 dark:bg-zinc-950/30 resize-none focus-visible:border-pink-500 focus-visible:ring-4 focus-visible:ring-pink-500/20 transition-all text-sm"
+                          disabled={readOnly}
                         />
                       </FormControl>
                       <FormMessage className="mt-1" />
@@ -585,6 +595,7 @@ export function OrderHeaderForm({
           currentCurrency={watchedCurrency ? (typeof watchedCurrency === 'string' ? Number(watchedCurrency) : watchedCurrency) : undefined}
           orderId={orderId}
           orderOfferNo={orderOfferNo}
+          readOnly={readOnly}
         />
       )}
 

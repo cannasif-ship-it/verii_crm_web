@@ -54,6 +54,9 @@ export function OrderDetailPage(): ReactElement {
   const exchangeRatesInitializedRef = useRef(false);
   const formInitializedRef = useRef(false);
   const [activeTab, setActiveTab] = useState('detail');
+  const orderStatus = Number((order as { status?: number; Status?: number })?.status ?? (order as { status?: number; Status?: number })?.Status);
+  const isReadOnly = orderStatus === 2 || orderStatus === 3;
+  const linesEnabled = !isReadOnly;
 
   const form = useForm<CreateOrderSchema>({
     resolver: zodResolver(createOrderSchema),
@@ -211,6 +214,7 @@ export function OrderDetailPage(): ReactElement {
 
   // Submit İşlemi
   const onSubmit = async (data: CreateOrderSchema): Promise<void> => {
+    if (isReadOnly) return;
     if (lines.length === 0) {
       toast.error(t('order.update.error', 'Sipariş Güncellenemedi'), {
         description: t('order.lines.required', 'En az 1 satır eklenmelidir'),
@@ -450,6 +454,7 @@ export function OrderDetailPage(): ReactElement {
                     revisionNo={order?.revisionNo}
                     orderId={orderId}
                     orderOfferNo={order?.offerNo}
+                    readOnly={isReadOnly}
                 />
             </div>
 
@@ -465,6 +470,7 @@ export function OrderDetailPage(): ReactElement {
                 erpCustomerCode={watchedErpCustomerCode}
                 representativeId={watchedRepresentativeId}
                 orderId={orderId}
+                enabled={linesEnabled}
               />
             </div>
 
@@ -488,7 +494,7 @@ export function OrderDetailPage(): ReactElement {
 
             {/* ACTION BUTTONS */}
             <div className="flex items-center justify-end gap-3 pt-6 border-t border-zinc-200 dark:border-white/10">
-              {order?.status === 0 && (
+              {order?.status === 0 && !isReadOnly && (
                 <Button 
                   type="button"
                   variant="secondary"

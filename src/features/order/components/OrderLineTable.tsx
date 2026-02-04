@@ -132,6 +132,7 @@ interface OrderLineTableProps {
   erpCustomerCode?: string | null;
   representativeId?: number | null;
   orderId?: number | null;
+  enabled?: boolean;
 }
 
 export function OrderLineTable({
@@ -145,7 +146,9 @@ export function OrderLineTable({
   erpCustomerCode,
   representativeId,
   orderId,
+  enabled = true,
 }: OrderLineTableProps): ReactElement {
+  const linesEditable = enabled;
   const { t } = useTranslation();
   const [productDialogOpen, setProductDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -184,6 +187,7 @@ export function OrderLineTable({
   const isCurrencySelected = currency !== undefined && currency !== null && !Number.isNaN(currency);
 
   const handleAddLine = (): void => {
+    if (!linesEditable) return;
     if ((!customerId && !erpCustomerCode) || !representativeId || !isCurrencySelected) {
       toast.error(t('order.error', 'Hata'), {
         description: t('order.lines.requiredFieldsMissing', 'Lütfen müşteri, temsilci ve para birimi seçimlerini yapınız.'),
@@ -234,11 +238,12 @@ export function OrderLineTable({
       setAddLineDialogOpen(false);
       setNewLine(null);
     },
-    [isExistingOrder, orderId, createMutation, lines, setLines]
+    [isExistingOrder, orderId, createMutation, lines, setLines, linesEditable]
   );
 
   const handleSaveMultipleLines = useCallback(
     async (newLines: OrderLineFormState[]): Promise<void> => {
+      if (!linesEditable) return;
       const linesToAdd = newLines.map((l) => ({ ...l, isEditing: false }));
       if (isExistingOrder && orderId) {
         try {
@@ -256,7 +261,7 @@ export function OrderLineTable({
       setAddLineDialogOpen(false);
       setNewLine(null);
     },
-    [isExistingOrder, orderId, createMutation, lines, setLines]
+    [isExistingOrder, orderId, createMutation, lines, setLines, linesEditable]
   );
 
   const handleCancelNewLine = (): void => {
@@ -344,6 +349,7 @@ export function OrderLineTable({
     updatedLine: OrderLineFormState,
     relatedLinesToUpdate?: OrderLineFormState[]
   ): Promise<void> => {
+    if (!linesEditable) return;
     const originalLine = lines.find((l) => l.id === updatedLine.id);
     if (!originalLine) {
       setEditLineDialogOpen(false);
@@ -390,6 +396,7 @@ export function OrderLineTable({
   };
 
   const handleDeleteConfirm = async (): Promise<void> => {
+    if (!linesEditable) return;
     if (!lineToDelete) return;
     const lineToDeleteObj = lines.find((line) => line.id === lineToDelete);
     if (!lineToDeleteObj) {
@@ -460,6 +467,7 @@ export function OrderLineTable({
             </div>
           </div>
           
+          {linesEditable && (
           <Button 
             onClick={handleAddLine} 
             size="sm"
@@ -468,6 +476,7 @@ export function OrderLineTable({
             <Plus className="h-4 w-4 mr-2" />
             {t('order.lines.add', 'Satır Ekle')}
           </Button>
+          )}
         </div>
 
         <div className="p-0">
@@ -495,7 +504,9 @@ export function OrderLineTable({
                     <TableHead className={cn(styles.tableHead, "text-center min-w-[80px]")}>{t('order.lines.discount2', 'İnd.2')}</TableHead>
                     <TableHead className={cn(styles.tableHead, "text-center min-w-[80px]")}>{t('order.lines.discount3', 'İnd.3')}</TableHead>
                     <TableHead className={cn(styles.tableHead, "text-right min-w-[120px]")}>{t('order.lines.netPrice', 'Tutar')}</TableHead>
+                    {!linesEditable && (
                     <TableHead className={cn(styles.tableHead, "text-center w-[100px]")}>{t('order.actions', 'İşlem')}</TableHead>
+                    )}
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -581,6 +592,7 @@ export function OrderLineTable({
                           </div>
                         </TableCell>
 
+                        {linesEditable && (
                         <TableCell className={cn(styles.tableCell, "text-center pr-4")}>
                           <div className="flex items-center justify-center gap-2">
                             <Button
@@ -596,7 +608,6 @@ export function OrderLineTable({
                                 !isMainStock && isRelatedProduct ? "text-zinc-300" : "text-blue-600"
                               )} />
                             </Button>
-                            
                             <Button
                               variant="ghost"
                               size="icon"
@@ -608,6 +619,7 @@ export function OrderLineTable({
                             </Button>
                           </div>
                         </TableCell>
+                        )}
                       </TableRow>
                     );
                   })}
