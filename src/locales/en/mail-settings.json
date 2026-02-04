@@ -1,0 +1,18 @@
+{
+  "PageTitle": "Mail Settings",
+  "PageDescription": "Configure SMTP server settings",
+  "Save": "Save",
+  "SavedSuccessfully": "Mail settings saved successfully",
+  "SaveFailed": "Failed to save mail settings",
+  "Fields": {
+    "Host": "Host",
+    "Port": "Port",
+    "EnableSsl": "Enable SSL",
+    "Username": "Username",
+    "Password": "Password",
+    "PasswordPlaceholder": "Enter new password to change",
+    "FromEmail": "From Email",
+    "FromName": "From Name",
+    "Timeout": "Timeout (sec)"
+  }
+}

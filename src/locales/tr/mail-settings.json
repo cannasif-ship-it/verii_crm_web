@@ -1,0 +1,18 @@
+{
+  "PageTitle": "Mail Ayarları",
+  "PageDescription": "SMTP sunucu ayarlarını yapılandırın",
+  "Save": "Kaydet",
+  "SavedSuccessfully": "Mail ayarları başarıyla kaydedildi",
+  "SaveFailed": "Mail ayarları kaydedilemedi",
+  "Fields": {
+    "Host": "Host",
+    "Port": "Port",
+    "EnableSsl": "SSL Kullan",
+    "Username": "Kullanıcı Adı",
+    "Password": "Şifre",
+    "PasswordPlaceholder": "Değiştirmek için yeni şifre girin",
+    "FromEmail": "Gönderen E-posta",
+    "FromName": "Gönderen Adı",
+    "Timeout": "Zaman Aşımı (sn)"
+  }
+}
