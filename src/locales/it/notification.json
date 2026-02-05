@@ -10,5 +10,9 @@
     "success": "Successo",
     "warning": "Attenzione",
     "error": "Errore"
-  }
+  },
+  "loading": "Caricamento",
+  "noNotifications": "Nessuna notifica trovata",
+  "close": "Chiudi",
+  "unread": "Non letto"
 }

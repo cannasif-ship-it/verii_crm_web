@@ -68,10 +68,10 @@
   "maxPrice": "Prezzo Massimo",
   "minDiscount": "Sconto Minimo",
   "maxDiscount": "Sconto Massimo",
-  "percentage": "%",
+  "percentage": "Percentuale",
   "try": "Lira Turca",
   "usd": "Dollaro USA",
-  "eur": "Euro",
+  "eur": "EUR",
   "gbp": "Sterlina Britannica",
   "jpy": "Yen Giapponese",
   "calculateFinalPrice": "Calcola Prezzo Finale",
@@ -114,5 +114,14 @@
   "previous": "Precedente",
   "next": "Successivo",
   "deleteConfirmTitle": "Conferma Eliminazione",
-  "deleteConfirmMessage": "Sei sicuro di voler eliminare questo record? Questa azione non può essere annullata."
+  "deleteConfirmMessage": "Sei sicuro di voler eliminare questo record? Questa azione non può essere annullata.",
+  "productInfo": "INFO PRODOTTO",
+  "category": "CATEGORIA",
+  "searchPlaceholder": "Cerca per nome prodotto, SKU o categoria...",
+  "filter": {
+    "all": "Tutti",
+    "active": "Attivo",
+    "critical": "Scorte critiche",
+    "archive": "Archivio"
+  }
 }

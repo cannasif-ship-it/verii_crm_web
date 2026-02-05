@@ -34,5 +34,16 @@
     "required": "Obbligatorio",
     "successAdd": "Utente aggiunto con successo",
     "successUpdate": "Utente aggiornato con successo"
+  },
+  "stats": {
+    "totalUsers": "Utenti totali",
+    "activeUsers": "Utenti attivi",
+    "newThisMonth": "Nuovi questo mese",
+    "confirmedUsers": "Utenti confermati",
+    "loading": "Caricamento..."
+  },
+  "delete": {
+    "confirmTitle": "Elimina utente",
+    "confirmMessage": "Sei sicuro di voler eliminare l'utente {{username}}?"
   }
 }

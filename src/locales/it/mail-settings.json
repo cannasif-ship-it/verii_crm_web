@@ -1,0 +1,18 @@
+{
+  "PageTitle": "Impostazioni email",
+  "PageDescription": "Configura le impostazioni del server SMTP",
+  "Save": "Salva",
+  "SavedSuccessfully": "Impostazioni email salvate con successo",
+  "SaveFailed": "Impossibile salvare le impostazioni email",
+  "Fields": {
+    "Host": "Host",
+    "Port": "Porta",
+    "EnableSsl": "Usa SSL",
+    "Username": "Nome utente",
+    "Password": "Password",
+    "PasswordPlaceholder": "Inserisci una nuova password per modificare",
+    "FromEmail": "Email mittente",
+    "FromName": "Nome mittente",
+    "Timeout": "Timeout (s)"
+  }
+}

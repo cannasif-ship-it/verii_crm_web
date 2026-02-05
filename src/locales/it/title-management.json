@@ -7,19 +7,22 @@
   "deleteMessage": "Sei sicuro di voler eliminare questo titolo?",
   "deleteSuccess": "Titolo eliminato con successo",
   "table": {
-    "name": "Titolo",
+    "name": "Nome titolo",
     "code": "Codice",
     "description": "Descrizione",
     "status": "Stato",
     "actions": "Azioni",
     "searchPlaceholder": "Cerca titoli...",
-    "showing": "Visualizzazione {{from}}-{{to}} / {{total}}",
+    "showing": "Mostrando {{from}}-{{to}} / {{total}}",
     "page": "Pagina {{current}} / {{total}}",
-    "rowsPerPage": "Righe per pagina"
+    "rowsPerPage": "Righe per pagina",
+    "id": "ID",
+    "createdDate": "Data di creazione",
+    "createdBy": "Creato da"
   },
   "form": {
-    "addTitle": "Aggiungi Nuovo Titolo",
-    "editTitle": "Modifica Titolo",
+    "addTitle": "Aggiungi nuovo titolo",
+    "editTitle": "Modifica titolo",
     "name": "Titolo",
     "code": "Codice",
     "description": "Descrizione",
@@ -30,6 +33,34 @@
     "save": "Salva",
     "required": "Obbligatorio",
     "successAdd": "Titolo aggiunto con successo",
-    "successUpdate": "Titolo aggiornato con successo"
+    "successUpdate": "Titolo aggiornato con successo",
+    "addDescription": "Inserisci le informazioni del nuovo titolo",
+    "editDescription": "Modifica le informazioni del titolo",
+    "titleName": "Nome titolo",
+    "titleNamePlaceholder": "Inserisci il nome del titolo",
+    "titleCode": "Codice titolo",
+    "codePlaceholder": "Inserisci codice (opzionale)",
+    "saving": "Salvataggio..."
+  },
+  "loading": "Caricamento...",
+  "noData": "Nessun dato trovato",
+  "search": "Cerca...",
+  "refresh": "Aggiorna",
+  "previous": "Precedente",
+  "next": "Successivo",
+  "cancel": "Annulla",
+  "save": "Salva",
+  "saving": "Salvataggio...",
+  "delete": {
+    "confirmTitle": "Elimina titolo",
+    "confirmMessage": "Sei sicuro di voler eliminare il titolo {{name}}?",
+    "button": "Elimina"
+  },
+  "deleting": "Eliminazione...",
+  "actions": "Azioni",
+  "edit": "Modifica",
+  "header": {
+    "title": "Gestione titoli",
+    "description": "Puoi gestire qui le definizioni dei titoli."
   }
 }

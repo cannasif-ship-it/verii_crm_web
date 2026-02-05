@@ -36,14 +36,14 @@
   "auth": {
     "login": {
       "title": "Accesso al Sistema",
-      "subtitle": "VERII WMS",
+      "subtitle": "Accedi per continuare",
       "branch": "Filiale",
       "selectBranch": "Seleziona filiale",
       "branchNotFound": "Filiale non trovata",
       "email": "Email",
       "emailPlaceholder": "Inserisci il tuo indirizzo email",
       "password": "Password",
-      "passwordPlaceholder": "••••••••",
+      "passwordPlaceholder": "Inserisci la tua password",
       "loginButton": "Accedi",
       "loggingIn": "Accesso in corso...",
       "wrongPassword": "Email o password non corretti",
@@ -61,7 +61,7 @@
   },
   "navbar": {
     "VERII WMS": "VERII WMS",
-    "crm": "V3RII CRM"
+    "crm": "CRM"
   },
   "sidebar": {
     "dashboard": "Dashboard",
@@ -83,7 +83,7 @@
     "orders": "Ordini",
     "campaigns": "Campagne",
     "reports": "Report",
-    "powerbi": "PowerBI",
+    "powerbi": "Power BI",
     "titleManagement": "Gestione Titoli",
     "shippingAddressManagement": "Gestione Indirizzi di Spedizione",
     "userManagement": "Gestione Utenti",
@@ -148,18 +148,8 @@
     "reportDownload": "Scarica Report",
     "quickAction": "Azione Rapida",
     "monthsShort": {
-      "jan": "Gen",
-      "feb": "Feb",
-      "mar": "Mar",
-      "apr": "Apr",
-      "may": "Mag",
-      "jun": "Giu",
-      "jul": "Lug",
-      "aug": "Ago",
-      "sep": "Set",
-      "oct": "Ott",
-      "nov": "Nov",
-      "dec": "Dic"
+      "mar": "mar",
+      "may": "mag"
     },
     "quickStats": {
       "pendingTasks": "Compiti in Sospeso",
@@ -1086,5 +1076,402 @@
     "profilePictureDeletedSuccessfully": "Immagine profilo eliminata con successo",
     "profilePictureDeleteError": "Si è verificato un errore durante l'eliminazione dell'immagine profilo",
     "userNotFound": "Utente non trovato"
+  },
+  "inventory": {
+    "warehouse3d": {
+      "title": "Magazzino 3D",
+      "description": "Visualizza il magazzino in 3D e il livello di stock",
+      "selectWarehouse": "Seleziona magazzino",
+      "error": "Si è verificato un errore",
+      "totalStock": "Stock totale",
+      "products": "Prodotti",
+      "quantity": "Quantità",
+      "empty": "Vuoto",
+      "lowStock": "Stock basso",
+      "mediumStock": "Stock medio",
+      "highStock": "Stock alto",
+      "emptyCell": "Cella vuota",
+      "desktopOnly": "Disponibile solo su desktop",
+      "pleaseSelectWarehouse": "Seleziona un magazzino per continuare",
+      "controls": "Controlli",
+      "rotate": "Ruota",
+      "pan": "Panoramica",
+      "zoom": "Zoom",
+      "selectShelf": "Seleziona scaffale",
+      "leftClickDrag": "Trascina con clic sinistro",
+      "rightClickDrag": "Trascina con clic destro",
+      "scroll": "Scorri con la rotella",
+      "clickShelf": "Fai clic sullo scaffale"
+    }
+  },
+  "subcontracting": {
+    "sit": {
+      "assignedList": {
+        "title": "Ordini assegnati",
+        "searchPlaceholder": "Cerca...",
+        "id": "ID",
+        "documentNo": "N. documento",
+        "documentDate": "Data documento",
+        "customerCode": "Codice cliente",
+        "customerName": "Nome cliente",
+        "sourceWarehouse": "Magazzino origine",
+        "targetWarehouse": "Magazzino destinazione",
+        "documentType": "Tipo documento",
+        "createdDate": "Data di creazione",
+        "actions": "Azioni",
+        "viewDetails": "Vedi dettagli",
+        "noData": "Nessun dato",
+        "error": "Si è verificato un errore"
+      },
+      "collection": {
+        "title": "Raccolta",
+        "stockNotFound": "Stock non trovato",
+        "enterBarcode": "Inserisci il codice a barre",
+        "noStockSelected": "Nessuno stock selezionato",
+        "invalidQuantity": "Quantità non valida",
+        "stockNotInOrder": "Lo stock non è nell'ordine",
+        "collected": "Raccolto",
+        "collectError": "Errore durante la raccolta",
+        "invalidHeaderId": "ID intestazione non valido",
+        "completed": "Completato",
+        "completeError": "Errore durante il completamento",
+        "barcodeScanned": "Codice a barre scansionato",
+        "cameraError": "Errore fotocamera",
+        "viewCollected": "Visualizza raccolti",
+        "barcodePlaceholder": "Inserisci codice a barre",
+        "quantity": "Quantità",
+        "collect": "Raccogli",
+        "total": "Totale",
+        "remaining": "Rimanenti",
+        "noOrderLines": "Nessuna riga ordine",
+        "complete": "Completa",
+        "scanBarcode": "Scansiona codice a barre",
+        "scanBarcodeDescription": "Usa la fotocamera per scansionare il codice a barre",
+        "yapKod": "Codice Yap"
+      }
+    },
+    "srt": {
+      "assignedList": {
+        "title": "Ordini assegnati",
+        "searchPlaceholder": "Cerca...",
+        "id": "ID",
+        "documentNo": "N. documento",
+        "documentDate": "Data documento",
+        "customerCode": "Codice cliente",
+        "customerName": "Nome cliente",
+        "sourceWarehouse": "Magazzino origine",
+        "targetWarehouse": "Magazzino destinazione",
+        "documentType": "Tipo documento",
+        "createdDate": "Data di creazione",
+        "actions": "Azioni",
+        "viewDetails": "Vedi dettagli",
+        "noData": "Nessun dato",
+        "error": "Si è verificato un errore"
+      },
+      "collection": {
+        "title": "Raccolta",
+        "stockNotFound": "Stock non trovato",
+        "enterBarcode": "Inserisci il codice a barre",
+        "noStockSelected": "Nessuno stock selezionato",
+        "invalidQuantity": "Quantità non valida",
+        "stockNotInOrder": "Lo stock non è nell'ordine",
+        "collected": "Raccolto",
+        "collectError": "Errore durante la raccolta",
+        "invalidHeaderId": "ID intestazione non valido",
+        "completed": "Completato",
+        "completeError": "Errore durante il completamento",
+        "barcodeScanned": "Codice a barre scansionato",
+        "cameraError": "Errore fotocamera",
+        "viewCollected": "Visualizza raccolti",
+        "barcodePlaceholder": "Inserisci codice a barre",
+        "quantity": "Quantità",
+        "collect": "Raccogli",
+        "total": "Totale",
+        "remaining": "Rimanenti",
+        "noOrderLines": "Nessuna riga ordine",
+        "complete": "Completa",
+        "scanBarcode": "Scansiona codice a barre",
+        "scanBarcodeDescription": "Usa la fotocamera per scansionare il codice a barre",
+        "yapKod": "Codice Yap"
+      }
+    }
+  },
+  "footer": {
+    "copyright": "© {{year}} Tutti i diritti riservati"
+  },
+  "theme": {
+    "toggle": "Tema",
+    "light": "Chiaro",
+    "dark": "Scuro",
+    "system": "Sistema"
+  },
+  "parameters": {
+    "list": {
+      "title": "Elenco parametri",
+      "searchPlaceholder": "Cerca...",
+      "id": "ID",
+      "allowLessQuantity": "Quantità inferiore in base all'ordine",
+      "allowMoreQuantity": "Quantità superiore in base all'ordine",
+      "requireApproval": "Approvazione prima ERP",
+      "requireAllOrderItemsCollected": "Tutte le righe dell'ordine devono essere raccolte",
+      "createdDate": "Data di creazione",
+      "updatedDate": "Data di aggiornamento",
+      "actions": "Azioni",
+      "noData": "Nessun dato",
+      "error": "Si è verificato un errore durante il caricamento",
+      "addNew": "Aggiungi nuovo"
+    },
+    "form": {
+      "allowLessQuantity": "Quantità inferiore in base all'ordine",
+      "allowLessQuantityDescription": "Consente di inserire una quantità inferiore rispetto all'ordine. Quando attivo, è possibile inserire meno della quantità ordinata.",
+      "allowMoreQuantity": "Quantità superiore in base all'ordine",
+      "allowMoreQuantityDescription": "Consente di inserire una quantità superiore rispetto all'ordine. Quando attivo, è possibile inserire più della quantità ordinata.",
+      "requireApproval": "Approvazione prima ERP",
+      "requireApprovalDescription": "Richiede approvazione prima dell'invio al sistema ERP. Quando attivo, le operazioni passano per il flusso di approvazione.",
+      "requireAllOrderItemsCollected": "Tutte le righe dell'ordine devono essere raccolte",
+      "requireAllOrderItemsCollectedDescription": "Quando attivo, tutte le righe dell'ordine devono essere raccolte.",
+      "editDescription": "Puoi modificare le impostazioni dei parametri esistenti",
+      "createDescription": "Puoi creare nuove impostazioni dei parametri",
+      "updateButton": "Aggiorna",
+      "createButton": "Salva"
+    },
+    "create": {
+      "success": "Parametro creato correttamente",
+      "error": "Errore durante la creazione del parametro"
+    },
+    "update": {
+      "success": "Parametro aggiornato correttamente",
+      "error": "Errore durante l'aggiornamento del parametro"
+    },
+    "delete": {
+      "title": "Elimina parametro",
+      "description": "Sei sicuro di voler eliminare questo parametro?",
+      "success": "Parametro eliminato correttamente",
+      "error": "Errore durante l'eliminazione del parametro"
+    },
+    "gr": {
+      "title": "Parametri ricezione merci",
+      "createTitle": "Parametri ricezione merci - Aggiungi nuovo",
+      "editTitle": "Parametri ricezione merci - Modifica"
+    },
+    "wt": {
+      "title": "Parametri trasferimento magazzino",
+      "createTitle": "Parametri trasferimento magazzino - Aggiungi nuovo",
+      "editTitle": "Parametri trasferimento magazzino - Modifica"
+    },
+    "wo": {
+      "title": "Parametri uscita magazzino",
+      "createTitle": "Parametri uscita magazzino - Aggiungi nuovo",
+      "editTitle": "Parametri uscita magazzino - Modifica"
+    },
+    "wi": {
+      "title": "Parametri ingresso magazzino",
+      "createTitle": "Parametri ingresso magazzino - Aggiungi nuovo",
+      "editTitle": "Parametri ingresso magazzino - Modifica"
+    },
+    "sh": {
+      "title": "Parametri spedizione",
+      "createTitle": "Parametri spedizione - Aggiungi nuovo",
+      "editTitle": "Parametri spedizione - Modifica"
+    },
+    "srt": {
+      "title": "Parametri trasferimento acquisto conto terzi",
+      "createTitle": "Parametri trasferimento acquisto conto terzi - Aggiungi nuovo",
+      "editTitle": "Parametri trasferimento acquisto conto terzi - Modifica"
+    },
+    "sit": {
+      "title": "Parametri trasferimento uscita conto terzi",
+      "createTitle": "Parametri trasferimento uscita conto terzi - Aggiungi nuovo",
+      "editTitle": "Parametri trasferimento uscita conto terzi - Modifica"
+    },
+    "pt": {
+      "title": "Parametri trasferimento produzione",
+      "createTitle": "Parametri trasferimento produzione - Aggiungi nuovo",
+      "editTitle": "Parametri trasferimento produzione - Modifica"
+    },
+    "pr": {
+      "title": "Parametri produzione",
+      "createTitle": "Parametri produzione - Aggiungi nuovo",
+      "editTitle": "Parametri produzione - Modifica"
+    },
+    "ic": {
+      "title": "Parametri inventario",
+      "createTitle": "Parametri inventario - Aggiungi nuovo",
+      "editTitle": "Parametri inventario - Modifica"
+    },
+    "p": {
+      "title": "Parametri pacco",
+      "createTitle": "Parametri pacco - Aggiungi nuovo",
+      "editTitle": "Parametri pacco - Modifica"
+    }
+  },
+  "countryManagement": {
+    "menu": "Gestione paesi",
+    "description": "Gestisci e modifica i paesi",
+    "addButton": "Aggiungi nuovo paese",
+    "stats": {
+      "totalCountries": "Totale paesi",
+      "activeCountries": "Paesi attivi",
+      "newThisMonth": "Nuovi questo mese"
+    },
+    "table": {
+      "id": "ID",
+      "name": "Nome del paese",
+      "code": "Codice",
+      "erpCode": "Codice ERP",
+      "createdDate": "Data di creazione",
+      "createdBy": "Creato da",
+      "showing": "{{from}}-{{to}} / {{total}} visualizzati",
+      "page": "Pagina {{current}} / {{total}}"
+    },
+    "form": {
+      "addCountry": "Aggiungi nuovo paese",
+      "editCountry": "Modifica paese",
+      "addDescription": "Inserisci i dati del nuovo paese",
+      "editDescription": "Modifica i dati del paese",
+      "name": {
+        "required": "Il nome del paese è obbligatorio",
+        "maxLength": "Il nome del paese può avere al massimo 100 caratteri"
+      },
+      "namePlaceholder": "Inserisci il nome del paese",
+      "code": {
+        "required": "Il codice del paese è obbligatorio",
+        "minLength": "Il codice del paese deve avere almeno 2 caratteri",
+        "maxLength": "Il codice del paese può avere al massimo 5 caratteri"
+      },
+      "codePlaceholder": "Inserisci il codice del paese (es: IT, US)",
+      "erpCode": {
+        "maxLength": "Il codice ERP può avere al massimo 10 caratteri"
+      },
+      "erpCodePlaceholder": "Inserisci il codice ERP (opzionale)",
+      "name.required": "Il nome del paese è obbligatorio",
+      "name.maxLength": "Il nome del paese può avere al massimo 100 caratteri",
+      "code.required": "Il codice del paese è obbligatorio",
+      "code.minLength": "Il codice del paese deve avere almeno 2 caratteri",
+      "code.maxLength": "Il codice del paese può avere al massimo 5 caratteri",
+      "erpCode.maxLength": "Il codice ERP può avere al massimo 10 caratteri"
+    },
+    "delete": {
+      "confirmTitle": "Elimina paese",
+      "confirmMessage": "Sei sicuro di voler eliminare il paese {{name}}?"
+    },
+    "messages": {
+      "createSuccess": "Paese creato con successo",
+      "createError": "Impossibile creare il paese",
+      "updateSuccess": "Paese aggiornato con successo",
+      "updateError": "Impossibile aggiornare il paese",
+      "deleteSuccess": "Paese eliminato con successo",
+      "deleteError": "Impossibile eliminare il paese"
+    }
+  },
+  "cityManagement": {
+    "menu": "Gestione città",
+    "description": "Gestisci e modifica le città",
+    "addButton": "Aggiungi nuova città",
+    "stats": {
+      "totalCities": "Totale città",
+      "activeCities": "Città attive",
+      "newThisMonth": "Nuove questo mese"
+    },
+    "table": {
+      "id": "ID",
+      "name": "Nome della città",
+      "erpCode": "Codice ERP",
+      "countryName": "Nome del paese",
+      "createdDate": "Data di creazione",
+      "createdBy": "Creato da",
+      "showing": "{{from}}-{{to}} / {{total}} visualizzati",
+      "page": "Pagina {{current}} / {{total}}"
+    },
+    "form": {
+      "addCity": "Aggiungi nuova città",
+      "editCity": "Modifica città",
+      "addDescription": "Inserisci i dati della nuova città",
+      "editDescription": "Modifica i dati della città",
+      "name": {
+        "required": "Il nome della città è obbligatorio",
+        "maxLength": "Il nome della città può avere al massimo 100 caratteri"
+      },
+      "namePlaceholder": "Inserisci il nome della città",
+      "country": {
+        "required": "La selezione del paese è obbligatoria"
+      },
+      "selectCountry": "Seleziona un paese",
+      "erpCode": {
+        "maxLength": "Il codice ERP può avere al massimo 10 caratteri"
+      },
+      "erpCodePlaceholder": "Inserisci il codice ERP (opzionale)",
+      "name.required": "Il nome della città è obbligatorio",
+      "name.maxLength": "Il nome della città può avere al massimo 100 caratteri",
+      "country.required": "La selezione del paese è obbligatoria",
+      "erpCode.maxLength": "Il codice ERP può avere al massimo 10 caratteri"
+    },
+    "delete": {
+      "confirmTitle": "Elimina città",
+      "confirmMessage": "Sei sicuro di voler eliminare la città {{name}}?"
+    },
+    "messages": {
+      "createSuccess": "Città creata con successo",
+      "createError": "Impossibile creare la città",
+      "updateSuccess": "Città aggiornata con successo",
+      "updateError": "Impossibile aggiornare la città",
+      "deleteSuccess": "Città eliminata con successo",
+      "deleteError": "Impossibile eliminare la città"
+    }
+  },
+  "districtManagement": {
+    "menu": "Gestione distretti",
+    "description": "Gestisci e modifica i distretti",
+    "addButton": "Aggiungi nuovo distretto",
+    "stats": {
+      "totalDistricts": "Totale distretti",
+      "activeDistricts": "Distretti attivi",
+      "newThisMonth": "Nuovi questo mese"
+    },
+    "table": {
+      "id": "ID",
+      "name": "Nome del distretto",
+      "erpCode": "Codice ERP",
+      "cityName": "Nome della città",
+      "createdDate": "Data di creazione",
+      "createdBy": "Creato da",
+      "showing": "{{from}}-{{to}} / {{total}} visualizzati",
+      "page": "Pagina {{current}} / {{total}}"
+    },
+    "form": {
+      "addDistrict": "Aggiungi nuovo distretto",
+      "editDistrict": "Modifica distretto",
+      "addDescription": "Inserisci i dati del nuovo distretto",
+      "editDescription": "Modifica i dati del distretto",
+      "name": {
+        "required": "Il nome del distretto è obbligatorio",
+        "maxLength": "Il nome del distretto può avere al massimo 100 caratteri"
+      },
+      "namePlaceholder": "Inserisci il nome del distretto",
+      "city": {
+        "required": "La selezione della città è obbligatoria"
+      },
+      "selectCity": "Seleziona una città",
+      "erpCode": {
+        "maxLength": "Il codice ERP può avere al massimo 10 caratteri"
+      },
+      "erpCodePlaceholder": "Inserisci il codice ERP (opzionale)",
+      "name.required": "Il nome del distretto è obbligatorio",
+      "name.maxLength": "Il nome del distretto può avere al massimo 100 caratteri",
+      "city.required": "La selezione della città è obbligatoria",
+      "erpCode.maxLength": "Il codice ERP può avere al massimo 10 caratteri"
+    },
+    "delete": {
+      "confirmTitle": "Elimina distretto",
+      "confirmMessage": "Sei sicuro di voler eliminare il distretto {{name}}?"
+    },
+    "messages": {
+      "createSuccess": "Distretto creato con successo",
+      "createError": "Impossibile creare il distretto",
+      "updateSuccess": "Distretto aggiornato con successo",
+      "updateError": "Impossibile aggiornare il distretto",
+      "deleteSuccess": "Distretto eliminato con successo",
+      "deleteError": "Impossibile eliminare il distretto"
+    }
   }
 }

@@ -12,5 +12,10 @@
     "stock": "Magazzino"
   },
   "noData": "Nessun prodotto trovato",
-  "loading": "Caricamento prodotti..."
+  "loading": "Caricamento",
+  "description": "Seleziona i prodotti ERP da aggiungere al tuo ordine",
+  "product": "Prodotto",
+  "noProducts": "Nessun prodotto",
+  "noResults": "Nessun risultato trovato",
+  "voiceSearch": "Ricerca vocale"
 }
