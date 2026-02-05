@@ -68,6 +68,7 @@ const PowerbiConfigurationPage = lazyImport(() => import('@/features/powerbi-con
 const PowerbiReportsListPage = lazyImport(() => import('@/features/powerbi-viewer'), 'PowerbiReportsListPage');
 const PowerbiReportViewerPage = lazyImport(() => import('@/features/powerbi-viewer'), 'PowerbiReportViewerPage');
 const PowerbiReportSyncPage = lazyImport(() => import('@/features/powerbi-sync'), 'PowerbiReportSyncPage');
+const PowerbiRlsPage = lazyImport(() => import('@/features/powerbi-rls'), 'PowerbiRlsPage');
 
 export const router = createBrowserRouter([
   {
@@ -94,6 +95,7 @@ export const router = createBrowserRouter([
       { path: 'powerbi/groups', element: <GroupList /> },
       { path: 'powerbi/user-groups', element: <UserGroupList /> },
       { path: 'powerbi/group-report-definitions', element: <GroupReportDefinitionList /> },
+      { path: 'powerbi/rls', element: <PowerbiRlsPage /> },
       { path: 'title-management', element: <TitleManagementPage /> },
       { path: 'user-management', element: <UserManagementPage /> },
       { path: 'country-management', element: <CountryManagementPage /> },

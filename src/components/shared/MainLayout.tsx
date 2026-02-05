@@ -115,6 +115,7 @@ export function MainLayout({ navItems }: MainLayoutProps): ReactElement {
           { title: t('sidebar.powerbiGroups', 'PowerBI Grupları'), href: '/powerbi/groups' },
           { title: t('sidebar.powerbiUserGroups', 'PowerBI Kullanıcı Grupları'), href: '/powerbi/user-groups' },
           { title: t('sidebar.powerbiGroupReportMapping', 'PowerBI Grup-Rapor Eşleştirme'), href: '/powerbi/group-report-definitions' },
+          { title: t('sidebar.powerbiRls', 'RLS Yönetimi'), href: '/powerbi/rls' },
         ],
       },
       {
