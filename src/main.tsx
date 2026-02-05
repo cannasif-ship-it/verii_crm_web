@@ -8,10 +8,12 @@ import i18n, { ensureI18nReady } from './lib/i18n';
 import App from './App.tsx';
 import { queryClient } from './lib/query-client';
 import { ensureApiReady } from './lib/axios';
+import { useAuthStore } from './stores/auth-store';
 
 async function bootstrap(): Promise<void> {
   await ensureApiReady();
   await ensureI18nReady();
+  useAuthStore.getState().init();
   const root = document.getElementById('root')!;
   createRoot(root).render(
     <StrictMode>

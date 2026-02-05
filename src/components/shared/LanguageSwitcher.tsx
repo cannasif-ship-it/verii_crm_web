@@ -84,7 +84,7 @@ export function LanguageSwitcher({ variant = 'default' }: LanguageSwitcherProps)
       <SelectContent 
         align={variant === 'icon' ? "end" : "start"} 
         side={variant === 'icon' ? "top" : "bottom"}
-        className="bg-[#140a1e]/95 backdrop-blur-xl border border-white/10 text-white rounded-xl shadow-2xl z-[60] min-w-[140px]"
+        className="bg-[#140a1e]/95 backdrop-blur-xl border border-white/10 text-white rounded-xl shadow-2xl z-60 min-w-[140px]"
       >
         {languages.map((language) => (
           <SelectItem 

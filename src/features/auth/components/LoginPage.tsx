@@ -111,7 +111,7 @@ export function LoginPage(): React.JSX.Element {
       >
         <div className="absolute top-[-10%] right-[-10%] w-[60vw] h-[60vw] bg-pink-900/15 blur-[120px] rounded-full mix-blend-screen" />
         <div className="absolute bottom-[-10%] left-[-10%] w-[60vw] h-[60vw] bg-orange-900/10 blur-[120px] rounded-full mix-blend-screen" />
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#0f0518]/60 to-[#0f0518]" />
+        <div className="absolute inset-0 bg-linear-to-b from-transparent via-[#0f0518]/60 to-[#0f0518]" />
       </div>
 
       <AuthBackground isActive={showAnimation} />
@@ -143,7 +143,7 @@ export function LoginPage(): React.JSX.Element {
 
       <div className="relative z-10 w-full h-full flex flex-col justify-between items-center px-4 py-8 overflow-y-auto">
 
-        <div className="w-full max-w-md p-10 rounded-3xl bg-[#140a1e]/70 backdrop-blur-xl border border-white/10 shadow-[0_20px_40px_rgba(0,0,0,0.4),_inset_0_0_20px_rgba(255,255,255,0.07)] animate-[fadeIn_0.8s_ease-out] my-auto mt-20 md:mt-auto">
+        <div className="w-full max-w-md p-10 rounded-3xl bg-[#140a1e]/70 backdrop-blur-xl border border-white/10 shadow-[0_20px_40px_rgba(0,0,0,0.4),inset_0_0_20px_rgba(255,255,255,0.07)] animate-[fadeIn_0.8s_ease-out] my-auto mt-20 md:mt-auto">
           <div className="text-center mb-8">
             <img
               src={loginImage}
@@ -297,7 +297,7 @@ export function LoginPage(): React.JSX.Element {
               <button
                 type="submit"
                 disabled={isPending}
-                className="w-full py-4 rounded-xl bg-gradient-to-r from-pink-600 via-orange-500 to-yellow-500 hover:from-pink-500 hover:via-orange-400 hover:to-yellow-400 text-white font-bold text-sm mt-6 shadow-lg shadow-orange-900/20 tracking-wide uppercase transition-all transform hover:-translate-y-0.5 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center"
+                className="w-full py-4 rounded-xl bg-linear-to-r from-pink-600 via-orange-500 to-yellow-500 hover:from-pink-500 hover:via-orange-400 hover:to-yellow-400 text-white font-bold text-sm mt-6 shadow-lg shadow-orange-900/20 tracking-wide uppercase transition-all transform hover:-translate-y-0.5 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center"
               >
                 {isPending ? t('auth.login.processing') : t('auth.login.submitButton')}
               </button>
@@ -309,7 +309,7 @@ export function LoginPage(): React.JSX.Element {
           <p className="text-slate-400 text-sm font-light tracking-[0.2em] uppercase opacity-80 text-center">
             <Trans
               i18nKey="auth.login.slogan"
-              components={{ 1: <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-yellow-400 font-bold border-b border-pink-500/20 pb-0.5" /> }}
+              components={{ 1: <span className="text-transparent bg-clip-text bg-linear-to-r from-pink-400 to-yellow-400 font-bold border-b border-pink-500/20 pb-0.5" /> }}
             />
           </p>
           

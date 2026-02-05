@@ -3,8 +3,8 @@ import { Link, useLocation } from 'react-router-dom';
 import { useUIStore } from '@/stores/ui-store';
 import { cn } from '@/lib/utils';
 import { ChevronDown, ChevronRight, X } from 'lucide-react'; 
-import Logo from '../../../public/v3logo.png';
-import VeriiLogo from '../../../public/veriicrmlogo.png';
+const LOGO_URL = '/v3logo.png';
+const VERII_LOGO_URL = '/veriicrmlogo.png';
 
 interface NavItem {
   title: string;
@@ -48,7 +48,7 @@ function SubMenuComponent({ item, pathname }: { item: NavItem; pathname: string 
             : "text-slate-500 hover:bg-slate-50 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-white/5"
         )}
       >
-        <span className="whitespace-normal leading-tight text-left break-words pr-2">{item.title}</span>
+        <span className="whitespace-normal leading-tight text-left wrap-break-word pr-2">{item.title}</span>
         <span className="opacity-70 shrink-0">
           {isOpen ? <ChevronDown size={12} /> : <ChevronRight size={12} />}
         </span>
@@ -63,7 +63,7 @@ function SubMenuComponent({ item, pathname }: { item: NavItem; pathname: string 
                  key={child.href || child.title}
                  to={child.href || '#'}
                  className={cn(
-                   "flex items-center justify-between px-3 py-2 rounded-lg transition-colors text-xs block w-full relative",
+                   "flex items-center justify-between px-3 py-2 rounded-lg transition-colors text-xs w-full relative",
                    isSubLinkActive
                      ? 'bg-slate-100 text-slate-900 font-medium dark:bg-white/10 dark:text-white'
                      : 'text-slate-500 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-white/5'
@@ -72,7 +72,7 @@ function SubMenuComponent({ item, pathname }: { item: NavItem; pathname: string 
                    if (window.innerWidth < 1024) useUIStore.getState().setSidebarOpen(false);
                  }}
                >
-                 <span className="whitespace-normal leading-tight text-left break-words">{child.title}</span>
+                 <span className="whitespace-normal leading-tight text-left wrap-break-word">{child.title}</span>
                  {isSubLinkActive && <span className="w-2 h-2 rounded-full bg-purple-600 dark:bg-pink-500 shrink-0 ml-2" />}
                </Link>
              );
@@ -186,7 +186,7 @@ function NavItemComponent({
 
           {isSidebarOpen && (
              <span className={cn(
-               "flex-1 text-sm font-medium transition-colors whitespace-normal leading-tight text-left break-words pr-2",
+               "flex-1 text-sm font-medium transition-colors whitespace-normal leading-tight text-left wrap-break-word pr-2",
                visualActive 
                  ? 'text-purple-900 font-semibold dark:text-white' 
                  : 'text-slate-600 dark:text-slate-300'
@@ -202,7 +202,7 @@ function NavItemComponent({
           )}
 
           {visualActive && !isExpanded && !isSidebarOpen && (
-             <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 rounded-r-full bg-gradient-to-b from-purple-500 to-pink-500" />
+             <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 rounded-r-full bg-linear-to-b from-purple-500 to-pink-500" />
           )}
         </button>
 
@@ -219,7 +219,7 @@ function NavItemComponent({
                   key={child.href}
                   to={child.href || '#'}
                   className={cn(
-                    "flex items-center justify-between px-3 py-2 rounded-lg transition-colors text-sm block w-full relative",
+                    "flex items-center justify-between px-3 py-2 rounded-lg transition-colors text-sm w-full relative",
                     isSubActive 
                       ? 'bg-purple-50 text-purple-700 font-semibold dark:bg-white/10 dark:text-white' 
                       : 'text-slate-500 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-white/5'
@@ -228,7 +228,7 @@ function NavItemComponent({
                     if (window.innerWidth < 1024) useUIStore.getState().setSidebarOpen(false);
                   }}
                 >
-                  <span className="whitespace-normal leading-tight text-left break-words">{child.title}</span>
+                  <span className="whitespace-normal leading-tight text-left wrap-break-word">{child.title}</span>
                   {isSubActive && <span className="w-2 h-2 rounded-full bg-purple-600 dark:bg-pink-500 shrink-0 ml-2" />}
                 </Link>
               );
@@ -269,7 +269,7 @@ function NavItemComponent({
             
             {isSidebarOpen && (
                 <span className={cn(
-                  "text-sm font-medium transition-colors whitespace-normal leading-tight text-left break-words pr-2", 
+                  "text-sm font-medium transition-colors whitespace-normal leading-tight text-left wrap-break-word pr-2", 
                   isActive ? 'text-purple-900 font-semibold dark:text-white' : 'text-slate-600 dark:text-slate-300'
                 )}>
                     {item.title}
@@ -277,7 +277,7 @@ function NavItemComponent({
             )}
 
             {isActive && (
-                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 rounded-r-full bg-gradient-to-b from-purple-500 to-pink-500" />
+                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 rounded-r-full bg-linear-to-b from-purple-500 to-pink-500" />
             )}
         </Link>
     </div>
@@ -353,7 +353,7 @@ export function Sidebar({ items }: SidebarProps): ReactElement {
 
                     <div className="flex justify-center flex-1">
                        <img 
-                           src={VeriiLogo}
+                           src={VERII_LOGO_URL}
                            alt="Logo" 
                            className="h-28 object-contain" 
                        />
@@ -371,7 +371,7 @@ export function Sidebar({ items }: SidebarProps): ReactElement {
                 <div className="flex items-center justify-center w-full h-full">
                       <div className="w-full h-full flex items-center justify-center p-1">
                           <img 
-                             src={Logo}
+                             src={LOGO_URL}
                              alt="V3" 
                              className="w-full h-full object-contain scale-150" 
                          />

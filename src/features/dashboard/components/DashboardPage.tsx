@@ -64,7 +64,7 @@ export function DashboardPage(): ReactElement {
   const { setPageTitle } = useUIStore();
   const { user } = useAuthStore();
   
-  const { data, isLoading, refetch } = useDashboardQuery(); 
+  const { data, isLoading } = useDashboardQuery(); 
   
   const [greeting, setGreeting] = useState('');
   const [chartMenuOpen, setChartMenuOpen] = useState(false);
@@ -79,10 +79,6 @@ export function DashboardPage(): ReactElement {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
-
-  useEffect(() => {
-    refetch();
-  }, [refetch]);
 
   useEffect(() => {
     const hour = new Date().getHours();
@@ -207,7 +203,7 @@ export function DashboardPage(): ReactElement {
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white mb-1 transition-colors flex flex-col items-start sm:flex-row sm:items-center sm:gap-x-2">
             <span>{greeting},</span>
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-600 to-orange-500">
+            <span className="text-transparent bg-clip-text bg-linear-to-r from-pink-600 to-orange-500">
               {getUserDisplayName()}
             </span>
           </h1>
@@ -230,7 +226,7 @@ export function DashboardPage(): ReactElement {
             <Button 
                 size="sm"
                 onClick={handleQuickAction}
-                className="bg-gradient-to-r from-pink-600 to-orange-600 text-white border-0 shadow-md hover:shadow-lg hover:shadow-pink-500/20 active:scale-95 transition-all duration-300 shrink-0"
+                className="bg-linear-to-r from-pink-600 to-orange-600 text-white border-0 shadow-md hover:shadow-lg hover:shadow-pink-500/20 active:scale-95 transition-all duration-300 shrink-0"
             >
                 <Zap size={14} className="mr-2" />
                 {t('dashboard.quickAction', 'Hızlı İşlem')}
@@ -325,7 +321,7 @@ export function DashboardPage(): ReactElement {
                                         <div className="absolute bottom-0 w-full h-full bg-slate-100 dark:bg-white/5 rounded-t-sm mx-1" />
                                         <div
                                             style={{ height: `${height}%` }} 
-                                            className="w-full mx-1 bg-gradient-to-t from-pink-600 to-orange-400 opacity-90 rounded-t-sm relative z-10"
+                                            className="w-full mx-1 bg-linear-to-t from-pink-600 to-orange-400 opacity-90 rounded-t-sm relative z-10"
                                         />
                                     </div>
                                     <span className="text-[10px] font-medium text-slate-400 uppercase">

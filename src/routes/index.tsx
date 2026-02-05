@@ -2,6 +2,7 @@ import { lazy, type ComponentType } from 'react';
 import { createBrowserRouter } from 'react-router-dom';
 import { ProtectedRoute } from '@/components/shared/ProtectedRoute';
 import { MainLayout } from '@/components/shared/MainLayout';
+import { RouteErrorFallback } from '@/components/shared/RouteErrorFallback';
 import AuthLayout from '@/layouts/AuthLayout';
 
 const lazyImport = <T extends Record<string, unknown>, K extends keyof T>(
@@ -33,7 +34,7 @@ const ProductPricingManagementPage = lazyImport(() => import('@/features/product
 const ActivityManagementPage = lazyImport(() => import('@/features/activity-management'), 'ActivityManagementPage');
 const ActivityTypeManagementPage = lazyImport(() => import('@/features/activity-type'), 'ActivityTypeManagementPage');
 const ShippingAddressManagementPage = lazyImport(() => import('@/features/shipping-address-management'), 'ShippingAddressManagementPage');
-const DailyTasksPage = lazyImport(() => import('@/features/daily-tasks/components/DailyTasksPage'), 'DailyTasksPage');
+const DailyTasksPage = lazyImport(() => import('@/features/daily-tasks'), 'DailyTasksPage');
 const ErpCustomerManagementPage = lazyImport(() => import('@/features/erp-customer-management'), 'ErpCustomerManagementPage');
 const ApprovalRoleGroupManagementPage = lazyImport(() => import('@/features/approval-role-group-management'), 'ApprovalRoleGroupManagementPage');
 const ApprovalUserRoleManagementPage = lazyImport(() => import('@/features/approval-user-role-management'), 'ApprovalUserRoleManagementPage');
@@ -78,6 +79,7 @@ export const router = createBrowserRouter([
         <MainLayout />
       </ProtectedRoute>
     ),
+    errorElement: <RouteErrorFallback />,
     children: [
       { index: true, element: <DashboardPage /> },
       { path: 'report-designer', element: <ReportDesignerListPage /> },

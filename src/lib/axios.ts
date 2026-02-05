@@ -1,7 +1,7 @@
 import axios from 'axios';
 import i18n from './i18n';
 
-const API_BASE_URL = 'https://crmapi.v3rii.com';
+const API_BASE_URL = 'http://localhost:5000';
 
 interface RuntimeConfig {
   apiUrl?: string;
@@ -68,6 +68,12 @@ export function getApiBaseUrl(): string {
   return apiUrl || normalizeBaseUrl(API_BASE_URL);
 }
 
+let authStoreModule: Promise<typeof import('@/stores/auth-store')> | null = null;
+function getAuthStore(): Promise<typeof import('@/stores/auth-store')> {
+  if (!authStoreModule) authStoreModule = import('@/stores/auth-store');
+  return authStoreModule;
+}
+
 export const api = axios.create({
   baseURL: apiUrl,
   headers: {
@@ -86,12 +92,13 @@ api.interceptors.request.use(async (config) => {
   config.headers['X-Language'] = i18n.language || 'tr';
 
   try {
-    const { useAuthStore } = await import('@/stores/auth-store');
+    const { useAuthStore } = await getAuthStore();
     const branch = useAuthStore.getState().branch;
     if (branch?.code) {
       config.headers['X-Branch-Code'] = branch.code;
     }
   } catch {
+    void 0;
   }
 
   return config;
@@ -105,9 +112,10 @@ api.interceptors.response.use(
       sessionStorage.removeItem('access_token');
 
       try {
-        const { useAuthStore } = await import('@/stores/auth-store');
+        const { useAuthStore } = await getAuthStore();
         useAuthStore.getState().logout();
       } catch {
+        void 0;
       }
 
       if (window.location.pathname !== '/auth/login') {
