@@ -256,9 +256,9 @@ export function ContactManagementPage(): ReactElement {
   };
 
   return (
-    <div className="w-full space-y-6">
+    <div className="w-full h-full flex flex-col space-y-4">
       
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-5 pt-2">
+      <div className="flex-none flex flex-col md:flex-row md:items-center justify-between gap-5 pt-2">
         <div className="flex flex-col gap-2">
           <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white transition-colors">
             {t('contactManagement.menu', 'İletişim Yönetimi')}
@@ -277,11 +277,14 @@ export function ContactManagementPage(): ReactElement {
         </Button>
       </div>
 
-      <ContactStats />
+      <div className="flex-none">
+        <ContactStats />
+      </div>
 
-      <div className="bg-white/70 dark:bg-[#1a1025]/60 backdrop-blur-xl border border-white/60 dark:border-white/5 shadow-sm rounded-2xl p-5 flex flex-col gap-5 transition-all duration-300">
+      <div className="flex-1 flex flex-col min-h-0 bg-white/70 dark:bg-[#1a1025]/60 backdrop-blur-xl border border-white/60 dark:border-white/5 shadow-sm rounded-2xl p-0 overflow-hidden transition-all duration-300">
           
-          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+          <div className="flex-none p-4 border-b border-white/5 flex flex-col gap-4">
+            <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
             
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full lg:w-auto">
                 <div className="relative group w-full sm:w-72 lg:w-96">
@@ -354,7 +357,7 @@ export function ContactManagementPage(): ReactElement {
 {/* Old filters removed */}
       </div>
 
-      <div className="bg-white/70 dark:bg-[#1a1025]/60 backdrop-blur-xl border border-white/60 dark:border-white/5 shadow-sm rounded-2xl p-0 sm:p-1 transition-all duration-300 overflow-hidden">
+      <div className="flex-1 flex flex-col min-h-0 overflow-hidden relative">
         <div className="flex justify-end px-4 py-2 gap-2">
             <Popover open={showFilters} onOpenChange={setShowFilters}>
                 <PopoverTrigger asChild>
@@ -561,6 +564,7 @@ export function ContactManagementPage(): ReactElement {
         contact={editingContact}
         isLoading={createContact.isPending || updateContact.isPending}
       />
+    </div>
     </div>
   );
 }

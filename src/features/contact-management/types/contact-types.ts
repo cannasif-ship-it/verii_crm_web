@@ -6,6 +6,7 @@ export interface ContactDto {
   email?: string;
   phone?: string;
   mobile?: string;
+  status?: string;
   notes?: string;
   customerId: number;
   customerName?: string;

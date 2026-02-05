@@ -17,6 +17,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { Badge } from '@/components/ui/badge';
 import { useDeleteContact } from '../hooks/useDeleteContact';
 import type { ContactDto } from '../types/contact-types';
 import { 
@@ -38,7 +39,7 @@ import { Alert02Icon } from 'hugeicons-react';
 export interface ColumnDef<T> {
   key: keyof T;
   label: string;
-  type: 'text' | 'email' | 'phone' | 'mobile' | 'date' | 'user' | 'customer' | 'title';
+  type: 'text' | 'email' | 'phone' | 'mobile' | 'date' | 'user' | 'customer' | 'title' | 'status';
   className?: string;
 }
 
@@ -59,6 +60,7 @@ export const getColumnsConfig = (t: any): ColumnDef<ContactDto>[] => [
     { key: 'titleName', label: t('contactManagement.table.title', 'Ünvan'), type: 'title', className: 'min-w-[150px]' },
     { key: 'createdDate', label: t('contactManagement.table.createdDate', 'Oluşturulma'), type: 'date', className: 'whitespace-nowrap' },
     { key: 'createdByFullUser', label: t('contactManagement.table.createdBy', 'Oluşturan'), type: 'user', className: 'whitespace-nowrap' },
+    { key: 'status', label: t('contactManagement.table.status', 'Durum'), type: 'status', className: 'w-[100px]' },
 ];
 
 export function ContactTable({
@@ -140,6 +142,12 @@ export function ContactTable({
             return <div className="flex items-center gap-2 text-xs"><Calendar size={14} className="text-pink-500/50" />{new Date(String(value)).toLocaleDateString(i18n.language)}</div>;
         case 'user':
             return <div className="flex items-center gap-2 text-xs"><User size={14} className="text-indigo-500/50" />{String(value)}</div>;
+        case 'status':
+            return (
+                <Badge variant="secondary" className="bg-emerald-50 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400 border-emerald-100 dark:border-emerald-500/20 hover:bg-emerald-100 dark:hover:bg-emerald-500/20 shadow-none font-medium">
+                    {value ? String(value) : t('common.active', 'Aktif')}
+                </Badge>
+            );
         default:
             return String(value);
     }

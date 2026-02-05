@@ -221,8 +221,8 @@ export function MainLayout({ navItems }: MainLayoutProps): ReactElement {
 
       <div className="flex flex-1 flex-col h-full overflow-hidden relative z-10">
         <Navbar />
-        <main className="flex-1 overflow-y-auto p-6 text-foreground">
-           <div className="container mx-auto min-h-full">
+        <main className="flex-1 overflow-x-hidden overflow-y-auto p-6 text-foreground w-full">
+           <div className="w-full min-h-full">
              <Outlet />
            </div>
         </main>
