@@ -21,18 +21,22 @@ export function PowerbiReportViewerPage(): ReactElement {
 
     const initEmbed = async (): Promise<void> => {
       const raw = await import('powerbi-client');
-      const mod = (raw && typeof (raw as { default?: unknown }).default === 'object' ? (raw as { default: typeof raw }).default : raw) as {
-        service: { Service?: new (hpm: unknown, wpmp: unknown, router: unknown) => { embed: (el: HTMLElement, config: unknown) => unknown; reset: (el: HTMLElement) => void } } | (new (hpm: unknown, wpmp: unknown, router: unknown) => { embed: (el: HTMLElement, config: unknown) => unknown; reset: (el: HTMLElement) => void });
-        factories: { hpmFactory: unknown; wpmpFactory: unknown; routerFactory: unknown };
+      const mod = (raw as unknown as { default?: unknown }).default && typeof (raw as unknown as { default: unknown }).default === 'object'
+        ? ((raw as unknown as { default: typeof raw }).default)
+        : raw;
+      const typedMod = mod as {
+        service?: { Service?: new (hpm: unknown, wpmp: unknown, router: unknown) => { embed: (el: HTMLElement, config: unknown) => unknown; reset: (el: HTMLElement) => void } };
+        factories?: { hpmFactory: unknown; wpmpFactory: unknown; routerFactory: unknown };
       };
+      const serviceNs = typedMod?.service;
       const ServiceConstructor =
-        typeof mod.service?.Service === 'function'
-          ? mod.service.Service
-          : typeof mod.service === 'function'
-            ? mod.service
+        typeof serviceNs === 'object' && serviceNs !== null && typeof (serviceNs as { Service?: unknown }).Service === 'function'
+          ? (serviceNs as { Service: new (hpm: unknown, wpmp: unknown, router: unknown) => { embed: (el: HTMLElement, config: unknown) => unknown; reset: (el: HTMLElement) => void } }).Service
+          : typeof serviceNs === 'function'
+            ? serviceNs
             : undefined;
-      if (typeof ServiceConstructor !== 'function') throw new Error('Power BI Service not found');
-      const powerbi = new ServiceConstructor(mod.factories.hpmFactory, mod.factories.wpmpFactory, mod.factories.routerFactory);
+      if (typeof ServiceConstructor !== 'function' || !typedMod?.factories) throw new Error('Power BI Service not found');
+      const powerbi = new ServiceConstructor(typedMod.factories.hpmFactory, typedMod.factories.wpmpFactory, typedMod.factories.routerFactory);
       powerbiInstance = powerbi;
       const config = {
         type: 'report',
