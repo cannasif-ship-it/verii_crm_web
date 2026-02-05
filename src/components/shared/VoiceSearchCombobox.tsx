@@ -53,7 +53,8 @@ export function VoiceSearchCombobox({
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const SpeechRecognition =
-        (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+        (window as Window & { webkitSpeechRecognition?: new () => SpeechRecognition }).SpeechRecognition ||
+        (window as Window & { webkitSpeechRecognition?: new () => SpeechRecognition }).webkitSpeechRecognition;
       if (SpeechRecognition) {
         const recognition = new SpeechRecognition();
         recognition.continuous = false;
@@ -73,13 +74,12 @@ export function VoiceSearchCombobox({
           setIsListening(false);
         };
 
-        recognition.onerror = (event: any) => {
+        recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
           console.error('Speech recognition error', event.error);
           setIsListening(false);
           if (event.error === 'not-allowed') {
             toast.error(t('common.voiceSearchPermissionDenied', 'Mikrofon izni reddedildi.'));
           } else if (event.error === 'no-speech') {
-            // Ignore no-speech error, just stop listening
           } else {
             toast.error(t('common.voiceSearchError', 'Sesli arama sırasında bir hata oluştu.'));
           }

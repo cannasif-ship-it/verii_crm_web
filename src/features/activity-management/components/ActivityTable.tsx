@@ -1,4 +1,5 @@
 import { type ReactElement, useState, useMemo } from 'react';
+import type { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
 import {
   Table,
@@ -69,7 +70,7 @@ interface ActivityTableProps {
   onSortChange: (sortBy: string, sortDirection: 'asc' | 'desc') => void;
 }
 
-const getColumnsConfig = (t: any): ColumnDef<ActivityDto>[] => [
+const getColumnsConfig = (t: TFunction): ColumnDef<ActivityDto>[] => [
     { key: 'id', label: t('activityManagement.id', 'ID'), type: 'text', className: 'font-medium w-[60px]' },
     { key: 'subject', label: t('activityManagement.subject', 'Konu'), type: 'text', className: 'font-semibold text-slate-900 dark:text-white min-w-[200px]' },
     { key: 'activityType', label: t('activityManagement.activityType', 'Tip'), type: 'text', className: 'whitespace-nowrap' },
@@ -143,7 +144,7 @@ export function ActivityTable({
   };
 
   const renderCellContent = (item: ActivityDto, column: ColumnDef<ActivityDto>) => {
-    const value = (item as any)[column.key];
+    const value = item[column.key as keyof ActivityDto];
 
     switch (column.type) {
         case 'status':

@@ -1,5 +1,6 @@
 import { type ReactElement, useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import type { TFunction } from 'i18next';
 import {
   Table,
   TableBody,
@@ -62,7 +63,7 @@ interface PricingRuleTableProps {
   onEdit: (header: PricingRuleHeaderGetDto) => void;
 }
 
-const getColumnsConfig = (t: any): ColumnDef<PricingRuleHeaderGetDto>[] => [
+const getColumnsConfig = (t: TFunction): ColumnDef<PricingRuleHeaderGetDto>[] => [
     { key: 'ruleCode', label: t('pricingRule.table.ruleCode', 'Kural Kodu'), type: 'code', className: 'w-[120px]' },
     { key: 'ruleName', label: t('pricingRule.table.ruleName', 'Kural Adı'), type: 'text', className: 'min-w-[200px] font-medium' },
     { key: 'ruleType', label: t('pricingRule.table.ruleType', 'Kural Tipi'), type: 'ruleType', className: 'w-[140px]' },

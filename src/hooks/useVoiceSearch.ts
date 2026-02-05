@@ -10,10 +10,17 @@ export const useVoiceSearch = ({ onResult, language = 'tr-TR' }: UseVoiceSearchO
   const [error, setError] = useState<string | null>(null);
   const [isSupported, setIsSupported] = useState(false);
 
+  const getSpeechRecognition = (): (new () => SpeechRecognition) | null => {
+    const SpeechRecognition =
+      window.SpeechRecognition ||
+      (window as Window & { webkitSpeechRecognition?: new () => SpeechRecognition })
+        .webkitSpeechRecognition;
+    return SpeechRecognition ?? null;
+  };
+
   useEffect(() => {
     const checkSupport = () => {
-      const SpeechRecognition = window.SpeechRecognition || (window as any).webkitSpeechRecognition;
-      setIsSupported(!!SpeechRecognition);
+      setIsSupported(!!getSpeechRecognition());
     };
     checkSupport();
   }, []);
@@ -24,7 +31,11 @@ export const useVoiceSearch = ({ onResult, language = 'tr-TR' }: UseVoiceSearchO
       return;
     }
 
-    const SpeechRecognition = window.SpeechRecognition || (window as any).webkitSpeechRecognition;
+    const SpeechRecognition = getSpeechRecognition();
+    if (!SpeechRecognition) {
+      setError('Tarayıcınız sesli aramayı desteklemiyor');
+      return;
+    }
     const recognition = new SpeechRecognition();
 
     recognition.continuous = false;
@@ -36,15 +47,15 @@ export const useVoiceSearch = ({ onResult, language = 'tr-TR' }: UseVoiceSearchO
       setError(null);
     };
 
-    recognition.onresult = (event: any) => {
+    recognition.onresult = (event: SpeechRecognitionEvent) => {
       const transcript = Array.from(event.results)
-        .map((result: any) => result[0].transcript)
+        .map((result) => result[0].transcript)
         .join('');
       onResult(transcript);
       setIsListening(false);
     };
 
-    recognition.onerror = (event: any) => {
+    recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
       if (event.error === 'no-speech') {
         setError('Ses algılanamadı');
       } else if (event.error === 'not-allowed') {
@@ -61,7 +72,7 @@ export const useVoiceSearch = ({ onResult, language = 'tr-TR' }: UseVoiceSearchO
 
     try {
       recognition.start();
-    } catch (err) {
+    } catch {
       setError('Sesli arama başlatılamadı');
       setIsListening(false);
     }
@@ -79,5 +90,4 @@ export const useVoiceSearch = ({ onResult, language = 'tr-TR' }: UseVoiceSearchO
     stopListening,
   };
 };
-
 

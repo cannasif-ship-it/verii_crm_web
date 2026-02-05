@@ -1,5 +1,6 @@
 import { type ReactElement, useState, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import type { TFunction } from 'i18next';
 import {
   Table,
   TableBody,
@@ -24,7 +25,7 @@ interface ErpCustomerTableProps {
   customers: CariDto[];
   isLoading: boolean;
 }
-const getColumnsConfig = (t: any) => [
+const getColumnsConfig = (t: TFunction) => [
     { key: 'subeKodu', label: t('erpCustomerManagement.table.branchCode', 'Şube'), className: 'font-medium whitespace-nowrap' },
     { key: 'isletmeKodu', label: t('erpCustomerManagement.table.businessUnitCode', 'İş Birimi'), className: 'whitespace-nowrap' },
     { key: 'cariKod', label: t('erpCustomerManagement.table.customerCode', 'Müşteri Kodu'), className: 'font-semibold text-slate-900 dark:text-white group-hover:text-pink-600 dark:group-hover:text-pink-400 transition-colors whitespace-nowrap' },

@@ -98,9 +98,13 @@ export function DashboardPage(): ReactElement {
     };
   }, [t, setPageTitle]);
 
-  const getUserDisplayName = () => {
+  const getUserDisplayName = (): string => {
     if (!user) return t('dashboard.user', 'Kullanıcı');
-    return (user as any).fullName || (user as any).name || (user as any).username || t('dashboard.user', 'Kullanıcı');
+    const userRecord = user as Record<string, unknown>;
+    const fullName = typeof userRecord.fullName === 'string' ? userRecord.fullName : '';
+    const name = typeof userRecord.name === 'string' ? userRecord.name : '';
+    const username = typeof userRecord.username === 'string' ? userRecord.username : '';
+    return fullName || name || username || t('dashboard.user', 'Kullanıcı');
   };
 
   const formatCurrency = (amount: number | undefined | null): string => {
@@ -129,7 +133,8 @@ export function DashboardPage(): ReactElement {
   }
 
   const kpis = data?.kpis;
-  const activities = Array.isArray(data?.activities) ? data.activities : [];
+  type ActivityLike = Record<string, unknown>;
+  const activities = Array.isArray(data?.activities) ? (data.activities as ActivityLike[]) : [];
 
   const stats = [
     {
@@ -172,12 +177,22 @@ export function DashboardPage(): ReactElement {
 
   const monthKeys = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
 
-  const deals = activities.slice(0, 5).map((activity: any) => ({
-      c: activity.title || activity.subject || activity.konu || activity.description || 'İsimsiz Aktivite',
-      a: activity.amount ? formatCurrency(activity.amount) : '',
-      s: t(`dashboard.activityType.${activity.type}`) || activity.type || 'Genel',
-      d: activity.timeAgo || (activity.createdAt ? new Date(activity.createdAt).toLocaleDateString() : 'Tarih yok'),
-  }));
+  const deals = activities.slice(0, 5).map((activity) => {
+    const title = typeof activity.title === 'string' ? activity.title : '';
+    const subject = typeof activity.subject === 'string' ? activity.subject : '';
+    const konu = typeof activity.konu === 'string' ? activity.konu : '';
+    const description = typeof activity.description === 'string' ? activity.description : '';
+    const type = typeof activity.type === 'string' ? activity.type : '';
+    const timeAgo = typeof activity.timeAgo === 'string' ? activity.timeAgo : '';
+    const createdAt = typeof activity.createdAt === 'string' ? activity.createdAt : '';
+    const amount = typeof activity.amount === 'number' ? activity.amount : null;
+    return {
+      c: title || subject || konu || description || 'İsimsiz Aktivite',
+      a: amount !== null ? formatCurrency(amount) : '',
+      s: t(`dashboard.activityType.${type}`) || type || 'Genel',
+      d: timeAgo || (createdAt ? new Date(createdAt).toLocaleDateString() : 'Tarih yok'),
+    };
+  });
 
   const handleDownloadReport = () => {
     console.log("Rapor indiriliyor...");

@@ -41,6 +41,7 @@ import {
   ChevronDown
 } from 'lucide-react';
 import { Alert02Icon } from 'hugeicons-react';
+import type { TFunction } from 'i18next';
 
 // Sütun yapılandırması için tip tanımı
 export interface ColumnDef<T> {
@@ -57,7 +58,7 @@ interface ActivityTypeTableProps {
 }
 
 // Kolon konfigürasyonu
-const getColumnsConfig = (t: any): ColumnDef<ActivityTypeDto>[] => [
+const getColumnsConfig = (t: TFunction): ColumnDef<ActivityTypeDto>[] => [
     { key: 'id', label: t('activityType.table.id', 'ID'), type: 'text', className: 'font-medium w-[80px]' },
     { key: 'name', label: t('activityType.table.name', 'Aktivite Tipi'), type: 'text', className: 'font-semibold text-slate-900 dark:text-white min-w-[200px]' },
     { key: 'description', label: t('activityType.table.description', 'Açıklama'), type: 'description', className: 'min-w-[250px]' },

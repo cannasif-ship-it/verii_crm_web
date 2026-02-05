@@ -1,5 +1,6 @@
 import { type ReactElement, useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import type { TFunction } from 'i18next';
 import {
   Table,
   TableBody,
@@ -50,7 +51,7 @@ interface ContactTableProps {
   visibleColumns: Array<keyof ContactDto>;
 }
 
-export const getColumnsConfig = (t: any): ColumnDef<ContactDto>[] => [
+export const getColumnsConfig = (t: TFunction): ColumnDef<ContactDto>[] => [
     { key: 'id', label: t('contactManagement.table.id', 'ID'), type: 'text', className: 'font-medium w-[80px]' },
     { key: 'fullName', label: t('contactManagement.table.fullName', 'Ad Soyad'), type: 'text', className: 'font-semibold text-slate-900 dark:text-white min-w-[150px]' },
     { key: 'email', label: t('contactManagement.table.email', 'E-posta'), type: 'email', className: 'min-w-[180px] break-all' },

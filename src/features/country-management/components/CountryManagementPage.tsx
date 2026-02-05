@@ -35,7 +35,7 @@ export function CountryManagementPage(): ReactElement {
     pageSize: 10000
   });
 
-  const countries = apiResponse?.data || (apiResponse as any)?.items || [];
+  const countries = apiResponse?.data ?? [];
 
   useEffect(() => {
     setPageTitle(t('countryManagement.menu', 'Ülke Yönetimi'));

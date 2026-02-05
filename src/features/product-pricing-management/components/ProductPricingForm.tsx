@@ -1,5 +1,5 @@
 import { type ReactElement, useEffect, useMemo, useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { type Resolver, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription
@@ -64,7 +64,7 @@ export function ProductPricingForm({
   const [productDialogOpen, setProductDialogOpen] = useState(false);
 
   const form = useForm<ProductPricingFormSchema>({
-    resolver: zodResolver(productPricingFormSchema) as any,
+    resolver: zodResolver(productPricingFormSchema) as Resolver<ProductPricingFormSchema>,
     defaultValues: {
       erpProductCode: '', erpGroupCode: '', currency: 'TRY',
       listPrice: 0, costPrice: 0,
@@ -121,7 +121,7 @@ export function ProductPricingForm({
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* SOL KOLON: Ürün Bilgileri */}
                 <div className="space-y-5">
-                  <FormField control={form.control as any} name="erpProductCode" render={({ field }) => (
+                  <FormField control={form.control} name="erpProductCode" render={({ field }) => (
                     <FormItem className="space-y-0">
                       <FormLabel className={LABEL_STYLE}>
                         <Package size={12} className="text-pink-500" /> Stok Kodu *
@@ -143,7 +143,7 @@ export function ProductPricingForm({
                     </FormItem>
                   )} />
 
-                  <FormField control={form.control as any} name="erpGroupCode" render={({ field }) => (
+                  <FormField control={form.control} name="erpGroupCode" render={({ field }) => (
                     <FormItem className="space-y-0">
                       <FormLabel className={LABEL_STYLE}>
                         <Layers size={12} className="text-pink-500" /> Grup Kodu
@@ -154,7 +154,7 @@ export function ProductPricingForm({
                     </FormItem>
                   )} />
 
-                  <FormField control={form.control as any} name="currency" render={({ field }) => (
+                  <FormField control={form.control} name="currency" render={({ field }) => (
                     <FormItem className="space-y-0">
                       <FormLabel className={LABEL_STYLE}>
                         <Banknote size={12} className="text-pink-500" /> Para Birimi *
@@ -204,7 +204,7 @@ export function ProductPricingForm({
                 {/* SAĞ KOLON: Fiyatlar */}
                 <div className="space-y-5">
                   <div className="grid grid-cols-2 gap-4">
-                    <FormField control={form.control as any} name="listPrice" render={({ field }) => (
+                    <FormField control={form.control} name="listPrice" render={({ field }) => (
                       <FormItem className="space-y-0">
                         <FormLabel className={LABEL_STYLE}>
                           <Tag size={12} className="text-pink-500" /> Liste Fiyatı
@@ -215,7 +215,7 @@ export function ProductPricingForm({
                         <FormMessage className="text-red-500 text-[10px]" />
                       </FormItem>
                     )} />
-                    <FormField control={form.control as any} name="costPrice" render={({ field }) => (
+                    <FormField control={form.control} name="costPrice" render={({ field }) => (
                       <FormItem className="space-y-0">
                         <FormLabel className={LABEL_STYLE}>
                           <Coins size={12} className="text-pink-500" /> Maliyet
@@ -229,7 +229,7 @@ export function ProductPricingForm({
                   </div>
 
                   <div className="grid grid-cols-3 gap-3">
-                    <FormField control={form.control as any} name="discount1" render={({ field }) => (
+                    <FormField control={form.control} name="discount1" render={({ field }) => (
                       <FormItem className="space-y-0">
                         <FormLabel className={LABEL_STYLE}>
                           <Percent size={12} className="text-pink-500" /> İsk. 1 (%)
@@ -237,7 +237,7 @@ export function ProductPricingForm({
                         <FormControl><Input type="number" {...field} className={INPUT_STYLE} /></FormControl>
                       </FormItem>
                     )} />
-                    <FormField control={form.control as any} name="discount2" render={({ field }) => (
+                    <FormField control={form.control} name="discount2" render={({ field }) => (
                       <FormItem className="space-y-0">
                         <FormLabel className={LABEL_STYLE}>
                           <Percent size={12} className="text-pink-500" /> İsk. 2 (%)
@@ -245,7 +245,7 @@ export function ProductPricingForm({
                         <FormControl><Input type="number" {...field} className={INPUT_STYLE} /></FormControl>
                       </FormItem>
                     )} />
-                    <FormField control={form.control as any} name="discount3" render={({ field }) => (
+                    <FormField control={form.control} name="discount3" render={({ field }) => (
                       <FormItem className="space-y-0">
                         <FormLabel className={LABEL_STYLE}>
                           <Percent size={12} className="text-pink-500" /> İsk. 3 (%)

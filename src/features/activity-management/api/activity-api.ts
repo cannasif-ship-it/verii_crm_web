@@ -18,12 +18,12 @@ export const activityApi = {
     );
     
     if (response.success && response.data) {
-      const pagedData = response.data;
+      const pagedData = response.data as PagedResponse<ActivityDto> & { items?: ActivityDto[] };
       
-      if ((pagedData as any).items && !pagedData.data) {
+      if (pagedData.items && !pagedData.data) {
         return {
           ...pagedData,
-          data: (pagedData as any).items,
+          data: pagedData.items,
         };
       }
       

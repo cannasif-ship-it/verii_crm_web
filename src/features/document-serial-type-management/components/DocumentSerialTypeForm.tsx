@@ -79,7 +79,9 @@ function SearchableSelect({
 
   const startListening = () => {
     if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-      const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+      const SpeechRecognition =
+        (window as Window & { webkitSpeechRecognition?: new () => SpeechRecognition }).SpeechRecognition ||
+        (window as Window & { webkitSpeechRecognition?: new () => SpeechRecognition }).webkitSpeechRecognition;
       const recognition = new SpeechRecognition();
       recognition.lang = 'tr-TR';
       recognition.continuous = false;
@@ -88,7 +90,7 @@ function SearchableSelect({
       recognition.onstart = () => setIsListening(true);
       recognition.onend = () => setIsListening(false);
       
-      recognition.onresult = (event: any) => {
+      recognition.onresult = (event: SpeechRecognitionEvent) => {
         const transcript = event.results[0][0].transcript;
         setSearch(transcript);
       };

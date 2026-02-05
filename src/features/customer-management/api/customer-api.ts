@@ -18,12 +18,12 @@ export const customerApi = {
     );
     
     if (response.success && response.data) {
-      const pagedData = response.data;
+      const pagedData = response.data as PagedResponse<CustomerDto> & { items?: CustomerDto[] };
       
-      if ((pagedData as any).items && !pagedData.data) {
+      if (pagedData.items && !pagedData.data) {
         return {
           ...pagedData,
-          data: (pagedData as any).items,
+          data: pagedData.items,
         };
       }
       

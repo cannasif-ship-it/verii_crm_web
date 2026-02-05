@@ -73,7 +73,7 @@ export function CustomerManagementPage(): ReactElement {
     pageSize: 10000,
   });
 
-  const customers = apiResponse?.data || (apiResponse as any)?.items || [];
+  const customers = apiResponse?.data ?? [];
 
   useEffect(() => {
     setPageTitle(t('customerManagement.menu', 'Müşteri Yönetimi'));
@@ -148,9 +148,12 @@ export function CustomerManagementPage(): ReactElement {
 
   const handleExportExcel = () => {
     const dataToExport = filteredCustomers.map(item => {
-        const row: any = {};
+        const row: Record<string, string | number | boolean | null | undefined> = {};
         tableColumns.filter(col => visibleColumns.includes(col.key)).forEach(col => {
-            row[col.label] = item[col.key];
+            const value = item[col.key];
+            row[col.label] = (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean')
+              ? value
+              : value ?? '';
         });
         return row;
     });
@@ -198,9 +201,9 @@ export function CustomerManagementPage(): ReactElement {
             .map(col => String(item[col.key] || ''));
     });
 
-    const tableData = [headers, ...rows];
+    const tableData: string[][] = [headers, ...rows];
 
-    slide.addTable(tableData as any, { x: 0.5, y: 1.5, w: '90%' });
+    slide.addTable(tableData, { x: 0.5, y: 1.5, w: '90%' });
 
     pptx.writeFile({ fileName: "musteriler.pptx" });
   };

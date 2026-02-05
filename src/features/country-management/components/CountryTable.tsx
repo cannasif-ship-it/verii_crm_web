@@ -1,5 +1,6 @@
 import { type ReactElement, useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import type { TFunction } from 'i18next';
 import {
   Table,
   TableBody,
@@ -55,7 +56,7 @@ interface CountryTableProps {
   onEdit: (country: CountryDto) => void;
 }
 
-const getColumnsConfig = (t: any): ColumnDef<CountryDto>[] => [
+const getColumnsConfig = (t: TFunction): ColumnDef<CountryDto>[] => [
     { key: 'id', label: t('countryManagement.table.id', 'ID'), type: 'id', className: 'w-[100px]' },
     { key: 'name', label: t('countryManagement.table.name', 'Ülke Adı'), type: 'text', className: 'min-w-[200px] font-medium' },
     { key: 'code', label: t('countryManagement.table.code', 'Ülke Kodu'), type: 'text', className: 'w-[140px]' },

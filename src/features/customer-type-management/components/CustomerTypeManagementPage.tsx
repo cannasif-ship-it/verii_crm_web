@@ -35,7 +35,7 @@ export function CustomerTypeManagementPage(): ReactElement {
     pageSize: 10000, // Tüm veriyi çekiyoruz
   });
 
-  const customerTypes = apiResponse?.data || (apiResponse as any)?.items || [];
+  const customerTypes = apiResponse?.data ?? [];
 
   // Sayfa Başlığı
   useEffect(() => {

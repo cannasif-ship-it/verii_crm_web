@@ -19,12 +19,12 @@ export const approvalFlowStepApi = {
     );
 
     if (response.success && response.data) {
-      const pagedData = response.data;
+      const pagedData = response.data as PagedResponse<ApprovalFlowStepGetDto> & { items?: ApprovalFlowStepGetDto[] };
 
-      if ((pagedData as any).items && !pagedData.data) {
+      if (pagedData.items && !pagedData.data) {
         return {
           ...pagedData,
-          data: (pagedData as any).items,
+          data: pagedData.items,
         };
       }
 

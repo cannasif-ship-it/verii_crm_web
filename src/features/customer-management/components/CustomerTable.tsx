@@ -1,5 +1,6 @@
 import { type ReactElement, useState, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import type { TFunction } from 'i18next';
 import {
   TableBody,
   TableCell,
@@ -50,7 +51,7 @@ export interface CustomerTableProps {
   visibleColumns: Array<keyof CustomerDto>;
 }
 
-export const getColumnsConfig = (t: any): ColumnDef<CustomerDto>[] => [
+export const getColumnsConfig = (t: TFunction): ColumnDef<CustomerDto>[] => [
     { key: 'id', label: t('customerManagement.table.id', 'ID'), type: 'text', className: 'font-medium w-[60px]' },
     { key: 'customerCode', label: t('customerManagement.table.customerCode', 'Kod'), type: 'code', className: 'font-mono text-xs' },
     { key: 'name', label: t('customerManagement.table.name', 'Müşteri Adı'), type: 'text', className: 'font-bold text-slate-900 dark:text-white min-w-[200px]' },

@@ -1,5 +1,6 @@
 import { type ReactElement, useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import type { TFunction } from 'i18next';
 import {
   Table,
   TableBody,
@@ -55,7 +56,7 @@ interface CustomerTypeTableProps {
   onEdit: (customerType: CustomerTypeDto) => void;
 }
 
-const getColumnsConfig = (t: any): ColumnDef<CustomerTypeDto>[] => [
+const getColumnsConfig = (t: TFunction): ColumnDef<CustomerTypeDto>[] => [
     { key: 'id', label: t('customerTypeManagement.table.id', 'ID'), type: 'text', className: 'font-medium w-[80px]' },
     { key: 'name', label: t('customerTypeManagement.table.name', 'Müşteri Tipi Adı'), type: 'badge', className: 'font-semibold text-slate-900 dark:text-white min-w-[150px]' },
     { key: 'description', label: t('customerTypeManagement.table.description', 'Açıklama'), type: 'description', className: 'min-w-[250px]' },

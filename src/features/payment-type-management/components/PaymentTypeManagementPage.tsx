@@ -33,7 +33,7 @@ export function PaymentTypeManagementPage(): ReactElement {
   });
 
   const allPaymentTypes = useMemo(() => {
-    return data?.data || (data as any)?.items || [];
+    return data?.data ?? [];
   }, [data]);
 
   const filteredPaymentTypes = useMemo(() => {
@@ -198,4 +198,3 @@ export function PaymentTypeManagementPage(): ReactElement {
     </div>
   );
 }
-

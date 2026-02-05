@@ -1,5 +1,6 @@
 import { type ReactElement, useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import type { TFunction } from 'i18next';
 import {
   Table,
   TableBody,
@@ -67,7 +68,7 @@ export function ApprovalFlowTable({
 
   const deleteApprovalFlow = useDeleteApprovalFlow();
 
-  const getColumnsConfig = (t: any): ColumnDef<ApprovalFlowDto>[] => [
+  const getColumnsConfig = (t: TFunction): ColumnDef<ApprovalFlowDto>[] => [
     { key: 'id', label: t('approvalFlow.table.id', 'ID'), className: 'w-[100px]' },
     { key: 'documentType', label: t('approvalFlow.table.documentType', 'Belge Tipi'), className: 'min-w-[150px]' },
     { key: 'description', label: t('approvalFlow.table.description', 'Açıklama'), className: 'min-w-[200px]' },
@@ -78,8 +79,9 @@ export function ApprovalFlowTable({
 
   const tableColumns = useMemo(() => getColumnsConfig(t), [t]);
   
-  const [visibleColumns, setVisibleColumns] = useState<Array<keyof ApprovalFlowDto | 'actions'>>(
-    tableColumns.map(col => col.key).concat(['actions'] as any)
+  type ColumnKey = keyof ApprovalFlowDto | 'actions';
+  const [visibleColumns, setVisibleColumns] = useState<ColumnKey[]>(
+    [...tableColumns.map(col => col.key), 'actions']
   );
 
   const processedApprovalFlows = useMemo(() => {

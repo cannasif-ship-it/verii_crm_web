@@ -83,7 +83,7 @@ export function ContactManagementPage(): ReactElement {
     pageSize: 10000 
   });
 
-  const contacts = apiResponse?.data || (apiResponse as any)?.items || [];
+  const contacts = apiResponse?.data ?? [];
 
   useEffect(() => {
     setPageTitle(t('contactManagement.menu', 'İletişim Yönetimi'));
@@ -192,11 +192,14 @@ export function ContactManagementPage(): ReactElement {
 
   const handleExportExcel = () => {
     const dataToExport = filteredContacts.map(contact => {
-        const row: any = {};
+        const row: Record<string, string | number | boolean | null | undefined> = {};
         visibleColumns.forEach(key => {
             const col = tableColumns.find(c => c.key === key);
             if (col) {
-                row[col.label] = contact[key];
+                const value = contact[key];
+                row[col.label] = (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean')
+                  ? value
+                  : value ?? '';
             }
         });
         return row;
@@ -247,10 +250,9 @@ export function ContactManagementPage(): ReactElement {
             .map(col => String(contact[col.key] || ''));
     });
 
-    const tableData = [headers, ...rows];
+    const tableData: string[][] = [headers, ...rows];
 
-    // Add Table
-    slide.addTable(tableData as any, { x: 0.5, y: 1.5, w: '90%' });
+    slide.addTable(tableData, { x: 0.5, y: 1.5, w: '90%' });
 
     pptx.writeFile({ fileName: "contacts.pptx" });
   };

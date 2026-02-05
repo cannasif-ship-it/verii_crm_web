@@ -1,5 +1,6 @@
 import { type ReactElement, useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import type { TFunction } from 'i18next';
 import {
   Table,
   TableBody,
@@ -54,7 +55,7 @@ interface TitleTableProps {
   onEdit: (title: TitleDto) => void;
 }
 
-const getColumnsConfig = (t: any): ColumnDef<TitleDto>[] => [
+const getColumnsConfig = (t: TFunction): ColumnDef<TitleDto>[] => [
     { key: 'id', label: t('titleManagement.table.id', 'ID'), type: 'id', className: 'w-[100px]' },
     { key: 'titleName', label: t('titleManagement.table.name', 'Ünvan Adı'), type: 'text', className: 'min-w-[200px] font-medium' },
     { key: 'code', label: t('titleManagement.table.code', 'Kod'), type: 'text', className: 'w-[140px]' },

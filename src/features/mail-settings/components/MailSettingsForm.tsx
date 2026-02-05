@@ -1,5 +1,5 @@
 import { type ReactElement, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
+import { type Resolver, type SubmitHandler, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
@@ -36,7 +36,7 @@ export function MailSettingsForm({
   const { t } = useTranslation();
 
   const form = useForm<SmtpSettingsFormSchema>({
-    resolver: zodResolver(smtpSettingsFormSchema) as any,
+    resolver: zodResolver(smtpSettingsFormSchema) as Resolver<SmtpSettingsFormSchema>,
     defaultValues: {
       host: '',
       port: 587,
@@ -64,7 +64,7 @@ export function MailSettingsForm({
     }
   }, [data, form]);
 
-  const handleSubmit = (values: SmtpSettingsFormSchema): void => {
+  const handleSubmit: SubmitHandler<SmtpSettingsFormSchema> = (values) => {
     onSubmit(values);
   };
 
@@ -80,7 +80,7 @@ export function MailSettingsForm({
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(handleSubmit as any)} className="space-y-6">
+      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
         <Card>
           <CardHeader>
             <CardTitle>{t('mailSettings.PageTitle', 'Mail Ayarları')}</CardTitle>
@@ -90,7 +90,7 @@ export function MailSettingsForm({
           </CardHeader>
           <CardContent className="space-y-4">
             <FormField
-              control={form.control as any}
+              control={form.control}
               name="host"
               render={({ field }) => (
                 <FormItem>
@@ -103,7 +103,7 @@ export function MailSettingsForm({
               )}
             />
             <FormField
-              control={form.control as any}
+              control={form.control}
               name="port"
               render={({ field }) => (
                 <FormItem>
@@ -122,7 +122,7 @@ export function MailSettingsForm({
               )}
             />
             <FormField
-              control={form.control as any}
+              control={form.control}
               name="enableSsl"
               render={({ field }) => (
                 <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
@@ -138,7 +138,7 @@ export function MailSettingsForm({
               )}
             />
             <FormField
-              control={form.control as any}
+              control={form.control}
               name="username"
               render={({ field }) => (
                 <FormItem>
@@ -151,7 +151,7 @@ export function MailSettingsForm({
               )}
             />
             <FormField
-              control={form.control as any}
+              control={form.control}
               name="password"
               render={({ field }) => (
                 <FormItem>
@@ -168,7 +168,7 @@ export function MailSettingsForm({
               )}
             />
             <FormField
-              control={form.control as any}
+              control={form.control}
               name="fromEmail"
               render={({ field }) => (
                 <FormItem>
@@ -181,7 +181,7 @@ export function MailSettingsForm({
               )}
             />
             <FormField
-              control={form.control as any}
+              control={form.control}
               name="fromName"
               render={({ field }) => (
                 <FormItem>
@@ -194,7 +194,7 @@ export function MailSettingsForm({
               )}
             />
             <FormField
-              control={form.control as any}
+              control={form.control}
               name="timeout"
               render={({ field }) => (
                 <FormItem>

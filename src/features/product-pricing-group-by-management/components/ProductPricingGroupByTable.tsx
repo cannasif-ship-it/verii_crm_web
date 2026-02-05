@@ -1,5 +1,6 @@
 import { type ReactElement, useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import type { TFunction } from 'i18next';
 import {
   Table,
   TableBody,
@@ -67,7 +68,7 @@ export function ProductPricingGroupByTable({
 
   const deleteMutation = useDeleteProductPricingGroupBy();
 
-  const getColumnsConfig = (t: any): ColumnDef<ProductPricingGroupByDto>[] => [
+  const getColumnsConfig = (t: TFunction): ColumnDef<ProductPricingGroupByDto>[] => [
     { key: 'erpGroupCode', label: t('productPricingGroupByManagement.erpGroupCode', 'Grup Kodu'), className: 'min-w-[150px]' },
     { key: 'currency', label: t('productPricingGroupByManagement.currency', 'Para Birimi'), className: 'w-[100px]' },
     { key: 'listPrice', label: t('productPricingGroupByManagement.listPrice', 'Liste Fiyatı'), className: 'w-[120px]' },
@@ -79,8 +80,9 @@ export function ProductPricingGroupByTable({
 
   const tableColumns = useMemo(() => getColumnsConfig(t), [t]);
   
-  const [visibleColumns, setVisibleColumns] = useState<Array<keyof ProductPricingGroupByDto | 'actions'>>(
-    tableColumns.map(col => col.key).concat(['actions'] as any)
+  type ColumnKey = keyof ProductPricingGroupByDto | 'actions';
+  const [visibleColumns, setVisibleColumns] = useState<ColumnKey[]>(
+    [...tableColumns.map(col => col.key), 'actions']
   );
 
   const processedItems = useMemo(() => {

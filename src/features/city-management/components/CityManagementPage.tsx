@@ -35,7 +35,7 @@ export function CityManagementPage(): ReactElement {
     pageSize: 10000
   });
 
-  const cities = apiResponse?.data || (apiResponse as any)?.items || [];
+  const cities = apiResponse?.data ?? [];
 
   useEffect(() => {
     setPageTitle(t('cityManagement.menu', 'Şehir Yönetimi'));

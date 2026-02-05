@@ -1,5 +1,6 @@
 import { type ReactElement, useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import type { TFunction } from 'i18next';
 import {
   Table,
   TableBody,
@@ -57,7 +58,7 @@ interface PaymentTypeTableProps {
   onEdit: (paymentType: PaymentTypeDto) => void;
 }
 
-const getColumnsConfig = (t: any): ColumnDef<PaymentTypeDto>[] => [
+const getColumnsConfig = (t: TFunction): ColumnDef<PaymentTypeDto>[] => [
     { key: 'id', label: t('paymentTypeManagement.table.id', 'ID'), type: 'id', className: 'w-[80px]' },
     { key: 'name', label: t('paymentTypeManagement.table.name', 'Ad'), type: 'text', className: 'min-w-[200px] font-medium' },
     { key: 'description', label: t('paymentTypeManagement.table.description', 'Açıklama'), type: 'text', className: 'min-w-[250px]' },

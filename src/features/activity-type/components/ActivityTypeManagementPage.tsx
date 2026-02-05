@@ -35,13 +35,7 @@ export function ActivityTypeManagementPage(): ReactElement {
     sortDirection: 'desc'
   });
 
-  const allActivityTypes = useMemo(() => {
-    if (!apiResponse) return [];
-    if (Array.isArray(apiResponse)) return apiResponse;
-    if (apiResponse.data && Array.isArray(apiResponse.data)) return apiResponse.data;
-    if ((apiResponse as any).items && Array.isArray((apiResponse as any).items)) return (apiResponse as any).items;
-    return [];
-  }, [apiResponse]);
+  const allActivityTypes = useMemo(() => apiResponse?.data ?? [], [apiResponse]);
 
   useEffect(() => {
     setPageTitle(t('activityType.management.title', 'Aktivite Tipi Yönetimi'));

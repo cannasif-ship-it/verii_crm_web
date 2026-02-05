@@ -1,5 +1,6 @@
 import { type ReactElement, useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import type { TFunction } from 'i18next';
 import {
   Table,
   TableBody,
@@ -66,7 +67,7 @@ export function ApprovalUserRoleTable({
 
   const deleteUserRole = useDeleteApprovalUserRole();
 
-  const getColumnsConfig = (t: any): ColumnDef<ApprovalUserRoleDto>[] => [
+  const getColumnsConfig = (t: TFunction): ColumnDef<ApprovalUserRoleDto>[] => [
     { key: 'id', label: t('approvalUserRole.table.id', 'ID'), className: 'w-[100px]' },
     { key: 'userFullName', label: t('approvalUserRole.table.userFullName', 'Kullanıcı'), className: 'min-w-[200px]' },
     { key: 'approvalRoleName', label: t('approvalUserRole.table.approvalRoleName', 'Onay Rolü'), className: 'min-w-[200px]' },
@@ -76,8 +77,9 @@ export function ApprovalUserRoleTable({
 
   const tableColumns = useMemo(() => getColumnsConfig(t), [t]);
   
-  const [visibleColumns, setVisibleColumns] = useState<Array<keyof ApprovalUserRoleDto | 'actions'>>(
-    tableColumns.map(col => col.key).concat(['actions'] as any)
+  type ColumnKey = keyof ApprovalUserRoleDto | 'actions';
+  const [visibleColumns, setVisibleColumns] = useState<ColumnKey[]>(
+    [...tableColumns.map(col => col.key), 'actions']
   );
 
   const processedUserRoles = useMemo(() => {

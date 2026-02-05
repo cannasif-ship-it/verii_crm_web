@@ -34,7 +34,7 @@ export function DistrictManagementPage(): ReactElement {
   });
 
   const allDistricts = useMemo(() => {
-    return data?.data || (data as any)?.items || [];
+    return data?.data ?? [];
   }, [data]);
 
   const filteredDistricts = useMemo(() => {

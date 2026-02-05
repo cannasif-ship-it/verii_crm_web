@@ -18,12 +18,12 @@ export const contactApi = {
     );
     
     if (response.success && response.data) {
-      const pagedData = response.data;
+      const pagedData = response.data as PagedResponse<ContactDto> & { items?: ContactDto[] };
       
-      if ((pagedData as any).items && !pagedData.data) {
+      if (pagedData.items && !pagedData.data) {
         return {
           ...pagedData,
-          data: (pagedData as any).items,
+          data: pagedData.items,
         };
       }
       

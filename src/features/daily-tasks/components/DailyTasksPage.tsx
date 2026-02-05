@@ -228,13 +228,15 @@ export function DailyTasksPage(): ReactElement {
       : 'bg-white/50 dark:bg-white/5 border border-slate-200 dark:border-white/10 hover:bg-slate-100 dark:hover:bg-white/10 text-slate-600 dark:text-slate-300'}
   `;
 
-  // Safe User Name Access
-  const getUserDisplayName = () => {
+  const getUserDisplayName = (): string => {
     if (!user) return '';
-    return (user as any).fullName || (user as any).username || (user as any).name || 'Kullanıcı';
+    const userRecord = user as Record<string, unknown>;
+    const fullName = typeof userRecord.fullName === 'string' ? userRecord.fullName : '';
+    const username = typeof userRecord.username === 'string' ? userRecord.username : '';
+    const name = typeof userRecord.name === 'string' ? userRecord.name : '';
+    return fullName || username || name || 'Kullanıcı';
   };
 
-  // Background
   const backgroundBlobs = (
     <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10">
       <div className="absolute top-0 left-1/4 w-[200px] md:w-[500px] h-[200px] md:h-[500px] bg-purple-500/10 dark:bg-purple-900/20 rounded-full blur-[60px] md:blur-[100px] animate-pulse" />

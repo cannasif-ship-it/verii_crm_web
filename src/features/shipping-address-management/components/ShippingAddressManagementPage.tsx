@@ -32,7 +32,7 @@ export function ShippingAddressManagementPage(): ReactElement {
   });
 
   const allShippingAddresses = useMemo(() => {
-    return apiResponse?.data || (apiResponse as any)?.items || [];
+    return apiResponse?.data ?? [];
   }, [apiResponse]);
 
   const filteredShippingAddresses = useMemo(() => {
