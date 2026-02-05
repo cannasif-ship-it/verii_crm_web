@@ -43,51 +43,7 @@ export function MainLayout({ navItems }: MainLayoutProps): ReactElement {
         icon: <DashboardSquare02Icon size={iconSize} className="text-blue-500" />,
       },
       {
-        title: t('sidebar.pdfBuilder', 'PDF Builder'),
-        icon: <File01Icon size={iconSize} className="text-amber-500" />,
-        children: [
-          { title: 'Listele', href: '/report-designer' },
-          { title: 'Oluştur', href: '/report-designer/create' },
-        ],
-      },
-      {
-        title: t('sidebar.reportBuilder', 'Report Builder'),
-        icon: <File01Icon size={iconSize} className="text-cyan-500" />,
-        children: [
-          { title: t('sidebar.reportsList', 'Liste'), href: '/reports' },
-          { title: t('sidebar.reportsCreate', 'Yeni Oluştur'), href: '/reports/new' },
-        ],
-      },
-      {
-        title: t('sidebar.customers', 'Müşteriler'),
-        icon: <UserGroupIcon size={iconSize} className="text-purple-500" />,
-        children: [
-          { title: t('sidebar.customerManagement', 'Müşteri Yönetimi'), href: '/customer-management' },
-          { title: t('sidebar.customerTypeManagement', 'Müşteri Tipi Yönetimi'), href: '/customer-type-management' },
-          { title: t('sidebar.contactManagement', 'Müşteri İletişim Yönetimi'), href: '/contact-management' },
-          { title: t('sidebar.erpCustomerManagement', 'ERP Müşteri'), href: '/erp-customers' },
-        ],
-      },
-      {
-        title: t('sidebar.activities', 'Aktiviteler'),
-        icon: <Calendar03Icon size={iconSize} className="text-emerald-500" />,
-        children: [
-          { title: t('sidebar.activityTypeManagement', 'Aktivite Tipi Yönetimi'), href: '/activity-type-management' },
-          { title: t('sidebar.activityManagement', 'Aktivite Yönetimi'), href: '/activity-management' },
-          { title: t('sidebar.dailyTasks', 'Günlük İşler'), href: '/daily-tasks' },
-        ],
-      },
-      {
-        title: t('sidebar.productAndStock', 'Ürün & Stok'),
-        icon: <PackageIcon size={iconSize} className="text-pink-500" />,
-        children: [
-          { title: t('sidebar.stockManagement', 'Stok Yönetimi'), href: '/stocks' },
-          { title: t('sidebar.productPricingManagement', 'Ürün Fiyatlandırma Yönetimi'), href: '/product-pricing-management' },
-          { title: t('sidebar.productPricingGroupByManagement', 'Ürün Fiyatlandırma Grubu Yönetimi'), href: '/product-pricing-group-by-management' },
-        ],
-      },
-      {
-        title: t('sidebar.salesManagement', 'Satış Yönetimi'),
+        title: t('sidebar.salesManagement', 'Satış Hunisi'),
         icon: <ShoppingBag03Icon size={iconSize} className="text-orange-500" />,
         children: [
           {
@@ -117,12 +73,61 @@ export function MainLayout({ navItems }: MainLayoutProps): ReactElement {
         ],
       },
       {
+        title: t('sidebar.customers', 'Müşteriler'),
+        icon: <UserGroupIcon size={iconSize} className="text-purple-500" />,
+        children: [
+          { title: t('sidebar.customerManagement', 'Müşteri Yönetimi'), href: '/customer-management' },
+          { title: t('sidebar.erpCustomerManagement', 'ERP Müşteri'), href: '/erp-customers' },
+          { title: t('sidebar.contactManagement', 'Müşteri İletişimleri'), href: '/contact-management' },
+          { title: t('sidebar.customerTypeManagement', 'Müşteri Tipleri'), href: '/customer-type-management' },
+        ],
+      },
+      {
+        title: t('sidebar.activities', 'Aktiviteler'),
+        icon: <Calendar03Icon size={iconSize} className="text-emerald-500" />,
+        children: [
+          { title: t('sidebar.dailyTasks', 'Günlük İşler'), href: '/daily-tasks' },
+          { title: t('sidebar.activityManagement', 'Aktivite Yönetimi'), href: '/activity-management' },
+          { title: t('sidebar.activityTypeManagement', 'Aktivite Tipleri'), href: '/activity-type-management' },
+        ],
+      },
+      {
+        title: t('sidebar.productAndStock', 'Ürün & Fiyat'),
+        icon: <PackageIcon size={iconSize} className="text-pink-500" />,
+        children: [
+          { title: t('sidebar.stockManagement', 'Stok Yönetimi'), href: '/stocks' },
+          { title: t('sidebar.productPricingManagement', 'Ürün Fiyatlandırma'), href: '/product-pricing-management' },
+          { title: t('sidebar.productPricingGroupByManagement', 'Fiyat Grubu Yönetimi'), href: '/product-pricing-group-by-management' },
+          { title: t('sidebar.pricingRuleManagement', 'Fiyat Kuralları'), href: '/pricing-rules' },
+        ],
+      },
+      {
+        title: t('sidebar.reports', 'Raporlar'),
+        icon: <File01Icon size={iconSize} className="text-cyan-500" />,
+        children: [
+          {
+            title: t('sidebar.reportBuilder', 'Report Builder'),
+            children: [
+              { title: t('sidebar.reportsList', 'Liste'), href: '/reports' },
+              { title: t('sidebar.reportsCreate', 'Yeni Oluştur'), href: '/reports/new' },
+            ],
+          },
+          {
+            title: t('sidebar.pdfBuilder', 'PDF Builder'),
+            children: [
+              { title: 'Listele', href: '/report-designer' },
+              { title: 'Oluştur', href: '/report-designer/create' },
+            ],
+          },
+        ],
+      },
+      {
         title: t('sidebar.approvalDefinitions', 'Onay Tanım Grubu'),
         icon: <CheckmarkCircle02Icon size={iconSize} className="text-teal-500" />,
         children: [
           { title: t('sidebar.approvalFlowManagement', 'Onay Akış Yönetimi'), href: '/approval-flow-management' },
-          { title: t('sidebar.approvalRoleManagement', 'Onay Rol Yönetimi'), href: '/approval-role-management' },
           { title: t('sidebar.approvalRoleGroupManagement', 'Onay Rol Grubu Yönetimi'), href: '/approval-role-group-management' },
+          { title: t('sidebar.approvalRoleManagement', 'Onay Rol Yönetimi'), href: '/approval-role-management' },
           { title: t('sidebar.approvalUserRoleManagement', 'Onay Kullanıcı Rolü Yönetimi'), href: '/approval-user-role-management' },
         ],
       },
@@ -130,13 +135,12 @@ export function MainLayout({ navItems }: MainLayoutProps): ReactElement {
         title: t('sidebar.definitions', 'Tanımlar'),
         icon: <SlidersHorizontalIcon size={iconSize} className="text-slate-500" />,
         children: [
-          { title: t('sidebar.districtManagement', 'İlçe Yönetimi'), href: '/district-management' },
-          { title: t('sidebar.cityManagement', 'Şehir Yönetimi'), href: '/city-management' },
           { title: t('sidebar.countryManagement', 'Ülke Yönetimi'), href: '/country-management' },
+          { title: t('sidebar.cityManagement', 'Şehir Yönetimi'), href: '/city-management' },
+          { title: t('sidebar.districtManagement', 'İlçe Yönetimi'), href: '/district-management' },
           { title: t('sidebar.shippingAddressManagement', 'Sevk Adresi Yönetimi'), href: '/shipping-address-management' },
-          { title: t('sidebar.paymentTypeManagement', 'Ödeme Tipi Yönetimi'), href: '/payment-type-management' },
           { title: t('sidebar.titleManagement', 'Ünvan Yönetimi'), href: '/title-management' },
-          { title: t('sidebar.pricingRuleManagement', 'Fiyat Kuralı Yönetimi'), href: '/pricing-rules' },
+          { title: t('sidebar.paymentTypeManagement', 'Ödeme Tipi Yönetimi'), href: '/payment-type-management' },
           { title: t('sidebar.documentSerialTypeManagement', 'Dosya Tip Yönetimi'), href: '/document-serial-type-management' },
         ],
       },
