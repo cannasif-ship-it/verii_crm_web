@@ -1,9 +1,9 @@
 {
-  "menu": "Gestión de Tipos de Actividad",
-  "description": "Gestionar y editar tipos de actividad",
-  "addButton": "Añadir Nuevo Tipo de Actividad",
+  "menu": "Gestión de tipos de actividad",
+  "description": "Gestione y edite los tipos de actividad",
+  "addButton": "Agregar nuevo tipo de actividad",
   "loading": "Cargando...",
-  "noData": "No se encontraron datos",
+  "noData": "Sin datos",
   "actions": "Acciones",
   "edit": "Editar",
   "deleteButton": "Eliminar",
@@ -13,42 +13,42 @@
   "previous": "Anterior",
   "next": "Siguiente",
   "form": {
-    "addTitle": "Añadir Nuevo Tipo de Actividad",
-    "editTitle": "Editar Tipo de Actividad",
-    "addDescription": "Introducir información del nuevo tipo de actividad",
-    "editDescription": "Editar información del tipo de actividad",
-    "name": "Nombre del Tipo de Actividad",
-    "namePlaceholder": "Introducir nombre del tipo de actividad",
+    "addTitle": "Agregar nuevo tipo de actividad",
+    "editTitle": "Editar tipo de actividad",
+    "addDescription": "Ingrese la información del nuevo tipo de actividad",
+    "editDescription": "Edite la información del tipo de actividad",
+    "name": "Nombre del tipo de actividad",
+    "namePlaceholder": "Ingrese el nombre del tipo de actividad",
     "nameRequired": "El nombre del tipo de actividad es obligatorio",
-    "nameMaxLength": "El nombre del tipo de actividad debe tener como máximo 100 caracteres",
+    "nameMaxLength": "El nombre del tipo de actividad puede tener como máximo 100 caracteres",
     "description": "Descripción",
-    "descriptionPlaceholder": "Introducir descripción (opcional)",
-    "descriptionMaxLength": "La descripción debe tener como máximo 500 caracteres"
+    "descriptionPlaceholder": "Ingrese una descripción (opcional)",
+    "descriptionMaxLength": "La descripción puede tener como máximo 500 caracteres"
   },
   "table": {
     "id": "ID",
-    "name": "Nombre del Tipo de Actividad",
+    "name": "Nombre del tipo de actividad",
     "description": "Descripción",
-    "createdDate": "Fecha de Creación",
-    "createdBy": "Creado Por",
+    "createdDate": "Fecha de creación",
+    "createdBy": "Creado por",
     "showing": "Mostrando {{from}}-{{to}} / {{total}}",
     "page": "Página {{current}} / {{total}}"
   },
   "stats": {
-    "totalActivityTypes": "Total de Tipos de Actividad",
-    "activeActivityTypes": "Tipos de Actividad Activos",
-    "newThisMonth": "Nuevos este Mes"
+    "totalActivityTypes": "Total de tipos de actividad",
+    "activeActivityTypes": "Tipos de actividad activos",
+    "newThisMonth": "Nuevos este mes"
   },
   "messages": {
-    "createSuccess": "Tipo de actividad creado con éxito",
+    "createSuccess": "Tipo de actividad creado correctamente",
     "createError": "No se pudo crear el tipo de actividad",
-    "updateSuccess": "Tipo de actividad actualizado con éxito",
+    "updateSuccess": "Tipo de actividad actualizado correctamente",
     "updateError": "No se pudo actualizar el tipo de actividad",
-    "deleteSuccess": "Tipo de actividad eliminado con éxito",
+    "deleteSuccess": "Tipo de actividad eliminado correctamente",
     "deleteError": "No se pudo eliminar el tipo de actividad"
   },
   "deleteConfirm": {
-    "confirmTitle": "Eliminar Tipo de Actividad",
-    "confirmMessage": "¿Está seguro de que desea eliminar el tipo de actividad {{name}}?"
+    "confirmTitle": "Eliminar tipo de actividad",
+    "confirmMessage": "¿Seguro que desea eliminar el tipo de actividad {{name}}?"
   }
 }

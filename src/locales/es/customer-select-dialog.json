@@ -1,7 +1,7 @@
 {
-  "title": "Seleccionar Cliente",
+  "title": "Seleccionar cliente",
   "description": "Seleccione una pestaña y elija un cliente de la lista",
-  "erpCustomers": "Cliente ERP",
+  "erpCustomers": "Clientes ERP",
   "crmCustomers": "Clientes CRM",
   "allCustomers": "Todos",
   "erp": "ERP",
@@ -9,16 +9,16 @@
   "noErpCustomers": "No se encontraron clientes ERP",
   "noCrmCustomers": "No se encontraron clientes CRM",
   "noCustomers": "No se encontraron clientes",
-  "noResults": "No se encontraron resultados de búsqueda",
+  "noResults": "No se encontraron resultados",
   "searchPlaceholder": "Buscar por nombre o código...",
   "voiceSearch": "Búsqueda por voz",
   "loading": "Cargando",
   "table": {
     "type": "Tipo",
-    "customerCode": "Código de Cliente",
-    "customerName": "Nombre del Cliente",
+    "customerCode": "Código de cliente",
+    "customerName": "Nombre del cliente",
     "phone": "Teléfono",
     "city": "Ciudad",
-    "email": "Correo Electrónico"
+    "email": "Correo electrónico"
   }
 }

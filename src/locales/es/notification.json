@@ -1,6 +1,6 @@
 {
   "title": "Notificaciones",
-  "markAllAsRead": "Marcar todas como leídas",
+  "markAllAsRead": "Marcar todo como leído",
   "viewAll": "Ver todas",
   "empty": "No tienes notificaciones",
   "new": "Nueva",
@@ -10,5 +10,9 @@
     "success": "Éxito",
     "warning": "Advertencia",
     "error": "Error"
-  }
+  },
+  "loading": "Cargando",
+  "noNotifications": "No se encontraron notificaciones",
+  "close": "Cerrar",
+  "unread": "No leído"
 }

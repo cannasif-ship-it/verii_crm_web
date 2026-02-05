@@ -36,14 +36,14 @@
   "auth": {
     "login": {
       "title": "Inicio de Sesión",
-      "subtitle": "VERII WMS",
+      "subtitle": "Inicie sesión para continuar",
       "branch": "Sucursal",
       "selectBranch": "Seleccionar sucursal",
       "branchNotFound": "Sucursal no encontrada",
       "email": "Correo electrónico",
       "emailPlaceholder": "Ingrese su correo electrónico",
       "password": "Contraseña",
-      "passwordPlaceholder": "••••••••",
+      "passwordPlaceholder": "Ingrese su contraseña",
       "loginButton": "Iniciar Sesión",
       "loggingIn": "Iniciando sesión...",
       "wrongPassword": "El correo o la contraseña son incorrectos",
@@ -61,7 +61,7 @@
   },
   "navbar": {
     "VERII WMS": "VERII WMS",
-    "crm": "V3RII CRM"
+    "crm": "CRM"
   },
   "sidebar": {
     "dashboard": "Tablero",
@@ -83,7 +83,7 @@
     "orders": "Pedidos",
     "campaigns": "Campañas",
     "reports": "Informes",
-    "powerbi": "PowerBI",
+    "powerbi": "Power BI",
     "titleManagement": "Gestión de Títulos",
     "shippingAddressManagement": "Gestión de Direcciones de Envío",
     "userManagement": "Gestión de Usuarios",
@@ -150,9 +150,9 @@
     "monthsShort": {
       "jan": "Ene",
       "feb": "Feb",
-      "mar": "Mar",
+      "mar": "mar",
       "apr": "Abr",
-      "may": "May",
+      "may": "may",
       "jun": "Jun",
       "jul": "Jul",
       "aug": "Ago",
@@ -934,7 +934,7 @@
     },
     "packageType": {
       "box": "Caja",
-      "pallet": "Palet",
+      "pallet": "Palé",
       "bag": "Bolsa",
       "custom": "Personalizado"
     },
@@ -1008,6 +1008,539 @@
       "updateError": "Error al actualizar título",
       "deleteSuccess": "Título eliminado con éxito",
       "deleteError": "Error al eliminar título"
+    }
+  },
+  "inventory": {
+    "warehouse3d": {
+      "title": "Almacén 3D",
+      "description": "Visualice el almacén en 3D y el nivel de stock",
+      "selectWarehouse": "Seleccione almacén",
+      "error": "Ocurrió un error",
+      "totalStock": "Stock total",
+      "products": "Productos",
+      "quantity": "Cantidad",
+      "empty": "Vacío",
+      "lowStock": "Stock bajo",
+      "mediumStock": "Stock medio",
+      "highStock": "Stock alto",
+      "emptyCell": "Celda vacía",
+      "desktopOnly": "Solo disponible en escritorio",
+      "pleaseSelectWarehouse": "Seleccione un almacén para continuar",
+      "controls": "Controles",
+      "rotate": "Rotar",
+      "pan": "Desplazar",
+      "zoom": "Zoom",
+      "selectShelf": "Seleccione estantería",
+      "leftClickDrag": "Arrastre con clic izquierdo",
+      "rightClickDrag": "Arrastre con clic derecho",
+      "scroll": "Desplácese con la rueda",
+      "clickShelf": "Haga clic en la estantería"
+    }
+  },
+  "subcontracting": {
+    "sit": {
+      "assignedList": {
+        "title": "Órdenes asignadas",
+        "searchPlaceholder": "Buscar...",
+        "id": "ID",
+        "documentNo": "N.º de documento",
+        "documentDate": "Fecha del documento",
+        "customerCode": "Código de cliente",
+        "customerName": "Nombre del cliente",
+        "sourceWarehouse": "Almacén origen",
+        "targetWarehouse": "Almacén destino",
+        "documentType": "Tipo de documento",
+        "createdDate": "Fecha de creación",
+        "actions": "Acciones",
+        "viewDetails": "Ver detalles",
+        "noData": "Sin datos",
+        "error": "Ocurrió un error"
+      },
+      "collection": {
+        "title": "Recolección",
+        "stockNotFound": "Stock no encontrado",
+        "enterBarcode": "Ingrese el código de barras",
+        "noStockSelected": "No se seleccionó stock",
+        "invalidQuantity": "Cantidad inválida",
+        "stockNotInOrder": "El stock no está en el pedido",
+        "collected": "Recolectado",
+        "collectError": "Error al recolectar",
+        "invalidHeaderId": "ID de encabezado inválido",
+        "completed": "Completado",
+        "completeError": "Error al completar",
+        "barcodeScanned": "Código de barras leído",
+        "cameraError": "Error de cámara",
+        "viewCollected": "Ver recolectado",
+        "barcodePlaceholder": "Ingrese código de barras",
+        "quantity": "Cantidad",
+        "collect": "Recolectar",
+        "total": "Total",
+        "remaining": "Restante",
+        "noOrderLines": "No hay líneas de pedido",
+        "complete": "Completar",
+        "scanBarcode": "Escanear código de barras",
+        "scanBarcodeDescription": "Use la cámara para escanear el código de barras",
+        "yapKod": "Código Yap"
+      }
+    },
+    "srt": {
+      "assignedList": {
+        "title": "Órdenes asignadas",
+        "searchPlaceholder": "Buscar...",
+        "id": "ID",
+        "documentNo": "N.º de documento",
+        "documentDate": "Fecha del documento",
+        "customerCode": "Código de cliente",
+        "customerName": "Nombre del cliente",
+        "sourceWarehouse": "Almacén origen",
+        "targetWarehouse": "Almacén destino",
+        "documentType": "Tipo de documento",
+        "createdDate": "Fecha de creación",
+        "actions": "Acciones",
+        "viewDetails": "Ver detalles",
+        "noData": "Sin datos",
+        "error": "Ocurrió un error"
+      },
+      "collection": {
+        "title": "Recolección",
+        "stockNotFound": "Stock no encontrado",
+        "enterBarcode": "Ingrese el código de barras",
+        "noStockSelected": "No se seleccionó stock",
+        "invalidQuantity": "Cantidad inválida",
+        "stockNotInOrder": "El stock no está en el pedido",
+        "collected": "Recolectado",
+        "collectError": "Error al recolectar",
+        "invalidHeaderId": "ID de encabezado inválido",
+        "completed": "Completado",
+        "completeError": "Error al completar",
+        "barcodeScanned": "Código de barras leído",
+        "cameraError": "Error de cámara",
+        "viewCollected": "Ver recolectado",
+        "barcodePlaceholder": "Ingrese código de barras",
+        "quantity": "Cantidad",
+        "collect": "Recolectar",
+        "total": "Total",
+        "remaining": "Restante",
+        "noOrderLines": "No hay líneas de pedido",
+        "complete": "Completar",
+        "scanBarcode": "Escanear código de barras",
+        "scanBarcodeDescription": "Use la cámara para escanear el código de barras",
+        "yapKod": "Código Yap"
+      }
+    }
+  },
+  "approvalRoleGroup": {
+    "menu": "Grupos de rol de aprobación",
+    "description": "Gestione grupos de rol de aprobación",
+    "addButton": "Agregar grupo",
+    "table": {
+      "id": "ID",
+      "name": "Nombre",
+      "createdDate": "Fecha de creación",
+      "createdBy": "Creado por",
+      "showing": "Mostrando",
+      "page": "Página"
+    },
+    "form": {
+      "addTitle": "Agregar grupo de rol de aprobación",
+      "editTitle": "Editar grupo de rol de aprobación",
+      "addDescription": "Cree un grupo de rol de aprobación",
+      "editDescription": "Actualice el grupo de rol de aprobación",
+      "name": "Nombre del grupo",
+      "namePlaceholder": "Ingrese el nombre del grupo",
+      "name.required": "El nombre del grupo es obligatorio",
+      "name.maxLength": "El nombre del grupo puede tener como máximo 100 caracteres"
+    },
+    "delete": {
+      "confirmTitle": "Eliminar grupo",
+      "confirmMessage": "¿Seguro que desea eliminar este grupo?"
+    },
+    "messages": {
+      "createSuccess": "Grupo creado",
+      "createError": "No se pudo crear el grupo",
+      "updateSuccess": "Grupo actualizado",
+      "updateError": "No se pudo actualizar el grupo",
+      "deleteSuccess": "Grupo eliminado",
+      "deleteError": "No se pudo eliminar el grupo"
+    }
+  },
+  "approvalUserRole": {
+    "menu": "Roles de usuario de aprobación",
+    "description": "Gestione las asignaciones de usuarios a roles de aprobación",
+    "addButton": "Agregar",
+    "table": {
+      "id": "ID",
+      "userFullName": "Nombre completo",
+      "approvalRoleName": "Rol de aprobación",
+      "createdDate": "Fecha de creación",
+      "createdBy": "Creado por",
+      "showing": "Mostrando",
+      "page": "Página"
+    },
+    "form": {
+      "addTitle": "Agregar rol de usuario",
+      "editTitle": "Editar rol de usuario",
+      "addDescription": "Asigne un rol de aprobación a un usuario",
+      "editDescription": "Actualice la asignación de rol",
+      "userId": "Usuario",
+      "selectUser": "Seleccione usuario",
+      "noUserSelected": "No se seleccionó usuario",
+      "userId.required": "El usuario es obligatorio",
+      "approvalRoleId": "Rol de aprobación",
+      "selectApprovalRole": "Seleccione rol de aprobación",
+      "noApprovalRoleSelected": "No se seleccionó rol de aprobación",
+      "approvalRoleId.required": "El rol de aprobación es obligatorio"
+    },
+    "delete": {
+      "confirmTitle": "Eliminar asignación",
+      "confirmMessage": "¿Seguro que desea eliminar esta asignación?"
+    },
+    "messages": {
+      "createSuccess": "Asignación creada",
+      "createError": "No se pudo crear la asignación",
+      "updateSuccess": "Asignación actualizada",
+      "updateError": "No se pudo actualizar la asignación",
+      "deleteSuccess": "Asignación eliminada",
+      "deleteError": "No se pudo eliminar la asignación"
+    }
+  },
+  "approvalRole": {
+    "menu": "Roles de aprobación",
+    "description": "Gestione roles de aprobación",
+    "addButton": "Agregar rol",
+    "table": {
+      "id": "ID",
+      "approvalRoleGroupName": "Grupo de rol",
+      "name": "Nombre",
+      "createdDate": "Fecha de creación",
+      "createdBy": "Creado por",
+      "showing": "Mostrando",
+      "page": "Página"
+    },
+    "form": {
+      "addTitle": "Agregar rol de aprobación",
+      "editTitle": "Editar rol de aprobación",
+      "addDescription": "Cree un rol de aprobación",
+      "editDescription": "Actualice el rol de aprobación",
+      "approvalRoleGroupId": "Grupo de rol",
+      "selectApprovalRoleGroup": "Seleccione grupo de rol",
+      "noApprovalRoleGroupSelected": "No se seleccionó grupo de rol",
+      "approvalRoleGroupId.required": "El grupo de rol es obligatorio",
+      "name": "Nombre",
+      "namePlaceholder": "Ingrese nombre",
+      "name.required": "El nombre es obligatorio",
+      "name.maxLength": "El nombre es demasiado largo"
+    },
+    "delete": {
+      "confirmTitle": "Eliminar rol",
+      "confirmMessage": "¿Seguro que desea eliminar este rol?"
+    },
+    "messages": {
+      "createSuccess": "Rol creado correctamente",
+      "createError": "No se pudo crear el rol",
+      "updateSuccess": "Rol actualizado correctamente",
+      "updateError": "No se pudo actualizar el rol",
+      "deleteSuccess": "Rol eliminado correctamente",
+      "deleteError": "No se pudo eliminar el rol"
+    }
+  },
+  "approvalFlow": {
+    "menu": "Gestión de flujo de aprobación",
+    "description": "Gestione y edite los flujos de aprobación",
+    "addButton": "Agregar nuevo flujo de aprobación",
+    "documentType": {
+      "offer": "Oferta",
+      "request": "Solicitud",
+      "order": "Pedido"
+    },
+    "table": {
+      "id": "ID",
+      "documentType": "Tipo de documento",
+      "description": "Descripción",
+      "isActive": "Activo",
+      "createdDate": "Fecha de creación",
+      "createdBy": "Creado por",
+      "showing": "Mostrando {{from}}-{{to}} / {{total}}",
+      "page": "Página {{current}} / {{total}}"
+    },
+    "form": {
+      "addTitle": "Agregar nuevo flujo de aprobación",
+      "editTitle": "Editar flujo de aprobación",
+      "addDescription": "Ingrese la información del nuevo flujo de aprobación",
+      "editDescription": "Edite la información del flujo de aprobación",
+      "documentType": "Tipo de documento",
+      "selectDocumentType": "Seleccione tipo de documento",
+      "noDocumentTypeSelected": "No se seleccionó tipo de documento",
+      "documentType.required": "La selección de tipo de documento es obligatoria",
+      "description": "Descripción",
+      "descriptionPlaceholder": "Ingrese una descripción (opcional)",
+      "description.maxLength": "La descripción puede tener como máximo 200 caracteres",
+      "isActive": "Activo",
+      "isActiveDescription": "Estado activo del flujo de aprobación"
+    },
+    "delete": {
+      "confirmTitle": "Eliminar flujo de aprobación",
+      "confirmMessage": "¿Seguro que desea eliminar este flujo de aprobación?"
+    },
+    "messages": {
+      "createSuccess": "Flujo de aprobación creado correctamente",
+      "createError": "No se pudo crear el flujo de aprobación",
+      "updateSuccess": "Flujo de aprobación actualizado correctamente",
+      "updateError": "No se pudo actualizar el flujo de aprobación",
+      "deleteSuccess": "Flujo de aprobación eliminado correctamente",
+      "deleteError": "No se pudo eliminar el flujo de aprobación"
+    }
+  },
+  "userManagement": {
+    "menu": "Gestión de usuarios",
+    "description": "Gestione y edite los usuarios",
+    "addButton": "Agregar nuevo usuario",
+    "stats": {
+      "totalUsers": "Usuarios totales",
+      "activeUsers": "Usuarios activos",
+      "newThisMonth": "Nuevos este mes",
+      "confirmedUsers": "Usuarios confirmados"
+    },
+    "table": {
+      "id": "ID",
+      "username": "Nombre de usuario",
+      "email": "Correo electrónico",
+      "fullName": "Nombre completo",
+      "role": "Rol",
+      "status": "Estado",
+      "createdDate": "Fecha de creación",
+      "active": "Activo",
+      "inactive": "Inactivo",
+      "confirmed": "Confirmado",
+      "showing": "Mostrando {{from}}-{{to}} / {{total}}",
+      "page": "Página {{current}} / {{total}}"
+    },
+    "form": {
+      "addUser": "Agregar nuevo usuario",
+      "editUser": "Editar usuario",
+      "addDescription": "Ingrese la información del nuevo usuario",
+      "editDescription": "Edite la información del usuario",
+      "username": "Nombre de usuario",
+      "usernamePlaceholder": "Ingrese nombre de usuario",
+      "email": "Correo electrónico",
+      "emailPlaceholder": "Ingrese correo electrónico",
+      "password": "Contraseña",
+      "passwordPlaceholder": "Ingrese contraseña (mín. 8 caracteres)",
+      "firstName": "Nombre",
+      "firstNamePlaceholder": "Ingrese el nombre",
+      "lastName": "Apellido",
+      "lastNamePlaceholder": "Ingrese el apellido",
+      "phoneNumber": "Teléfono",
+      "phoneNumberPlaceholder": "Ingrese el teléfono",
+      "role": "Rol",
+      "rolePlaceholder": "Ingrese rol",
+      "isActive": "Activo",
+      "isActiveDescription": "Estado activo del usuario",
+      "username.required": "El nombre de usuario es obligatorio",
+      "username.maxLength": "El nombre de usuario puede tener como máximo 50 caracteres",
+      "email.required": "El correo electrónico es obligatorio",
+      "email.invalid": "Ingrese un correo electrónico válido",
+      "password.minLength": "La contraseña debe tener al menos 8 caracteres",
+      "password.maxLength": "La contraseña puede tener como máximo 100 caracteres",
+      "firstName.maxLength": "El nombre puede tener como máximo 50 caracteres",
+      "lastName.maxLength": "El apellido puede tener como máximo 50 caracteres",
+      "phoneNumber.maxLength": "El número de teléfono puede tener como máximo 20 caracteres"
+    },
+    "delete": {
+      "confirmTitle": "Eliminar usuario",
+      "confirmMessage": "¿Seguro que desea eliminar al usuario {{username}}?"
+    },
+    "messages": {
+      "createSuccess": "Usuario creado correctamente",
+      "createError": "No se pudo crear el usuario",
+      "updateSuccess": "Usuario actualizado correctamente",
+      "updateError": "No se pudo actualizar el usuario",
+      "deleteSuccess": "Usuario eliminado correctamente",
+      "deleteError": "No se pudo eliminar el usuario"
+    }
+  },
+  "userDetail": {
+    "title": "Detalles del usuario",
+    "subtitle": "Actualice la información de detalles del usuario",
+    "profilePicture": "Foto de perfil",
+    "noImage": "Sin imagen",
+    "selectFile": "Seleccionar archivo",
+    "upload": "Subir",
+    "uploading": "Subiendo...",
+    "height": "Altura (cm)",
+    "weight": "Peso (kg)",
+    "gender": "Género",
+    "selectGender": "Seleccione género",
+    "gender.notSpecified": "No especificado",
+    "gender.male": "Masculino",
+    "gender.female": "Femenino",
+    "gender.other": "Otro",
+    "description": "Descripción",
+    "descriptionPlaceholder": "Ingrese una descripción...",
+    "deletePictureTitle": "Eliminar foto de perfil",
+    "deletePictureMessage": "¿Seguro que desea eliminar la foto de perfil?",
+    "invalidFileFormat": "Formato de archivo no válido. Solo se admiten JPG, PNG, GIF, WEBP.",
+    "fileSizeExceeded": "El archivo es demasiado grande. El máximo es 5 MB.",
+    "invalidUrl": "Formato de URL no válido",
+    "heightMin": "La altura no puede ser menor que 0",
+    "heightMax": "La altura no puede ser mayor que 300",
+    "weightMin": "El peso no puede ser menor que 0",
+    "weightMax": "El peso no puede ser mayor que 500",
+    "descriptionMax": "La descripción puede tener como máximo 2000 caracteres",
+    "createdSuccessfully": "El detalle del usuario se creó correctamente",
+    "createError": "Ocurrió un error al crear el detalle del usuario",
+    "updatedSuccessfully": "El detalle del usuario se actualizó correctamente",
+    "updateError": "Ocurrió un error al actualizar el detalle del usuario",
+    "profilePictureUploadedSuccessfully": "La foto de perfil se cargó correctamente",
+    "profilePictureUploadError": "Error al cargar la foto de perfil",
+    "profilePictureDeletedSuccessfully": "La foto de perfil se eliminó correctamente",
+    "profilePictureDeleteError": "Error al eliminar la foto de perfil",
+    "userNotFound": "Usuario no encontrado"
+  },
+  "countryManagement": {
+    "menu": "Gestión de países",
+    "description": "Gestione y edite los países",
+    "addButton": "Agregar nuevo país",
+    "stats": {
+      "totalCountries": "Total de países",
+      "activeCountries": "Países activos",
+      "newThisMonth": "Nuevos este mes"
+    },
+    "table": {
+      "id": "ID",
+      "name": "Nombre del país",
+      "code": "Código",
+      "erpCode": "Código ERP",
+      "createdDate": "Fecha de creación",
+      "createdBy": "Creado por",
+      "showing": "Mostrando {{from}}-{{to}} / {{total}}",
+      "page": "Página {{current}} / {{total}}"
+    },
+    "form": {
+      "addCountry": "Agregar nuevo país",
+      "editCountry": "Editar país",
+      "addDescription": "Ingrese la información del nuevo país",
+      "editDescription": "Edite la información del país",
+      "name": "Nombre del país",
+      "namePlaceholder": "Ingrese el nombre del país",
+      "code": "Código del país",
+      "codePlaceholder": "Ingrese el código del país (ej.: TR, US)",
+      "erpCode": "Código ERP",
+      "erpCodePlaceholder": "Ingrese el código ERP (opcional)",
+      "name.required": "El nombre del país es obligatorio",
+      "name.maxLength": "El nombre del país puede tener como máximo 100 caracteres",
+      "code.required": "El código del país es obligatorio",
+      "code.minLength": "El código del país debe tener al menos 2 caracteres",
+      "code.maxLength": "El código del país puede tener como máximo 5 caracteres",
+      "erpCode.maxLength": "El código ERP puede tener como máximo 10 caracteres"
+    },
+    "delete": {
+      "confirmTitle": "Eliminar país",
+      "confirmMessage": "¿Seguro que desea eliminar el país {{name}}?"
+    },
+    "messages": {
+      "createSuccess": "País creado correctamente",
+      "createError": "No se pudo crear el país",
+      "updateSuccess": "País actualizado correctamente",
+      "updateError": "No se pudo actualizar el país",
+      "deleteSuccess": "País eliminado correctamente",
+      "deleteError": "No se pudo eliminar el país"
+    }
+  },
+  "cityManagement": {
+    "menu": "Gestión de ciudades",
+    "description": "Gestione y edite las ciudades",
+    "addButton": "Agregar nueva ciudad",
+    "stats": {
+      "totalCities": "Total de ciudades",
+      "activeCities": "Ciudades activas",
+      "newThisMonth": "Nuevas este mes"
+    },
+    "table": {
+      "id": "ID",
+      "name": "Nombre de la ciudad",
+      "erpCode": "Código ERP",
+      "countryName": "Nombre del país",
+      "createdDate": "Fecha de creación",
+      "createdBy": "Creado por",
+      "showing": "Mostrando {{from}}-{{to}} / {{total}}",
+      "page": "Página {{current}} / {{total}}"
+    },
+    "form": {
+      "addCity": "Agregar nueva ciudad",
+      "editCity": "Editar ciudad",
+      "addDescription": "Ingrese la información de la nueva ciudad",
+      "editDescription": "Edite la información de la ciudad",
+      "name": "Nombre de la ciudad",
+      "namePlaceholder": "Ingrese el nombre de la ciudad",
+      "country": "País",
+      "selectCountry": "Seleccione país",
+      "erpCode": "Código ERP",
+      "erpCodePlaceholder": "Ingrese el código ERP (opcional)",
+      "name.required": "El nombre de la ciudad es obligatorio",
+      "name.maxLength": "El nombre de la ciudad puede tener como máximo 100 caracteres",
+      "country.required": "La selección de país es obligatoria",
+      "erpCode.maxLength": "El código ERP puede tener como máximo 10 caracteres"
+    },
+    "delete": {
+      "confirmTitle": "Eliminar ciudad",
+      "confirmMessage": "¿Seguro que desea eliminar la ciudad {{name}}?"
+    },
+    "messages": {
+      "createSuccess": "Ciudad creada correctamente",
+      "createError": "No se pudo crear la ciudad",
+      "updateSuccess": "Ciudad actualizada correctamente",
+      "updateError": "No se pudo actualizar la ciudad",
+      "deleteSuccess": "Ciudad eliminada correctamente",
+      "deleteError": "No se pudo eliminar la ciudad"
+    }
+  },
+  "districtManagement": {
+    "menu": "Gestión de distritos",
+    "description": "Gestione y edite los distritos",
+    "addButton": "Agregar nuevo distrito",
+    "stats": {
+      "totalDistricts": "Total de distritos",
+      "activeDistricts": "Distritos activos",
+      "newThisMonth": "Nuevos este mes"
+    },
+    "table": {
+      "id": "ID",
+      "name": "Nombre del distrito",
+      "erpCode": "Código ERP",
+      "cityName": "Nombre de la ciudad",
+      "createdDate": "Fecha de creación",
+      "createdBy": "Creado por",
+      "showing": "Mostrando {{from}}-{{to}} / {{total}}",
+      "page": "Página {{current}} / {{total}}"
+    },
+    "form": {
+      "addDistrict": "Agregar nuevo distrito",
+      "editDistrict": "Editar distrito",
+      "addDescription": "Ingrese la información del nuevo distrito",
+      "editDescription": "Edite la información del distrito",
+      "name": "Nombre del distrito",
+      "namePlaceholder": "Ingrese el nombre del distrito",
+      "city": "Ciudad",
+      "selectCity": "Seleccione ciudad",
+      "erpCode": "Código ERP",
+      "erpCodePlaceholder": "Ingrese el código ERP (opcional)",
+      "name.required": "El nombre del distrito es obligatorio",
+      "name.maxLength": "El nombre del distrito puede tener como máximo 100 caracteres",
+      "city.required": "La selección de ciudad es obligatoria",
+      "erpCode.maxLength": "El código ERP puede tener como máximo 10 caracteres"
+    },
+    "delete": {
+      "confirmTitle": "Eliminar distrito",
+      "confirmMessage": "¿Seguro que desea eliminar el distrito {{name}}?"
+    },
+    "messages": {
+      "createSuccess": "Distrito creado correctamente",
+      "createError": "No se pudo crear el distrito",
+      "updateSuccess": "Distrito actualizado correctamente",
+      "updateError": "No se pudo actualizar el distrito",
+      "deleteSuccess": "Distrito eliminado correctamente",
+      "deleteError": "No se pudo eliminar el distrito"
     }
   }
 }
