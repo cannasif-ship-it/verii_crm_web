@@ -52,7 +52,7 @@
   "applyFilters": "Appliquer Filtres",
   "minDiscount": "Remise Min",
   "maxDiscount": "Remise Max",
-  "percentage": "%",
+  "percentage": "Pourcentage",
   "getBySalesperson": "Obtenir par Représentant",
   "getByGroup": "Obtenir par Groupe",
   "getBySalespersonAndGroup": "Obtenir par Représentant et Groupe",

@@ -33,14 +33,14 @@
   "auth": {
     "login": {
       "title": "Connexion au système",
-      "subtitle": "VERII WMS",
+      "subtitle": "Connectez-vous pour continuer",
       "branch": "Succursale",
       "selectBranch": "Sélectionner une succursale",
       "branchNotFound": "Succursale introuvable",
       "email": "E-mail",
       "emailPlaceholder": "Entrez votre adresse e-mail",
       "password": "Mot de passe",
-      "passwordPlaceholder": "••••••••",
+      "passwordPlaceholder": "Entrez votre mot de passe",
       "loginButton": "Se connecter",
       "loggingIn": "Connexion en cours...",
       "wrongPassword": "L'e-mail ou le mot de passe est incorrect",
@@ -52,7 +52,7 @@
   },
   "navbar": {
     "VERII WMS": "VERII WMS",
-    "crm": "V3RII CRM"
+    "crm": "CRM"
   },
   "sidebar": {
     "dashboard": "Tableau de bord",
@@ -69,7 +69,7 @@
     "orders": "Commandes",
     "campaigns": "Campagnes",
     "reports": "Rapports",
-    "powerbi": "PowerBI",
+    "powerbi": "Power BI",
     "titleManagement": "Gestion des titres",
     "shippingAddressManagement": "Gestion des adresses de livraison",
     "userManagement": "Gestion des utilisateurs",
@@ -274,7 +274,6 @@
       "isPlanned": "Planifié",
       "priorityLevel": "Niveau de priorité",
       "statusInfo": "Informations sur le statut",
-      "status": "Statut",
       "isCompleted": "Terminé",
       "completionDate": "Date d'achèvement",
       "isPendingApproval": "En attente d'approbation",
@@ -1022,7 +1021,6 @@
       "yapKod": "Code Yap",
       "quantity": "Quantité",
       "serialNo": "N° de série",
-      "barcode": "Code-barres",
       "actions": "Actions",
       "noLines": "Aucune ligne trouvée",
       "notFound": "Colis non trouvé",
@@ -1036,47 +1034,9 @@
       "lineAddError": "Une erreur s'est produite lors de l'ajout de la ligne"
     },
     "form": {
-      "packingNo": "N° d'emballage",
-      "packingNoRequired": "Le N° d'emballage est requis",
-      "packingDate": "Date d'emballage",
-      "warehouseCode": "Code entrepôt",
-      "sourceType": "Type de source",
-      "selectSourceType": "Sélectionner le type de source",
-      "sourceHeaderId": "ID d'en-tête source",
-      "customerCode": "Code client",
-      "customerAddress": "Adresse client",
-      "status": "Statut",
-      "carrierId": "ID transporteur",
-      "carrierServiceType": "Type de service transporteur",
-      "trackingNo": "N° de suivi",
-      "packageNo": "N° de colis",
-      "packageNoRequired": "Le N° de colis est requis",
-      "packageType": "Type de colis",
-      "package": "Colis",
-      "selectPackage": "Sélectionner le colis",
-      "packingHeaderId": "ID d'en-tête d'emballage",
-      "packingHeaderIdRequired": "L'ID d'en-tête d'emballage est requis",
-      "packageIdRequired": "L'ID du colis est requis",
-      "barcode": "Code-barres",
-      "length": "Longueur",
-      "width": "Largeur",
-      "height": "Hauteur",
-      "volume": "Volume",
-      "netWeight": "Poids net",
-      "tareWeight": "Poids à vide",
-      "grossWeight": "Poids brut",
-      "isMixed": "Mixte",
-      "stockCode": "Code stock",
-      "stockCodeRequired": "Le code stock est requis",
-      "yapKod": "Code Yap",
-      "yapKodRequired": "Le code Yap est requis",
-      "quantity": "Quantité",
-      "quantityRequired": "La quantité est requise",
-      "serialNo": "N° de série",
-      "serialNo2": "N° de série 2",
-      "serialNo3": "N° de série 3",
-      "serialNo4": "N° de série 4",
-      "sourceRouteId": "ID de route source"
+      "selectWarehouse": "Sélectionner l'entrepôt",
+      "selectCustomer": "Sélectionner le client",
+      "selectCarrier": "Sélectionner le transporteur"
     },
     "status": {
       "draft": "Brouillon",
@@ -1127,11 +1087,6 @@
       "Scotty": "Scotty",
       "KolayGelsin": "Kolay Gelsin",
       "BirGundeKargo": "Bir Günde Kargo"
-    },
-    "form": {
-      "selectWarehouse": "Sélectionner l'entrepôt",
-      "selectCustomer": "Sélectionner le client",
-      "selectCarrier": "Sélectionner le transporteur"
     }
   },
   "notification": {
@@ -1294,6 +1249,313 @@
     "profilePictureDeletedSuccessfully": "Photo de profil supprimée avec succès",
     "profilePictureDeleteError": "Une erreur s'est produite lors de la suppression de la photo de profil",
     "userNotFound": "Utilisateur non trouvé"
+  },
+  "approvalRoleGroup": {
+    "menu": "Gestion des groupes de rôles d’approbation",
+    "description": "Gérez et modifiez les groupes de rôles d’approbation",
+    "addButton": "Ajouter un nouveau groupe de rôles d’approbation",
+    "table": {
+      "id": "ID",
+      "name": "Nom du groupe",
+      "createdDate": "Date de création",
+      "createdBy": "Créé par",
+      "showing": "{{from}}-{{to}} / {{total}} affichés",
+      "page": "Page {{current}} / {{total}}"
+    },
+    "form": {
+      "addTitle": "Ajouter un nouveau groupe de rôles d’approbation",
+      "editTitle": "Modifier le groupe de rôles d’approbation",
+      "addDescription": "Saisissez les informations du nouveau groupe",
+      "editDescription": "Modifiez les informations du groupe",
+      "name": "Nom du groupe",
+      "namePlaceholder": "Saisissez le nom du groupe",
+      "name.required": "Le nom du groupe est obligatoire",
+      "name.maxLength": "Le nom du groupe ne peut pas dépasser 100 caractères"
+    },
+    "delete": {
+      "confirmTitle": "Supprimer le groupe de rôles d’approbation",
+      "confirmMessage": "Êtes-vous sûr de vouloir supprimer le groupe {{name}} ?"
+    },
+    "messages": {
+      "createSuccess": "Groupe de rôles d’approbation créé avec succès",
+      "createError": "Impossible de créer le groupe de rôles d’approbation",
+      "updateSuccess": "Groupe de rôles d’approbation mis à jour avec succès",
+      "updateError": "Impossible de mettre à jour le groupe de rôles d’approbation",
+      "deleteSuccess": "Groupe de rôles d’approbation supprimé avec succès",
+      "deleteError": "Impossible de supprimer le groupe de rôles d’approbation"
+    }
+  },
+  "approvalUserRole": {
+    "menu": "Gestion des rôles d’approbation utilisateur",
+    "description": "Gérez et modifiez les rôles d’approbation des utilisateurs",
+    "addButton": "Ajouter un nouveau rôle d’approbation utilisateur",
+    "table": {
+      "id": "ID",
+      "userFullName": "Utilisateur",
+      "approvalRoleName": "Rôle d’approbation",
+      "createdDate": "Date de création",
+      "createdBy": "Créé par",
+      "showing": "{{from}}-{{to}} / {{total}} affichés",
+      "page": "Page {{current}} / {{total}}"
+    },
+    "form": {
+      "addTitle": "Ajouter un nouveau rôle d’approbation utilisateur",
+      "editTitle": "Modifier le rôle d’approbation utilisateur",
+      "addDescription": "Saisissez les informations du nouveau rôle",
+      "editDescription": "Modifiez les informations du rôle",
+      "userId": "Utilisateur",
+      "selectUser": "Sélectionnez un utilisateur",
+      "noUserSelected": "Aucun utilisateur sélectionné",
+      "userId.required": "La sélection d’un utilisateur est obligatoire",
+      "approvalRoleId": "Rôle d’approbation",
+      "selectApprovalRole": "Sélectionnez un rôle d’approbation",
+      "noApprovalRoleSelected": "Aucun rôle d’approbation sélectionné",
+      "approvalRoleId.required": "La sélection d’un rôle d’approbation est obligatoire"
+    },
+    "delete": {
+      "confirmTitle": "Supprimer le rôle d’approbation utilisateur",
+      "confirmMessage": "Êtes-vous sûr de vouloir supprimer ce rôle d’approbation utilisateur ?"
+    },
+    "messages": {
+      "createSuccess": "Rôle d’approbation utilisateur créé avec succès",
+      "createError": "Impossible de créer le rôle d’approbation utilisateur",
+      "updateSuccess": "Rôle d’approbation utilisateur mis à jour avec succès",
+      "updateError": "Impossible de mettre à jour le rôle d’approbation utilisateur",
+      "deleteSuccess": "Rôle d’approbation utilisateur supprimé avec succès",
+      "deleteError": "Impossible de supprimer le rôle d’approbation utilisateur"
+    }
+  },
+  "approvalRole": {
+    "menu": "Gestion des rôles d’approbation",
+    "description": "Gérez et modifiez les rôles d’approbation",
+    "addButton": "Ajouter un nouveau rôle d’approbation",
+    "table": {
+      "id": "ID",
+      "approvalRoleGroupName": "Groupe de rôles",
+      "name": "Nom du rôle",
+      "createdDate": "Date de création",
+      "createdBy": "Créé par",
+      "showing": "{{from}}-{{to}} / {{total}} affichés",
+      "page": "Page {{current}} / {{total}}"
+    },
+    "form": {
+      "addTitle": "Ajouter un nouveau rôle d’approbation",
+      "editTitle": "Modifier le rôle d’approbation",
+      "addDescription": "Saisissez les informations du nouveau rôle",
+      "editDescription": "Modifiez les informations du rôle",
+      "approvalRoleGroupId": "Groupe de rôles d’approbation",
+      "selectApprovalRoleGroup": "Sélectionnez un groupe de rôles d’approbation",
+      "noApprovalRoleGroupSelected": "Aucun groupe de rôles sélectionné",
+      "approvalRoleGroupId.required": "La sélection d’un groupe de rôles est obligatoire",
+      "name": "Nom du rôle",
+      "namePlaceholder": "Saisissez le nom du rôle",
+      "name.required": "Le nom du rôle est obligatoire",
+      "name.maxLength": "Le nom du rôle ne peut pas dépasser 100 caractères"
+    },
+    "delete": {
+      "confirmTitle": "Supprimer le rôle d’approbation",
+      "confirmMessage": "Êtes-vous sûr de vouloir supprimer le rôle {{name}} ?"
+    },
+    "messages": {
+      "createSuccess": "Rôle d’approbation créé avec succès",
+      "createError": "Impossible de créer le rôle d’approbation",
+      "updateSuccess": "Rôle d’approbation mis à jour avec succès",
+      "updateError": "Impossible de mettre à jour le rôle d’approbation",
+      "deleteSuccess": "Rôle d’approbation supprimé avec succès",
+      "deleteError": "Impossible de supprimer le rôle d’approbation"
+    }
+  },
+  "approvalFlow": {
+    "menu": "Gestion des flux d’approbation",
+    "description": "Gérez et modifiez les flux d’approbation",
+    "addButton": "Ajouter un nouveau flux d’approbation",
+    "documentType": {
+      "offer": "Offre",
+      "request": "Demande",
+      "order": "Commande"
+    },
+    "table": {
+      "id": "ID",
+      "documentType": "Type de document",
+      "description": "Description",
+      "isActive": "Actif",
+      "createdDate": "Date de création",
+      "createdBy": "Créé par",
+      "showing": "{{from}}-{{to}} / {{total}} affichés",
+      "page": "Page {{current}} / {{total}}"
+    },
+    "form": {
+      "addTitle": "Ajouter un nouveau flux d’approbation",
+      "editTitle": "Modifier le flux d’approbation",
+      "addDescription": "Saisissez les informations du nouveau flux",
+      "editDescription": "Modifiez les informations du flux",
+      "documentType": "Type de document",
+      "selectDocumentType": "Sélectionnez un type de document",
+      "noDocumentTypeSelected": "Aucun type de document sélectionné",
+      "documentType.required": "La sélection d’un type de document est obligatoire",
+      "description": "Description",
+      "descriptionPlaceholder": "Saisissez une description (optionnel)",
+      "description.maxLength": "La description ne peut pas dépasser 200 caractères",
+      "isActive": "Actif",
+      "isActiveDescription": "Statut d’activation du flux d’approbation"
+    },
+    "delete": {
+      "confirmTitle": "Supprimer le flux d’approbation",
+      "confirmMessage": "Êtes-vous sûr de vouloir supprimer ce flux d’approbation ?"
+    },
+    "messages": {
+      "createSuccess": "Flux d’approbation créé avec succès",
+      "createError": "Impossible de créer le flux d’approbation",
+      "updateSuccess": "Flux d’approbation mis à jour avec succès",
+      "updateError": "Impossible de mettre à jour le flux d’approbation",
+      "deleteSuccess": "Flux d’approbation supprimé avec succès",
+      "deleteError": "Impossible de supprimer le flux d’approbation"
+    }
+  },
+  "countryManagement": {
+    "menu": "Gestion des pays",
+    "description": "Gérez et modifiez les pays",
+    "addButton": "Ajouter un nouveau pays",
+    "stats": {
+      "totalCountries": "Total des pays",
+      "activeCountries": "Pays actifs",
+      "newThisMonth": "Nouveaux ce mois-ci"
+    },
+    "table": {
+      "id": "ID",
+      "name": "Nom du pays",
+      "code": "Code",
+      "erpCode": "Code ERP",
+      "createdDate": "Date de création",
+      "createdBy": "Créé par",
+      "showing": "{{from}}-{{to}} / {{total}} affichés",
+      "page": "Page {{current}} / {{total}}"
+    },
+    "form": {
+      "addCountry": "Ajouter un nouveau pays",
+      "editCountry": "Modifier le pays",
+      "addDescription": "Saisissez les informations du nouveau pays",
+      "editDescription": "Modifiez les informations du pays",
+      "name": "Nom du pays",
+      "namePlaceholder": "Saisissez le nom du pays",
+      "code": "Code du pays",
+      "codePlaceholder": "Saisissez le code du pays (ex : FR, US)",
+      "erpCode": "Code ERP",
+      "erpCodePlaceholder": "Saisissez le code ERP (optionnel)",
+      "name.required": "Le nom du pays est requis",
+      "name.maxLength": "Le nom du pays doit comporter au maximum 100 caractères",
+      "code.required": "Le code du pays est requis",
+      "code.minLength": "Le code du pays doit comporter au moins 2 caractères",
+      "code.maxLength": "Le code du pays doit comporter au maximum 5 caractères",
+      "erpCode.maxLength": "Le code ERP doit comporter au maximum 10 caractères"
+    },
+    "delete": {
+      "confirmTitle": "Supprimer le pays",
+      "confirmMessage": "Êtes-vous sûr de vouloir supprimer le pays {{name}} ?"
+    },
+    "messages": {
+      "createSuccess": "Pays créé avec succès",
+      "createError": "Impossible de créer le pays",
+      "updateSuccess": "Pays mis à jour avec succès",
+      "updateError": "Impossible de mettre à jour le pays",
+      "deleteSuccess": "Pays supprimé avec succès",
+      "deleteError": "Impossible de supprimer le pays"
+    }
+  },
+  "cityManagement": {
+    "menu": "Gestion des villes",
+    "description": "Gérez et modifiez les villes",
+    "addButton": "Ajouter une nouvelle ville",
+    "stats": {
+      "totalCities": "Total des villes",
+      "activeCities": "Villes actives",
+      "newThisMonth": "Nouvelles ce mois-ci"
+    },
+    "table": {
+      "id": "ID",
+      "name": "Nom de la ville",
+      "erpCode": "Code ERP",
+      "countryName": "Nom du pays",
+      "createdDate": "Date de création",
+      "createdBy": "Créé par",
+      "showing": "{{from}}-{{to}} / {{total}} affichés",
+      "page": "Page {{current}} / {{total}}"
+    },
+    "form": {
+      "addCity": "Ajouter une nouvelle ville",
+      "editCity": "Modifier la ville",
+      "addDescription": "Saisissez les informations de la nouvelle ville",
+      "editDescription": "Modifiez les informations de la ville",
+      "name": "Nom de la ville",
+      "namePlaceholder": "Saisissez le nom de la ville",
+      "country": "Pays",
+      "selectCountry": "Sélectionnez un pays",
+      "erpCode": "Code ERP",
+      "erpCodePlaceholder": "Saisissez le code ERP (optionnel)",
+      "name.required": "Le nom de la ville est requis",
+      "name.maxLength": "Le nom de la ville doit comporter au maximum 100 caractères",
+      "country.required": "La sélection du pays est requise",
+      "erpCode.maxLength": "Le code ERP doit comporter au maximum 10 caractères"
+    },
+    "delete": {
+      "confirmTitle": "Supprimer la ville",
+      "confirmMessage": "Êtes-vous sûr de vouloir supprimer la ville {{name}} ?"
+    },
+    "messages": {
+      "createSuccess": "Ville créée avec succès",
+      "createError": "Impossible de créer la ville",
+      "updateSuccess": "Ville mise à jour avec succès",
+      "updateError": "Impossible de mettre à jour la ville",
+      "deleteSuccess": "Ville supprimée avec succès",
+      "deleteError": "Impossible de supprimer la ville"
+    }
+  },
+  "districtManagement": {
+    "menu": "Gestion des districts",
+    "description": "Gérez et modifiez les districts",
+    "addButton": "Ajouter un nouveau district",
+    "stats": {
+      "totalDistricts": "Total des districts",
+      "activeDistricts": "Districts actifs",
+      "newThisMonth": "Nouveaux ce mois-ci"
+    },
+    "table": {
+      "id": "ID",
+      "name": "Nom du district",
+      "erpCode": "Code ERP",
+      "cityName": "Nom de la ville",
+      "createdDate": "Date de création",
+      "createdBy": "Créé par",
+      "showing": "{{from}}-{{to}} / {{total}} affichés",
+      "page": "Page {{current}} / {{total}}"
+    },
+    "form": {
+      "addDistrict": "Ajouter un nouveau district",
+      "editDistrict": "Modifier le district",
+      "addDescription": "Saisissez les informations du nouveau district",
+      "editDescription": "Modifiez les informations du district",
+      "name": "Nom du district",
+      "namePlaceholder": "Saisissez le nom du district",
+      "city": "Ville",
+      "selectCity": "Sélectionnez une ville",
+      "erpCode": "Code ERP",
+      "erpCodePlaceholder": "Saisissez le code ERP (optionnel)",
+      "name.required": "Le nom du district est requis",
+      "name.maxLength": "Le nom du district doit comporter au maximum 100 caractères",
+      "city.required": "La sélection de la ville est requise",
+      "erpCode.maxLength": "Le code ERP doit comporter au maximum 10 caractères"
+    },
+    "delete": {
+      "confirmTitle": "Supprimer le district",
+      "confirmMessage": "Êtes-vous sûr de vouloir supprimer le district {{name}} ?"
+    },
+    "messages": {
+      "createSuccess": "District créé avec succès",
+      "createError": "Impossible de créer le district",
+      "updateSuccess": "District mis à jour avec succès",
+      "updateError": "Impossible de mettre à jour le district",
+      "deleteSuccess": "District supprimé avec succès",
+      "deleteError": "Impossible de supprimer le district"
+    }
   }
 }
-

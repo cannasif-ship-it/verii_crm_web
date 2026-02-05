@@ -1,6 +1,6 @@
 {
   "title": "Gestion des Types de Paiement",
-  "description": "Gérer et modifier les types de paiement",
+  "description": "Description",
   "create": "Nouveau Type de Paiement",
   "edit": "Modifier le Type de Paiement",
   "editDescription": "Modifier les informations du type de paiement",
@@ -9,7 +9,6 @@
   "deleteTitle": "Supprimer le Type de Paiement",
   "name": "Nom",
   "namePlaceholder": "Entrer le nom du type de paiement",
-  "description": "Description",
   "descriptionPlaceholder": "Entrer une description (optionnel)",
   "createdDate": "Date de Création",
   "updatedDate": "Date de Mise à Jour",
@@ -47,5 +46,6 @@
     "description": {
       "maxLength": "La description peut comporter au plus 500 caractères"
     }
-  }
+  },
+  "headerDescription": "Gérez et modifiez les types de paiement"
 }

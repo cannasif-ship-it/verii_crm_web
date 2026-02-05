@@ -10,7 +10,10 @@
   "previous": "Précédent",
   "next": "Suivant",
   "cancel": "Annuler",
-  "delete": "Supprimer",
+  "delete": {
+    "confirmTitle": "Supprimer le District",
+    "confirmMessage": "Êtes-vous sûr de vouloir supprimer le district {{name}} ?"
+  },
   "save": "Enregistrer",
   "saving": "Enregistrement...",
   "table": {
@@ -22,10 +25,6 @@
     "createdBy": "Créé Par",
     "showing": "Affichage de {{from}} à {{to}} sur {{total}}",
     "page": "Page {{current}} sur {{total}}"
-  },
-  "delete": {
-    "confirmTitle": "Supprimer le District",
-    "confirmMessage": "Êtes-vous sûr de vouloir supprimer le district {{name}} ?"
   },
   "form": {
     "editDistrict": "Modifier le District",
@@ -42,5 +41,14 @@
     "name.maxLength": "Le nom du district ne peut pas dépasser 100 caractères",
     "erpCode.maxLength": "Le code ERP ne peut pas dépasser 10 caractères",
     "city.required": "La sélection de la ville est requise"
+  },
+  "deleteConfirm": {
+    "confirmTitle": "Supprimer le district",
+    "confirmMessage": "Êtes-vous sûr de vouloir supprimer le district {{name}} ?"
+  },
+  "stats": {
+    "totalDistricts": "TOTAL DES DISTRICTS",
+    "activeDistricts": "DISTRICTS ACTIFS",
+    "newThisMonth": "NOUVEAUX CE MOIS-CI"
   }
 }
