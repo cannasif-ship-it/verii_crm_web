@@ -39,7 +39,7 @@ const languages = [
   { code: 'fr', name: 'Français', flag: '🇫🇷', short: 'FR' },
   { code: 'it', name: 'Italiano', flag: '🇮🇹', short: 'IT' },
   { code: 'es', name: 'Español', flag: '🇪🇸', short: 'ES' },
-  { code: 'sa', name: 'العربية', flag: '🇸🇦', short: 'AR' },
+  { code: 'ar', name: 'العربية', flag: '🇸🇦', short: 'AR' },
 ];
 
 export function UserProfileModal({ 
@@ -53,7 +53,8 @@ export function UserProfileModal({
   const navigate = useNavigate();
   const { data: userDetail } = useUserDetailByUserId(user?.id || 0);
 
-  const currentLanguage = languages.find((lang) => lang.code === i18n.language) || languages[0];
+  const langCode = i18n.language?.toLowerCase() === 'sa' ? 'ar' : i18n.language?.toLowerCase().split('-')[0] ?? 'tr';
+  const currentLanguage = languages.find((lang) => lang.code === langCode) || languages[0];
 
   const displayName = user?.name || user?.email || 'Kullanıcı';
   const displayInitials = user?.name?.[0]?.toUpperCase() || user?.email?.[0]?.toUpperCase() || 'MK';
@@ -149,7 +150,7 @@ export function UserProfileModal({
              <div className="grid grid-cols-1 md:grid-cols-2 gap-6"> 
                 {/* Dil */} 
           <div className="relative w-full">
-            <Select value={i18n.language} onValueChange={handleLanguageChange}>
+            <Select value={currentLanguage.code} onValueChange={handleLanguageChange}>
               <SelectPrimitive.Trigger asChild>
                 <button type="button" className={`w-full p-5 rounded-xl border cursor-pointer transition-all flex flex-col justify-between h-32 group text-left focus:outline-none ${darkMode ? 'bg-[#251b30]/80 border-white/5 hover:border-white/10 hover:bg-[#2d223a]' : 'bg-white border-gray-200 hover:shadow-md'}`}> 
                   <div className="flex justify-between items-start w-full"> 

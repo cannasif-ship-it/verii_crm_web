@@ -19,7 +19,8 @@ for (const [path, loader] of Object.entries(modules)) {
   loaders[lang][ns] = loader as () => Promise<ResourceModule>;
 }
 
-const fallbackLng = 'tr';
+const DEFAULT_LANG = 'tr';
+const fallbackLng = DEFAULT_LANG;
 const supportedLngs = Object.keys(loaders);
 
 const normalizeLang = (lng?: string | null): string | undefined => {
@@ -32,7 +33,8 @@ const normalizeLang = (lng?: string | null): string | undefined => {
   return mapped;
 };
 
-const initialLng = normalizeLang(localStorage.getItem('i18nextLng')) ?? fallbackLng;
+const storedLng = localStorage.getItem('i18nextLng');
+const initialLng = storedLng ? (normalizeLang(storedLng) ?? DEFAULT_LANG) : DEFAULT_LANG;
 
 async function loadLanguage(lang: string): Promise<void> {
   const target = normalizeLang(lang) ?? fallbackLng;
