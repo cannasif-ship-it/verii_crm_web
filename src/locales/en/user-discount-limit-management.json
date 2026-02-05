@@ -49,7 +49,7 @@
   "applyFilters": "Apply Filters",
   "minDiscount": "Min Discount",
   "maxDiscount": "Max Discount",
-  "percentage": "%",
+  "percentage": "Percentage",
   "getBySalesperson": "Get by Salesperson",
   "getByGroup": "Get by Group",
   "getBySalespersonAndGroup": "Get by Salesperson and Group",
@@ -64,5 +64,8 @@
     "updatedDate": "Updated Date",
     "showing": "Showing {{from}}-{{to}} of {{total}}",
     "page": "Page {{current}} of {{total}}"
-  }
+  },
+  "previous": "Previous",
+  "next": "Next",
+  "saving": "Saving..."
 }

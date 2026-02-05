@@ -37,14 +37,14 @@
   "auth": {
     "login": {
       "title": "System Login",
-      "subtitle": "VERII WMS",
+      "subtitle": "Sign in to continue",
       "branch": "Branch",
       "selectBranch": "Select branch",
       "branchNotFound": "Branch not found",
       "email": "Email",
       "emailPlaceholder": "Enter your email address",
       "password": "Password",
-      "passwordPlaceholder": "••••••••",
+      "passwordPlaceholder": "Enter your password",
       "loginButton": "Sign In",
       "loggingIn": "Signing in...",
       "wrongPassword": "Email or password is incorrect",
@@ -62,7 +62,7 @@
   },
   "navbar": {
     "VERII WMS": "VERII WMS",
-    "crm": "V3RII CRM"
+    "crm": "CRM"
   },
   "sidebar": {
     "dashboard": "Dashboard",
@@ -86,7 +86,7 @@
     "reports": "Reports",
     "reportBuilder": "Report Builder",
     "pdfBuilder": "PDF Builder",
-    "powerbi": "PowerBI",
+    "powerbi": "Power BI",
     "titleManagement": "Title Management",
     "shippingAddressManagement": "Shipping Address Management",
     "userManagement": "User Management",
@@ -152,18 +152,8 @@
     "reportDownload": "Download Report",
     "quickAction": "Quick Action",
     "monthsShort": {
-      "jan": "Jan",
-      "feb": "Feb",
       "mar": "Mar",
-      "apr": "Apr",
-      "may": "May",
-      "jun": "Jun",
-      "jul": "Jul",
-      "aug": "Aug",
-      "sep": "Sep",
-      "oct": "Oct",
-      "nov": "Nov",
-      "dec": "Dec"
+      "may": "May"
     },
     "quickStats": {
       "pendingTasks": "Pending Tasks",
@@ -672,7 +662,7 @@
       "selectShelf": "Select Shelf",
       "leftClickDrag": "🖱️ Left Click + Drag",
       "rightClickDrag": "🖱️ Right Click + Drag",
-      "scroll": "🖱️ Scroll",
+      "scroll": "Scroll",
       "clickShelf": "🖱️ Click Shelf"
     }
   },
@@ -1067,51 +1057,9 @@
       "lineAddError": "An error occurred while adding line"
     },
     "form": {
-      "packingNo": "Packing No",
-      "sourceType": "Source Type",
-      "selectSourceType": "Select Source Type",
-      "noSourceType": "Source type not found",
-      "sourceHeaderId": "Header to Map",
-      "selectSourceHeader": "Select Header to Map",
-      "noAvailableHeaders": "No available headers found",
-      "selectSourceTypeFirst": "Please select source type first",
-      "packingNoRequired": "Packing No is required",
-      "packingDate": "Packing Date",
-      "warehouseCode": "Warehouse Code",
-      "customerCode": "Customer Code",
-      "customerAddress": "Customer Address",
-      "status": "Status",
-      "carrierId": "Carrier ID",
-      "carrierServiceType": "Carrier Service Type",
-      "trackingNo": "Tracking No",
-      "packageNo": "Package No",
-      "packageNoRequired": "Package No is required",
-      "packageType": "Package Type",
-      "package": "Package",
-      "selectPackage": "Select Package",
-      "packingHeaderId": "Packing Header ID",
-      "packingHeaderIdRequired": "Packing Header ID is required",
-      "packageIdRequired": "Package ID is required",
-      "barcode": "Barcode",
-      "length": "Length",
-      "width": "Width",
-      "height": "Height",
-      "volume": "Volume",
-      "netWeight": "Net Weight",
-      "tareWeight": "Tare Weight",
-      "grossWeight": "Gross Weight",
-      "isMixed": "Mixed",
-      "stockCode": "Stock Code",
-      "stockCodeRequired": "Stock Code is required",
-      "yapKod": "Yap Code",
-      "yapKodRequired": "Yap Code is required",
-      "quantity": "Quantity",
-      "quantityRequired": "Quantity is required",
-      "serialNo": "Serial No",
-      "serialNo2": "Serial No 2",
-      "serialNo3": "Serial No 3",
-      "serialNo4": "Serial No 4",
-      "sourceRouteId": "Source Route ID"
+      "selectWarehouse": "Select Warehouse",
+      "selectCustomer": "Select Customer",
+      "selectCarrier": "Select Carrier"
     },
     "status": {
       "draft": "Draft",
@@ -1162,11 +1110,6 @@
       "Scotty": "Scotty",
       "KolayGelsin": "Kolay Gelsin",
       "BirGundeKargo": "Bir Günde Kargo"
-    },
-    "form": {
-      "selectWarehouse": "Select Warehouse",
-      "selectCustomer": "Select Customer",
-      "selectCarrier": "Select Carrier"
     }
   },
   "notification": {
@@ -1496,6 +1439,174 @@
     "profilePictureDeletedSuccessfully": "Profile picture deleted successfully",
     "profilePictureDeleteError": "An error occurred while deleting profile picture",
     "userNotFound": "User not found"
+  },
+  "countryManagement": {
+    "menu": "Country Management",
+    "description": "Manage and edit countries",
+    "addButton": "Add New Country",
+    "stats": {
+      "totalCountries": "Total Countries",
+      "activeCountries": "Active Countries",
+      "newThisMonth": "New This Month"
+    },
+    "table": {
+      "id": "ID",
+      "name": "Country Name",
+      "code": "Code",
+      "erpCode": "ERP Code",
+      "createdDate": "Created Date",
+      "createdBy": "Created By",
+      "showing": "{{from}}-{{to}} / {{total}} shown",
+      "page": "Page {{current}} / {{total}}"
+    },
+    "form": {
+      "addCountry": "Add New Country",
+      "editCountry": "Edit Country",
+      "addDescription": "Enter new country details",
+      "editDescription": "Edit country details",
+      "name": {
+        "required": "Country name is required",
+        "maxLength": "Country name can be at most 100 characters"
+      },
+      "namePlaceholder": "Enter country name",
+      "code": {
+        "required": "Country code is required",
+        "minLength": "Country code must be at least 2 characters",
+        "maxLength": "Country code can be at most 5 characters"
+      },
+      "codePlaceholder": "Enter country code (e.g., TR, US)",
+      "erpCode": {
+        "maxLength": "ERP code can be at most 10 characters"
+      },
+      "erpCodePlaceholder": "Enter ERP code (optional)",
+      "name.required": "Country name is required",
+      "name.maxLength": "Country name must be at most 100 characters",
+      "code.required": "Country code is required",
+      "code.minLength": "Country code must be at least 2 characters",
+      "code.maxLength": "Country code must be at most 5 characters",
+      "erpCode.maxLength": "ERP code must be at most 10 characters"
+    },
+    "delete": {
+      "confirmTitle": "Delete Country",
+      "confirmMessage": "Are you sure you want to delete country {{name}}?"
+    },
+    "messages": {
+      "createSuccess": "Country created successfully",
+      "createError": "Failed to create country",
+      "updateSuccess": "Country updated successfully",
+      "updateError": "Failed to update country",
+      "deleteSuccess": "Country deleted successfully",
+      "deleteError": "Failed to delete country"
+    }
+  },
+  "cityManagement": {
+    "menu": "City Management",
+    "description": "Manage and edit cities",
+    "addButton": "Add New City",
+    "stats": {
+      "totalCities": "Total Cities",
+      "activeCities": "Active Cities",
+      "newThisMonth": "New This Month"
+    },
+    "table": {
+      "id": "ID",
+      "name": "City Name",
+      "erpCode": "ERP Code",
+      "countryName": "Country Name",
+      "createdDate": "Created Date",
+      "createdBy": "Created By",
+      "showing": "{{from}}-{{to}} / {{total}} shown",
+      "page": "Page {{current}} / {{total}}"
+    },
+    "form": {
+      "addCity": "Add New City",
+      "editCity": "Edit City",
+      "addDescription": "Enter new city details",
+      "editDescription": "Edit city details",
+      "name": {
+        "required": "City name is required",
+        "maxLength": "City name can be at most 100 characters"
+      },
+      "namePlaceholder": "Enter city name",
+      "country": {
+        "required": "Country selection is required"
+      },
+      "selectCountry": "Select a country",
+      "erpCode": {
+        "maxLength": "ERP code can be at most 10 characters"
+      },
+      "erpCodePlaceholder": "Enter ERP code (optional)",
+      "name.required": "City name is required",
+      "name.maxLength": "City name must be at most 100 characters",
+      "country.required": "Country selection is required",
+      "erpCode.maxLength": "ERP code must be at most 10 characters"
+    },
+    "delete": {
+      "confirmTitle": "Delete City",
+      "confirmMessage": "Are you sure you want to delete city {{name}}?"
+    },
+    "messages": {
+      "createSuccess": "City created successfully",
+      "createError": "Failed to create city",
+      "updateSuccess": "City updated successfully",
+      "updateError": "Failed to update city",
+      "deleteSuccess": "City deleted successfully",
+      "deleteError": "Failed to delete city"
+    }
+  },
+  "districtManagement": {
+    "menu": "District Management",
+    "description": "Manage and edit districts",
+    "addButton": "Add New District",
+    "stats": {
+      "totalDistricts": "Total Districts",
+      "activeDistricts": "Active Districts",
+      "newThisMonth": "New This Month"
+    },
+    "table": {
+      "id": "ID",
+      "name": "District Name",
+      "erpCode": "ERP Code",
+      "cityName": "City Name",
+      "createdDate": "Created Date",
+      "createdBy": "Created By",
+      "showing": "{{from}}-{{to}} / {{total}} shown",
+      "page": "Page {{current}} / {{total}}"
+    },
+    "form": {
+      "addDistrict": "Add New District",
+      "editDistrict": "Edit District",
+      "addDescription": "Enter new district details",
+      "editDescription": "Edit district details",
+      "name": {
+        "required": "District name is required",
+        "maxLength": "District name can be at most 100 characters"
+      },
+      "namePlaceholder": "Enter district name",
+      "city": {
+        "required": "City selection is required"
+      },
+      "selectCity": "Select a city",
+      "erpCode": {
+        "maxLength": "ERP code can be at most 10 characters"
+      },
+      "erpCodePlaceholder": "Enter ERP code (optional)",
+      "name.required": "District name is required",
+      "name.maxLength": "District name must be at most 100 characters",
+      "city.required": "City selection is required",
+      "erpCode.maxLength": "ERP code must be at most 10 characters"
+    },
+    "delete": {
+      "confirmTitle": "Delete District",
+      "confirmMessage": "Are you sure you want to delete district {{name}}?"
+    },
+    "messages": {
+      "createSuccess": "District created successfully",
+      "createError": "Failed to create district",
+      "updateSuccess": "District updated successfully",
+      "updateError": "Failed to update district",
+      "deleteSuccess": "District deleted successfully",
+      "deleteError": "Failed to delete district"
+    }
   }
 }
-
