@@ -55,7 +55,10 @@
       "forgotPassword": "Password dimenticata?",
       "processing": "Elaborazione...",
       "submitButton": "Accedi",
-      "slogan": "Potenzia la tua attività con <1>VERII CRM</1>"
+      "slogan": "Potenzia la tua attività con <1>VERII CRM</1>",
+      "capsLockOn": "Bloc Maiusc attivo",
+      "animationOff": "Disattiva animazione",
+      "animationOn": "Attiva animazione"
     },
     "logout": "Disconnetti"
   },

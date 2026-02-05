@@ -1,4 +1,4 @@
-import { type ReactElement } from 'react';
+import { type ReactElement, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Select,
@@ -8,7 +8,8 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Languages } from 'lucide-react';
-import { TranslateIcon } from 'hugeicons-react'; 
+import { TranslateIcon } from 'hugeicons-react';
+import { loadLanguage } from '@/lib/i18n'; 
 
 const languages = [
   { code: 'tr', name: 'Türkçe', flag: '🇹🇷' },
@@ -26,17 +27,26 @@ interface LanguageSwitcherProps {
 
 export function LanguageSwitcher({ variant = 'default' }: LanguageSwitcherProps): ReactElement {
   const { i18n } = useTranslation();
-  const normalizedLang = i18n.language.toLowerCase() === 'sa' ? 'ar' : i18n.language.toLowerCase();
+  const [isChanging, setIsChanging] = useState(false);
+  const normalizedLang = i18n.language?.toLowerCase() === 'sa' ? 'ar' : i18n.language?.toLowerCase() ?? 'tr';
   const baseLang = normalizedLang.split('-')[0];
   const currentLanguage = languages.find((lang) => lang.code === baseLang) || languages[0];
 
-  const handleLanguageChange = (value: string): void => {
+  const handleLanguageChange = async (value: string): Promise<void> => {
     const target = value.toLowerCase() === 'sa' ? 'ar' : value.toLowerCase();
-    i18n.changeLanguage(target);
+    if (target === baseLang) return;
+    setIsChanging(true);
+    try {
+      await loadLanguage(target);
+      await i18n.changeLanguage(target);
+      if (typeof window !== 'undefined') window.localStorage.setItem('i18nextLng', target);
+    } finally {
+      setIsChanging(false);
+    }
   };
 
   return (
-    <Select value={currentLanguage.code} onValueChange={handleLanguageChange}>
+    <Select value={currentLanguage.code} onValueChange={handleLanguageChange} disabled={isChanging}>
       
       <SelectTrigger 
         className={

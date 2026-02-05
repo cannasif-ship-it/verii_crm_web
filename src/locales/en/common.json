@@ -56,7 +56,10 @@
       "forgotPassword": "Forgot password?",
       "processing": "Processing...",
       "submitButton": "Sign In",
-      "slogan": "Empowering your business with <1>VERII CRM</1>"
+      "slogan": "Empowering your business with <1>VERII CRM</1>",
+      "capsLockOn": "Caps lock is on",
+      "animationOff": "Turn off animation",
+      "animationOn": "Turn on animation"
     },
     "logout": "Logout"
   },

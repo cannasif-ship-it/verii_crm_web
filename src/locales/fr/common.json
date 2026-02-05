@@ -46,7 +46,16 @@
       "wrongPassword": "L'e-mail ou le mot de passe est incorrect",
       "loginError": "Une erreur s'est produite lors de la connexion",
       "sessionExpired": "Votre session a expiré. Veuillez vous reconnecter.",
-      "copyright": "© 2025 VERII. Tous droits réservés."
+      "copyright": "© 2025 VERII. Tous droits réservés.",
+      "branchPlaceholder": "Sélectionner une succursale",
+      "rememberMe": "Se souvenir de moi",
+      "forgotPassword": "Mot de passe oublié ?",
+      "processing": "Connexion en cours...",
+      "submitButton": "Se connecter",
+      "slogan": "Renforcez votre activité avec <1>VERII CRM</1>",
+      "capsLockOn": "Verr. Maj. activé",
+      "animationOff": "Désactiver l'animation",
+      "animationOn": "Activer l'animation"
     },
     "logout": "Déconnexion"
   },

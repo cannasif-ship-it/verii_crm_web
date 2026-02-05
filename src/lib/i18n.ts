@@ -36,7 +36,7 @@ const normalizeLang = (lng?: string | null): string | undefined => {
 const storedLng = localStorage.getItem('i18nextLng');
 const initialLng = storedLng ? (normalizeLang(storedLng) ?? DEFAULT_LANG) : DEFAULT_LANG;
 
-async function loadLanguage(lang: string): Promise<void> {
+export async function loadLanguage(lang: string): Promise<void> {
   const target = normalizeLang(lang) ?? fallbackLng;
   const langLoaders = loaders[target] || {};
   const entries = Object.entries(langLoaders);

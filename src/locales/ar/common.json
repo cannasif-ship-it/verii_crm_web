@@ -55,7 +55,10 @@
       "forgotPassword": "نسيت كلمة المرور؟",
       "processing": "جاري المعالجة...",
       "submitButton": "تسجيل الدخول",
-      "slogan": "قم بتمكين عملك مع <1>VERII CRM</1>"
+      "slogan": "قم بتمكين عملك مع <1>VERII CRM</1>",
+      "capsLockOn": "مفتاح Caps Lock مفعّل",
+      "animationOff": "إيقاف الحركة",
+      "animationOn": "تشغيل الحركة"
     },
     "logout": "تسجيل الخروج"
   },

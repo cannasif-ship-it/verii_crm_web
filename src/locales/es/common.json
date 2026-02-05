@@ -55,7 +55,10 @@
       "forgotPassword": "¿Olvidaste tu contraseña?",
       "processing": "Procesando...",
       "submitButton": "Iniciar Sesión",
-      "slogan": "Potenciando tu negocio con <1>VERII CRM</1>"
+      "slogan": "Potenciando tu negocio con <1>VERII CRM</1>",
+      "capsLockOn": "Bloq. Mayús está activado",
+      "animationOff": "Desactivar animación",
+      "animationOn": "Activar animación"
     },
     "logout": "Cerrar Sesión"
   },

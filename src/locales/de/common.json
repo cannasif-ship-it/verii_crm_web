@@ -46,7 +46,16 @@
       "wrongPassword": "E-Mail oder Passwort ist falsch",
       "loginError": "Beim Anmelden ist ein Fehler aufgetreten",
       "sessionExpired": "Ihre Sitzung ist abgelaufen. Bitte melden Sie sich erneut an.",
-      "copyright": "© 2025 VERII. Alle Rechte vorbehalten."
+      "copyright": "© 2025 VERII. Alle Rechte vorbehalten.",
+      "branchPlaceholder": "Filiale auswählen",
+      "rememberMe": "Angemeldet bleiben",
+      "forgotPassword": "Passwort vergessen?",
+      "processing": "Wird angemeldet...",
+      "submitButton": "Anmelden",
+      "slogan": "Stärken Sie Ihr Geschäft mit <1>VERII CRM</1>",
+      "capsLockOn": "Caps Lock ist aktiviert",
+      "animationOff": "Animation ausschalten",
+      "animationOn": "Animation einschalten"
     },
     "logout": "Abmelden"
   },
