@@ -11,6 +11,7 @@ interface NavItem {
   href?: string;
   icon?: ReactElement;
   children?: NavItem[];
+  defaultExpanded?: boolean;
 }
 
 interface SidebarProps {
@@ -85,13 +86,13 @@ function SubMenuComponent({ item, pathname }: { item: NavItem; pathname: string 
 function NavItemComponent({
   item,
   searchQuery,
-  expandedItemKey,
+  expandedItemKeys,
   onToggle,
   isManualClick,
 }: {
   item: NavItem;
   searchQuery: string;
-  expandedItemKey: string | null;
+  expandedItemKeys: Set<string>;
   onToggle: (key: string | null) => void;
   isManualClick: boolean;
 }): ReactElement {
@@ -109,7 +110,7 @@ function NavItemComponent({
   const isActive = item.href ? location.pathname === item.href : false;
   
   const itemKey = item.href || item.title;
-  const isExpanded = expandedItemKey === itemKey;
+  const isExpanded = expandedItemKeys.has(itemKey);
   const onToggleRef = useRef(onToggle);
 
   onToggleRef.current = onToggle;
@@ -165,7 +166,7 @@ function NavItemComponent({
                   setSidebarOpen(true);
                   setTimeout(() => onToggleRef.current(itemKey), 100);
                 } else {
-                  onToggle(itemKey);
+                  onToggleRef.current(itemKey);
                 }
             }}
         >
@@ -283,18 +284,42 @@ function NavItemComponent({
   );
 }
 
+function getDefaultExpandedKeys(navItems: NavItem[]): Set<string> {
+  const keys = new Set<string>();
+  navItems.forEach((item) => {
+    if (item.defaultExpanded && item.children?.length) {
+      keys.add(item.href || item.title);
+    }
+  });
+  return keys;
+}
+
 export function Sidebar({ items }: SidebarProps): ReactElement {
   const { isSidebarOpen, searchQuery } = useUIStore(); 
-  const [expandedItemKey, setExpandedItemKey] = useState<string | null>(null);
+  const [expandedItemKeys, setExpandedItemKeys] = useState<Set<string>>(() => getDefaultExpandedKeys(items));
   const [isManualClick, setIsManualClick] = useState(false);
   
   useEffect(() => {
-    if (!isSidebarOpen) setExpandedItemKey(null);
-  }, [isSidebarOpen]);
+    if (!isSidebarOpen) {
+      setExpandedItemKeys(new Set());
+    } else {
+      setExpandedItemKeys((prev) => {
+        const next = new Set(prev);
+        getDefaultExpandedKeys(items).forEach((k) => next.add(k));
+        return next;
+      });
+    }
+  }, [isSidebarOpen, items]);
 
   const handleToggle = useCallback((key: string | null): void => {
+    if (key === null) return;
     setIsManualClick(true);
-    setExpandedItemKey((prev) => (key === null || prev === key ? null : key));
+    setExpandedItemKeys((prev) => {
+      const next = new Set(prev);
+      if (next.has(key)) next.delete(key);
+      else next.add(key);
+      return next;
+    });
   }, []);
 
   return (
@@ -361,7 +386,7 @@ export function Sidebar({ items }: SidebarProps): ReactElement {
               key={item.href || item.title || index}
               item={item}
               searchQuery={searchQuery}
-              expandedItemKey={expandedItemKey}
+              expandedItemKeys={expandedItemKeys}
               onToggle={handleToggle}
               isManualClick={isManualClick}
             />

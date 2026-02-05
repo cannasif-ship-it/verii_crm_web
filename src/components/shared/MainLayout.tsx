@@ -15,7 +15,8 @@ import {
   SlidersHorizontalIcon, 
   UserCircleIcon, 
   Settings02Icon,
-  File01Icon
+  File01Icon,
+  Analytics01Icon
 } from 'hugeicons-react';
 
 interface NavItem {
@@ -23,6 +24,7 @@ interface NavItem {
   href?: string;
   icon?: ReactElement;
   children?: NavItem[];
+  defaultExpanded?: boolean;
 }
 interface MainLayoutProps {
   navItems?: NavItem[];
@@ -99,6 +101,19 @@ export function MainLayout({ navItems }: MainLayoutProps): ReactElement {
           { title: t('sidebar.productPricingManagement', 'Ürün Fiyatlandırma'), href: '/product-pricing-management' },
           { title: t('sidebar.productPricingGroupByManagement', 'Fiyat Grubu Yönetimi'), href: '/product-pricing-group-by-management' },
           { title: t('sidebar.pricingRuleManagement', 'Fiyat Kuralları'), href: '/pricing-rules' },
+        ],
+      },
+      {
+        title: t('sidebar.powerbi', 'PowerBI'),
+        icon: <Analytics01Icon size={iconSize} className="text-amber-500" />,
+        defaultExpanded: true,
+        children: [
+          { title: t('sidebar.powerbiConfiguration', 'PowerBI Konfigürasyon'), href: '/powerbi/configuration' },
+          { title: t('sidebar.powerbiReportsView', 'PowerBI Raporları (Görüntüle)'), href: '/powerbi/reports' },
+          { title: t('sidebar.powerbiReportDefinitions', 'PowerBI Raporları'), href: '/powerbi/report-definitions' },
+          { title: t('sidebar.powerbiGroups', 'PowerBI Grupları'), href: '/powerbi/groups' },
+          { title: t('sidebar.powerbiUserGroups', 'PowerBI Kullanıcı Grupları'), href: '/powerbi/user-groups' },
+          { title: t('sidebar.powerbiGroupReportMapping', 'PowerBI Grup-Rapor Eşleştirme'), href: '/powerbi/group-report-definitions' },
         ],
       },
       {

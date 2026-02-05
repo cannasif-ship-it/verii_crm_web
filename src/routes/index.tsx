@@ -60,6 +60,13 @@ const ReportDesignerCreatePage = lazyImport(() => import('@/features/report-desi
 const ReportsListPage = lazyImport(() => import('@/features/report-builder/pages'), 'ReportsListPage');
 const ReportBuilderPage = lazyImport(() => import('@/features/report-builder/pages'), 'ReportBuilderPage');
 const ReportViewerPage = lazyImport(() => import('@/features/report-builder/pages'), 'ReportViewerPage');
+const ReportDefinitionList = lazyImport(() => import('@/features/powerbi'), 'ReportDefinitionList');
+const GroupList = lazyImport(() => import('@/features/powerbi'), 'GroupList');
+const UserGroupList = lazyImport(() => import('@/features/powerbi'), 'UserGroupList');
+const GroupReportDefinitionList = lazyImport(() => import('@/features/powerbi'), 'GroupReportDefinitionList');
+const PowerbiConfigurationPage = lazyImport(() => import('@/features/powerbi-configuration'), 'PowerbiConfigurationPage');
+const PowerbiReportsListPage = lazyImport(() => import('@/features/powerbi-viewer'), 'PowerbiReportsListPage');
+const PowerbiReportViewerPage = lazyImport(() => import('@/features/powerbi-viewer'), 'PowerbiReportViewerPage');
 
 export const router = createBrowserRouter([
   {
@@ -78,6 +85,13 @@ export const router = createBrowserRouter([
       { path: 'reports/new', element: <ReportBuilderPage /> },
       { path: 'reports/:id/edit', element: <ReportBuilderPage /> },
       { path: 'reports/:id', element: <ReportViewerPage /> },
+      { path: 'powerbi/configuration', element: <PowerbiConfigurationPage /> },
+      { path: 'powerbi/reports', element: <PowerbiReportsListPage /> },
+      { path: 'powerbi/reports/:id', element: <PowerbiReportViewerPage /> },
+      { path: 'powerbi/report-definitions', element: <ReportDefinitionList /> },
+      { path: 'powerbi/groups', element: <GroupList /> },
+      { path: 'powerbi/user-groups', element: <UserGroupList /> },
+      { path: 'powerbi/group-report-definitions', element: <GroupReportDefinitionList /> },
       { path: 'title-management', element: <TitleManagementPage /> },
       { path: 'user-management', element: <UserManagementPage /> },
       { path: 'country-management', element: <CountryManagementPage /> },
