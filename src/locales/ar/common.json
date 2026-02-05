@@ -63,6 +63,20 @@
     "VERII WMS": "VERII WMS",
     "crm": "CRM"
   },
+  "powerbiSync": {
+    "title": "مزامنة تقارير Power BI",
+    "description": "جلب التقارير من مساحة العمل ومزامنتها مع قاعدة بيانات CRM.",
+    "workspaceId": "معرف مساحة العمل",
+    "workspaceIdPlaceholder": "معرف مساحة العمل (اختياري)",
+    "sync": "مزامنة",
+    "success": "تمت المزامنة بنجاح",
+    "error": "فشلت المزامنة",
+    "totalRemote": "المجموع البعيد",
+    "created": "تم الإنشاء",
+    "updated": "تم التحديث",
+    "reactivated": "إعادة التفعيل",
+    "deleted": "تم الحذف"
+  },
   "sidebar": {
     "dashboard": "لوحة التحكم",
     "search": "بحث...",
@@ -85,6 +99,7 @@
     "reports": "التقارير",
     "powerbi": "Power BI",
     "powerbiReportDefinitions": "تقارير Power BI",
+    "powerbiSync": "مزامنة Power BI",
     "powerbiGroups": "مجموعات Power BI",
     "powerbiUserGroups": "مجموعات مستخدمي Power BI",
     "powerbiGroupReportMapping": "تعيين مجموعة-تقرير Power BI",

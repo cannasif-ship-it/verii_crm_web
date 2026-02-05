@@ -54,6 +54,20 @@
     "VERII WMS": "VERII WMS",
     "crm": "CRM"
   },
+  "powerbiSync": {
+    "title": "Power BI Berichtssynchronisation",
+    "description": "Lädt Berichte aus dem Workspace und synchronisiert sie mit der CRM-Datenbank.",
+    "workspaceId": "Workspace-ID",
+    "workspaceIdPlaceholder": "Workspace-GUID (optional)",
+    "sync": "Synchronisieren",
+    "success": "Synchronisation erfolgreich",
+    "error": "Synchronisation fehlgeschlagen",
+    "totalRemote": "Gesamt Remote",
+    "created": "Erstellt",
+    "updated": "Aktualisiert",
+    "reactivated": "Reaktiviert",
+    "deleted": "Gelöscht"
+  },
   "sidebar": {
     "dashboard": "Dashboard",
     "search": "Suchen...",
@@ -71,6 +85,7 @@
     "reports": "Berichte",
     "powerbi": "Power BI",
     "powerbiReportDefinitions": "Power BI Berichte",
+    "powerbiSync": "Power BI Synchronisation",
     "powerbiGroups": "Power BI Gruppen",
     "powerbiUserGroups": "Power BI Benutzergruppen",
     "powerbiGroupReportMapping": "Power BI Gruppen-Bericht-Zuordnung",

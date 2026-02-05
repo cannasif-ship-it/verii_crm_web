@@ -67,6 +67,7 @@ const GroupReportDefinitionList = lazyImport(() => import('@/features/powerbi'),
 const PowerbiConfigurationPage = lazyImport(() => import('@/features/powerbi-configuration'), 'PowerbiConfigurationPage');
 const PowerbiReportsListPage = lazyImport(() => import('@/features/powerbi-viewer'), 'PowerbiReportsListPage');
 const PowerbiReportViewerPage = lazyImport(() => import('@/features/powerbi-viewer'), 'PowerbiReportViewerPage');
+const PowerbiReportSyncPage = lazyImport(() => import('@/features/powerbi-sync'), 'PowerbiReportSyncPage');
 
 export const router = createBrowserRouter([
   {
@@ -88,6 +89,7 @@ export const router = createBrowserRouter([
       { path: 'powerbi/configuration', element: <PowerbiConfigurationPage /> },
       { path: 'powerbi/reports', element: <PowerbiReportsListPage /> },
       { path: 'powerbi/reports/:id', element: <PowerbiReportViewerPage /> },
+      { path: 'powerbi/sync', element: <PowerbiReportSyncPage /> },
       { path: 'powerbi/report-definitions', element: <ReportDefinitionList /> },
       { path: 'powerbi/groups', element: <GroupList /> },
       { path: 'powerbi/user-groups', element: <UserGroupList /> },

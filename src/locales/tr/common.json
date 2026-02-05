@@ -58,6 +58,20 @@
     "VERII WMS": "VERII WMS",
     "crm": "V3RII CRM"
   },
+  "powerbiSync": {
+    "title": "PowerBI Rapor Senkronizasyonu",
+    "description": "Workspace'ten raporları çekip CRM veritabanına işler.",
+    "workspaceId": "Workspace ID",
+    "workspaceIdPlaceholder": "Workspace GUID (opsiyonel)",
+    "sync": "Senkronize Et",
+    "success": "Senkronizasyon başarılı",
+    "error": "Senkronizasyon başarısız",
+    "totalRemote": "Uzak Toplam",
+    "created": "Oluşturulan",
+    "updated": "Güncellenen",
+    "reactivated": "Yeniden Aktif",
+    "deleted": "Silinen"
+  },
   "sidebar": {
     "dashboard": "Dashboard",
     "search": "Ara...",
@@ -87,6 +101,7 @@
     "powerbiGroupReportMapping": "PowerBI Grup-Rapor Eşleştirme",
     "powerbiConfiguration": "PowerBI Konfigürasyon",
     "powerbiReportsView": "PowerBI Raporları (Görüntüle)",
+    "powerbiSync": "PowerBI Senkronizasyon",
     "titleManagement": "Ünvan Yönetimi",
     "shippingAddressManagement": "Sevk Adresi Yönetimi",
     "userManagement": "Kullanıcı Yönetimi",

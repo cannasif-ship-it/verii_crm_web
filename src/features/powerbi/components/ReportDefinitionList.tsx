@@ -15,6 +15,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import type { PowerBIReportDefinitionGetDto } from '../types/powerbiReportDefinition.types';
 import type { PowerBIReportDefinitionFormSchema } from '../types/powerbiReportDefinition.types';
 import { ReportDefinitionForm } from './ReportDefinitionForm';
+import { PowerbiReportSyncCard } from '@/features/powerbi-sync';
 import {
   Table,
   TableBody,
@@ -127,6 +128,7 @@ export function ReportDefinitionList(): ReactElement {
 
   return (
     <div className="w-full space-y-6">
+      <PowerbiReportSyncCard />
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pt-2">
         <h1 className="text-3xl font-bold tracking-tight">
           {t('powerbi.reportDefinition.title', 'PowerBI Rapor Tanımları')}

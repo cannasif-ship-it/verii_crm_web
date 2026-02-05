@@ -110,6 +110,7 @@ export function MainLayout({ navItems }: MainLayoutProps): ReactElement {
         children: [
           { title: t('sidebar.powerbiConfiguration', 'PowerBI Konfigürasyon'), href: '/powerbi/configuration' },
           { title: t('sidebar.powerbiReportsView', 'PowerBI Raporları (Görüntüle)'), href: '/powerbi/reports' },
+          { title: t('sidebar.powerbiSync', 'PowerBI Senkronizasyon'), href: '/powerbi/sync' },
           { title: t('sidebar.powerbiReportDefinitions', 'PowerBI Raporları'), href: '/powerbi/report-definitions' },
           { title: t('sidebar.powerbiGroups', 'PowerBI Grupları'), href: '/powerbi/groups' },
           { title: t('sidebar.powerbiUserGroups', 'PowerBI Kullanıcı Grupları'), href: '/powerbi/user-groups' },
