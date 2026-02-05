@@ -1,4 +1,4 @@
-import { type ReactElement, useState, useMemo } from 'react';
+import { type ReactElement, useState, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Table,
@@ -48,6 +48,44 @@ export function ErpCustomerTable({ customers, isLoading }: ErpCustomerTableProps
   
   const allColumns = getColumnsConfig(t);
   const [visibleColumns, setVisibleColumns] = useState<string[]>(allColumns.map(col => col.key));
+
+  // Drag to Scroll Logic
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [scrollLeft, setScrollLeft] = useState(0);
+  const [startY, setStartY] = useState(0);
+  const [scrollTop, setScrollTop] = useState(0);
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (!scrollRef.current) return;
+    setIsDragging(true);
+    setStartX(e.pageX - scrollRef.current.offsetLeft);
+    setScrollLeft(scrollRef.current.scrollLeft);
+    setStartY(e.pageY - scrollRef.current.offsetTop);
+    setScrollTop(scrollRef.current.scrollTop);
+    scrollRef.current.style.cursor = 'grabbing';
+    scrollRef.current.style.userSelect = 'none';
+  };
+
+  const handleMouseUpOrLeave = () => {
+    setIsDragging(false);
+    if (scrollRef.current) {
+      scrollRef.current.style.cursor = 'grab';
+      scrollRef.current.style.removeProperty('user-select');
+    }
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging || !scrollRef.current) return;
+    e.preventDefault();
+    const x = e.pageX - scrollRef.current.offsetLeft;
+    const y = e.pageY - scrollRef.current.offsetTop;
+    const walkX = (x - startX) * 2;
+    const walkY = (y - startY) * 2;
+    scrollRef.current.scrollLeft = scrollLeft - walkX;
+    scrollRef.current.scrollTop = scrollTop - walkY;
+  };
 
   const sortedCustomers = useMemo(() => {
     if (!sortConfig) return customers;
@@ -162,10 +200,17 @@ export function ErpCustomerTable({ customers, isLoading }: ErpCustomerTableProps
             </DropdownMenu>
         </div>
 
-        <div className="rounded-xl border border-slate-200 dark:border-white/10 overflow-hidden bg-white/40 dark:bg-[#1a1025]/40 backdrop-blur-sm min-h-[75vh] flex flex-col shadow-sm">
-            <div className="flex-1 overflow-auto custom-scrollbar w-full">
-                <Table className="min-w-full">
-                    <TableHeader className="sticky top-0 z-20 shadow-sm">
+        <div className="rounded-xl border border-white/5 dark:border-white/10 overflow-hidden bg-white/40 dark:bg-[#1a1025]/40 backdrop-blur-sm min-h-[75vh] flex flex-col shadow-sm">
+            <div 
+                ref={scrollRef}
+                className="flex-1 overflow-auto custom-scrollbar w-full h-[600px] cursor-grab active:cursor-grabbing border border-white/5 rounded-2xl"
+                onMouseDown={handleMouseDown}
+                onMouseLeave={handleMouseUpOrLeave}
+                onMouseUp={handleMouseUpOrLeave}
+                onMouseMove={handleMouseMove}
+            >
+                <Table className="w-full min-w-[1200px]">
+                    <TableHeader className="bg-[#151025] sticky top-0 z-10 shadow-sm">
                         <TableRow className="hover:bg-transparent border-b border-slate-200 dark:border-white/10">
                             {allColumns.filter(col => visibleColumns.includes(col.key)).map((col) => (
                                 <TableHead 

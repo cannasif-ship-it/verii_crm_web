@@ -1,7 +1,6 @@
-import { type ReactElement, useState, useMemo } from 'react';
+import { type ReactElement, useState, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-  Table,
   TableBody,
   TableCell,
   TableHead,
@@ -17,14 +16,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { 
-    DropdownMenu, 
-    DropdownMenuCheckboxItem, 
-    DropdownMenuContent, 
-    DropdownMenuTrigger,
-    DropdownMenuLabel,
-    DropdownMenuSeparator
-} from '@/components/ui/dropdown-menu';
 import { useDeleteCustomer } from '../hooks/useDeleteCustomer';
 import type { CustomerDto } from '../types/customer-types';
 import { 
@@ -35,8 +26,6 @@ import {
   ArrowDown,
   Calendar,
   User,
-  EyeOff,
-  ChevronDown,
   Tag,
   MapPin,
   Mail,
@@ -54,13 +43,14 @@ export interface ColumnDef<T> {
   className?: string;
 }
 
-interface CustomerTableProps {
+export interface CustomerTableProps {
   customers: CustomerDto[];
   isLoading: boolean;
   onEdit: (customer: CustomerDto) => void;
+  visibleColumns: Array<keyof CustomerDto>;
 }
 
-const getColumnsConfig = (t: any): ColumnDef<CustomerDto>[] => [
+export const getColumnsConfig = (t: any): ColumnDef<CustomerDto>[] => [
     { key: 'id', label: t('customerManagement.table.id', 'ID'), type: 'text', className: 'font-medium w-[60px]' },
     { key: 'customerCode', label: t('customerManagement.table.customerCode', 'Kod'), type: 'code', className: 'font-mono text-xs' },
     { key: 'name', label: t('customerManagement.table.name', 'Müşteri Adı'), type: 'text', className: 'font-bold text-slate-900 dark:text-white min-w-[200px]' },
@@ -82,6 +72,7 @@ export function CustomerTable({
   customers,
   isLoading,
   onEdit,
+  visibleColumns,
 }: CustomerTableProps): ReactElement {
   const { t, i18n } = useTranslation();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -91,12 +82,46 @@ export function CustomerTable({
   const pageSize = 10;
   const [sortConfig, setSortConfig] = useState<{ key: keyof CustomerDto; direction: 'asc' | 'desc' } | null>(null);
 
+  // Drag to Scroll Logic
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [scrollLeft, setScrollLeft] = useState(0);
+  const [startY, setStartY] = useState(0);
+  const [scrollTop, setScrollTop] = useState(0);
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (!scrollRef.current) return;
+    setIsDragging(true);
+    setStartX(e.pageX - scrollRef.current.offsetLeft);
+    setScrollLeft(scrollRef.current.scrollLeft);
+    setStartY(e.pageY - scrollRef.current.offsetTop);
+    setScrollTop(scrollRef.current.scrollTop);
+    scrollRef.current.style.cursor = 'grabbing';
+    scrollRef.current.style.userSelect = 'none';
+  };
+
+  const handleMouseUpOrLeave = () => {
+    setIsDragging(false);
+    if (scrollRef.current) {
+        scrollRef.current.style.cursor = 'grab';
+        scrollRef.current.style.removeProperty('user-select');
+    }
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging || !scrollRef.current) return;
+    e.preventDefault();
+    const x = e.pageX - scrollRef.current.offsetLeft;
+    const y = e.pageY - scrollRef.current.offsetTop;
+    const walkX = (x - startX) * 2;
+    const walkY = (y - startY) * 2;
+    scrollRef.current.scrollLeft = scrollLeft - walkX;
+    scrollRef.current.scrollTop = scrollTop - walkY;
+  };
+
   const tableColumns = useMemo(() => getColumnsConfig(t), [t]);
   
-  const [visibleColumns, setVisibleColumns] = useState<Array<keyof CustomerDto>>([
-    'customerCode', 'name', 'customerTypeName', 'email', 'phone', 'cityName', 'creditLimit', 'salesRepCode'
-  ]);
-
   const deleteCustomer = useDeleteCustomer();
 
   const processedData = useMemo(() => {
@@ -137,12 +162,6 @@ export function CustomerTable({
         direction = 'desc';
     }
     setSortConfig({ key: key as keyof CustomerDto, direction });
-  };
-
-  const toggleColumn = (key: keyof CustomerDto) => {
-    setVisibleColumns(prev => 
-      prev.includes(key) ? prev.filter(c => c !== key) : [...prev, key]
-    );
   };
 
   const renderCellContent = (item: CustomerDto, column: ColumnDef<CustomerDto>) => {
@@ -213,46 +232,17 @@ export function CustomerTable({
   return (
     <div className="flex flex-col gap-4">
       
-      <div className="flex justify-end p-2 sm:p-0">
-            <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                    <Button 
-                        variant="outline" 
-                        size="sm" 
-                        className="ml-auto h-9 lg:flex border-dashed border-slate-300 dark:border-white/20 bg-transparent hover:bg-slate-50 dark:hover:bg-white/5 text-xs sm:text-sm"
-                    >
-                        <EyeOff className="mr-2 h-4 w-4" />
-                        {t('common.editColumns', 'Sütunları Düzenle')}
-                        <ChevronDown className="ml-2 h-4 w-4" />
-                    </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent 
-                    align="end" 
-                    className="w-56 max-h-[400px] overflow-y-auto bg-white/95 dark:bg-[#1a1025]/95 backdrop-blur-xl border border-slate-200 dark:border-white/10 shadow-xl rounded-xl p-2 z-50"
-                >
-                    <DropdownMenuLabel className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider px-2 py-1.5">
-                        {t('common.visibleColumns', 'Görünür Sütunlar')}
-                    </DropdownMenuLabel>
-                    <DropdownMenuSeparator className="bg-slate-200 dark:bg-white/10 my-1" />
-                    
-                    {tableColumns.map((col) => (
-                        <DropdownMenuCheckboxItem
-                            key={col.key}
-                            checked={visibleColumns.includes(col.key)}
-                            onSelect={(e) => e.preventDefault()} 
-                            onCheckedChange={() => toggleColumn(col.key)}
-                            className="text-sm text-slate-700 dark:text-slate-200 focus:bg-pink-50 dark:focus:bg-pink-500/10 focus:text-pink-600 dark:focus:text-pink-400 cursor-pointer rounded-lg px-2 py-1.5 pl-8 relative"
-                        >
-                            {col.label}
-                        </DropdownMenuCheckboxItem>
-                    ))}
-                </DropdownMenuContent>
-            </DropdownMenu>
-      </div>
-
       <div className="rounded-xl border border-slate-200 dark:border-white/10 overflow-hidden bg-white/50 dark:bg-transparent">
-        <Table>
-            <TableHeader className="bg-slate-50/50 dark:bg-white/5">
+        <div 
+          ref={scrollRef}
+          className="relative w-full overflow-auto custom-scrollbar cursor-grab active:cursor-grabbing h-[600px] border border-white/5 rounded-2xl"
+          onMouseDown={handleMouseDown}
+          onMouseLeave={handleMouseUpOrLeave}
+          onMouseUp={handleMouseUpOrLeave}
+          onMouseMove={handleMouseMove}
+        >
+          <table className="w-full min-w-[1200px] caption-bottom text-sm">
+            <TableHeader className="bg-slate-50 dark:bg-[#151025] sticky top-0 z-10 shadow-sm">
               <TableRow className="border-b border-slate-200 dark:border-white/10 hover:bg-transparent">
                 {tableColumns.filter(col => visibleColumns.includes(col.key)).map((col) => (
                     <TableHead 
@@ -292,7 +282,8 @@ export function CustomerTable({
                 </TableRow>
               ))}
             </TableBody>
-          </Table>
+          </table>
+        </div>
       </div>
 
       <div className="flex flex-col sm:flex-row items-center justify-between py-4 gap-4">
