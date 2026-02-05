@@ -11,7 +11,9 @@
   "deleteConfirmTitle": "Löschbestätigung",
   "cancel": "Abbrechen",
   "deleting": "Löschen...",
-  "delete": "Löschen",
+  "delete": {
+    "confirmMessage": "Sind Sie sicher, dass Sie das Land {{name}} löschen möchten?"
+  },
   "saving": "Speichern...",
   "save": "Speichern",
   "stats": {
@@ -54,7 +56,7 @@
       }
     }
   },
-  "delete": {
-    "confirmMessage": "Sind Sie sicher, dass Sie das Land {{name}} löschen möchten?"
+  "deleteConfirm": {
+    "confirmMessage": "Möchten Sie das Land {{name}} wirklich löschen?"
   }
 }

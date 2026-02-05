@@ -1,6 +1,6 @@
 {
   "title": "Zahlungsart-Verwaltung",
-  "description": "Zahlungsarten verwalten und bearbeiten",
+  "description": "Beschreibung",
   "create": "Neue Zahlungsart",
   "edit": "Zahlungsart bearbeiten",
   "editDescription": "Zahlungsart-Informationen bearbeiten",
@@ -9,7 +9,6 @@
   "deleteTitle": "Zahlungsart löschen",
   "name": "Name",
   "namePlaceholder": "Namen der Zahlungsart eingeben",
-  "description": "Beschreibung",
   "descriptionPlaceholder": "Beschreibung eingeben (optional)",
   "createdDate": "Erstellungsdatum",
   "updatedDate": "Aktualisierungsdatum",
@@ -47,5 +46,6 @@
     "description": {
       "maxLength": "Beschreibung darf maximal 500 Zeichen lang sein"
     }
-  }
+  },
+  "headerDescription": "Zahlungstypen verwalten und bearbeiten"
 }

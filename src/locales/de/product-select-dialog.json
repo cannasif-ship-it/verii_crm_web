@@ -1,9 +1,10 @@
 {
   "title": "Produkt auswählen",
-  "description": "Wählen Sie das Produkt aus, das zur Angebotszeile hinzugefügt werden soll",
-  "product": "PRODUKT",
-  "noProducts": "Kein Produkt gefunden",
-  "noResults": "Keine Suchergebnisse gefunden",
+  "description": "Wählen Sie ERP‑Produkte aus, die Sie Ihrer Bestellung hinzufügen möchten",
+  "product": "Produkt",
+  "noProducts": "Keine Produkte",
+  "noResults": "Keine Ergebnisse gefunden",
   "searchPlaceholder": "Nach Produktcode oder Namen suchen...",
-  "voiceSearch": "Sprachsuche"
+  "voiceSearch": "Sprachsuche",
+  "loading": "Wird geladen"
 }

@@ -1,0 +1,18 @@
+{
+  "PageTitle": "E-Mail-Einstellungen",
+  "PageDescription": "SMTP-Servereinstellungen konfigurieren",
+  "Save": "Speichern",
+  "SavedSuccessfully": "E-Mail-Einstellungen wurden erfolgreich gespeichert",
+  "SaveFailed": "E-Mail-Einstellungen konnten nicht gespeichert werden",
+  "Fields": {
+    "Host": "Host",
+    "Port": "Port",
+    "EnableSsl": "SSL verwenden",
+    "Username": "Benutzername",
+    "Password": "Passwort",
+    "PasswordPlaceholder": "Neues Passwort zum Ändern eingeben",
+    "FromEmail": "Absender-E-Mail",
+    "FromName": "Absendername",
+    "Timeout": "Zeitüberschreitung (s)"
+  }
+}

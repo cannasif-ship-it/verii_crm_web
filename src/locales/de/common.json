@@ -33,14 +33,14 @@
   "auth": {
     "login": {
       "title": "Systemanmeldung",
-      "subtitle": "VERII WMS",
+      "subtitle": "Bitte melden Sie sich an, um fortzufahren",
       "branch": "Filiale",
       "selectBranch": "Filiale auswählen",
       "branchNotFound": "Filiale nicht gefunden",
       "email": "E-Mail",
       "emailPlaceholder": "Geben Sie Ihre E-Mail-Adresse ein",
       "password": "Passwort",
-      "passwordPlaceholder": "••••••••",
+      "passwordPlaceholder": "Passwort eingeben",
       "loginButton": "Anmelden",
       "loggingIn": "Wird angemeldet...",
       "wrongPassword": "E-Mail oder Passwort ist falsch",
@@ -52,7 +52,7 @@
   },
   "navbar": {
     "VERII WMS": "VERII WMS",
-    "crm": "V3RII CRM"
+    "crm": "CRM"
   },
   "sidebar": {
     "dashboard": "Dashboard",
@@ -69,7 +69,7 @@
     "orders": "Bestellungen",
     "campaigns": "Kampagnen",
     "reports": "Berichte",
-    "powerbi": "PowerBI",
+    "powerbi": "Power BI",
     "titleManagement": "Titelverwaltung",
     "shippingAddressManagement": "Lieferadressenverwaltung",
     "userManagement": "Benutzerverwaltung",
@@ -274,7 +274,6 @@
       "isPlanned": "Geplant",
       "priorityLevel": "Prioritätsstufe",
       "statusInfo": "Statusinformationen",
-      "status": "Status",
       "isCompleted": "Abgeschlossen",
       "completionDate": "Abschlussdatum",
       "isPendingApproval": "Genehmigung ausstehend",
@@ -1022,7 +1021,6 @@
       "yapKod": "Yap-Kode",
       "quantity": "Menge",
       "serialNo": "Seriennummer",
-      "barcode": "Barcode",
       "actions": "Aktionen",
       "noLines": "Keine Zeilen gefunden",
       "notFound": "Paket nicht gefunden",
@@ -1036,47 +1034,9 @@
       "lineAddError": "Fehler beim Hinzufügen der Zeile"
     },
     "form": {
-      "packingNo": "Verpackungsnummer",
-      "packingNoRequired": "Verpackungsnummer ist erforderlich",
-      "packingDate": "Verpackungsdatum",
-      "warehouseCode": "Lagerkode",
-      "sourceType": "Quelltyp",
-      "selectSourceType": "Quelltyp auswählen",
-      "sourceHeaderId": "Quellkopf-ID",
-      "customerCode": "Kundencode",
-      "customerAddress": "Kundenadresse",
-      "status": "Status",
-      "carrierId": "Spediteur-ID",
-      "carrierServiceType": "Spediteurdiensttyp",
-      "trackingNo": "Sendungsnummer",
-      "packageNo": "Paketnummer",
-      "packageNoRequired": "Paketnummer ist erforderlich",
-      "packageType": "Pakettyp",
-      "package": "Paket",
-      "selectPackage": "Paket auswählen",
-      "packingHeaderId": "Verpackungskopf-ID",
-      "packingHeaderIdRequired": "Verpackungskopf-ID ist erforderlich",
-      "packageIdRequired": "Paket-ID ist erforderlich",
-      "barcode": "Barcode",
-      "length": "Länge",
-      "width": "Breite",
-      "height": "Höhe",
-      "volume": "Volumen",
-      "netWeight": "Nettogewicht",
-      "tareWeight": "Taragewicht",
-      "grossWeight": "Bruttogewicht",
-      "isMixed": "Gemischt",
-      "stockCode": "Lagerkode",
-      "stockCodeRequired": "Lagerkode ist erforderlich",
-      "yapKod": "Yap-Kode",
-      "yapKodRequired": "Yap-Kode ist erforderlich",
-      "quantity": "Menge",
-      "quantityRequired": "Menge ist erforderlich",
-      "serialNo": "Seriennummer",
-      "serialNo2": "Seriennummer 2",
-      "serialNo3": "Seriennummer 3",
-      "serialNo4": "Seriennummer 4",
-      "sourceRouteId": "Quellrouten-ID"
+      "selectWarehouse": "Lager auswählen",
+      "selectCustomer": "Kunde auswählen",
+      "selectCarrier": "Spediteur auswählen"
     },
     "status": {
       "draft": "Entwurf",
@@ -1127,11 +1087,6 @@
       "Scotty": "Scotty",
       "KolayGelsin": "Kolay Gelsin",
       "BirGundeKargo": "Bir Günde Kargo"
-    },
-    "form": {
-      "selectWarehouse": "Lager auswählen",
-      "selectCustomer": "Kunde auswählen",
-      "selectCarrier": "Spediteur auswählen"
     }
   },
   "notification": {
@@ -1294,6 +1249,336 @@
     "profilePictureDeletedSuccessfully": "Profilbild erfolgreich gelöscht",
     "profilePictureDeleteError": "Beim Löschen des Profilbilds ist ein Fehler aufgetreten",
     "userNotFound": "Benutzer nicht gefunden"
+  },
+  "approvalRoleGroup": {
+    "menu": "Genehmigungs‑Rollengruppen",
+    "description": "Verwalten Sie Genehmigungs‑Rollengruppen",
+    "addButton": "Gruppe hinzufügen",
+    "table": {
+      "id": "ID",
+      "name": "Name",
+      "createdDate": "Erstellungsdatum",
+      "createdBy": "Erstellt von",
+      "showing": "{{from}}-{{to}} / {{total}} angezeigt",
+      "page": "Seite {{current}} / {{total}}"
+    },
+    "form": {
+      "addTitle": "Neue Rollengruppe hinzufügen",
+      "editTitle": "Rollengruppe bearbeiten",
+      "addDescription": "Geben Sie die Informationen der neuen Rollengruppe ein",
+      "editDescription": "Bearbeiten Sie die Informationen der Rollengruppe",
+      "name": "Gruppenname",
+      "namePlaceholder": "Gruppenname eingeben",
+      "name.required": "Gruppenname ist erforderlich",
+      "name.maxLength": "Gruppenname darf höchstens 100 Zeichen lang sein"
+    },
+    "delete": {
+      "confirmTitle": "Gruppe löschen",
+      "confirmMessage": "Möchten Sie diese Gruppe wirklich löschen?"
+    },
+    "messages": {
+      "createSuccess": "Gruppe erstellt",
+      "createError": "Gruppe konnte nicht erstellt werden",
+      "updateSuccess": "Gruppe aktualisiert",
+      "updateError": "Gruppe konnte nicht aktualisiert werden",
+      "deleteSuccess": "Gruppe gelöscht",
+      "deleteError": "Gruppe konnte nicht gelöscht werden"
+    }
+  },
+  "approvalUserRole": {
+    "menu": "Genehmigungs‑Benutzerrollen",
+    "description": "Verwalten Sie Benutzer‑Rollenzuweisungen",
+    "addButton": "Hinzufügen",
+    "table": {
+      "id": "ID",
+      "userFullName": "Vollständiger Name",
+      "approvalRoleName": "Genehmigungsrolle",
+      "createdDate": "Erstellungsdatum",
+      "createdBy": "Erstellt von",
+      "showing": "{{from}}-{{to}} / {{total}} angezeigt",
+      "page": "Seite {{current}} / {{total}}"
+    },
+    "form": {
+      "addTitle": "Benutzerrolle hinzufügen",
+      "editTitle": "Benutzerrolle bearbeiten",
+      "addDescription": "Weisen Sie einem Benutzer eine Genehmigungsrolle zu",
+      "editDescription": "Bearbeiten Sie die Rollenzuweisung",
+      "userId": "Benutzer",
+      "selectUser": "Benutzer auswählen",
+      "noUserSelected": "Kein Benutzer ausgewählt",
+      "userId.required": "Benutzer ist erforderlich",
+      "approvalRoleId": "Genehmigungsrolle",
+      "selectApprovalRole": "Genehmigungsrolle auswählen",
+      "noApprovalRoleSelected": "Keine Genehmigungsrolle ausgewählt",
+      "approvalRoleId.required": "Genehmigungsrolle ist erforderlich"
+    },
+    "delete": {
+      "confirmTitle": "Zuweisung löschen",
+      "confirmMessage": "Möchten Sie diese Zuweisung wirklich löschen?"
+    },
+    "messages": {
+      "createSuccess": "Zuweisung erstellt",
+      "createError": "Zuweisung konnte nicht erstellt werden",
+      "updateSuccess": "Zuweisung aktualisiert",
+      "updateError": "Zuweisung konnte nicht aktualisiert werden",
+      "deleteSuccess": "Zuweisung gelöscht",
+      "deleteError": "Zuweisung konnte nicht gelöscht werden"
+    }
+  },
+  "approvalRole": {
+    "menu": "Genehmigungsrollen",
+    "description": "Verwalten Sie Genehmigungsrollen",
+    "addButton": "Rolle hinzufügen",
+    "table": {
+      "id": "ID",
+      "approvalRoleGroupName": "Rollengruppe",
+      "name": "Name",
+      "createdDate": "Erstellungsdatum",
+      "createdBy": "Erstellt von",
+      "showing": "{{from}}-{{to}} / {{total}} angezeigt",
+      "page": "Seite {{current}} / {{total}}"
+    },
+    "form": {
+      "addTitle": "Genehmigungsrolle hinzufügen",
+      "editTitle": "Genehmigungsrolle bearbeiten",
+      "addDescription": "Geben Sie die Informationen der neuen Rolle ein",
+      "editDescription": "Bearbeiten Sie die Rolleninformationen",
+      "approvalRoleGroupId": "Rollengruppe",
+      "selectApprovalRoleGroup": "Rollengruppe auswählen",
+      "noApprovalRoleGroupSelected": "Keine Rollengruppe ausgewählt",
+      "approvalRoleGroupId.required": "Rollengruppe ist erforderlich",
+      "name": "Name",
+      "namePlaceholder": "Name eingeben",
+      "name.required": "Name ist erforderlich",
+      "name.maxLength": "Name darf höchstens 100 Zeichen lang sein"
+    },
+    "delete": {
+      "confirmTitle": "Rolle löschen",
+      "confirmMessage": "Möchten Sie diese Rolle wirklich löschen?"
+    },
+    "messages": {
+      "createSuccess": "Rolle erstellt",
+      "createError": "Rolle konnte nicht erstellt werden",
+      "updateSuccess": "Rolle aktualisiert",
+      "updateError": "Rolle konnte nicht aktualisiert werden",
+      "deleteSuccess": "Rolle gelöscht",
+      "deleteError": "Rolle konnte nicht gelöscht werden"
+    }
+  },
+  "approvalFlow": {
+    "menu": "Genehmigungsfluss‑Verwaltung",
+    "description": "Verwalten und bearbeiten Sie Genehmigungsflüsse",
+    "addButton": "Neuen Genehmigungsfluss hinzufügen",
+    "documentType": {
+      "offer": "Angebot",
+      "request": "Anfrage",
+      "order": "Bestellung"
+    },
+    "table": {
+      "id": "ID",
+      "documentType": "Dokumenttyp",
+      "description": "Beschreibung",
+      "isActive": "Aktiv",
+      "createdDate": "Erstellungsdatum",
+      "createdBy": "Erstellt von",
+      "showing": "{{from}}-{{to}} / {{total}} angezeigt",
+      "page": "Seite {{current}} / {{total}}"
+    },
+    "form": {
+      "addTitle": "Neuen Genehmigungsfluss hinzufügen",
+      "editTitle": "Genehmigungsfluss bearbeiten",
+      "addDescription": "Geben Sie die Informationen des neuen Genehmigungsflusses ein",
+      "editDescription": "Bearbeiten Sie die Informationen des Genehmigungsflusses",
+      "documentType": "Dokumenttyp",
+      "selectDocumentType": "Dokumenttyp auswählen",
+      "noDocumentTypeSelected": "Kein Dokumenttyp ausgewählt",
+      "documentType.required": "Dokumenttyp ist erforderlich",
+      "description": "Beschreibung",
+      "descriptionPlaceholder": "Beschreibung eingeben (optional)",
+      "description.maxLength": "Beschreibung darf höchstens 200 Zeichen lang sein",
+      "isActive": "Aktiv",
+      "isActiveDescription": "Aktiv‑Status des Genehmigungsflusses"
+    },
+    "delete": {
+      "confirmTitle": "Genehmigungsfluss löschen",
+      "confirmMessage": "Möchten Sie diesen Genehmigungsfluss wirklich löschen?"
+    },
+    "messages": {
+      "createSuccess": "Genehmigungsfluss erstellt",
+      "createError": "Genehmigungsfluss konnte nicht erstellt werden",
+      "updateSuccess": "Genehmigungsfluss aktualisiert",
+      "updateError": "Genehmigungsfluss konnte nicht aktualisiert werden",
+      "deleteSuccess": "Genehmigungsfluss gelöscht",
+      "deleteError": "Genehmigungsfluss konnte nicht gelöscht werden"
+    }
+  },
+  "countryManagement": {
+    "menu": "Länderverwaltung",
+    "description": "Länder verwalten und bearbeiten",
+    "addButton": "Neues Land hinzufügen",
+    "stats": {
+      "totalCountries": "Länder gesamt",
+      "activeCountries": "Aktive Länder",
+      "newThisMonth": "Neu in diesem Monat"
+    },
+    "table": {
+      "id": "ID",
+      "name": "Landesname",
+      "code": "Code",
+      "erpCode": "ERP-Code",
+      "createdDate": "Erstellungsdatum",
+      "createdBy": "Erstellt von",
+      "showing": "{{from}}-{{to}} / {{total}} angezeigt",
+      "page": "Seite {{current}} / {{total}}"
+    },
+    "form": {
+      "addCountry": "Neues Land hinzufügen",
+      "editCountry": "Land bearbeiten",
+      "addDescription": "Neue Landesdaten eingeben",
+      "editDescription": "Landesdaten bearbeiten",
+      "name": {
+        "required": "Landesname ist erforderlich",
+        "maxLength": "Landesname darf höchstens 100 Zeichen haben"
+      },
+      "namePlaceholder": "Landesnamen eingeben",
+      "code": {
+        "required": "Ländercode ist erforderlich",
+        "minLength": "Ländercode muss mindestens 2 Zeichen haben",
+        "maxLength": "Ländercode darf höchstens 5 Zeichen haben"
+      },
+      "codePlaceholder": "Ländercode eingeben (z. B. DE, US)",
+      "erpCode": {
+        "maxLength": "ERP-Code darf höchstens 10 Zeichen haben"
+      },
+      "erpCodePlaceholder": "ERP-Code eingeben (optional)",
+      "name.required": "Ländername ist erforderlich",
+      "name.maxLength": "Ländername darf höchstens 100 Zeichen lang sein",
+      "code.required": "Ländercode ist erforderlich",
+      "code.minLength": "Ländercode muss mindestens 2 Zeichen haben",
+      "code.maxLength": "Ländercode darf höchstens 5 Zeichen lang sein",
+      "erpCode.maxLength": "ERP‑Code darf höchstens 10 Zeichen lang sein"
+    },
+    "delete": {
+      "confirmTitle": "Land löschen",
+      "confirmMessage": "Möchten Sie das Land {{name}} wirklich löschen?"
+    },
+    "messages": {
+      "createSuccess": "Land erfolgreich erstellt",
+      "createError": "Land konnte nicht erstellt werden",
+      "updateSuccess": "Land erfolgreich aktualisiert",
+      "updateError": "Land konnte nicht aktualisiert werden",
+      "deleteSuccess": "Land erfolgreich gelöscht",
+      "deleteError": "Land konnte nicht gelöscht werden"
+    }
+  },
+  "cityManagement": {
+    "menu": "Stadtverwaltung",
+    "description": "Städte verwalten und bearbeiten",
+    "addButton": "Neue Stadt hinzufügen",
+    "stats": {
+      "totalCities": "Städte gesamt",
+      "activeCities": "Aktive Städte",
+      "newThisMonth": "Neu in diesem Monat"
+    },
+    "table": {
+      "id": "ID",
+      "name": "Stadtname",
+      "erpCode": "ERP-Code",
+      "countryName": "Landesname",
+      "createdDate": "Erstellungsdatum",
+      "createdBy": "Erstellt von",
+      "showing": "{{from}}-{{to}} / {{total}} angezeigt",
+      "page": "Seite {{current}} / {{total}}"
+    },
+    "form": {
+      "addCity": "Neue Stadt hinzufügen",
+      "editCity": "Stadt bearbeiten",
+      "addDescription": "Neue Stadtdaten eingeben",
+      "editDescription": "Stadtdaten bearbeiten",
+      "name": {
+        "required": "Stadtname ist erforderlich",
+        "maxLength": "Stadtname darf höchstens 100 Zeichen haben"
+      },
+      "namePlaceholder": "Stadtnamen eingeben",
+      "country": {
+        "required": "Landesauswahl ist erforderlich"
+      },
+      "selectCountry": "Land auswählen",
+      "erpCode": {
+        "maxLength": "ERP-Code darf höchstens 10 Zeichen haben"
+      },
+      "erpCodePlaceholder": "ERP-Code eingeben (optional)",
+      "name.required": "Stadtname ist erforderlich",
+      "name.maxLength": "Stadtname darf höchstens 100 Zeichen lang sein",
+      "country.required": "Land ist erforderlich",
+      "erpCode.maxLength": "ERP‑Code darf höchstens 10 Zeichen lang sein"
+    },
+    "delete": {
+      "confirmTitle": "Stadt löschen",
+      "confirmMessage": "Möchten Sie die Stadt {{name}} wirklich löschen?"
+    },
+    "messages": {
+      "createSuccess": "Stadt erfolgreich erstellt",
+      "createError": "Stadt konnte nicht erstellt werden",
+      "updateSuccess": "Stadt erfolgreich aktualisiert",
+      "updateError": "Stadt konnte nicht aktualisiert werden",
+      "deleteSuccess": "Stadt erfolgreich gelöscht",
+      "deleteError": "Stadt konnte nicht gelöscht werden"
+    }
+  },
+  "districtManagement": {
+    "menu": "Bezirksverwaltung",
+    "description": "Bezirke verwalten und bearbeiten",
+    "addButton": "Neuen Bezirk hinzufügen",
+    "stats": {
+      "totalDistricts": "Bezirke gesamt",
+      "activeDistricts": "Aktive Bezirke",
+      "newThisMonth": "Neu in diesem Monat"
+    },
+    "table": {
+      "id": "ID",
+      "name": "Bezirksname",
+      "erpCode": "ERP-Code",
+      "cityName": "Stadtname",
+      "createdDate": "Erstellungsdatum",
+      "createdBy": "Erstellt von",
+      "showing": "{{from}}-{{to}} / {{total}} angezeigt",
+      "page": "Seite {{current}} / {{total}}"
+    },
+    "form": {
+      "addDistrict": "Neuen Bezirk hinzufügen",
+      "editDistrict": "Bezirk bearbeiten",
+      "addDescription": "Neue Bezirksdaten eingeben",
+      "editDescription": "Bezirksdaten bearbeiten",
+      "name": {
+        "required": "Bezirksname ist erforderlich",
+        "maxLength": "Bezirksname darf höchstens 100 Zeichen haben"
+      },
+      "namePlaceholder": "Bezirksnamen eingeben",
+      "city": {
+        "required": "Stadtauswahl ist erforderlich"
+      },
+      "selectCity": "Stadt auswählen",
+      "erpCode": {
+        "maxLength": "ERP-Code darf höchstens 10 Zeichen haben"
+      },
+      "erpCodePlaceholder": "ERP-Code eingeben (optional)",
+      "name.required": "Bezirksname ist erforderlich",
+      "name.maxLength": "Bezirksname darf höchstens 100 Zeichen lang sein",
+      "city.required": "Stadt ist erforderlich",
+      "erpCode.maxLength": "ERP‑Code darf höchstens 10 Zeichen lang sein"
+    },
+    "delete": {
+      "confirmTitle": "Bezirk löschen",
+      "confirmMessage": "Möchten Sie den Bezirk {{name}} wirklich löschen?"
+    },
+    "messages": {
+      "createSuccess": "Bezirk erfolgreich erstellt",
+      "createError": "Bezirk konnte nicht erstellt werden",
+      "updateSuccess": "Bezirk erfolgreich aktualisiert",
+      "updateError": "Bezirk konnte nicht aktualisiert werden",
+      "deleteSuccess": "Bezirk erfolgreich gelöscht",
+      "deleteError": "Bezirk konnte nicht gelöscht werden"
+    }
   }
 }
-

@@ -10,7 +10,10 @@
   "previous": "Zurück",
   "next": "Weiter",
   "cancel": "Abbrechen",
-  "delete": "Löschen",
+  "delete": {
+    "confirmTitle": "Bezirk löschen",
+    "confirmMessage": "Sind Sie sicher, dass Sie den Bezirk {{name}} löschen möchten?"
+  },
   "save": "Speichern",
   "saving": "Wird gespeichert...",
   "table": {
@@ -22,10 +25,6 @@
     "createdBy": "Erstellt von",
     "showing": "Zeige {{from}}-{{to}} von {{total}}",
     "page": "Seite {{current}} von {{total}}"
-  },
-  "delete": {
-    "confirmTitle": "Bezirk löschen",
-    "confirmMessage": "Sind Sie sicher, dass Sie den Bezirk {{name}} löschen möchten?"
   },
   "form": {
     "editDistrict": "Bezirk bearbeiten",
@@ -42,5 +41,14 @@
     "name.maxLength": "Bezirksname darf maximal 100 Zeichen lang sein",
     "erpCode.maxLength": "ERP-Code darf maximal 10 Zeichen lang sein",
     "city.required": "Stadtauswahl ist erforderlich"
+  },
+  "deleteConfirm": {
+    "confirmTitle": "Bezirk löschen",
+    "confirmMessage": "Möchten Sie den Bezirk {{name}} wirklich löschen?"
+  },
+  "stats": {
+    "totalDistricts": "GESAMTBEZIRKE",
+    "activeDistricts": "AKTIVE BEZIRKE",
+    "newThisMonth": "NEU DIESEN MONAT"
   }
 }
