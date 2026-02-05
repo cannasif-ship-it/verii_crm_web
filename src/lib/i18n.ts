@@ -21,15 +21,27 @@ for (const [path, loader] of Object.entries(modules)) {
 
 const fallbackLng = 'tr';
 const supportedLngs = Object.keys(loaders);
-const initialLng = localStorage.getItem('i18nextLng') || fallbackLng;
+
+const normalizeLang = (lng?: string | null): string | undefined => {
+  if (!lng) return undefined;
+  const lower = lng.toLowerCase();
+  const mapped = lower === 'sa' ? 'ar' : lower;
+  if (supportedLngs.includes(mapped)) return mapped;
+  const base = mapped.split('-')[0];
+  if (supportedLngs.includes(base)) return base;
+  return mapped;
+};
+
+const initialLng = normalizeLang(localStorage.getItem('i18nextLng')) ?? fallbackLng;
 
 async function loadLanguage(lang: string): Promise<void> {
-  const langLoaders = loaders[lang] || {};
+  const target = normalizeLang(lang) ?? fallbackLng;
+  const langLoaders = loaders[target] || {};
   const entries = Object.entries(langLoaders);
   await Promise.all(
     entries.map(async ([ns, loader]) => {
       const mod = await loader();
-      i18n.addResourceBundle(lang, ns, mod.default, true, true);
+      i18n.addResourceBundle(target, ns, mod.default, true, true);
     })
   );
 }
@@ -41,6 +53,8 @@ const initPromise = (async () => {
     lng: initialLng,
     fallbackLng,
     supportedLngs,
+    load: 'languageOnly',
+    nonExplicitSupportedLngs: true,
     ns: namespaces.length > 0 ? namespaces : [defaultNS],
     defaultNS,
     resources: {},

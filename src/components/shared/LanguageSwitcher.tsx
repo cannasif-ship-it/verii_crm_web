@@ -17,7 +17,7 @@ const languages = [
   { code: 'fr', name: 'Français', flag: '🇫🇷' },
   { code: 'it', name: 'Italiano', flag: '🇮🇹' },
   { code: 'es', name: 'Español', flag: '🇪🇸' },
-  { code: 'sa', name: 'العربية', flag: '🇸🇦' },
+  { code: 'ar', name: 'العربية', flag: '🇸🇦' },
 ];
 
 interface LanguageSwitcherProps {
@@ -26,14 +26,17 @@ interface LanguageSwitcherProps {
 
 export function LanguageSwitcher({ variant = 'default' }: LanguageSwitcherProps): ReactElement {
   const { i18n } = useTranslation();
-  const currentLanguage = languages.find((lang) => lang.code === i18n.language) || languages[0];
+  const normalizedLang = i18n.language.toLowerCase() === 'sa' ? 'ar' : i18n.language.toLowerCase();
+  const baseLang = normalizedLang.split('-')[0];
+  const currentLanguage = languages.find((lang) => lang.code === baseLang) || languages[0];
 
   const handleLanguageChange = (value: string): void => {
-    i18n.changeLanguage(value);
+    const target = value.toLowerCase() === 'sa' ? 'ar' : value.toLowerCase();
+    i18n.changeLanguage(target);
   };
 
   return (
-    <Select value={i18n.language} onValueChange={handleLanguageChange}>
+    <Select value={currentLanguage.code} onValueChange={handleLanguageChange}>
       
       <SelectTrigger 
         className={
