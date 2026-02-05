@@ -17,14 +17,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { 
-    DropdownMenu, 
-    DropdownMenuCheckboxItem, 
-    DropdownMenuContent, 
-    DropdownMenuTrigger,
-    DropdownMenuLabel,
-    DropdownMenuSeparator
-} from '@/components/ui/dropdown-menu';
 import { useDeleteContact } from '../hooks/useDeleteContact';
 import type { ContactDto } from '../types/contact-types';
 import { 
@@ -39,9 +31,7 @@ import {
   Calendar,
   User,
   Building2,
-  Briefcase,
-  EyeOff,
-  ChevronDown
+  Briefcase
 } from 'lucide-react';
 import { Alert02Icon } from 'hugeicons-react';
 
@@ -56,9 +46,10 @@ interface ContactTableProps {
   contacts: ContactDto[];
   isLoading: boolean;
   onEdit: (contact: ContactDto) => void;
+  visibleColumns: Array<keyof ContactDto>;
 }
 
-const getColumnsConfig = (t: any): ColumnDef<ContactDto>[] => [
+export const getColumnsConfig = (t: any): ColumnDef<ContactDto>[] => [
     { key: 'id', label: t('contactManagement.table.id', 'ID'), type: 'text', className: 'font-medium w-[80px]' },
     { key: 'fullName', label: t('contactManagement.table.fullName', 'Ad Soyad'), type: 'text', className: 'font-semibold text-slate-900 dark:text-white min-w-[150px]' },
     { key: 'email', label: t('contactManagement.table.email', 'E-posta'), type: 'email', className: 'min-w-[180px] break-all' },
@@ -74,6 +65,7 @@ export function ContactTable({
   contacts,
   isLoading,
   onEdit,
+  visibleColumns,
 }: ContactTableProps): ReactElement {
   const { t, i18n } = useTranslation();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -86,10 +78,6 @@ export function ContactTable({
 
   const tableColumns = useMemo(() => getColumnsConfig(t), [t]);
   
-  const [visibleColumns, setVisibleColumns] = useState<Array<keyof ContactDto>>(
-    tableColumns.map(col => col.key)
-  );
-
   const processedContacts = useMemo(() => {
     let result = [...contacts];
 
@@ -130,12 +118,6 @@ export function ContactTable({
       direction = 'desc';
     }
     setSortConfig({ key, direction });
-  };
-
-  const toggleColumn = (key: keyof ContactDto) => {
-    setVisibleColumns(prev => 
-      prev.includes(key) ? prev.filter(c => c !== key) : [...prev, key]
-    );
   };
 
   const renderCellContent = (item: ContactDto, column: ColumnDef<ContactDto>) => {
@@ -203,43 +185,6 @@ export function ContactTable({
   return (
     <div className="flex flex-col gap-4">
       
-      <div className="flex justify-end p-2 sm:p-0">
-            <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                    <Button 
-                        variant="outline" 
-                        size="sm" 
-                        className="ml-auto h-9 lg:flex border-dashed border-slate-300 dark:border-white/20 bg-transparent hover:bg-slate-50 dark:hover:bg-white/5 text-xs sm:text-sm"
-                    >
-                        <EyeOff className="mr-2 h-4 w-4" />
-                        {t('common.editColumns', 'Sütunları Düzenle')}
-                        <ChevronDown className="ml-2 h-4 w-4" />
-                    </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent 
-                    align="end" 
-                    className="w-56 max-h-[400px] overflow-y-auto bg-white/95 dark:bg-[#1a1025]/95 backdrop-blur-xl border border-slate-200 dark:border-white/10 shadow-xl rounded-xl p-2 z-50"
-                >
-                    <DropdownMenuLabel className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider px-2 py-1.5">
-                        {t('common.visibleColumns', 'Görünür Sütunlar')}
-                    </DropdownMenuLabel>
-                    <DropdownMenuSeparator className="bg-slate-200 dark:bg-white/10 my-1" />
-                    
-                    {tableColumns.map((col) => (
-                        <DropdownMenuCheckboxItem
-                            key={col.key}
-                            checked={visibleColumns.includes(col.key)}
-                            onSelect={(e) => e.preventDefault()} 
-                            onCheckedChange={() => toggleColumn(col.key)}
-                            className="text-sm text-slate-700 dark:text-slate-200 focus:bg-pink-50 dark:focus:bg-pink-500/10 focus:text-pink-600 dark:focus:text-pink-400 cursor-pointer rounded-lg px-2 py-1.5 pl-8 relative"
-                        >
-                            {col.label}
-                        </DropdownMenuCheckboxItem>
-                    ))}
-                </DropdownMenuContent>
-            </DropdownMenu>
-      </div>
-
       <div className="rounded-xl border border-slate-200 dark:border-white/10 overflow-hidden bg-white/50 dark:bg-transparent">
         <Table>
             <TableHeader className="bg-slate-50/50 dark:bg-white/5">
@@ -265,7 +210,8 @@ export function ContactTable({
               {paginatedContacts.map((contact: ContactDto, index: number) => (
                 <TableRow 
                   key={contact.id || `contact-${index}`}
-                  className="border-b border-slate-100 dark:border-white/5 transition-colors duration-200 hover:bg-pink-50/40 dark:hover:bg-pink-500/5 group last:border-0"
+                  className="border-b border-slate-100 dark:border-white/5 transition-colors duration-200 hover:bg-pink-50/40 dark:hover:bg-pink-500/5 group last:border-0 cursor-pointer"
+                  onDoubleClick={() => onEdit(contact)}
                 >
                   {tableColumns.filter(col => visibleColumns.includes(col.key)).map((col) => (
                       <TableCell key={`${contact.id}-${col.key}`} className={`${cellStyle} ${col.className || ''}`}>
