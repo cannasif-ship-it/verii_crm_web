@@ -6,16 +6,19 @@ import { Plus, Search, RefreshCw, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useQueryClient } from '@tanstack/react-query';
+import { useAuthStore } from '@/stores/auth-store';
 import { ActivityTable } from './ActivityTable';
 import { ActivityForm } from './ActivityForm';
 import { useCreateActivity } from '../hooks/useCreateActivity';
 import { useUpdateActivity } from '../hooks/useUpdateActivity';
 import { useActivities } from '../hooks/useActivities';
+import { buildCreateActivityPayload } from '../utils/build-create-payload';
 import type { ActivityDto } from '../types/activity-types';
 import type { ActivityFormSchema } from '../types/activity-types';
 
 export function ActivityManagementPage(): ReactElement {
   const { t } = useTranslation();
+  const { user } = useAuthStore();
   const { setPageTitle } = useUIStore();
   const [searchParams, setSearchParams] = useSearchParams();
   const [formOpen, setFormOpen] = useState(false);
@@ -95,38 +98,38 @@ export function ActivityManagementPage(): ReactElement {
     setFormOpen(true);
   };
 
+  const toActivityTypeId = (value: string): number | undefined => {
+    const num = Number(value);
+    return Number.isInteger(num) && !Number.isNaN(num) ? num : undefined;
+  };
+
+  const buildUpdatePayload = (data: ActivityFormSchema) => {
+    const activityTypeId = toActivityTypeId(data.activityType);
+    return {
+      subject: data.subject,
+      description: data.description,
+      activityType: data.activityType,
+      ...(activityTypeId !== undefined && { activityTypeId }),
+      potentialCustomerId: data.potentialCustomerId || undefined,
+      erpCustomerCode: data.erpCustomerCode || undefined,
+      productCode: data.productCode || undefined,
+      productName: data.productName || undefined,
+      status: data.status,
+      isCompleted: data.isCompleted,
+      priority: data.priority || undefined,
+      contactId: data.contactId || undefined,
+      assignedUserId: data.assignedUserId || undefined,
+      activityDate: data.activityDate,
+    };
+  };
+
   const handleFormSubmit = async (data: ActivityFormSchema): Promise<void> => {
     if (editingActivity) {
-      await updateActivity.mutateAsync({
-        id: editingActivity.id,
-        data: {
-          subject: data.subject,
-          description: data.description,
-          activityType: data.activityType,
-          potentialCustomerId: data.potentialCustomerId || undefined,
-          erpCustomerCode: data.erpCustomerCode || undefined,
-          status: data.status,
-          isCompleted: data.isCompleted,
-          priority: data.priority || undefined,
-          contactId: data.contactId || undefined,
-          assignedUserId: data.assignedUserId || undefined,
-          activityDate: data.activityDate,
-        },
-      });
+      await updateActivity.mutateAsync({ id: editingActivity.id, data: buildUpdatePayload(data) });
     } else {
-      await createActivity.mutateAsync({
-        subject: data.subject,
-        description: data.description,
-        activityType: data.activityType,
-        potentialCustomerId: data.potentialCustomerId || undefined,
-        erpCustomerCode: data.erpCustomerCode || undefined,
-        status: data.status,
-        isCompleted: data.isCompleted,
-        priority: data.priority || undefined,
-        contactId: data.contactId || undefined,
-        assignedUserId: data.assignedUserId || undefined,
-        activityDate: data.activityDate,
-      });
+      await createActivity.mutateAsync(
+        buildCreateActivityPayload(data, { assignedUserIdFallback: user?.id })
+      );
     }
     setFormOpen(false);
     setEditingActivity(null);
@@ -154,7 +157,7 @@ export function ActivityManagementPage(): ReactElement {
         
         <Button 
           onClick={handleAddClick}
-          className="px-6 py-2 bg-gradient-to-r from-pink-600 to-orange-600 rounded-lg text-white text-sm font-bold shadow-lg shadow-pink-500/20 hover:scale-105 transition-transform border-0 hover:text-white"
+          className="px-6 py-2 bg-linear-to-r from-pink-600 to-orange-600 rounded-lg text-white text-sm font-bold shadow-lg shadow-pink-500/20 hover:scale-105 transition-transform border-0 hover:text-white"
         >
           <Plus size={18} className="mr-2" />
           {t('activityManagement.create', 'Yeni Aktivite')}

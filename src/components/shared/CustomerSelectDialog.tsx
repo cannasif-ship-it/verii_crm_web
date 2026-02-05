@@ -18,6 +18,7 @@ import { cn } from '@/lib/utils';
 export interface CustomerSelectionResult {
   customerId?: number;
   erpCustomerCode?: string;
+  customerName?: string;
 }
 
 interface CustomerSelectDialogProps {
@@ -324,16 +325,19 @@ export function CustomerSelectDialog({
     type: 'erp' | 'crm';
     id?: number;
     erpCode?: string;
+    name?: string;
   }): void => {
     if (customer.type === 'erp' && customer.erpCode) {
       onSelect({
         customerId: undefined,
         erpCustomerCode: customer.erpCode,
+        customerName: customer.name,
       });
     } else if (customer.type === 'crm' && customer.id) {
       onSelect({
         customerId: customer.id,
         erpCustomerCode: undefined,
+        customerName: customer.name,
       });
     }
     onOpenChange(false);
@@ -374,7 +378,7 @@ export function CustomerSelectDialog({
             email={customer.email}
             city={customer.cariIl}
             district={customer.cariIlce}
-            onClick={() => handleCustomerSelect({ type: 'erp', erpCode: customer.cariKod })}
+            onClick={() => handleCustomerSelect({ type: 'erp', erpCode: customer.cariKod, name: customer.cariIsim || customer.cariKod })}
           />
         ))}
       </div>
@@ -416,7 +420,7 @@ export function CustomerSelectDialog({
             email={customer.email}
             city={customer.cityName}
             district={customer.districtName}
-            onClick={() => handleCustomerSelect({ type: 'crm', id: customer.id })}
+            onClick={() => handleCustomerSelect({ type: 'crm', id: customer.id, name: customer.name })}
           />
         ))}
       </div>
@@ -466,9 +470,9 @@ export function CustomerSelectDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-6xl max-h-[90vh] flex flex-col p-0 overflow-hidden bg-white/95 dark:bg-[#0c0516]/95 backdrop-blur-xl border-slate-200 dark:border-white/10 shadow-2xl">
-        <DialogHeader className="px-6 py-5 border-b border-slate-200/50 dark:border-white/5 bg-slate-50/50 dark:bg-white/5 flex-shrink-0">
+        <DialogHeader className="px-6 py-5 border-b border-slate-200/50 dark:border-white/5 bg-slate-50/50 dark:bg-white/5 shrink-0">
           <DialogTitle className="flex items-center gap-3 text-slate-900 dark:text-white text-lg">
-             <div className="bg-gradient-to-br from-indigo-500 to-violet-600 p-2.5 rounded-xl shadow-lg shadow-indigo-500/20 text-white">
+             <div className="bg-linear-to-br from-indigo-500 to-violet-600 p-2.5 rounded-xl shadow-lg shadow-indigo-500/20 text-white">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="20"
@@ -491,7 +495,7 @@ export function CustomerSelectDialog({
           </DialogDescription>
         </DialogHeader>
 
-        <div className="px-6 py-4 flex-shrink-0 bg-white/50 dark:bg-white/5 border-b border-slate-200/50 dark:border-white/5">
+        <div className="px-6 py-4 shrink-0 bg-white/50 dark:bg-white/5 border-b border-slate-200/50 dark:border-white/5">
           <div className="relative flex gap-3">
             <div className="relative flex-1 group">
               <svg
@@ -572,7 +576,7 @@ export function CustomerSelectDialog({
 
         <div className="flex-1 min-h-0 flex flex-col px-6 pb-6 pt-4">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full flex-1 flex flex-col min-h-0">
-            <TabsList className="grid w-full grid-cols-3 mb-4 flex-shrink-0 bg-slate-100/50 dark:bg-white/5 p-1 rounded-xl">
+            <TabsList className="grid w-full grid-cols-3 mb-4 shrink-0 bg-slate-100/50 dark:bg-white/5 p-1 rounded-xl">
               <TabsTrigger value="erp" className="rounded-lg data-[state=active]:bg-white dark:data-[state=active]:bg-white/10 data-[state=active]:shadow-sm transition-all">
                 {t('customerSelectDialog.erpCustomers', 'ERP Müşterisi')}
               </TabsTrigger>

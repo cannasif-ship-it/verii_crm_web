@@ -16,6 +16,8 @@ import { useCreateActivity } from '@/features/activity-management/hooks/useCreat
 import { ActivityStatusBadge } from '@/features/activity-management/components/ActivityStatusBadge';
 import { ActivityPriorityBadge } from '@/features/activity-management/components/ActivityPriorityBadge';
 import { ActivityForm } from '@/features/activity-management/components/ActivityForm';
+import { buildCreateActivityPayload } from '@/features/activity-management/utils/build-create-payload';
+import { toUpdateActivityDto } from '@/features/activity-management/utils/to-update-activity-dto';
 import type { ActivityDto } from '@/features/activity-management/types/activity-types';
 import type { ActivityFormSchema } from '@/features/activity-management/types/activity-types';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -153,36 +155,31 @@ export function DailyTasksPage(): ReactElement {
 
   // --- Handlers ---
   const handleToggleComplete = async (activity: ActivityDto) => {
-    await updateActivity.mutateAsync({ id: activity.id, data: { ...activity, status: activity.isCompleted ? 'Scheduled' : 'Completed', isCompleted: !activity.isCompleted } });
+    await updateActivity.mutateAsync({ id: activity.id, data: toUpdateActivityDto(activity, { status: activity.isCompleted ? 'Scheduled' : 'Completed', isCompleted: !activity.isCompleted }) });
     void refetch();
   };
   const handleDelete = async (id: number) => { await deleteActivity.mutateAsync(id); void refetch(); };
   const handleNewTask = () => setFormOpen(true);
+
   const handleFormSubmit = async (data: ActivityFormSchema) => {
-    await createActivity.mutateAsync({ 
-      subject: data.subject,
-      description: data.description,
-      activityType: data.activityType,
-      activityDate: data.activityDate,
-      status: data.status,
-      isCompleted: data.isCompleted,
-      potentialCustomerId: data.potentialCustomerId || undefined,
-      erpCustomerCode: data.erpCustomerCode || undefined,
-      priority: data.priority || undefined,
-      contactId: data.contactId || undefined,
-      assignedUserId: data.assignedUserId || user?.id || undefined,
-    });
-    setFormOpen(false); 
+    await createActivity.mutateAsync(
+      buildCreateActivityPayload(data, { assignedUserIdFallback: user?.id })
+    );
+    setFormOpen(false);
     void refetch();
   };
-  const handleStartTask = async (activity: ActivityDto) => { await updateActivity.mutateAsync({ id: activity.id, data: { ...activity, status: 'In Progress', isCompleted: false } }); void refetch(); };
-  const handleCompleteTask = async (activity: ActivityDto) => { await updateActivity.mutateAsync({ id: activity.id, data: { ...activity, status: 'Completed', isCompleted: true } }); void refetch(); };
-  const handlePutOnHold = async (activity: ActivityDto) => { await updateActivity.mutateAsync({ id: activity.id, data: { ...activity, status: 'Postponed' } }); void refetch(); };
+  const handleStartTask = async (activity: ActivityDto) => { await updateActivity.mutateAsync({ id: activity.id, data: toUpdateActivityDto(activity, { status: 'In Progress', isCompleted: false }) }); void refetch(); };
+  const handleCompleteTask = async (activity: ActivityDto) => { await updateActivity.mutateAsync({ id: activity.id, data: toUpdateActivityDto(activity, { status: 'Completed', isCompleted: true }) }); void refetch(); };
+  const handlePutOnHold = async (activity: ActivityDto) => { await updateActivity.mutateAsync({ id: activity.id, data: toUpdateActivityDto(activity, { status: 'Postponed' }) }); void refetch(); };
   const handlePreviousMonth = () => setCalendarMonth(new Date(calendarMonth.getFullYear(), calendarMonth.getMonth() - 1, 1));
   const handleNextMonth = () => setCalendarMonth(new Date(calendarMonth.getFullYear(), calendarMonth.getMonth() + 1, 1));
   const handleToday = () => setCalendarMonth(new Date());
 
-  // --- Helpers ---
+  const getActivityTypeDisplay = (activityType: ActivityDto['activityType']): string => {
+    if (activityType == null) return '';
+    return typeof activityType === 'object' && 'name' in activityType ? activityType.name : String(activityType);
+  };
+
   const getCategoryColor = (activityType: string): string => {
     switch (activityType) {
       case 'Call': return 'border-blue-500 text-blue-600 bg-blue-50 dark:bg-blue-900/20 dark:text-blue-300';
@@ -224,7 +221,7 @@ export function DailyTasksPage(): ReactElement {
   const filterButtonStyle = (isActive: boolean) => `
     h-8 text-xs font-medium transition-all rounded-lg shrink-0
     ${isActive 
-      ? 'bg-gradient-to-r from-pink-600 to-orange-600 text-white shadow-lg shadow-pink-500/20 border-transparent' 
+      ? 'bg-linear-to-r from-pink-600 to-orange-600 text-white shadow-lg shadow-pink-500/20 border-transparent' 
       : 'bg-white/50 dark:bg-white/5 border border-slate-200 dark:border-white/10 hover:bg-slate-100 dark:hover:bg-white/10 text-slate-600 dark:text-slate-300'}
   `;
 
@@ -261,7 +258,7 @@ export function DailyTasksPage(): ReactElement {
       {backgroundBlobs}
       
       {/* 1. HERO SECTION: Responsive Layout */}
-      <div className="relative overflow-hidden rounded-2xl md:rounded-3xl bg-gradient-to-br from-indigo-900 via-purple-900 to-slate-900 p-6 md:p-8 shadow-2xl ring-1 ring-white/10">
+      <div className="relative overflow-hidden rounded-2xl md:rounded-3xl bg-linear-to-br from-indigo-900 via-purple-900 to-slate-900 p-6 md:p-8 shadow-2xl ring-1 ring-white/10">
         <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 brightness-100 contrast-150"></div>
         <div className="absolute -right-20 -top-20 h-40 w-40 md:h-64 md:w-64 rounded-full bg-pink-500/30 blur-3xl"></div>
         
@@ -273,7 +270,7 @@ export function DailyTasksPage(): ReactElement {
             </div>
             <h1 className="text-2xl md:text-4xl font-bold text-white leading-tight">
               {greeting}, <br className="md:hidden" /> 
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-orange-400">
+              <span className="text-transparent bg-clip-text bg-linear-to-r from-pink-400 to-orange-400">
                 {getUserDisplayName()}
               </span>
             </h1>
@@ -391,7 +388,7 @@ export function DailyTasksPage(): ReactElement {
                             <div className="flex flex-col overflow-hidden">
                                 <span className="text-[10px] uppercase font-bold tracking-wider text-slate-400 mb-1 flex items-center gap-1">
                                     {activity.activityType && <span className={`w-1.5 h-1.5 rounded-full ${activity.priority === 'High' ? 'bg-red-500' : 'bg-blue-500'}`}></span>}
-                                    {activity.activityType}
+                                    {getActivityTypeDisplay(activity.activityType)}
                                 </span>
                                 <h3 className={`font-bold text-base md:text-lg leading-tight truncate transition-colors ${activity.isCompleted ? 'text-slate-400 line-through' : 'text-slate-800 dark:text-slate-100 group-hover:text-pink-600 dark:group-hover:text-pink-400'}`}>
                                     {activity.subject}
@@ -419,11 +416,14 @@ export function DailyTasksPage(): ReactElement {
                         {/* Bilgi Hapları */}
                         <div className="pl-2 flex flex-wrap gap-2">
                             <ActivityPriorityBadge priority={activity.priority} />
-                            {activity.activityType && (
-                                <div className={`px-2 py-0.5 rounded-md text-[10px] font-semibold border border-current ${getCategoryColor(activity.activityType)}`}>
-                                    {t(`activityManagement.activityType${activity.activityType}`, activity.activityType)}
-                                </div>
-                            )}
+                            {activity.activityType && (() => {
+                                const display = getActivityTypeDisplay(activity.activityType);
+                                return display ? (
+                                  <div className={`px-2 py-0.5 rounded-md text-[10px] font-semibold border border-current ${getCategoryColor(display)}`}>
+                                    {t(`activityManagement.activityType${display}`, display)}
+                                  </div>
+                                ) : null;
+                            })()}
                         </div>
 
                         {/* Alt Bilgi ve Aksiyonlar */}
@@ -522,7 +522,7 @@ export function DailyTasksPage(): ReactElement {
                             <Button variant="ghost" size="sm" onClick={handleToday} className="h-8 text-xs font-semibold px-2 md:px-3 hover:bg-white dark:hover:bg-white/10 shadow-sm">{t('dailyTasks.today', 'Bugün')}</Button>
                             <Button variant="ghost" size="icon" onClick={handleNextMonth} className="h-8 w-8 rounded-md hover:bg-white dark:hover:bg-white/10 shadow-sm"><ChevronRight size={16} /></Button>
                         </div>
-                        <h2 className="text-base md:text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-slate-900 to-slate-600 dark:from-white dark:to-slate-400">
+                        <h2 className="text-base md:text-xl font-bold text-transparent bg-clip-text bg-linear-to-r from-slate-900 to-slate-600 dark:from-white dark:to-slate-400">
                             {calendarMonth.toLocaleDateString(i18n.language, { month: 'long', year: 'numeric' })}
                         </h2>
                     </div>

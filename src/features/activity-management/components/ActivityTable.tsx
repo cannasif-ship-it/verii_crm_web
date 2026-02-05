@@ -29,6 +29,7 @@ import {
 import { useDeleteActivity } from '../hooks/useDeleteActivity';
 import { useUpdateActivity } from '../hooks/useUpdateActivity';
 import type { ActivityDto } from '../types/activity-types';
+import { toUpdateActivityDto } from '../utils/to-update-activity-dto';
 import { ActivityStatusBadge } from './ActivityStatusBadge';
 import { ActivityPriorityBadge } from './ActivityPriorityBadge';
 import { 
@@ -125,7 +126,7 @@ export function ActivityTable({
   const handleStatusChange = async (activity: ActivityDto, newStatus: string, isCompleted: boolean) => {
       await updateActivity.mutateAsync({
           id: activity.id,
-          data: { ...activity, status: newStatus, isCompleted },
+          data: toUpdateActivityDto(activity, { status: newStatus, isCompleted }),
       });
   };
 
@@ -188,9 +189,10 @@ export function ActivityTable({
              ) : '-';
         default:
              if (column.key === 'activityType') {
-                 return <div className="flex items-center gap-2"><List size={14} className="text-pink-500" />{String(value)}</div>;
+                 const display = value != null && typeof value === 'object' && 'name' in value ? (value as { name: string }).name : String(value ?? '');
+                 return <div className="flex items-center gap-2"><List size={14} className="text-pink-500" />{display}</div>;
              }
-             return String(value || '-');
+             return String(value ?? '-');
     }
   };
 
@@ -345,7 +347,7 @@ export function ActivityTable({
           </DialogHeader>
           <DialogFooter className="flex flex-row gap-3 justify-center p-6 bg-slate-50/50 dark:bg-[#1a1025]/50 border-t border-slate-100 dark:border-white/5">
             <Button type="button" variant="outline" onClick={() => setDeleteDialogOpen(false)} disabled={deleteActivity.isPending} className="flex-1 h-12 rounded-xl border-slate-200 dark:border-white/10">{t('common.cancel', 'Vazgeç')}</Button>
-            <Button type="button" variant="destructive" onClick={handleDeleteConfirm} disabled={deleteActivity.isPending} className="flex-1 h-12 rounded-xl bg-gradient-to-r from-red-600 to-red-700 text-white font-bold">{deleteActivity.isPending ? t('common.loading', 'Siliniyor...') : t('common.delete', 'Sil')}</Button>
+            <Button type="button" variant="destructive" onClick={handleDeleteConfirm} disabled={deleteActivity.isPending} className="flex-1 h-12 rounded-xl bg-linear-to-r from-red-600 to-red-700 text-white font-bold">{deleteActivity.isPending ? t('common.loading', 'Siliniyor...') : t('common.delete', 'Sil')}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

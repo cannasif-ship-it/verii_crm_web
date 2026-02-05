@@ -1,4 +1,4 @@
-import { type ReactElement, useEffect, useState } from 'react';
+import { type ReactElement, type ReactNode, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslation } from 'react-i18next';
@@ -12,7 +12,6 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Switch } from '@/components/ui/switch';
 import {
   Form,
   FormControl,
@@ -56,18 +55,26 @@ interface ActivityFormProps {
 }
 
 const INPUT_STYLE = `
-  h-12 rounded-xl
-  bg-slate-50 dark:bg-[#0f0a18] 
+  h-11 rounded-lg
+  bg-slate-50 dark:bg-white/5 
   border border-slate-200 dark:border-white/10 
   text-slate-900 dark:text-white text-sm
-  placeholder:text-slate-400 dark:placeholder:text-slate-600 
-  focus-visible:bg-white dark:focus-visible:bg-[#1a1025]
-  focus-visible:border-pink-500 dark:focus-visible:border-pink-500/70
-  focus-visible:ring-2 focus-visible:ring-pink-500/10 focus-visible:ring-offset-0
+  placeholder:text-slate-400 dark:placeholder:text-slate-500 
+  focus-visible:bg-white dark:focus-visible:bg-white/5
+  focus-visible:border-pink-500/70 focus-visible:ring-2 focus-visible:ring-pink-500/10 focus-visible:ring-offset-0
   transition-all duration-200 w-full
 `;
 
-const LABEL_STYLE = "text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide ml-1 mb-2 flex items-center gap-2";
+const LABEL_STYLE = "text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 flex items-center gap-2";
+
+function FormSection({ title, children, className = '' }: { title: string; children: ReactNode; className?: string }) {
+  return (
+    <section className={className}>
+      <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-4">{title}</h3>
+      <div className="space-y-4">{children}</div>
+    </section>
+  );
+}
 
 export function ActivityForm({
   open,
@@ -82,9 +89,11 @@ export function ActivityForm({
   const { data: userOptions = [] } = useUserOptions();
   const [customerSelectDialogOpen, setCustomerSelectDialogOpen] = useState(false);
   const [productSelectDialogOpen, setProductSelectDialogOpen] = useState(false);
+  const [selectedCustomerDisplayName, setSelectedCustomerDisplayName] = useState<string | null>(null);
 
   const form = useForm<ActivityFormSchema>({
     resolver: zodResolver(activityFormSchema),
+    mode: 'onChange',
     defaultValues: {
       subject: '',
       description: '',
@@ -94,6 +103,9 @@ export function ActivityForm({
       activityDate: new Date().toISOString().split('T')[0],
     },
   });
+
+  const isFormValid = form.formState.isValid;
+  const isSubmitting = isLoading;
 
   const watchedStatus = form.watch('status');
   const watchedCustomerId = form.watch('potentialCustomerId');
@@ -134,7 +146,11 @@ export function ActivityForm({
       form.reset({
         subject: activity.subject,
         description: activity.description || '',
-        activityType: activity.activityType ? String(activity.activityType) : '',
+        activityType: activity.activityType
+          ? typeof activity.activityType === 'object' && activity.activityType !== null && 'id' in activity.activityType
+            ? String((activity.activityType as { id: number }).id)
+            : String(activity.activityType)
+          : '',
         potentialCustomerId: activity.potentialCustomerId || undefined,
         erpCustomerCode: activity.erpCustomerCode || '',
         productCode: activity.productCode || '',
@@ -146,6 +162,7 @@ export function ActivityForm({
         assignedUserId: activity.assignedUserId || undefined,
         activityDate: activity.activityDate ? new Date(activity.activityDate).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
       });
+      setSelectedCustomerDisplayName(null);
     } else {
       // @ts-ignore
       form.reset({
@@ -163,6 +180,7 @@ export function ActivityForm({
         assignedUserId: undefined,
         activityDate: initialDate || new Date().toISOString().split('T')[0],
       });
+      setSelectedCustomerDisplayName(null);
     }
   }, [activity, form, initialDate]);
 
@@ -185,251 +203,210 @@ export function ActivityForm({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-white dark:bg-[#130822] border border-slate-100 dark:border-white/10 text-slate-900 dark:text-white max-w-5xl w-[95%] sm:w-full h-full max-h-[90vh] flex flex-col p-0 overflow-hidden sm:rounded-2xl shadow-2xl">
-        <DialogHeader className="px-6 py-5 border-b border-slate-100 dark:border-white/5 bg-slate-50/50 dark:bg-[#1a1025]/50 flex flex-row items-center justify-between sticky top-0 z-10 backdrop-blur-sm">
-          <div className="flex items-center gap-4">
-             <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-pink-500 to-orange-500 p-0.5 shadow-lg shadow-pink-500/20">
-               <div className="h-full w-full bg-white dark:bg-[#130822] rounded-[14px] flex items-center justify-center">
-                 <Calendar size={24} className="text-pink-600 dark:text-pink-500" />
-               </div>
-             </div>
-             <div className="space-y-1">
-                <DialogTitle className="text-xl font-bold tracking-tight text-slate-900 dark:text-white">
-                  {activity ? t('activityManagement.edit', 'Aktivite Düzenle') : t('activityManagement.create', 'Yeni Aktivite')}
-                </DialogTitle>
-                <DialogDescription className="text-slate-500 dark:text-slate-400 text-sm">
-                  {activity ? t('activityManagement.editDescription', 'Aktivite bilgilerini düzenleyin') : t('activityManagement.createDescription', 'Yeni aktivite bilgilerini girin')}
-                </DialogDescription>
-             </div>
+      <DialogContent className="bg-white dark:bg-[#0f0a18] border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white max-w-2xl w-[95vw] sm:w-full max-h-[90vh] flex flex-col p-0 overflow-hidden rounded-2xl shadow-xl">
+        <DialogHeader className="px-6 py-4 border-b border-slate-100 dark:border-white/5 flex flex-row items-center justify-between shrink-0">
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="h-10 w-10 rounded-xl bg-linear-to-br from-pink-500 to-orange-500 flex items-center justify-center shrink-0">
+              <Calendar size={20} className="text-white" />
+            </div>
+            <div className="min-w-0">
+              <DialogTitle className="text-lg font-semibold text-slate-900 dark:text-white truncate">
+                {activity ? t('activityManagement.edit', 'Aktivite Düzenle') : t('activityManagement.create', 'Yeni Aktivite')}
+              </DialogTitle>
+              <DialogDescription className="text-slate-500 dark:text-slate-400 text-sm truncate">
+                {activity ? t('activityManagement.editDescription', 'Aktivite bilgilerini düzenleyin') : t('activityManagement.createDescription', 'Yeni aktivite bilgilerini girin')}
+              </DialogDescription>
+            </div>
           </div>
-          <Button variant="ghost" size="icon" onClick={() => onOpenChange(false)} className="text-slate-400 hover:text-slate-600 dark:hover:text-white rounded-full">
+          <Button variant="ghost" size="icon" onClick={() => onOpenChange(false)} className="shrink-0 rounded-full text-slate-400 hover:text-slate-600 dark:hover:text-white" aria-label={t('common.close', 'Kapat')}>
             <X size={20} />
           </Button>
         </DialogHeader>
 
-        <div className="flex-1 overflow-y-auto p-6 sm:p-8 custom-scrollbar">
+        <div className="flex-1 overflow-y-auto px-6 py-5 min-h-0">
           <Form {...form}>
-            <form id="activity-form" onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  <div className="space-y-6">
-                      <FormField control={form.control} name="subject" render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className={LABEL_STYLE}><FileText size={14} className="text-pink-500" /> {t('activityManagement.subject', 'Konu')} <span className="text-red-500">*</span></FormLabel>
-                            <FormControl><Input {...field} className={INPUT_STYLE} placeholder={t('activityManagement.enterSubject', 'Örn: Proje Toplantısı')} /></FormControl>
-                            <FormMessage className="text-xs" />
-                          </FormItem>
-                      )} />
+            <form id="activity-form" onSubmit={form.handleSubmit(handleSubmit)} className="space-y-8">
+              <FormSection title={t('activityManagement.basicInfo', 'Temel bilgiler')}>
+                <FormField control={form.control} name="subject" render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className={LABEL_STYLE}><FileText size={16} className="text-pink-500 shrink-0" /> {t('activityManagement.subject', 'Konu')} <span className="text-red-500">*</span></FormLabel>
+                    <FormControl><Input {...field} className={INPUT_STYLE} placeholder={t('activityManagement.enterSubject', 'Örn: Proje Toplantısı')} /></FormControl>
+                    <FormMessage className="text-xs text-red-500" />
+                  </FormItem>
+                )} />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <FormField control={form.control} name="activityType" render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className={LABEL_STYLE}><List size={16} className="text-pink-500 shrink-0" /> {t('activityManagement.activityType', 'Tip')} <span className="text-red-500">*</span></FormLabel>
+                      <FormControl>
+                        <Combobox
+                          options={activityTypes.map(type => ({ value: String(type.id), label: type.name }))}
+                          value={field.value ? String(field.value) : ''}
+                          onValueChange={field.onChange}
+                          placeholder={t('activityManagement.select', 'Seç')}
+                          className={INPUT_STYLE}
+                        />
+                      </FormControl>
+                      <FormMessage className="text-xs text-red-500" />
+                    </FormItem>
+                  )} />
+                  <FormField control={form.control} name="status" render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className={LABEL_STYLE}><CheckSquare size={16} className="text-pink-500 shrink-0" /> {t('activityManagement.status', 'Durum')} <span className="text-red-500">*</span></FormLabel>
+                      <FormControl>
+                        <Combobox
+                          options={ACTIVITY_STATUSES.map(status => ({ value: status.value, label: t(`activityManagement.status${status.value.replace(' ', '')}`, status.label) }))}
+                          value={field.value}
+                          onValueChange={field.onChange}
+                          placeholder={t('activityManagement.select', 'Seç')}
+                          className={INPUT_STYLE}
+                        />
+                      </FormControl>
+                      <FormMessage className="text-xs text-red-500" />
+                    </FormItem>
+                  )} />
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <FormField control={form.control} name="activityDate" render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className={LABEL_STYLE}><Calendar size={16} className="text-pink-500 shrink-0" /> {t('activityManagement.activityDate', 'Tarih')} <span className="text-red-500">*</span></FormLabel>
+                      <FormControl><Input {...field} type="date" className={INPUT_STYLE} value={field.value || ''} /></FormControl>
+                      <FormMessage className="text-xs text-red-500" />
+                    </FormItem>
+                  )} />
+                  <FormField control={form.control} name="priority" render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className={LABEL_STYLE}><AlertCircle size={16} className="text-pink-500 shrink-0" /> {t('activityManagement.priority', 'Öncelik')}</FormLabel>
+                      <FormControl>
+                        <Combobox
+                          options={[{ value: 'none', label: t('activityManagement.noPrioritySelected', 'Seçilmedi') }, ...ACTIVITY_PRIORITIES.map(priority => ({ value: priority.value, label: t(`activityManagement.priority${priority.value}`, priority.label) }))]}
+                          value={field.value || 'none'}
+                          onValueChange={(value) => field.onChange(value && value !== 'none' ? value : undefined)}
+                          placeholder={t('activityManagement.select', 'Seç')}
+                          className={INPUT_STYLE}
+                        />
+                      </FormControl>
+                      <FormMessage className="text-xs text-red-500" />
+                    </FormItem>
+                  )} />
+                </div>
+              </FormSection>
 
-                      <div className="grid grid-cols-2 gap-4">
-                          <FormField control={form.control} name="activityType" render={({ field }) => (
-                              <FormItem>
-                                <FormLabel className={LABEL_STYLE}><List size={14} className="text-pink-500" /> {t('activityManagement.activityType', 'Tip')} <span className="text-red-500">*</span></FormLabel>
-                                <FormControl>
-                                  <Combobox
-                                    options={activityTypes.map(type => ({ value: String(type.id), label: type.name }))}
-                                    value={field.value ? String(field.value) : ''}
-                                    onValueChange={field.onChange}
-                                    placeholder={t('activityManagement.select', 'Seç')}
-                                    className={INPUT_STYLE}
-                                  />
-                                </FormControl>
-                                <FormMessage className="text-xs" />
-                              </FormItem>
-                          )} />
-
-                          <FormField control={form.control} name="status" render={({ field }) => (
-                              <FormItem>
-                                <FormLabel className={LABEL_STYLE}><CheckSquare size={14} className="text-pink-500" /> {t('activityManagement.status', 'Durum')} <span className="text-red-500">*</span></FormLabel>
-                                <FormControl>
-                                  <Combobox
-                                    options={ACTIVITY_STATUSES.map(status => ({ value: status.value, label: t(`activityManagement.status${status.value.replace(' ', '')}`, status.label) }))}
-                                    value={field.value} onValueChange={field.onChange}
-                                    placeholder={t('activityManagement.select', 'Seç')}
-                                    className={INPUT_STYLE}
-                                  />
-                                </FormControl>
-                                <FormMessage className="text-xs" />
-                              </FormItem>
-                          )} />
-                      </div>
-
-                      <FormField control={form.control} name="potentialCustomerId" render={({ field }) => {
+              <FormSection title={t('activityManagement.relations', 'Müşteri & ilişkiler')}>
+                <FormField control={form.control} name="potentialCustomerId" render={({ field }) => {
                           const watchedErpCode = form.watch('erpCustomerCode');
                           const selectedCustomer = customerOptions.find((c) => c.id === field.value);
-                          const displayValue = selectedCustomer ? selectedCustomer.name : watchedErpCode ? t('activityManagement.erpLabel', { code: watchedErpCode }) : '';
+                          const displayValue = selectedCustomer
+                            ? (selectedCustomer.name || selectedCustomer.customerCode || String(field.value))
+                            : watchedErpCode
+                              ? (selectedCustomerDisplayName
+                                  ? `${selectedCustomerDisplayName} (${t('activity-management:erpLabel', { code: watchedErpCode, defaultValue: `ERP: ${watchedErpCode}` })})`
+                                  : t('activity-management:erpLabel', { code: watchedErpCode, defaultValue: `ERP: ${watchedErpCode}` }))
+                              : '';
 
                           return (
                             <FormItem>
-                              <FormLabel className={LABEL_STYLE}><Building2 size={14} className="text-pink-500" /> {t('activityManagement.customer', 'Müşteri')}</FormLabel>
+                              <FormLabel className={LABEL_STYLE}><Building2 size={16} className="text-pink-500 shrink-0" /> {t('activityManagement.customer', 'Müşteri')}</FormLabel>
                               <div className="flex w-full items-center gap-2">
                                 <FormControl>
-                                  <Input 
-                                    readOnly 
-                                    value={displayValue} 
-                                    placeholder={t('activityManagement.selectCustomer', 'Müşteri seçin')} 
-                                    className={`${INPUT_STYLE} flex-1`} 
+                                  <Input
+                                    readOnly
+                                    value={displayValue}
+                                    placeholder={t('activityManagement.selectCustomer', 'Müşteri seçin')}
+                                    className={`${INPUT_STYLE} flex-1 cursor-pointer`}
+                                    onClick={() => setCustomerSelectDialogOpen(true)}
                                   />
                                 </FormControl>
-                                <Button 
-                                  type="button" 
-                                  variant="outline" 
-                                  onClick={() => setCustomerSelectDialogOpen(true)} 
-                                  className="h-12 w-12 shrink-0 rounded-xl border-slate-200 dark:border-white/10 hover:bg-slate-50 dark:hover:bg-white/5"
-                                >
+                                <Button type="button" variant="outline" onClick={() => setCustomerSelectDialogOpen(true)} className="h-11 w-11 shrink-0 rounded-lg border-slate-200 dark:border-white/10" aria-label={t('activityManagement.selectCustomer', 'Müşteri seçin')}>
                                   <Search size={18} />
                                 </Button>
-                                {(field.value || watchedErpCode) && (
-                                  <Button 
-                                    type="button" 
-                                    variant="ghost" 
-                                    size="icon" 
-                                    className="h-12 w-12 shrink-0 rounded-xl text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20" 
-                                    onClick={() => { field.onChange(undefined); form.setValue('erpCustomerCode', ''); }}
-                                  >
+                                {(field.value != null || watchedErpCode) && (
+                                  <Button type="button" variant="ghost" size="icon" className="h-11 w-11 shrink-0 rounded-lg text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20" onClick={(e) => { e.stopPropagation(); field.onChange(undefined); form.setValue('erpCustomerCode', ''); setSelectedCustomerDisplayName(null); }} aria-label={t('common.clear', 'Temizle')}>
                                     <X size={18} />
                                   </Button>
                                 )}
                               </div>
-                              <FormMessage className="text-xs" />
+                              <FormMessage className="text-xs text-red-500" />
                             </FormItem>
                           );
                         }}
-                      />
+                />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <FormField control={form.control} name="contactId" render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className={LABEL_STYLE}><User size={16} className="text-pink-500 shrink-0" /> {t('activityManagement.contactId', 'İletişim')}</FormLabel>
+                      <FormControl>
+                        <Combobox
+                          options={[{ value: 'none', label: t('activityManagement.noContactSelected', 'Seçilmedi') }, ...contactOptions.map(contact => ({ value: contact.id.toString(), label: contact.fullName }))]}
+                          value={field.value && field.value !== 0 ? field.value.toString() : 'none'}
+                          onValueChange={(value) => field.onChange(value && value !== 'none' ? parseInt(value) : undefined)}
+                          placeholder={watchedCustomerId ? t('activityManagement.select', 'Seç') : t('activityManagement.selectCustomerFirst', 'Önce Müşteri')}
+                          disabled={!watchedCustomerId}
+                          className={INPUT_STYLE}
+                        />
+                      </FormControl>
+                      <FormMessage className="text-xs text-red-500" />
+                    </FormItem>
+                  )} />
+                  <FormField control={form.control} name="assignedUserId" render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className={LABEL_STYLE}><User size={16} className="text-pink-500 shrink-0" /> {t('activityManagement.assignedUser', 'Atanan Kullanıcı')}</FormLabel>
+                      <FormControl>
+                        <Combobox
+                          options={[{ value: 'none', label: t('activityManagement.noUserSelected', 'Seçilmedi') }, ...userOptions.map(user => ({ value: user.id.toString(), label: user.fullName }))]}
+                          value={field.value && field.value !== 0 ? field.value.toString() : 'none'}
+                          onValueChange={(value) => field.onChange(value && value !== 'none' ? parseInt(value) : undefined)}
+                          placeholder={t('activityManagement.select', 'Seç')}
+                          className={INPUT_STYLE}
+                        />
+                      </FormControl>
+                      <FormMessage className="text-xs text-red-500" />
+                    </FormItem>
+                  )} />
+                </div>
+              </FormSection>
 
-                      <FormField control={form.control} name="productCode" render={({ field }) => {
-                          const watchedProductName = form.watch('productName');
-                          const displayValue = field.value && watchedProductName ? `${field.value} - ${watchedProductName}` : field.value || watchedProductName || '';
-
-                          return (
-                            <FormItem>
-                              <FormLabel className={LABEL_STYLE}><Box size={14} className="text-pink-500" /> {t('activityManagement.product', 'Stok/Ürün')}</FormLabel>
-                              <div className="flex w-full items-center gap-2">
-                                <FormControl>
-                                  <Input 
-                                    readOnly 
-                                    value={displayValue} 
-                                    placeholder={t('activityManagement.selectProduct', 'Stok/Ürün seçin')} 
-                                    className={`${INPUT_STYLE} flex-1`} 
-                                  />
-                                </FormControl>
-                                <Button 
-                                  type="button" 
-                                  variant="outline" 
-                                  onClick={() => setProductSelectDialogOpen(true)} 
-                                  className="h-12 w-12 shrink-0 rounded-xl border-slate-200 dark:border-white/10 hover:bg-slate-50 dark:hover:bg-white/5"
-                                >
-                                  <Search size={18} />
-                                </Button>
-                                {(field.value || watchedProductName) && (
-                                  <Button 
-                                    type="button" 
-                                    variant="ghost" 
-                                    size="icon" 
-                                    className="h-12 w-12 shrink-0 rounded-xl text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20" 
-                                    onClick={() => { field.onChange(''); form.setValue('productName', ''); }}
-                                  >
-                                    <X size={18} />
-                                  </Button>
-                                )}
-                              </div>
-                              <FormMessage className="text-xs" />
-                            </FormItem>
-                          );
-                        }}
-                      />
-                  </div>
-
-                  <div className="space-y-6">
-                      <div className="grid grid-cols-2 gap-4">
-                          <FormField control={form.control} name="activityDate" render={({ field }) => (
-                              <FormItem>
-                                <FormLabel className={LABEL_STYLE}><Calendar size={14} className="text-pink-500" /> {t('activityManagement.activityDate', 'Tarih')} <span className="text-red-500">*</span></FormLabel>
-                                <FormControl><Input {...field} type="date" className={INPUT_STYLE} value={field.value || ''} /></FormControl>
-                                <FormMessage className="text-xs" />
-                              </FormItem>
-                          )} />
-
-                          <FormField control={form.control} name="priority" render={({ field }) => (
-                              <FormItem>
-                                <FormLabel className={LABEL_STYLE}><AlertCircle size={14} className="text-pink-500" /> {t('activityManagement.priority', 'Öncelik')}</FormLabel>
-                                <FormControl>
-                                  <Combobox
-                                    options={[{ value: 'none', label: t('activityManagement.noPrioritySelected', 'Seçilmedi') }, ...ACTIVITY_PRIORITIES.map(priority => ({ value: priority.value, label: t(`activityManagement.priority${priority.value}`, priority.label) }))]}
-                                    value={field.value || 'none'} onValueChange={(value) => field.onChange(value && value !== 'none' ? value : undefined)}
-                                    placeholder={t('activityManagement.select', 'Seç')}
-                                    className={INPUT_STYLE}
-                                  />
-                                </FormControl>
-                                <FormMessage className="text-xs" />
-                              </FormItem>
-                          )} />
+              <FormSection title={t('activityManagement.details', 'Detay')}>
+                <FormField control={form.control} name="description" render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className={LABEL_STYLE}><FileText size={16} className="text-pink-500 shrink-0" /> {t('activityManagement.description', 'Açıklama')}</FormLabel>
+                    <FormControl><Textarea {...field} className={`${INPUT_STYLE} min-h-[88px] py-3 resize-none`} placeholder={t('activityManagement.enterDescription', 'Aktivite detaylarını girin...')} /></FormControl>
+                    <FormMessage className="text-xs text-red-500" />
+                  </FormItem>
+                )} />
+                <FormField control={form.control} name="productCode" render={({ field }) => {
+                  const watchedProductName = form.watch('productName');
+                  const displayValue = field.value && watchedProductName ? `${field.value} - ${watchedProductName}` : field.value || watchedProductName || '';
+                  return (
+                    <FormItem>
+                      <FormLabel className={LABEL_STYLE}><Box size={16} className="text-pink-500 shrink-0" /> {t('activityManagement.product', 'Stok/Ürün')}</FormLabel>
+                      <div className="flex w-full items-center gap-2">
+                        <FormControl>
+                          <Input readOnly value={displayValue} placeholder={t('activityManagement.selectProduct', 'Stok/Ürün seçin')} className={`${INPUT_STYLE} flex-1`} />
+                        </FormControl>
+                        <Button type="button" variant="outline" onClick={() => setProductSelectDialogOpen(true)} className="h-11 w-11 shrink-0 rounded-lg border-slate-200 dark:border-white/10">
+                          <Search size={18} />
+                        </Button>
+                        {(field.value || watchedProductName) && (
+                          <Button type="button" variant="ghost" size="icon" className="h-11 w-11 shrink-0 rounded-lg text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20" onClick={() => { field.onChange(''); form.setValue('productName', ''); }}>
+                            <X size={18} />
+                          </Button>
+                        )}
                       </div>
+                      <FormMessage className="text-xs text-red-500" />
+                    </FormItem>
+                  );
+                }}
+                />
+              </FormSection>
 
-                      <div className="grid grid-cols-2 gap-4">
-                          <FormField control={form.control} name="contactId" render={({ field }) => (
-                              <FormItem>
-                                <FormLabel className={LABEL_STYLE}><User size={14} className="text-pink-500" /> {t('activityManagement.contactId', 'İletişim')}</FormLabel>
-                                <FormControl>
-                                  <Combobox
-                                    options={[{ value: 'none', label: t('activityManagement.noContactSelected', 'Seçilmedi') }, ...contactOptions.map(contact => ({ value: contact.id.toString(), label: contact.fullName }))]}
-                                    value={field.value && field.value !== 0 ? field.value.toString() : 'none'}
-                                    onValueChange={(value) => field.onChange(value && value !== 'none' ? parseInt(value) : undefined)}
-                                    placeholder={watchedCustomerId ? t('activityManagement.select', 'Seç') : t('activityManagement.selectCustomerFirst', 'Önce Müşteri')}
-                                    disabled={!watchedCustomerId}
-                                    className={INPUT_STYLE}
-                                  />
-                                </FormControl>
-                                <FormMessage className="text-xs" />
-                              </FormItem>
-                          )} />
-
-                          <FormField control={form.control} name="assignedUserId" render={({ field }) => (
-                              <FormItem>
-                                <FormLabel className={LABEL_STYLE}><User size={14} className="text-pink-500" /> {t('activityManagement.assignedUser', 'Atanan Kullanıcı')}</FormLabel>
-                                <FormControl>
-                                  <Combobox
-                                    options={[{ value: 'none', label: t('activityManagement.noUserSelected', 'Seçilmedi') }, ...userOptions.map(user => ({ value: user.id.toString(), label: user.fullName }))]}
-                                    value={field.value && field.value !== 0 ? field.value.toString() : 'none'}
-                                    onValueChange={(value) => field.onChange(value && value !== 'none' ? parseInt(value) : undefined)}
-                                    placeholder={t('activityManagement.select', 'Seç')}
-                                    className={INPUT_STYLE}
-                                  />
-                                </FormControl>
-                                <FormMessage className="text-xs" />
-                              </FormItem>
-                          )} />
-                      </div>
-
-                      <FormField control={form.control} name="description" render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className={LABEL_STYLE}><FileText size={14} className="text-pink-500" /> {t('activityManagement.description', 'Açıklama')}</FormLabel>
-                            <FormControl><Textarea {...field} className={`${INPUT_STYLE} min-h-[100px] py-3`} placeholder={t('activityManagement.enterDescription', 'Aktivite detaylarını girin...')} /></FormControl>
-                            <FormMessage className="text-xs" />
-                          </FormItem>
-                      )} />
-                      
-                      <FormField control={form.control} name="isCompleted" render={({ field }) => (
-                          <FormItem className="flex flex-row items-center justify-between rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 p-4">
-                            <div className="space-y-0.5">
-                              <FormLabel className="text-sm font-semibold text-slate-900 dark:text-white">{t('activityManagement.completed', 'Tamamlandı')}</FormLabel>
-                              <div className="text-xs text-slate-500 dark:text-slate-400">{t('activityManagement.completedDescription', 'Aktiviteyi tamamlandı olarak işaretle')}</div>
-                            </div>
-                            <FormControl>
-                              <Switch
-                                checked={field.value}
-                                onCheckedChange={field.onChange}
-                                className="data-[state=checked]:bg-pink-500"
-                              />
-                            </FormControl>
-                          </FormItem>
-                      )} />
-                  </div>
-              </div>
-
-              <div className="sticky bottom-0 -mx-6 -mb-6 p-6 bg-white/80 dark:bg-[#130822]/80 backdrop-blur-sm border-t border-slate-100 dark:border-white/5 flex justify-end gap-3 mt-8">
-                <Button type="button" variant="outline" onClick={() => onOpenChange(false)} className="h-12 px-6 rounded-xl border-slate-200 dark:border-white/10 hover:bg-slate-50 dark:hover:bg-white/5 font-semibold text-slate-700 dark:text-slate-200">{t('common.cancel', 'Vazgeç')}</Button>
-                <Button type="submit" disabled={isLoading} className="h-12 px-8 rounded-xl bg-gradient-to-r from-pink-600 to-orange-600 hover:from-pink-700 hover:to-orange-700 text-white font-bold shadow-lg shadow-pink-500/20">{isLoading ? t('common.saving', 'Kaydediliyor...') : activity ? t('common.update', 'Güncelle') : t('common.save', 'Kaydet')}</Button>
+              <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-3 pt-2 border-t border-slate-100 dark:border-white/5">
+                <Button type="button" variant="outline" onClick={() => onOpenChange(false)} className="h-11 px-5 rounded-lg font-medium">
+                  {t('common.cancel', 'Vazgeç')}
+                </Button>
+                <Button type="submit" disabled={isSubmitting || !isFormValid} className="h-11 px-6 rounded-lg bg-linear-to-r from-pink-600 to-orange-600 hover:from-pink-700 hover:to-orange-700 text-white font-semibold shadow-md disabled:opacity-50 disabled:pointer-events-none">
+                  {isSubmitting ? t('common.saving', 'Kaydediliyor...') : activity ? t('common.update', 'Güncelle') : t('common.save', 'Kaydet')}
+                </Button>
               </div>
             </form>
           </Form>
@@ -440,8 +417,9 @@ export function ActivityForm({
         open={customerSelectDialogOpen}
         onOpenChange={setCustomerSelectDialogOpen}
         onSelect={(customer: CustomerSelectionResult) => {
-          form.setValue('potentialCustomerId', customer.customerId);
-          form.setValue('erpCustomerCode', customer.erpCustomerCode);
+          form.setValue('potentialCustomerId', customer.customerId ?? undefined);
+          form.setValue('erpCustomerCode', customer.erpCustomerCode ?? '');
+          setSelectedCustomerDisplayName(customer.customerName ?? null);
           setCustomerSelectDialogOpen(false);
         }}
       />

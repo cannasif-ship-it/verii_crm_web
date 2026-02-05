@@ -1,10 +1,23 @@
 import { z } from 'zod';
 
+export interface ActivityTypeRef {
+  id: number;
+  name: string;
+  description?: string;
+  createdDate?: string;
+  updatedDate?: string;
+  deletedDate?: string;
+  isDeleted?: boolean;
+  createdByFullUser?: string;
+  updatedByFullUser?: string;
+  deletedByFullUser?: string;
+}
+
 export interface ActivityDto {
   id: number;
   subject: string;
   description?: string;
-  activityType: string;
+  activityType: string | ActivityTypeRef;
   potentialCustomerId?: number;
   potentialCustomer?: {
     id: number;
@@ -47,6 +60,7 @@ export interface CreateActivityDto {
   subject: string;
   description?: string;
   activityType: string;
+  activityTypeId?: number;
   potentialCustomerId?: number;
   erpCustomerCode?: string;
   productCode?: string;
@@ -63,6 +77,7 @@ export interface UpdateActivityDto {
   subject: string;
   description?: string;
   activityType: string;
+  activityTypeId?: number;
   potentialCustomerId?: number;
   erpCustomerCode?: string;
   productCode?: string;
