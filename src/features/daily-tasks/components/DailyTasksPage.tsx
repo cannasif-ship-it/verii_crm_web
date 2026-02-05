@@ -230,11 +230,7 @@ export function DailyTasksPage(): ReactElement {
 
   const getUserDisplayName = (): string => {
     if (!user) return '';
-    const userRecord = user as Record<string, unknown>;
-    const fullName = typeof userRecord.fullName === 'string' ? userRecord.fullName : '';
-    const username = typeof userRecord.username === 'string' ? userRecord.username : '';
-    const name = typeof userRecord.name === 'string' ? userRecord.name : '';
-    return fullName || username || name || 'Kullanıcı';
+    return user.name || user.email || 'Kullanıcı';
   };
 
   const backgroundBlobs = (

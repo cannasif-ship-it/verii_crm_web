@@ -151,13 +151,16 @@ export function ActivityTable({
             return <ActivityStatusBadge status={item.status} />;
         case 'priority':
             return <ActivityPriorityBadge priority={item.priority} />;
-        case 'date':
+        case 'date': {
+            const dateValue =
+              typeof value === 'string' || typeof value === 'number' || value instanceof Date ? value : null;
             return (
                 <div className="flex items-center gap-2 text-xs">
                     <Calendar size={14} className="text-pink-500/50" />
-                    {value ? new Date(value).toLocaleDateString(i18n.language) : '-'}
+                    {dateValue ? new Date(dateValue).toLocaleDateString(i18n.language) : '-'}
                 </div>
             );
+        }
         case 'customer':
             return item.potentialCustomer ? (
                 <div className="flex items-start gap-2">

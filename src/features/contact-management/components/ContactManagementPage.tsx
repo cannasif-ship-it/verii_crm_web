@@ -232,6 +232,8 @@ export function ContactManagementPage(): ReactElement {
     doc.save("contacts.pdf");
   };
 
+  type PptxTableRow = Array<{ text: string }>;
+
   const handleExportPowerPoint = () => {
     const pptx = new PptxGenJS();
     const slide = pptx.addSlide();
@@ -250,7 +252,10 @@ export function ContactManagementPage(): ReactElement {
             .map(col => String(contact[col.key] || ''));
     });
 
-    const tableData: string[][] = [headers, ...rows];
+    const tableData: PptxTableRow[] = [
+      headers.map(text => ({ text })),
+      ...rows.map(row => row.map(text => ({ text }))),
+    ];
 
     slide.addTable(tableData, { x: 0.5, y: 1.5, w: '90%' });
 

@@ -185,6 +185,8 @@ export function CustomerManagementPage(): ReactElement {
     doc.save("musteriler.pdf");
   };
 
+  type PptxTableRow = Array<{ text: string }>;
+
   const handleExportPowerPoint = () => {
     const pptx = new PptxGenJS();
     const slide = pptx.addSlide();
@@ -201,7 +203,10 @@ export function CustomerManagementPage(): ReactElement {
             .map(col => String(item[col.key] || ''));
     });
 
-    const tableData: string[][] = [headers, ...rows];
+    const tableData: PptxTableRow[] = [
+      headers.map(text => ({ text })),
+      ...rows.map(row => row.map(text => ({ text }))),
+    ];
 
     slide.addTable(tableData, { x: 0.5, y: 1.5, w: '90%' });
 

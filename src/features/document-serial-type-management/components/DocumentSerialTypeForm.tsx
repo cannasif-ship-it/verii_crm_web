@@ -82,6 +82,10 @@ function SearchableSelect({
       const SpeechRecognition =
         (window as Window & { webkitSpeechRecognition?: new () => SpeechRecognition }).SpeechRecognition ||
         (window as Window & { webkitSpeechRecognition?: new () => SpeechRecognition }).webkitSpeechRecognition;
+      if (!SpeechRecognition) {
+        alert('Tarayıcınız sesli aramayı desteklemiyor.');
+        return;
+      }
       const recognition = new SpeechRecognition();
       recognition.lang = 'tr-TR';
       recognition.continuous = false;

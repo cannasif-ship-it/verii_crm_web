@@ -16,6 +16,9 @@ export interface DashboardActivity {
   description: string;
   amount?: number;
   timeAgo: string;
+  subject?: string;
+  konu?: string;
+  createdAt?: string | number | Date;
 }
 
 export interface DashboardData {

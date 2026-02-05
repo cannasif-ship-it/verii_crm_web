@@ -100,11 +100,7 @@ export function DashboardPage(): ReactElement {
 
   const getUserDisplayName = (): string => {
     if (!user) return t('dashboard.user', 'Kullanıcı');
-    const userRecord = user as Record<string, unknown>;
-    const fullName = typeof userRecord.fullName === 'string' ? userRecord.fullName : '';
-    const name = typeof userRecord.name === 'string' ? userRecord.name : '';
-    const username = typeof userRecord.username === 'string' ? userRecord.username : '';
-    return fullName || name || username || t('dashboard.user', 'Kullanıcı');
+    return user.name || user.email || t('dashboard.user', 'Kullanıcı');
   };
 
   const formatCurrency = (amount: number | undefined | null): string => {
@@ -133,8 +129,7 @@ export function DashboardPage(): ReactElement {
   }
 
   const kpis = data?.kpis;
-  type ActivityLike = Record<string, unknown>;
-  const activities = Array.isArray(data?.activities) ? (data.activities as ActivityLike[]) : [];
+  const activities = Array.isArray(data?.activities) ? data.activities : [];
 
   const stats = [
     {
