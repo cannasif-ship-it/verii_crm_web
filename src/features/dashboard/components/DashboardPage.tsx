@@ -64,7 +64,7 @@ export function DashboardPage(): ReactElement {
   const { setPageTitle } = useUIStore();
   const { user } = useAuthStore();
   
-  const { data, isLoading } = useDashboardQuery(); 
+  const { data, isLoading, refetch } = useDashboardQuery(); 
   
   const [greeting, setGreeting] = useState('');
   const [chartMenuOpen, setChartMenuOpen] = useState(false);
