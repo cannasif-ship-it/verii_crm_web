@@ -36,14 +36,14 @@
   "auth": {
     "login": {
       "title": "تسجيل الدخول للنظام",
-      "subtitle": "VERII WMS",
+      "subtitle": "سجّل الدخول للمتابعة",
       "branch": "الفرع",
       "selectBranch": "اختر الفرع",
       "branchNotFound": "الفرع غير موجود",
       "email": "البريد الإلكتروني",
       "emailPlaceholder": "أدخل عنوان بريدك الإلكتروني",
       "password": "كلمة المرور",
-      "passwordPlaceholder": "••••••••",
+      "passwordPlaceholder": "أدخل كلمة المرور",
       "loginButton": "تسجيل الدخول",
       "loggingIn": "جاري تسجيل الدخول...",
       "wrongPassword": "البريد الإلكتروني أو كلمة المرور غير صحيحة",
@@ -61,7 +61,7 @@
   },
   "navbar": {
     "VERII WMS": "VERII WMS",
-    "crm": "V3RII CRM"
+    "crm": "CRM"
   },
   "sidebar": {
     "dashboard": "لوحة التحكم",
@@ -83,7 +83,7 @@
     "orders": "الطلبات",
     "campaigns": "الحملات",
     "reports": "التقارير",
-    "powerbi": "PowerBI",
+    "powerbi": "Power BI",
     "titleManagement": "إدارة الألقاب",
     "shippingAddressManagement": "إدارة عناوين الشحن",
     "userManagement": "إدارة المستخدمين",
@@ -1490,5 +1490,174 @@
     "profilePictureDeletedSuccessfully": "تم حذف صورة الملف الشخصي بنجاح",
     "profilePictureDeleteError": "حدث خطأ أثناء حذف صورة الملف الشخصي",
     "userNotFound": "المستخدم غير موجود"
+  },
+  "countryManagement": {
+    "menu": "إدارة الدول",
+    "description": "إدارة وتعديل الدول",
+    "addButton": "إضافة دولة جديدة",
+    "stats": {
+      "totalCountries": "إجمالي الدول",
+      "activeCountries": "الدول النشطة",
+      "newThisMonth": "جديد هذا الشهر"
+    },
+    "table": {
+      "id": "ID",
+      "name": "اسم الدولة",
+      "code": "الرمز",
+      "erpCode": "رمز ERP",
+      "createdDate": "تاريخ الإنشاء",
+      "createdBy": "أُنشئ بواسطة",
+      "showing": "{{from}}-{{to}} / {{total}} معروضة",
+      "page": "الصفحة {{current}} / {{total}}"
+    },
+    "form": {
+      "addCountry": "إضافة دولة جديدة",
+      "editCountry": "تعديل الدولة",
+      "addDescription": "أدخل بيانات الدولة الجديدة",
+      "editDescription": "عدّل بيانات الدولة",
+      "name": {
+        "required": "اسم الدولة مطلوب",
+        "maxLength": "اسم الدولة بحد أقصى 100 حرف"
+      },
+      "namePlaceholder": "أدخل اسم الدولة",
+      "code": {
+        "required": "رمز الدولة مطلوب",
+        "minLength": "رمز الدولة يجب أن يكون على الأقل حرفين",
+        "maxLength": "رمز الدولة بحد أقصى 5 أحرف"
+      },
+      "codePlaceholder": "أدخل رمز الدولة (مثال: AE, US)",
+      "erpCode": {
+        "maxLength": "رمز ERP بحد أقصى 10 أحرف"
+      },
+      "erpCodePlaceholder": "أدخل رمز ERP (اختياري)",
+      "name.required": "اسم الدولة مطلوب",
+      "name.maxLength": "اسم الدولة يجب ألا يتجاوز 100 حرفًا",
+      "code.required": "رمز الدولة مطلوب",
+      "code.minLength": "رمز الدولة يجب ألا يقل عن 2 أحرف",
+      "code.maxLength": "رمز الدولة يجب ألا يتجاوز 5 أحرف",
+      "erpCode.maxLength": "رمز ERP يجب ألا يتجاوز 10 أحرف"
+    },
+    "delete": {
+      "confirmTitle": "حذف الدولة",
+      "confirmMessage": "هل أنت متأكد من حذف الدولة {{name}}؟"
+    },
+    "messages": {
+      "createSuccess": "تم إنشاء الدولة بنجاح",
+      "createError": "تعذر إنشاء الدولة",
+      "updateSuccess": "تم تحديث الدولة بنجاح",
+      "updateError": "تعذر تحديث الدولة",
+      "deleteSuccess": "تم حذف الدولة بنجاح",
+      "deleteError": "تعذر حذف الدولة"
+    }
+  },
+  "cityManagement": {
+    "menu": "إدارة المدن",
+    "description": "إدارة وتعديل المدن",
+    "addButton": "إضافة مدينة جديدة",
+    "stats": {
+      "totalCities": "إجمالي المدن",
+      "activeCities": "المدن النشطة",
+      "newThisMonth": "جديد هذا الشهر"
+    },
+    "table": {
+      "id": "ID",
+      "name": "اسم المدينة",
+      "erpCode": "رمز ERP",
+      "countryName": "اسم الدولة",
+      "createdDate": "تاريخ الإنشاء",
+      "createdBy": "أُنشئ بواسطة",
+      "showing": "{{from}}-{{to}} / {{total}} معروضة",
+      "page": "الصفحة {{current}} / {{total}}"
+    },
+    "form": {
+      "addCity": "إضافة مدينة جديدة",
+      "editCity": "تعديل المدينة",
+      "addDescription": "أدخل بيانات المدينة الجديدة",
+      "editDescription": "عدّل بيانات المدينة",
+      "name": {
+        "required": "اسم المدينة مطلوب",
+        "maxLength": "اسم المدينة بحد أقصى 100 حرف"
+      },
+      "namePlaceholder": "أدخل اسم المدينة",
+      "country": {
+        "required": "اختيار الدولة مطلوب"
+      },
+      "selectCountry": "اختر دولة",
+      "erpCode": {
+        "maxLength": "رمز ERP بحد أقصى 10 أحرف"
+      },
+      "erpCodePlaceholder": "أدخل رمز ERP (اختياري)",
+      "name.required": "اسم المدينة مطلوب",
+      "name.maxLength": "اسم المدينة يجب ألا يتجاوز 100 حرفًا",
+      "country.required": "اختيار الدولة مطلوب",
+      "erpCode.maxLength": "رمز ERP يجب ألا يتجاوز 10 أحرف"
+    },
+    "delete": {
+      "confirmTitle": "حذف المدينة",
+      "confirmMessage": "هل أنت متأكد من حذف المدينة {{name}}؟"
+    },
+    "messages": {
+      "createSuccess": "تم إنشاء المدينة بنجاح",
+      "createError": "تعذر إنشاء المدينة",
+      "updateSuccess": "تم تحديث المدينة بنجاح",
+      "updateError": "تعذر تحديث المدينة",
+      "deleteSuccess": "تم حذف المدينة بنجاح",
+      "deleteError": "تعذر حذف المدينة"
+    }
+  },
+  "districtManagement": {
+    "menu": "إدارة المناطق",
+    "description": "إدارة وتعديل المناطق",
+    "addButton": "إضافة منطقة جديدة",
+    "stats": {
+      "totalDistricts": "إجمالي المناطق",
+      "activeDistricts": "المناطق النشطة",
+      "newThisMonth": "جديد هذا الشهر"
+    },
+    "table": {
+      "id": "ID",
+      "name": "اسم المنطقة",
+      "erpCode": "رمز ERP",
+      "cityName": "اسم المدينة",
+      "createdDate": "تاريخ الإنشاء",
+      "createdBy": "أُنشئ بواسطة",
+      "showing": "{{from}}-{{to}} / {{total}} معروضة",
+      "page": "الصفحة {{current}} / {{total}}"
+    },
+    "form": {
+      "addDistrict": "إضافة منطقة جديدة",
+      "editDistrict": "تعديل المنطقة",
+      "addDescription": "أدخل بيانات المنطقة الجديدة",
+      "editDescription": "عدّل بيانات المنطقة",
+      "name": {
+        "required": "اسم المنطقة مطلوب",
+        "maxLength": "اسم المنطقة بحد أقصى 100 حرف"
+      },
+      "namePlaceholder": "أدخل اسم المنطقة",
+      "city": {
+        "required": "اختيار المدينة مطلوب"
+      },
+      "selectCity": "اختر مدينة",
+      "erpCode": {
+        "maxLength": "رمز ERP بحد أقصى 10 أحرف"
+      },
+      "erpCodePlaceholder": "أدخل رمز ERP (اختياري)",
+      "name.required": "اسم الحي مطلوب",
+      "name.maxLength": "اسم الحي يجب ألا يتجاوز 100 حرفًا",
+      "city.required": "اختيار المدينة مطلوب",
+      "erpCode.maxLength": "رمز ERP يجب ألا يتجاوز 10 أحرف"
+    },
+    "delete": {
+      "confirmTitle": "حذف المنطقة",
+      "confirmMessage": "هل أنت متأكد من حذف المنطقة {{name}}؟"
+    },
+    "messages": {
+      "createSuccess": "تم إنشاء المنطقة بنجاح",
+      "createError": "تعذر إنشاء المنطقة",
+      "updateSuccess": "تم تحديث المنطقة بنجاح",
+      "updateError": "تعذر تحديث المنطقة",
+      "deleteSuccess": "تم حذف المنطقة بنجاح",
+      "deleteError": "تعذر حذف المنطقة"
+    }
   }
 }

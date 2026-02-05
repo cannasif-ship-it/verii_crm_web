@@ -34,5 +34,16 @@
     "required": "مطلوب",
     "successAdd": "تم إضافة المستخدم بنجاح",
     "successUpdate": "تم تحديث المستخدم بنجاح"
+  },
+  "stats": {
+    "totalUsers": "إجمالي المستخدمين",
+    "activeUsers": "المستخدمون النشطون",
+    "newThisMonth": "الجدد هذا الشهر",
+    "confirmedUsers": "المستخدمون المؤكدون",
+    "loading": "جارٍ التحميل..."
+  },
+  "delete": {
+    "confirmTitle": "حذف المستخدم",
+    "confirmMessage": "هل أنت متأكد من حذف المستخدم {{username}}؟"
   }
 }

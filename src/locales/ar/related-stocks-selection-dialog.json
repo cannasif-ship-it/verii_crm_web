@@ -11,5 +11,13 @@
     "quantity": "الكمية"
   },
   "noData": "لم يتم العثور على مخزونات ذات صلة",
-  "loading": "جاري التحميل..."
+  "loading": "جاري التحميل...",
+  "mandatoryStocks": "مخزونات إلزامية",
+  "optionalStocks": "مخزونات اختيارية",
+  "unknownStock": "مخزون غير معروف",
+  "quantity": "الكمية",
+  "mandatory": "إلزامي",
+  "noRelatedStocks": "لا توجد مخزونات مرتبطة",
+  "add": "إضافة",
+  "calculating": "جارٍ الحساب..."
 }

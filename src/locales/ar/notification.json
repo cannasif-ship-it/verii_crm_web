@@ -10,5 +10,9 @@
     "success": "نجاح",
     "warning": "تحذير",
     "error": "خطأ"
-  }
+  },
+  "loading": "جارٍ التحميل",
+  "noNotifications": "لا توجد إشعارات",
+  "close": "إغلاق",
+  "unread": "غير مقروء"
 }

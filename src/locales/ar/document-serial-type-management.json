@@ -31,5 +31,18 @@
     "required": "مطلوب",
     "successAdd": "تم إضافة نوع تسلسل المستندات بنجاح",
     "successUpdate": "تم تحديث نوع تسلسل المستندات بنجاح"
-  }
+  },
+  "search": "بحث...",
+  "refresh": "تحديث",
+  "loading": "جارٍ التحميل...",
+  "noData": "لا توجد بيانات",
+  "actions": "الإجراءات",
+  "cancel": "إلغاء",
+  "save": "حفظ",
+  "saving": "جارٍ الحفظ...",
+  "delete": "حذف",
+  "deleting": "جارٍ الحذف...",
+  "deleteConfirmTitle": "تأكيد الحذف",
+  "deleteConfirmDescription": "هل أنت متأكد من حذف هذا السجل؟ لا يمكن التراجع عن هذا الإجراء.",
+  "totalRecords": "الإجمالي {{count}} سجل"
 }

@@ -31,5 +31,26 @@
     "required": "مطلوب",
     "successAdd": "تم إضافة اللقب بنجاح",
     "successUpdate": "تم تحديث اللقب بنجاح"
+  },
+  "loading": "جارٍ التحميل...",
+  "noData": "لا توجد بيانات",
+  "search": "بحث...",
+  "refresh": "تحديث",
+  "previous": "السابق",
+  "next": "التالي",
+  "cancel": "إلغاء",
+  "save": "حفظ",
+  "saving": "جارٍ الحفظ...",
+  "delete": {
+    "confirmTitle": "حذف اللقب",
+    "confirmMessage": "هل أنت متأكد من حذف اللقب {{name}}؟",
+    "button": "حذف"
+  },
+  "deleting": "جارٍ الحذف...",
+  "actions": "الإجراءات",
+  "edit": "تعديل",
+  "header": {
+    "title": "إدارة الألقاب",
+    "description": "يمكنك إدارة تعريفات الألقاب من هنا."
   }
 }

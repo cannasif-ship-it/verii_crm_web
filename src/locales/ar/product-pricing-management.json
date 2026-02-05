@@ -68,7 +68,7 @@
   "maxPrice": "أعلى سعر",
   "minDiscount": "أقل خصم",
   "maxDiscount": "أعلى خصم",
-  "percentage": "%",
+  "percentage": "النسبة المئوية",
   "try": "ليرة تركية",
   "usd": "دولار أمريكي",
   "eur": "يورو",
@@ -114,5 +114,14 @@
   "previous": "السابق",
   "next": "التالي",
   "deleteConfirmTitle": "تأكيد الحذف",
-  "deleteConfirmMessage": "هل أنت متأكد أنك تريد حذف هذا السجل؟ لا يمكن التراجع عن هذا الإجراء."
+  "deleteConfirmMessage": "هل أنت متأكد أنك تريد حذف هذا السجل؟ لا يمكن التراجع عن هذا الإجراء.",
+  "productInfo": "معلومات المنتج",
+  "category": "الفئة",
+  "searchPlaceholder": "ابحث باسم المنتج أو SKU أو الفئة...",
+  "filter": {
+    "all": "الكل",
+    "active": "نشط",
+    "critical": "مخزون حرج",
+    "archive": "أرشيف"
+  }
 }
