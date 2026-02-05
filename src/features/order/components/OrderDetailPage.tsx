@@ -17,7 +17,7 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Send, Calculator, Layers, Loader2, FileCheck, FileText } from 'lucide-react';
 import { OrderApprovalFlowTab } from './OrderApprovalFlowTab';
-import { ReportTemplateTab, DocumentRuleType } from '@/report-designer';
+import { ReportTemplateTab, DocumentRuleType } from '@/features/report-designer';
 import { cn } from '@/lib/utils';
 import { createOrderSchema, type CreateOrderSchema } from '../schemas/order-schema';
 import type { OrderLineFormState, OrderExchangeRateFormState, OrderBulkCreateDto, CreateOrderDto, PricingRuleLineGetDto, UserDiscountLimitDto } from '../types/order-types';

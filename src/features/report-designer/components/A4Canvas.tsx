@@ -1,6 +1,6 @@
 import type { MutableRefObject, ReactElement, RefObject } from 'react';
 import { useDroppable } from '@dnd-kit/core';
-import { Rnd } from 'react-rnd';
+import { type RndDragCallback, type RndResizeCallback, Rnd } from 'react-rnd';
 import { GripVertical, Settings, Trash2, Upload } from 'lucide-react';
 import { toast } from 'sonner';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -72,6 +72,7 @@ function TableElementBlock({ table }: { table: TableElement }): ReactElement {
   const { setNodeRef, isOver } = useDroppable({
     id: getTableDroppableId(table.id),
   });
+
   return (
     <div
       ref={setNodeRef}
@@ -107,6 +108,7 @@ function TextElementBlock({ element }: { element: ReportElement }): ReactElement
   const fontSize = element.fontSize ?? DEFAULT_FONT_SIZE;
   const fontFamily = element.fontFamily ?? DEFAULT_FONT_FAMILY;
   const color = element.color ?? undefined;
+
   return (
     <textarea
       key={element.id}
@@ -154,11 +156,7 @@ function ImageElementBlock({ element }: { element: ReportElement }): ReactElemen
   if (isUrl) {
     return (
       <div className="flex h-full w-full items-center justify-center overflow-hidden bg-slate-100">
-        <img
-          src={element.value}
-          alt=""
-          className="h-full w-full object-contain"
-        />
+        <img src={element.value} alt="" className="h-full w-full object-contain" />
       </div>
     );
   }
@@ -199,6 +197,7 @@ function FieldElementBlock({ element }: { element: ReportElement }): ReactElemen
   const fontSize = element.fontSize ?? DEFAULT_FONT_SIZE;
   const fontFamily = element.fontFamily ?? DEFAULT_FONT_FAMILY;
   const color = element.color ?? undefined;
+
   return (
     <div
       className="flex h-full w-full select-none items-center justify-center text-slate-700"
@@ -452,6 +451,7 @@ function DroppableSection({
   className: string;
   style?: React.CSSProperties;
 }): ReactElement {
+
   return (
     <div
       ref={setNodeRef}
@@ -467,6 +467,13 @@ export function A4Canvas({ canvasRef }: A4CanvasProps): ReactElement {
   const elements = useReportStore((s) => s.elements);
   const updateElementPosition = useReportStore((s) => s.updateElementPosition);
   const updateElementSize = useReportStore((s) => s.updateElementSize);
+  const makeElementDragStop = (id: string): RndDragCallback => (_e, d) => {
+    updateElementPosition(id, d.x, d.y);
+  };
+
+  const makeElementResizeStop = (id: string): RndResizeCallback => (_e, _direction, ref, _delta, position) => {
+    updateElementSize(id, ref.offsetWidth, ref.offsetHeight, position.x, position.y);
+  };
   const removeElement = useReportStore((s) => s.removeElement);
   const setSelectedElement = useReportStore((s) => s.setSelectedElement);
 
@@ -518,10 +525,8 @@ export function A4Canvas({ canvasRef }: A4CanvasProps): ReactElement {
             key={el.id}
             position={{ x: el.x, y: el.y }}
             size={{ width: el.width, height: el.height }}
-            onDragStop={(_e, d) => updateElementPosition(el.id, d.x, d.y)}
-            onResizeStop={(_e, _direction, ref, _delta, position) =>
-              updateElementSize(el.id, ref.offsetWidth, ref.offsetHeight, position.x, position.y)
-            }
+            onDragStop={makeElementDragStop(el.id)}
+            onResizeStop={makeElementResizeStop(el.id)}
             bounds="parent"
             cancel="[data-delete-element], [data-text-edit], [data-image-upload], [data-element-settings]"
             dragHandleClassName="report-element-drag-handle"

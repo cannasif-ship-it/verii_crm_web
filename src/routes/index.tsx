@@ -1,49 +1,65 @@
+import { lazy, type ComponentType } from 'react';
 import { createBrowserRouter } from 'react-router-dom';
 import { ProtectedRoute } from '@/components/shared/ProtectedRoute';
 import { MainLayout } from '@/components/shared/MainLayout';
 import AuthLayout from '@/layouts/AuthLayout';
-import { LoginPage, ResetPasswordPage, ForgotPasswordPage } from '@/features/auth';
-import { DashboardPage } from '@/features/dashboard';
-import { TitleManagementPage } from '@/features/title-management';
-import { UserManagementPage } from '@/features/user-management';
-import { MailSettingsPage } from '@/features/mail-settings';
-import { CountryManagementPage } from '@/features/country-management';
-import { CityManagementPage } from '@/features/city-management';
-import { DistrictManagementPage } from '@/features/district-management';
-import { CustomerTypeManagementPage } from '@/features/customer-type-management';
-import { CustomerManagementPage } from '@/features/customer-management';
-import { ContactManagementPage } from '@/features/contact-management';
-import { PaymentTypeManagementPage } from '@/features/payment-type-management';
-import { UserDiscountLimitManagementPage } from '@/features/user-discount-limit-management';
-import { ProductPricingGroupByManagementPage } from '@/features/product-pricing-group-by-management';
-import { ProductPricingManagementPage } from '@/features/product-pricing-management';
-import { ActivityManagementPage } from '@/features/activity-management';
-import { ActivityTypeManagementPage } from '@/features/activity-type';
-import { ShippingAddressManagementPage } from '@/features/shipping-address-management';
-import { DailyTasksPage } from '@/features/daily-tasks/components/DailyTasksPage';
-import { ErpCustomerManagementPage } from '@/features/erp-customer-management';
-import { ApprovalRoleGroupManagementPage } from '@/features/approval-role-group-management';
-import { ApprovalUserRoleManagementPage } from '@/features/approval-user-role-management';
-import { ApprovalRoleManagementPage } from '@/features/approval-role-management';
-import { ApprovalFlowManagementPage } from '@/features/approval-flow-management';
-import { QuotationCreateForm, QuotationDetailPage, QuotationListPage, WaitingApprovalsPage } from '@/features/quotation';
-import { 
-  DemandCreateForm, 
-  DemandDetailPage, 
-  DemandListPage, 
-  WaitingApprovalsPage as DemandWaitingApprovalsPage 
-} from '@/features/demand';
-import { 
-  OrderCreateForm, 
-  OrderDetailPage, 
-  OrderListPage, 
-  WaitingApprovalsPage as OrderWaitingApprovalsPage 
-} from '@/features/order';
-import { PricingRuleManagementPage } from '@/features/pricing-rule';
-import { StockListPage, StockDetailPage } from '@/features/stock';
-import { DocumentSerialTypeManagementPage } from '@/features/document-serial-type-management';
-import { ReportDesignerListPage, ReportDesignerCreatePage } from '@/report-designer';
-import { ReportsListPage, ReportBuilderPage, ReportViewerPage } from '@/features/report-builder/pages';
+
+const lazyImport = <T extends Record<string, unknown>, K extends keyof T>(
+  factory: () => Promise<T>,
+  name: K
+) =>
+  lazy(async () => {
+    const module = await factory();
+    return { default: module[name] as ComponentType };
+  });
+
+const LoginPage = lazyImport(() => import('@/features/auth'), 'LoginPage');
+const ResetPasswordPage = lazyImport(() => import('@/features/auth'), 'ResetPasswordPage');
+const ForgotPasswordPage = lazyImport(() => import('@/features/auth'), 'ForgotPasswordPage');
+const DashboardPage = lazyImport(() => import('@/features/dashboard'), 'DashboardPage');
+const TitleManagementPage = lazyImport(() => import('@/features/title-management'), 'TitleManagementPage');
+const UserManagementPage = lazyImport(() => import('@/features/user-management'), 'UserManagementPage');
+const MailSettingsPage = lazyImport(() => import('@/features/mail-settings'), 'MailSettingsPage');
+const CountryManagementPage = lazyImport(() => import('@/features/country-management'), 'CountryManagementPage');
+const CityManagementPage = lazyImport(() => import('@/features/city-management'), 'CityManagementPage');
+const DistrictManagementPage = lazyImport(() => import('@/features/district-management'), 'DistrictManagementPage');
+const CustomerTypeManagementPage = lazyImport(() => import('@/features/customer-type-management'), 'CustomerTypeManagementPage');
+const CustomerManagementPage = lazyImport(() => import('@/features/customer-management'), 'CustomerManagementPage');
+const ContactManagementPage = lazyImport(() => import('@/features/contact-management'), 'ContactManagementPage');
+const PaymentTypeManagementPage = lazyImport(() => import('@/features/payment-type-management'), 'PaymentTypeManagementPage');
+const UserDiscountLimitManagementPage = lazyImport(() => import('@/features/user-discount-limit-management'), 'UserDiscountLimitManagementPage');
+const ProductPricingGroupByManagementPage = lazyImport(() => import('@/features/product-pricing-group-by-management'), 'ProductPricingGroupByManagementPage');
+const ProductPricingManagementPage = lazyImport(() => import('@/features/product-pricing-management'), 'ProductPricingManagementPage');
+const ActivityManagementPage = lazyImport(() => import('@/features/activity-management'), 'ActivityManagementPage');
+const ActivityTypeManagementPage = lazyImport(() => import('@/features/activity-type'), 'ActivityTypeManagementPage');
+const ShippingAddressManagementPage = lazyImport(() => import('@/features/shipping-address-management'), 'ShippingAddressManagementPage');
+const DailyTasksPage = lazyImport(() => import('@/features/daily-tasks/components/DailyTasksPage'), 'DailyTasksPage');
+const ErpCustomerManagementPage = lazyImport(() => import('@/features/erp-customer-management'), 'ErpCustomerManagementPage');
+const ApprovalRoleGroupManagementPage = lazyImport(() => import('@/features/approval-role-group-management'), 'ApprovalRoleGroupManagementPage');
+const ApprovalUserRoleManagementPage = lazyImport(() => import('@/features/approval-user-role-management'), 'ApprovalUserRoleManagementPage');
+const ApprovalRoleManagementPage = lazyImport(() => import('@/features/approval-role-management'), 'ApprovalRoleManagementPage');
+const ApprovalFlowManagementPage = lazyImport(() => import('@/features/approval-flow-management'), 'ApprovalFlowManagementPage');
+const QuotationCreateForm = lazyImport(() => import('@/features/quotation'), 'QuotationCreateForm');
+const QuotationDetailPage = lazyImport(() => import('@/features/quotation'), 'QuotationDetailPage');
+const QuotationListPage = lazyImport(() => import('@/features/quotation'), 'QuotationListPage');
+const WaitingApprovalsPage = lazyImport(() => import('@/features/quotation'), 'WaitingApprovalsPage');
+const DemandCreateForm = lazyImport(() => import('@/features/demand'), 'DemandCreateForm');
+const DemandDetailPage = lazyImport(() => import('@/features/demand'), 'DemandDetailPage');
+const DemandListPage = lazyImport(() => import('@/features/demand'), 'DemandListPage');
+const DemandWaitingApprovalsPage = lazyImport(() => import('@/features/demand'), 'WaitingApprovalsPage');
+const OrderCreateForm = lazyImport(() => import('@/features/order'), 'OrderCreateForm');
+const OrderDetailPage = lazyImport(() => import('@/features/order'), 'OrderDetailPage');
+const OrderListPage = lazyImport(() => import('@/features/order'), 'OrderListPage');
+const OrderWaitingApprovalsPage = lazyImport(() => import('@/features/order'), 'WaitingApprovalsPage');
+const PricingRuleManagementPage = lazyImport(() => import('@/features/pricing-rule'), 'PricingRuleManagementPage');
+const StockListPage = lazyImport(() => import('@/features/stock'), 'StockListPage');
+const StockDetailPage = lazyImport(() => import('@/features/stock'), 'StockDetailPage');
+const DocumentSerialTypeManagementPage = lazyImport(() => import('@/features/document-serial-type-management'), 'DocumentSerialTypeManagementPage');
+const ReportDesignerListPage = lazyImport(() => import('@/features/report-designer'), 'ReportDesignerListPage');
+const ReportDesignerCreatePage = lazyImport(() => import('@/features/report-designer'), 'ReportDesignerCreatePage');
+const ReportsListPage = lazyImport(() => import('@/features/report-builder/pages'), 'ReportsListPage');
+const ReportBuilderPage = lazyImport(() => import('@/features/report-builder/pages'), 'ReportBuilderPage');
+const ReportViewerPage = lazyImport(() => import('@/features/report-builder/pages'), 'ReportViewerPage');
 
 export const router = createBrowserRouter([
   {
@@ -54,220 +70,66 @@ export const router = createBrowserRouter([
       </ProtectedRoute>
     ),
     children: [
-      {
-        index: true,
-        element: <DashboardPage />,
-      },
-      {
-        path: 'report-designer',
-        element: <ReportDesignerListPage />,
-      },
-      {
-        path: 'report-designer/create',
-        element: <ReportDesignerCreatePage />,
-      },
-      {
-        path: 'report-designer/edit/:id',
-        element: <ReportDesignerCreatePage />,
-      },
-      {
-        path: 'reports',
-        element: <ReportsListPage />,
-      },
-      {
-        path: 'reports/new',
-        element: <ReportBuilderPage />,
-      },
-      {
-        path: 'reports/:id/edit',
-        element: <ReportBuilderPage />,
-      },
-      {
-        path: 'reports/:id',
-        element: <ReportViewerPage />,
-      },
-      {
-        path: 'title-management',
-        element: <TitleManagementPage />,
-      },
-      {
-        path: 'user-management',
-        element: <UserManagementPage />,
-      },
-      {
-        path: 'country-management',
-        element: <CountryManagementPage />,
-      },
-      {
-        path: 'city-management',
-        element: <CityManagementPage />,
-      },
-      {
-        path: 'district-management',
-        element: <DistrictManagementPage />,
-      },
-      {
-        path: 'customer-type-management',
-        element: <CustomerTypeManagementPage />,
-      },
-      {
-        path: 'customer-management',
-        element: <CustomerManagementPage />,
-      },
-      {
-        path: 'contact-management',
-        element: <ContactManagementPage />,
-      },
-      {
-        path: 'payment-type-management',
-        element: <PaymentTypeManagementPage />,
-      },
-      {
-        path: 'user-discount-limit-management',
-        element: <UserDiscountLimitManagementPage />,
-      },
-      {
-        path: 'users/mail-settings',
-        element: <MailSettingsPage />,
-      },
-      {
-        path: 'product-pricing-group-by-management',
-        element: <ProductPricingGroupByManagementPage />,
-      },
-      {
-        path: 'product-pricing-management',
-        element: <ProductPricingManagementPage />,
-      },
-      {
-        path: 'activity-management',
-        element: <ActivityManagementPage />,
-      },
-      {
-        path: 'activity-type-management',
-        element: <ActivityTypeManagementPage />,
-      },
-      {
-        path: 'shipping-address-management',
-        element: <ShippingAddressManagementPage />,
-      },
-      {
-        path: 'daily-tasks',
-        element: <DailyTasksPage />,
-      },
-      {
-        path: 'erp-customers',
-        element: <ErpCustomerManagementPage />,
-      },
-      {
-        path: 'approval-role-group-management',
-        element: <ApprovalRoleGroupManagementPage />,
-      },
-      {
-        path: 'approval-user-role-management',
-        element: <ApprovalUserRoleManagementPage />,
-      },
-      {
-        path: 'approval-role-management',
-        element: <ApprovalRoleManagementPage />,
-      },
-      {
-        path: 'approval-flow-management',
-        element: <ApprovalFlowManagementPage />,
-      },
-      {
-        path: 'quotations',
-        element: <QuotationListPage />,
-      },
-      {
-        path: 'quotations/create',
-        element: <QuotationCreateForm />,
-      },
-      {
-        path: 'quotations/:id',
-        element: <QuotationDetailPage />,
-      },
-      {
-        path: 'quotations/waiting-approvals',
-        element: <WaitingApprovalsPage />,
-      },
-      // DEMAND ROUTES
-      {
-        path: 'demands',
-        element: <DemandListPage />,
-      },
-      {
-        path: 'demands/create',
-        element: <DemandCreateForm />,
-      },
-      {
-        path: 'demands/:id',
-        element: <DemandDetailPage />,
-      },
-      {
-        path: 'demands/waiting-approvals',
-        element: <DemandWaitingApprovalsPage />,
-      },
-      // ORDER ROUTES
-      {
-        path: 'orders',
-        element: <OrderListPage />,
-      },
-      {
-        path: 'orders/create',
-        element: <OrderCreateForm />,
-      },
-      {
-        path: 'orders/:id',
-        element: <OrderDetailPage />,
-      },
-      {
-        path: 'orders/waiting-approvals',
-        element: <OrderWaitingApprovalsPage />,
-      },
-      {
-        path: 'pricing-rules',
-        element: <PricingRuleManagementPage />,
-      },
-      {
-        path: 'stocks',
-        element: <StockListPage />,
-      },
-      {
-        path: 'stocks/:id',
-        element: <StockDetailPage />,
-      },
-      {
-        path: 'document-serial-type-management',
-        element: <DocumentSerialTypeManagementPage />,
-      },
+      { index: true, element: <DashboardPage /> },
+      { path: 'report-designer', element: <ReportDesignerListPage /> },
+      { path: 'report-designer/create', element: <ReportDesignerCreatePage /> },
+      { path: 'report-designer/edit/:id', element: <ReportDesignerCreatePage /> },
+      { path: 'reports', element: <ReportsListPage /> },
+      { path: 'reports/new', element: <ReportBuilderPage /> },
+      { path: 'reports/:id/edit', element: <ReportBuilderPage /> },
+      { path: 'reports/:id', element: <ReportViewerPage /> },
+      { path: 'title-management', element: <TitleManagementPage /> },
+      { path: 'user-management', element: <UserManagementPage /> },
+      { path: 'country-management', element: <CountryManagementPage /> },
+      { path: 'city-management', element: <CityManagementPage /> },
+      { path: 'district-management', element: <DistrictManagementPage /> },
+      { path: 'customer-type-management', element: <CustomerTypeManagementPage /> },
+      { path: 'customer-management', element: <CustomerManagementPage /> },
+      { path: 'contact-management', element: <ContactManagementPage /> },
+      { path: 'payment-type-management', element: <PaymentTypeManagementPage /> },
+      { path: 'user-discount-limit-management', element: <UserDiscountLimitManagementPage /> },
+      { path: 'users/mail-settings', element: <MailSettingsPage /> },
+      { path: 'product-pricing-group-by-management', element: <ProductPricingGroupByManagementPage /> },
+      { path: 'product-pricing-management', element: <ProductPricingManagementPage /> },
+      { path: 'activity-management', element: <ActivityManagementPage /> },
+      { path: 'activity-type-management', element: <ActivityTypeManagementPage /> },
+      { path: 'shipping-address-management', element: <ShippingAddressManagementPage /> },
+      { path: 'daily-tasks', element: <DailyTasksPage /> },
+      { path: 'erp-customers', element: <ErpCustomerManagementPage /> },
+      { path: 'approval-role-group-management', element: <ApprovalRoleGroupManagementPage /> },
+      { path: 'approval-user-role-management', element: <ApprovalUserRoleManagementPage /> },
+      { path: 'approval-role-management', element: <ApprovalRoleManagementPage /> },
+      { path: 'approval-flow-management', element: <ApprovalFlowManagementPage /> },
+      { path: 'quotations', element: <QuotationListPage /> },
+      { path: 'quotations/create', element: <QuotationCreateForm /> },
+      { path: 'quotations/:id', element: <QuotationDetailPage /> },
+      { path: 'quotations/waiting-approvals', element: <WaitingApprovalsPage /> },
+      { path: 'demands', element: <DemandListPage /> },
+      { path: 'demands/create', element: <DemandCreateForm /> },
+      { path: 'demands/:id', element: <DemandDetailPage /> },
+      { path: 'demands/waiting-approvals', element: <DemandWaitingApprovalsPage /> },
+      { path: 'orders', element: <OrderListPage /> },
+      { path: 'orders/create', element: <OrderCreateForm /> },
+      { path: 'orders/:id', element: <OrderDetailPage /> },
+      { path: 'orders/waiting-approvals', element: <OrderWaitingApprovalsPage /> },
+      { path: 'pricing-rules', element: <PricingRuleManagementPage /> },
+      { path: 'stocks', element: <StockListPage /> },
+      { path: 'stocks/:id', element: <StockDetailPage /> },
+      { path: 'document-serial-type-management', element: <DocumentSerialTypeManagementPage /> },
     ],
   },
   {
     path: '/auth',
     element: <AuthLayout />,
     children: [
-      {
-        path: 'login',
-        element: <LoginPage />,
-      },
-      {
-        path: 'reset-password',
-        element: <ResetPasswordPage />,
-      },
-      {
-        path: 'forgot-password',
-        element: <ForgotPasswordPage />,
-      },
+      { path: 'login', element: <LoginPage /> },
+      { path: 'reset-password', element: <ResetPasswordPage /> },
+      { path: 'forgot-password', element: <ForgotPasswordPage /> },
     ],
   },
   {
     path: '/reset-password',
     element: <AuthLayout />,
-    children: [
-      {
-        index: true,
-        element: <ResetPasswordPage />,
-      },
-    ],
+    children: [{ index: true, element: <ResetPasswordPage /> }],
   },
 ]);

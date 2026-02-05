@@ -17,7 +17,7 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Send, Calculator, Layers, Loader2, FileCheck, FileText } from 'lucide-react';
 import { DemandApprovalFlowTab } from './DemandApprovalFlowTab';
-import { DemandReportTab } from '@/report-designer';
+import { DemandReportTab } from '@/features/report-designer';
 import { cn } from '@/lib/utils';
 import { createDemandSchema, type CreateDemandSchema } from '../schemas/demand-schema';
 import type { DemandLineFormState, DemandExchangeRateFormState, DemandBulkCreateDto, CreateDemandDto, PricingRuleLineGetDto, UserDiscountLimitDto } from '../types/demand-types';

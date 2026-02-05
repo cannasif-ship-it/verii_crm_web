@@ -17,7 +17,7 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Send, Calculator, Layers, Loader2, FileCheck, FileText } from 'lucide-react';
 import { QuotationApprovalFlowTab } from './QuotationApprovalFlowTab';
-import { ReportTemplateTab, DocumentRuleType } from '@/report-designer';
+import { ReportTemplateTab, DocumentRuleType } from '@/features/report-designer';
 import { cn } from '@/lib/utils';
 import { createQuotationSchema, type CreateQuotationSchema } from '../schemas/quotation-schema';
 import type { QuotationLineFormState, QuotationExchangeRateFormState, QuotationBulkCreateDto, CreateQuotationDto, PricingRuleLineGetDto, UserDiscountLimitDto } from '../types/quotation-types';
