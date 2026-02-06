@@ -106,7 +106,6 @@ export function MainLayout({ navItems }: MainLayoutProps): ReactElement {
       {
         title: t('sidebar.powerbi', 'PowerBI'),
         icon: <Analytics01Icon size={iconSize} className="text-amber-500" />,
-        defaultExpanded: true,
         children: [
           { title: t('sidebar.powerbiConfiguration', 'PowerBI Konfigürasyon'), href: '/powerbi/configuration' },
           { title: t('sidebar.powerbiReportsView', 'PowerBI Raporları (Görüntüle)'), href: '/powerbi/reports' },
