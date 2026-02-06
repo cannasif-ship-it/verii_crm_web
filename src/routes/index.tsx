@@ -27,6 +27,7 @@ const DistrictManagementPage = lazyImport(() => import('@/features/district-mana
 const CustomerTypeManagementPage = lazyImport(() => import('@/features/customer-type-management'), 'CustomerTypeManagementPage');
 const CustomerManagementPage = lazyImport(() => import('@/features/customer-management'), 'CustomerManagementPage');
 const Customer360Page = lazyImport(() => import('@/features/customer-360'), 'Customer360Page');
+const Salesmen360Page = lazyImport(() => import('@/features/salesman-360'), 'Salesmen360Page');
 const ContactManagementPage = lazyImport(() => import('@/features/contact-management'), 'ContactManagementPage');
 const PaymentTypeManagementPage = lazyImport(() => import('@/features/payment-type-management'), 'PaymentTypeManagementPage');
 const UserDiscountLimitManagementPage = lazyImport(() => import('@/features/user-discount-limit-management'), 'UserDiscountLimitManagementPage');
@@ -107,6 +108,7 @@ export const router = createBrowserRouter([
       { path: 'customer-type-management', element: <CustomerTypeManagementPage /> },
       { path: 'customer-management', element: <CustomerManagementPage /> },
       { path: 'customer-360/:customerId', element: <Customer360Page /> },
+      { path: 'salesmen-360/:userId', element: <Salesmen360Page /> },
       { path: 'contact-management', element: <ContactManagementPage /> },
       { path: 'payment-type-management', element: <PaymentTypeManagementPage /> },
       { path: 'user-discount-limit-management', element: <UserDiscountLimitManagementPage /> },
