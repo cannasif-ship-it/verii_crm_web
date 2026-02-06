@@ -11,8 +11,8 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { useErpCustomers } from '@/services/hooks/useErpCustomers';
 import { useCustomerList } from '@/features/customer-management/hooks/useCustomerList';
+import type { CustomerDto } from '@/features/customer-management/types/customer-types';
 import { cn } from '@/lib/utils';
 import { LayoutList, LayoutGrid, Phone, Mail, ChevronRight } from 'lucide-react';
 
@@ -90,7 +90,7 @@ function CustomerCard({
             </div>
           </div>
 
-          <div className="col-span-7 flex items-center gap-6 text-sm text-slate-500 hidden md:flex">
+          <div className="col-span-7 hidden items-center gap-6 text-sm text-slate-500 md:flex">
             {phone && (
               <div className="flex items-center gap-2 min-w-0 truncate" title={phone}>
                 <div className="p-1.5 rounded-full bg-slate-100 dark:bg-white/5">
@@ -241,7 +241,7 @@ export function CustomerSelectDialog({
   className,
 }: CustomerSelectDialogProps): ReactElement {
   const { t, i18n } = useTranslation();
-  const [activeTab, setActiveTab] = useState('erp');
+  const [activeTab, setActiveTab] = useState<'erp' | 'potential' | 'all'>('erp');
   const [viewMode, setViewMode] = useState<'list' | 'card'>('list');
   const [searchQuery, setSearchQuery] = useState('');
   const [isListening, setIsListening] = useState(false);
@@ -284,7 +284,7 @@ export function CustomerSelectDialog({
         recognitionRef.current = recognition;
       }
     }
-  }, []);
+  }, [i18n.language]);
 
   const handleVoiceSearch = (): void => {
     if (!recognitionRef.current) {
@@ -310,7 +310,6 @@ export function CustomerSelectDialog({
     }
   }, [open]);
 
-  const { data: erpCustomers = [], isLoading: erpLoading } = useErpCustomers(null);
   const { data: crmCustomersData, isLoading: crmLoading } = useCustomerList({
     pageNumber: 1,
     pageSize: 1000,
@@ -318,142 +317,53 @@ export function CustomerSelectDialog({
     sortDirection: 'asc',
   });
 
-  const crmCustomers = crmCustomersData?.data || [];
-
-  const filteredErpCustomers = useMemo(() => {
+  const displayCustomers = useMemo(() => {
+    const isErp = (c: CustomerDto): boolean =>
+      c.isIntegrated === true ||
+      (c.customerCode != null && String(c.customerCode).trim() !== '');
+    const list = (crmCustomersData?.data ?? []).map((c) => ({
+      ...c,
+      type: (isErp(c) ? 'erp' : 'crm') as 'erp' | 'crm',
+    }));
     if (!searchQuery.trim()) {
-      return erpCustomers;
+      return list.sort((a, b) => a.name.localeCompare(b.name, i18n.language));
     }
     const query = searchQuery.toLowerCase().trim();
-    return erpCustomers.filter(
-      (customer) =>
-        (customer.cariIsim?.toLowerCase().includes(query) ||
-          customer.cariKod?.toLowerCase().includes(query)) ??
-        false
-    );
-  }, [erpCustomers, searchQuery]);
+    return list
+      .filter(
+        (c) =>
+          c.name?.toLowerCase().includes(query) ||
+          (c.customerCode != null && c.customerCode.toLowerCase().includes(query))
+      )
+      .sort((a, b) => a.name.localeCompare(b.name, i18n.language));
+  }, [crmCustomersData?.data, searchQuery, i18n.language]);
 
-  const filteredCrmCustomers = useMemo(() => {
-    if (!searchQuery.trim()) {
-      return crmCustomers;
-    }
-    const query = searchQuery.toLowerCase().trim();
-    return crmCustomers.filter(
-      (customer) =>
-        customer.name?.toLowerCase().includes(query) ||
-        customer.customerCode?.toLowerCase().includes(query) ||
-        false
-    );
-  }, [crmCustomers, searchQuery]);
+  const erpCustomers = useMemo(
+    () => displayCustomers.filter((c) => c.type === 'erp'),
+    [displayCustomers]
+  );
+  const potentialCustomers = useMemo(
+    () => displayCustomers.filter((c) => c.type === 'crm'),
+    [displayCustomers]
+  );
 
-  const allCustomers = useMemo(() => {
-    const combined: Array<{
-      type: 'erp' | 'crm';
-      id?: number;
-      erpCode?: string;
-      name: string;
-      customerCode?: string;
-      phone?: string;
-      email?: string;
-      city?: string;
-      district?: string;
-    }> = [];
-
-    filteredErpCustomers.forEach((erp) => {
-      combined.push({
-        type: 'erp',
-        erpCode: erp.cariKod,
-        name: erp.cariIsim || erp.cariKod,
-        customerCode: erp.cariKod,
-        phone: erp.cariTel,
-        email: erp.email,
-        city: erp.cariIl,
-        district: erp.cariIlce,
-      });
+  const handleCustomerSelect = (customer: CustomerDto & { type: 'erp' | 'crm' }): void => {
+    const code =
+      customer.customerCode != null && String(customer.customerCode).trim() !== ''
+        ? String(customer.customerCode).trim()
+        : undefined;
+    onSelect({
+      customerId: customer.id,
+      erpCustomerCode: code,
+      customerName: customer.name,
     });
-
-    filteredCrmCustomers.forEach((crm) => {
-      combined.push({
-        type: 'crm',
-        id: crm.id,
-        name: crm.name,
-        customerCode: crm.customerCode,
-        phone: crm.phone,
-        email: crm.email,
-        city: crm.cityName,
-        district: crm.districtName,
-      });
-    });
-
-    return combined.sort((a, b) => a.name.localeCompare(b.name, i18n.language));
-  }, [filteredErpCustomers, filteredCrmCustomers, i18n.language]);
-
-  const handleCustomerSelect = (customer: {
-    type: 'erp' | 'crm';
-    id?: number;
-    erpCode?: string;
-    name?: string;
-  }): void => {
-    if (customer.type === 'erp' && customer.erpCode) {
-      onSelect({
-        customerId: undefined,
-        erpCustomerCode: customer.erpCode,
-        customerName: customer.name,
-      });
-    } else if (customer.type === 'crm' && customer.id) {
-      onSelect({
-        customerId: customer.id,
-        erpCustomerCode: undefined,
-        customerName: customer.name,
-      });
-    }
     onOpenChange(false);
   };
 
-  const renderErpCustomers = (): ReactElement => {
-    if (erpLoading) {
-      return (
-        <div className="flex items-center justify-center py-12">
-          <div className="text-muted-foreground">
-            {t('customerSelectDialog.loading', 'Yükleniyor...')}
-          </div>
-        </div>
-      );
-    }
-
-    if (filteredErpCustomers.length === 0) {
-      return (
-        <div className="flex items-center justify-center py-12">
-          <div className="text-muted-foreground">
-            {searchQuery.trim()
-              ? t('customerSelectDialog.noResults', 'Arama sonucu bulunamadı')
-              : t('customerSelectDialog.noErpCustomers', 'ERP müşterisi bulunamadı')}
-          </div>
-        </div>
-      );
-    }
-
-    return (
-      <div className={cn("grid gap-3", viewMode === 'card' ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1')}>
-        {filteredErpCustomers.map((customer, index) => (
-          <CustomerCard
-            key={`erp-${customer.cariKod}-${customer.subeKodu}-${index}`}
-            type="erp"
-            name={customer.cariIsim || customer.cariKod}
-            customerCode={customer.cariKod}
-            phone={customer.cariTel}
-            email={customer.email}
-            city={customer.cariIl}
-            district={customer.cariIlce}
-            onClick={() => handleCustomerSelect({ type: 'erp', erpCode: customer.cariKod, name: customer.cariIsim || customer.cariKod })}
-            viewMode={viewMode}
-          />
-        ))}
-      </div>
-    );
-  };
-
-  const renderCrmCustomers = (): ReactElement => {
+  const renderCustomerList = (
+    list: Array<CustomerDto & { type: 'erp' | 'crm' }>,
+    emptyKey: string
+  ): ReactElement => {
     if (crmLoading) {
       return (
         <div className="flex items-center justify-center py-12">
@@ -464,13 +374,13 @@ export function CustomerSelectDialog({
       );
     }
 
-    if (filteredCrmCustomers.length === 0) {
+    if (list.length === 0) {
       return (
         <div className="flex items-center justify-center py-12">
           <div className="text-muted-foreground">
             {searchQuery.trim()
               ? t('customerSelectDialog.noResults', 'Arama sonucu bulunamadı')
-              : t('customerSelectDialog.noCrmCustomers', 'CRM müşterisi bulunamadı')}
+              : t(emptyKey, { ns: 'customer-select-dialog', defaultValue: 'Müşteri bulunamadı' })}
           </div>
         </div>
       );
@@ -478,57 +388,16 @@ export function CustomerSelectDialog({
 
     return (
       <div className={cn("grid gap-3", viewMode === 'card' ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1')}>
-        {filteredCrmCustomers.map((customer) => (
+        {list.map((customer) => (
           <CustomerCard
-            key={`crm-${customer.id}`}
-            type="crm"
+            key={`customer-${customer.id}`}
+            type={customer.type}
             name={customer.name}
-            customerCode={customer.customerCode}
+            customerCode={customer.customerCode ?? undefined}
             phone={customer.phone}
             email={customer.email}
             city={customer.cityName}
             district={customer.districtName}
-            onClick={() => handleCustomerSelect({ type: 'crm', id: customer.id, name: customer.name })}
-            viewMode={viewMode}
-          />
-        ))}
-      </div>
-    );
-  };
-
-  const renderAllCustomers = (): ReactElement => {
-    if (erpLoading || crmLoading) {
-      return (
-        <div className="flex items-center justify-center py-12">
-          <div className="text-muted-foreground">
-            {t('customerSelectDialog.loading', 'Yükleniyor...')}
-          </div>
-        </div>
-      );
-    }
-
-    if (allCustomers.length === 0) {
-      return (
-        <div className="flex items-center justify-center py-12">
-          <div className="text-muted-foreground">
-            {t('customerSelectDialog.noCustomers', 'Müşteri bulunamadı')}
-          </div>
-        </div>
-      );
-    }
-
-    return (
-      <div className={cn("grid gap-3", viewMode === 'card' ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1')}>
-        {allCustomers.map((customer, index) => (
-          <CustomerCard
-            key={`${customer.type}-${customer.id || customer.erpCode}-${index}`}
-            type={customer.type}
-            name={customer.name}
-            customerCode={customer.customerCode}
-            phone={customer.phone}
-            email={customer.email}
-            city={customer.city}
-            district={customer.district}
             onClick={() => handleCustomerSelect(customer)}
             viewMode={viewMode}
           />
@@ -542,7 +411,7 @@ export function CustomerSelectDialog({
       <DialogContent className={cn("max-w-6xl max-h-[90vh] flex flex-col p-0 overflow-hidden bg-white/95 dark:bg-[#0c0516]/95 backdrop-blur-xl rounded-2xl border-white/60 dark:border-white/10 shadow-2xl", className)}>
         <DialogHeader className="px-6 py-5 border-b border-slate-200/50 dark:border-white/5 shrink-0">
           <div className="flex items-center gap-3 mb-2">
-            <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-pink-100 to-orange-100 dark:from-pink-900/20 dark:to-orange-900/20 flex items-center justify-center text-pink-600 dark:text-pink-400">
+            <div className="h-12 w-12 rounded-2xl bg-linear-to-br from-pink-100 to-orange-100 dark:from-pink-900/20 dark:to-orange-900/20 flex items-center justify-center text-pink-600 dark:text-pink-400">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="24"
@@ -559,11 +428,11 @@ export function CustomerSelectDialog({
               </svg>
             </div>
             <div>
-              <DialogTitle className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-pink-600 to-orange-600">
+              <DialogTitle className="text-2xl font-bold bg-clip-text text-transparent bg-linear-to-r from-pink-600 to-orange-600">
                 {t('customerSelectDialog.title', 'Müşteri Seç')}
               </DialogTitle>
               <DialogDescription className="text-slate-500 dark:text-slate-400 text-sm mt-1">
-                {t('customerSelectDialog.description', 'Müşteri seçmek için bir tab seçin ve listeden müşteriyi seçin')}
+                {t('customerSelectDialog.description', 'Müşteri seçmek için bir sekme seçin ve listeden müşteriyi seçin.')}
               </DialogDescription>
             </div>
           </div>
@@ -649,24 +518,24 @@ export function CustomerSelectDialog({
         </div>
 
         <div className="flex-1 min-h-0 flex flex-col px-6 pb-6 pt-4">
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full flex-1 flex flex-col min-h-0">
+          <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as 'erp' | 'potential' | 'all')} className="w-full flex-1 flex flex-col min-h-0">
             <div className="flex items-end justify-between border-b border-slate-200/50 dark:border-white/5 mb-4 px-1">
               <TabsList className="bg-transparent p-0 h-auto rounded-none border-none gap-2">
-                <TabsTrigger 
-                  value="erp" 
-                  className="px-6 py-2.5 rounded-t-xl rounded-b-none border-b-2 border-transparent data-[state=active]:border-pink-500 data-[state=active]:bg-pink-500/5 dark:data-[state=active]:bg-pink-500/10 data-[state=active]:text-pink-600 dark:data-[state=active]:text-pink-400 font-semibold transition-all -mb-[1px]"
+                <TabsTrigger
+                  value="erp"
+                  className="px-6 py-2.5 rounded-t-xl rounded-b-none border-b-2 border-transparent data-[state=active]:border-pink-500 data-[state=active]:bg-pink-500/5 dark:data-[state=active]:bg-pink-500/10 data-[state=active]:text-pink-600 dark:data-[state=active]:text-pink-400 font-semibold transition-all -mb-px"
                 >
-                  {t('customerSelectDialog.erpCustomers', 'ERP Müşterisi')}
+                  {t('customerSelectDialog.erpCustomers', 'ERP')}
                 </TabsTrigger>
-                <TabsTrigger 
-                  value="crm" 
-                  className="px-6 py-2.5 rounded-t-xl rounded-b-none border-b-2 border-transparent data-[state=active]:border-pink-500 data-[state=active]:bg-pink-500/5 dark:data-[state=active]:bg-pink-500/10 data-[state=active]:text-pink-600 dark:data-[state=active]:text-pink-400 font-semibold transition-all -mb-[1px]"
+                <TabsTrigger
+                  value="potential"
+                  className="px-6 py-2.5 rounded-t-xl rounded-b-none border-b-2 border-transparent data-[state=active]:border-pink-500 data-[state=active]:bg-pink-500/5 dark:data-[state=active]:bg-pink-500/10 data-[state=active]:text-pink-600 dark:data-[state=active]:text-pink-400 font-semibold transition-all -mb-px"
                 >
-                  {t('customerSelectDialog.crmCustomers', 'CRM Müşterileri')}
+                  {t('customerSelectDialog.potentialCustomers', 'Potansiyel')}
                 </TabsTrigger>
-                <TabsTrigger 
-                  value="all" 
-                  className="px-6 py-2.5 rounded-t-xl rounded-b-none border-b-2 border-transparent data-[state=active]:border-pink-500 data-[state=active]:bg-pink-500/5 dark:data-[state=active]:bg-pink-500/10 data-[state=active]:text-pink-600 dark:data-[state=active]:text-pink-400 font-semibold transition-all -mb-[1px]"
+                <TabsTrigger
+                  value="all"
+                  className="px-6 py-2.5 rounded-t-xl rounded-b-none border-b-2 border-transparent data-[state=active]:border-pink-500 data-[state=active]:bg-pink-500/5 dark:data-[state=active]:bg-pink-500/10 data-[state=active]:text-pink-600 dark:data-[state=active]:text-pink-400 font-semibold transition-all -mb-px"
                 >
                   {t('customerSelectDialog.allCustomers', 'Tümü')}
                 </TabsTrigger>
@@ -679,8 +548,8 @@ export function CustomerSelectDialog({
                   onClick={() => setViewMode('list')}
                   className={cn(
                     "h-8 w-8 p-0 rounded-lg transition-all",
-                    viewMode === 'list' 
-                      ? "bg-white dark:bg-white/10 text-pink-600 dark:text-white shadow-sm" 
+                    viewMode === 'list'
+                      ? "bg-white dark:bg-white/10 text-pink-600 dark:text-white shadow-sm"
                       : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
                   )}
                 >
@@ -692,8 +561,8 @@ export function CustomerSelectDialog({
                   onClick={() => setViewMode('card')}
                   className={cn(
                     "h-8 w-8 p-0 rounded-lg transition-all",
-                    viewMode === 'card' 
-                      ? "bg-white dark:bg-white/10 text-pink-600 dark:text-white shadow-sm" 
+                    viewMode === 'card'
+                      ? "bg-white dark:bg-white/10 text-pink-600 dark:text-white shadow-sm"
                       : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
                   )}
                 >
@@ -707,15 +576,13 @@ export function CustomerSelectDialog({
               className="flex-1 overflow-y-auto min-h-0 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
             >
               <TabsContent value="erp" className="mt-0 space-y-3">
-                {renderErpCustomers()}
+                {renderCustomerList(erpCustomers, 'noErpCustomers')}
               </TabsContent>
-
-              <TabsContent value="crm" className="mt-0 space-y-3">
-                {renderCrmCustomers()}
+              <TabsContent value="potential" className="mt-0 space-y-3">
+                {renderCustomerList(potentialCustomers, 'noPotentialCustomers')}
               </TabsContent>
-
               <TabsContent value="all" className="mt-0 space-y-3">
-                {renderAllCustomers()}
+                {renderCustomerList(displayCustomers, 'noCustomers')}
               </TabsContent>
             </div>
           </Tabs>

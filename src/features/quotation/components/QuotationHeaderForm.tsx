@@ -38,7 +38,6 @@ import { useShippingAddresses } from '../hooks/useShippingAddresses';
 import { useQuotationRelatedUsers } from '../hooks/useQuotationRelatedUsers';
 import { usePaymentTypes } from '../hooks/usePaymentTypes';
 import { useExchangeRate } from '@/services/hooks/useExchangeRate';
-import { useErpCustomers } from '@/services/hooks/useErpCustomers';
 import { useCustomerOptions } from '@/features/customer-management/hooks/useCustomerOptions';
 import { useCustomer } from '@/features/customer-management/hooks/useCustomer';
 import { useAvailableDocumentSerialTypes } from '@/features/document-serial-type-management/hooks/useAvailableDocumentSerialTypes';
@@ -99,7 +98,6 @@ export function QuotationHeaderForm({
   const { data: relatedUsers = [] } = useQuotationRelatedUsers(user?.id);
   const { data: paymentTypes } = usePaymentTypes();
   const { data: customerOptions = [] } = useCustomerOptions();
-  const { data: erpCustomers = [] } = useErpCustomers();
   const { data: customer } = useCustomer(watchedCustomerId ?? 0);
   
   const customerTypeId = useMemo(() => {
@@ -114,59 +112,43 @@ export function QuotationHeaderForm({
   );
 
   const customerDisplayValue = useMemo(() => {
-    if (watchedCustomerId) {
-      const customer = customerOptions.find((c) => c.id === watchedCustomerId);
-      if (customer) return customer.name;
-      return `CRM: ${watchedCustomerId}`;
+    if (!watchedCustomerId) return '';
+    if (customer) {
+      return customer.customerCode?.trim()
+        ? `ERP: ${customer.customerCode} - ${customer.name}`
+        : `CRM: ${customer.name}`;
     }
-    if (watchedErpCustomerCode) {
-      const erpCustomer = erpCustomers.find((c) => c.cariKod === watchedErpCustomerCode);
-      if (erpCustomer) return erpCustomer.cariIsim || watchedErpCustomerCode;
-      return watchedErpCustomerCode;
-    }
-    return '';
-  }, [watchedCustomerId, watchedErpCustomerCode, customerOptions, erpCustomers]);
+    return `ID: ${watchedCustomerId}`;
+  }, [watchedCustomerId, customer]);
 
   useEffect(() => {
     setCustomerSearchQuery(customerDisplayValue);
   }, [customerDisplayValue]);
 
   const allCustomerOptions = useMemo(() => {
-    const crmOptions = customerOptions.map((c) => ({
-      value: `crm-${c.id}`,
-      label: c.name,
-      type: 'crm' as const,
+    return customerOptions.map((c) => ({
+      value: `customer-${c.id}`,
+      label: c.customerCode?.trim()
+        ? `ERP: ${c.customerCode} - ${c.name}`
+        : `CRM: ${c.name}`,
+      type: (c.customerCode?.trim() ? 'erp' : 'crm') as 'erp' | 'crm',
       id: c.id,
-      code: c.customerCode,
+      code: c.customerCode ?? undefined,
     }));
-
-    const erpOptions = erpCustomers.map((c) => ({
-      value: `erp-${c.cariKod}`,
-      label: c.cariIsim || c.cariKod,
-      type: 'erp' as const,
-      code: c.cariKod,
-    }));
-
-    return [...crmOptions, ...erpOptions];
-  }, [customerOptions, erpCustomers]);
+  }, [customerOptions]);
 
   const filteredCustomerOptions = useMemo(() => {
     if (!customerSearchQuery) return [];
     const lowerQuery = customerSearchQuery.toLowerCase();
-    return allCustomerOptions.filter((option) => 
-      option.label.toLowerCase().includes(lowerQuery) || 
+    return allCustomerOptions.filter((option) =>
+      option.label.toLowerCase().includes(lowerQuery) ||
       (option.code && option.code.toLowerCase().includes(lowerQuery))
-    ).slice(0, 50); // Limit results for performance
+    ).slice(0, 50);
   }, [allCustomerOptions, customerSearchQuery]);
 
-  const handleComboboxSelect = (option: typeof allCustomerOptions[0]) => {
-    if (option.type === 'crm') {
-      form.setValue('quotation.potentialCustomerId', option.id);
-      form.setValue('quotation.erpCustomerCode', null);
-    } else {
-      form.setValue('quotation.erpCustomerCode', option.code);
-      form.setValue('quotation.potentialCustomerId', null);
-    }
+  const handleComboboxSelect = (option: (typeof allCustomerOptions)[0]) => {
+    form.setValue('quotation.potentialCustomerId', option.id);
+    form.setValue('quotation.erpCustomerCode', option.code ?? null);
     setCustomerComboboxOpen(false);
   };
 
@@ -720,13 +702,8 @@ export function QuotationHeaderForm({
         open={customerSelectDialogOpen}
         onOpenChange={setCustomerSelectDialogOpen}
         onSelect={(result) => {
-          if (result.customerId) {
-            form.setValue('quotation.potentialCustomerId', result.customerId);
-            form.setValue('quotation.erpCustomerCode', null);
-          } else if (result.erpCustomerCode) {
-            form.setValue('quotation.potentialCustomerId', null);
-            form.setValue('quotation.erpCustomerCode', result.erpCustomerCode);
-          }
+          form.setValue('quotation.potentialCustomerId', result.customerId ?? null);
+          form.setValue('quotation.erpCustomerCode', result.erpCustomerCode ?? null);
         }}
       />
 

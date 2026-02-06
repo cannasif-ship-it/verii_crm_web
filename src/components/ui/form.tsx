@@ -143,6 +143,8 @@ function FormMessage({ className, ...props }: React.ComponentProps<"p">) {
     return null
   }
 
+  const text = body.startsWith("auth.") ? t(body as string, { ns: "auth" }) : t(body as string)
+
   return (
     <p
       data-slot="form-message"
@@ -150,7 +152,7 @@ function FormMessage({ className, ...props }: React.ComponentProps<"p">) {
       className={cn("text-destructive text-sm", className)}
       {...props}
     >
-      {t(body as string)}
+      {text}
     </p>
   )
 }

@@ -25,8 +25,6 @@ import { useShippingAddresses } from '../hooks/useShippingAddresses';
 import { useOrderRelatedUsers } from '../hooks/useOrderRelatedUsers';
 import { usePaymentTypes } from '../hooks/usePaymentTypes';
 import { useExchangeRate } from '@/services/hooks/useExchangeRate';
-import { useErpCustomers } from '@/services/hooks/useErpCustomers';
-import { useCustomerOptions } from '@/features/customer-management/hooks/useCustomerOptions';
 import { useCustomer } from '@/features/customer-management/hooks/useCustomer';
 import { useAvailableDocumentSerialTypes } from '@/features/document-serial-type-management/hooks/useAvailableDocumentSerialTypes';
 import { PricingRuleType } from '@/features/pricing-rule/types/pricing-rule-types';
@@ -85,8 +83,6 @@ export function OrderHeaderForm({
   const { data: shippingAddresses } = useShippingAddresses(watchedCustomerId || undefined);
   const { data: relatedUsers = [] } = useOrderRelatedUsers(user?.id);
   const { data: paymentTypes } = usePaymentTypes();
-  const { data: customerOptions = [] } = useCustomerOptions();
-  const { data: erpCustomers = [] } = useErpCustomers();
   const { data: customer } = useCustomer(watchedCustomerId ?? 0);
   
   const customerTypeId = useMemo(() => {
@@ -101,18 +97,14 @@ export function OrderHeaderForm({
   );
 
   const customerDisplayValue = useMemo(() => {
-    if (watchedCustomerId) {
-      const customer = customerOptions.find((c) => c.id === watchedCustomerId);
-      if (customer) return `CRM: ${watchedCustomerId} / ${customer.name}`;
-      return `CRM: ${watchedCustomerId}`;
+    if (!watchedCustomerId) return '';
+    if (customer) {
+      return customer.customerCode?.trim()
+        ? `ERP: ${customer.customerCode} - ${customer.name}`
+        : `CRM: ${customer.name}`;
     }
-    if (watchedErpCustomerCode) {
-      const erpCustomer = erpCustomers.find((c) => c.cariKod === watchedErpCustomerCode);
-      if (erpCustomer) return `ERP: ${watchedErpCustomerCode} / ${erpCustomer.cariIsim || watchedErpCustomerCode}`;
-      return `ERP: ${watchedErpCustomerCode}`;
-    }
-    return '';
-  }, [watchedCustomerId, watchedErpCustomerCode, customerOptions, erpCustomers]);
+    return `ID: ${watchedCustomerId}`;
+  }, [watchedCustomerId, customer]);
 
   useEffect(() => {
     const currentRepresentativeId = form.watch('order.representativeId');
@@ -575,13 +567,8 @@ export function OrderHeaderForm({
         open={customerSelectDialogOpen}
         onOpenChange={setCustomerSelectDialogOpen}
         onSelect={(result) => {
-          if (result.customerId) {
-            form.setValue('order.potentialCustomerId', result.customerId);
-            form.setValue('order.erpCustomerCode', null);
-          } else if (result.erpCustomerCode) {
-            form.setValue('order.potentialCustomerId', null);
-            form.setValue('order.erpCustomerCode', result.erpCustomerCode);
-          }
+          form.setValue('order.potentialCustomerId', result.customerId ?? null);
+          form.setValue('order.erpCustomerCode', result.erpCustomerCode ?? null);
         }}
       />
 

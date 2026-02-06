@@ -50,13 +50,8 @@ export function PricingRuleHeaderForm(): ReactElement {
   const [customerDialogOpen, setCustomerDialogOpen] = useState(false);
 
   const handleCustomerSelect = (result: CustomerSelectionResult): void => {
-    if (result.customerId) {
-      form.setValue('customerId', result.customerId);
-      form.setValue('erpCustomerCode', null);
-    } else if (result.erpCustomerCode) {
-      form.setValue('customerId', null);
-      form.setValue('erpCustomerCode', result.erpCustomerCode);
-    }
+    form.setValue('customerId', result.customerId ?? null);
+    form.setValue('erpCustomerCode', result.erpCustomerCode ?? null);
   };
 
   const customerId = form.watch('customerId');
@@ -64,7 +59,9 @@ export function PricingRuleHeaderForm(): ReactElement {
 
   const selectedCustomer = customers?.find((c) => c.id === customerId);
   const displayValue = selectedCustomer
-    ? selectedCustomer.name
+    ? (selectedCustomer.customerCode?.trim()
+        ? `ERP: ${selectedCustomer.customerCode} - ${selectedCustomer.name}`
+        : `CRM: ${selectedCustomer.name}`)
     : erpCustomerCode
       ? `ERP: ${erpCustomerCode}`
       : '';

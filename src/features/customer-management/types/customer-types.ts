@@ -2,7 +2,8 @@ import { z } from 'zod';
 
 export interface CustomerDto {
   id: number;
-  customerCode?: string;
+  customerCode?: string | null;
+  isIntegrated?: boolean;
   name: string;
   taxNumber?: string;
   taxOffice?: string;
