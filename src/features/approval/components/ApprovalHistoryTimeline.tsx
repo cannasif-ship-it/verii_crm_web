@@ -1,6 +1,6 @@
 import { type ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
-import { CheckCircle2, XCircle, Clock } from 'lucide-react';
+import { CheckCircle2, XCircle, Clock, CircleDot } from 'lucide-react';
 import { ApprovalStatusBadge } from './ApprovalStatusBadge';
 import type { ApprovalTransactionDto } from '../types/approval-types';
 import { ApprovalStatus, ApprovalLevel } from '../types/approval-types';
@@ -18,6 +18,8 @@ export function ApprovalHistoryTimeline({ history }: ApprovalHistoryTimelineProp
         return <CheckCircle2 className="h-4 w-4 text-green-600" />;
       case ApprovalStatus.Rejected:
         return <XCircle className="h-4 w-4 text-red-600" />;
+      case ApprovalStatus.Closed:
+        return <CircleDot className="h-4 w-4 text-zinc-500" />;
       default:
         return <Clock className="h-4 w-4 text-yellow-600" />;
     }

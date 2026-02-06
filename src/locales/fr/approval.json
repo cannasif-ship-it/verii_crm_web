@@ -48,8 +48,11 @@
     "notRequired": "Non requis",
     "waiting": "En attente",
     "approved": "Approuvé",
-    "rejected": "Rejeté"
+    "rejected": "Rejeté",
+    "closed": "Fermé"
   },
+  "closedReason": "Cet enregistrement a été fermé car un autre enregistrement avec le même numéro d'offre a été approuvé.",
+  "statusFilterLabel": "Statut d'approbation",
   "level": {
     "salesManager": "Directeur des ventes",
     "regionalManager": "Directeur régional",

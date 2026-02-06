@@ -48,8 +48,11 @@
     "notRequired": "No Requerido",
     "waiting": "Esperando",
     "approved": "Aprobado",
-    "rejected": "Rechazado"
+    "rejected": "Rechazado",
+    "closed": "Cerrado"
   },
+  "closedReason": "Este registro se cerró porque se aprobó otro registro con el mismo número de oferta.",
+  "statusFilterLabel": "Estado de aprobación",
   "level": {
     "salesManager": "Gerente de Ventas",
     "regionalManager": "Gerente Regional",

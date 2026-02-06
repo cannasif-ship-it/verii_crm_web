@@ -48,8 +48,11 @@
     "notRequired": "Non Richiesto",
     "waiting": "In Attesa",
     "approved": "Approvato",
-    "rejected": "Rifiutato"
+    "rejected": "Rifiutato",
+    "closed": "Chiuso"
   },
+  "closedReason": "Questo record è stato chiuso perché un altro record con lo stesso numero di offerta è stato approvato.",
+  "statusFilterLabel": "Stato approvazione",
   "level": {
     "salesManager": "Responsabile Vendite",
     "regionalManager": "Responsabile Regionale",

@@ -39,8 +39,9 @@ function StepStatusIcon({ stepStatus }: { stepStatus: ApprovalFlowStepReportDto[
 }
 
 function ActionStatusBadge({ status, statusName }: { status: number; statusName: string }): ReactElement {
-  const variant = status === 2 ? 'default' : status === 3 ? 'destructive' : status === 1 ? 'secondary' : 'outline';
-  return <Badge variant={variant}>{statusName}</Badge>;
+  const variant = status === 2 ? 'default' : status === 3 ? 'destructive' : status === 4 ? 'secondary' : status === 1 ? 'secondary' : 'outline';
+  const className = status === 4 ? 'bg-zinc-500/80 hover:bg-zinc-600/80 text-white border-0' : undefined;
+  return <Badge variant={variant} className={className}>{statusName}</Badge>;
 }
 
 function StepCard({ step }: { step: ApprovalFlowStepReportDto }): ReactElement {

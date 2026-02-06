@@ -48,8 +48,11 @@
     "notRequired": "غير مطلوب",
     "waiting": "في الانتظار",
     "approved": "تمت الموافقة",
-    "rejected": "مرفوض"
+    "rejected": "مرفوض",
+    "closed": "مغلق"
   },
+  "closedReason": "تم إغلاق هذا السجل لأن سجلاً آخر بنفس رقم العرض تمت الموافقة عليه.",
+  "statusFilterLabel": "حالة الموافقة",
   "level": {
     "salesManager": "مدير المبيعات",
     "regionalManager": "المدير الإقليمي",

@@ -11,30 +11,35 @@ interface ApprovalStatusBadgeProps {
 export function ApprovalStatusBadge({ status }: ApprovalStatusBadgeProps): ReactElement {
   const { t } = useTranslation();
 
-  const statusConfig = {
+  const statusConfig: Record<ApprovalStatus, { label: string; variant: 'default' | 'secondary' | 'destructive' | 'outline'; className?: string }> = {
     [ApprovalStatusEnum.NotRequired]: {
       label: t('approval.status.notRequired', 'Gerekli Değil'),
-      variant: 'secondary' as const,
+      variant: 'secondary',
       className: undefined,
     },
     [ApprovalStatusEnum.Waiting]: {
       label: t('approval.status.waiting', 'Bekliyor'),
-      variant: 'default' as const,
+      variant: 'default',
       className: undefined,
     },
     [ApprovalStatusEnum.Approved]: {
       label: t('approval.status.approved', 'Onaylandı'),
-      variant: 'default' as const,
+      variant: 'default',
       className: 'bg-green-600 hover:bg-green-700',
     },
     [ApprovalStatusEnum.Rejected]: {
       label: t('approval.status.rejected', 'Reddedildi'),
-      variant: 'destructive' as const,
+      variant: 'destructive',
       className: undefined,
+    },
+    [ApprovalStatusEnum.Closed]: {
+      label: t('approval.status.closed', 'Kapandı'),
+      variant: 'secondary',
+      className: 'bg-zinc-500/80 hover:bg-zinc-600/80 text-white border-0',
     },
   };
 
-  const config = statusConfig[status] || statusConfig[ApprovalStatusEnum.Waiting];
+  const config = statusConfig[status as ApprovalStatus] ?? statusConfig[ApprovalStatusEnum.Waiting];
 
   return (
     <Badge variant={config.variant} className={config.className}>

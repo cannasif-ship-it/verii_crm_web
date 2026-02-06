@@ -48,8 +48,11 @@
     "notRequired": "Gerekli Değil",
     "waiting": "Bekliyor",
     "approved": "Onaylandı",
-    "rejected": "Reddedildi"
+    "rejected": "Reddedildi",
+    "closed": "Kapandı"
   },
+  "closedReason": "Bu kayıt aynı teklif numarasında başka bir kayıt onaylandığı için kapatıldı.",
+  "statusFilterLabel": "Onay durumu",
   "level": {
     "salesManager": "Satış Müdürü",
     "regionalManager": "Bölge Müdürü",

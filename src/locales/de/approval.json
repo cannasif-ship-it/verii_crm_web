@@ -48,8 +48,11 @@
     "notRequired": "Nicht erforderlich",
     "waiting": "Wartend",
     "approved": "Genehmigt",
-    "rejected": "Abgelehnt"
+    "rejected": "Abgelehnt",
+    "closed": "Geschlossen"
   },
+  "closedReason": "Dieser Datensatz wurde geschlossen, weil ein anderer Datensatz mit derselben Angebotsnummer genehmigt wurde.",
+  "statusFilterLabel": "Genehmigungsstatus",
   "level": {
     "salesManager": "Verkaufsleiter",
     "regionalManager": "Regionalleiter",

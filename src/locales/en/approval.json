@@ -48,8 +48,11 @@
     "notRequired": "Not Required",
     "waiting": "Waiting",
     "approved": "Approved",
-    "rejected": "Rejected"
+    "rejected": "Rejected",
+    "closed": "Closed"
   },
+  "closedReason": "This record was closed because another record with the same offer number was approved.",
+  "statusFilterLabel": "Approval status",
   "level": {
     "salesManager": "Sales Manager",
     "regionalManager": "Regional Manager",
