@@ -14,6 +14,7 @@ import { Button } from '@/components/ui/button';
 import { useErpCustomers } from '@/services/hooks/useErpCustomers';
 import { useCustomerList } from '@/features/customer-management/hooks/useCustomerList';
 import { cn } from '@/lib/utils';
+import { LayoutList, LayoutGrid, Phone, Mail, ChevronRight } from 'lucide-react';
 
 export interface CustomerSelectionResult {
   customerId?: number;
@@ -36,6 +37,7 @@ interface CustomerCardProps {
   city?: string;
   district?: string;
   onClick: () => void;
+  viewMode: 'list' | 'card';
 }
 
 function CustomerCard({
@@ -47,16 +49,78 @@ function CustomerCard({
   city,
   district,
   onClick,
+  viewMode,
 }: CustomerCardProps): ReactElement {
   const { t } = useTranslation();
+
+  if (viewMode === 'list') {
+    return (
+      <div
+        onClick={onClick}
+        className={cn(
+          'group flex items-center gap-4 p-3 rounded-xl border cursor-pointer transition-all duration-200',
+          'bg-white/50 dark:bg-white/5 border-slate-200 dark:border-white/5',
+          'hover:bg-indigo-50/50 dark:hover:bg-indigo-500/10 hover:border-indigo-200 dark:hover:border-indigo-500/20 hover:shadow-sm'
+        )}
+      >
+        <div className={cn(
+          'shrink-0 w-12 h-12 rounded-lg flex items-center justify-center border',
+          type === 'erp' 
+            ? 'bg-purple-50 border-purple-100 text-purple-600 dark:bg-purple-900/20 dark:border-purple-500/20 dark:text-purple-300'
+            : 'bg-pink-50 border-pink-100 text-pink-600 dark:bg-pink-900/20 dark:border-pink-500/20 dark:text-pink-300'
+        )}>
+          <span className="text-xs font-bold">{type === 'erp' ? 'ERP' : 'CRM'}</span>
+        </div>
+
+        <div className="flex-1 min-w-0 grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
+          <div className="col-span-5 min-w-0">
+            <div className="font-semibold truncate text-sm text-slate-900 dark:text-white mb-0.5">{name}</div>
+            <div className="flex items-center gap-2">
+              {customerCode && (
+                <span className="text-xs text-slate-500 font-mono bg-slate-100 dark:bg-white/10 px-1.5 py-0.5 rounded">
+                  {customerCode}
+                </span>
+              )}
+              {(city || district) && (
+                <span className="text-xs text-slate-400 truncate">
+                  • {[city, district].filter(Boolean).join(', ')}
+                </span>
+              )}
+            </div>
+          </div>
+
+          <div className="col-span-7 flex items-center gap-6 text-sm text-slate-500 hidden md:flex">
+            {phone && (
+              <div className="flex items-center gap-2 min-w-0 truncate" title={phone}>
+                <div className="p-1.5 rounded-full bg-slate-100 dark:bg-white/5">
+                  <Phone className="w-3.5 h-3.5 shrink-0" />
+                </div>
+                <span className="truncate">{phone}</span>
+              </div>
+            )}
+            {email && (
+              <div className="flex items-center gap-2 min-w-0 truncate" title={email}>
+                <div className="p-1.5 rounded-full bg-slate-100 dark:bg-white/5">
+                  <Mail className="w-3.5 h-3.5 shrink-0" />
+                </div>
+                <span className="truncate">{email}</span>
+              </div>
+            )}
+          </div>
+        </div>
+
+        <ChevronRight className="w-5 h-5 text-slate-300 group-hover:text-indigo-500 transition-colors" />
+      </div>
+    );
+  }
 
   return (
     <Card
       className={cn(
-        'cursor-pointer transition-all duration-200 hover:shadow-md active:scale-[0.98] border-slate-200 dark:border-white/5',
+        'cursor-pointer transition-all duration-200 border-slate-200 dark:border-white/5',
         'bg-white/50 dark:bg-white/5 backdrop-blur-sm',
-        'hover:border-pink-500/30 hover:bg-pink-50/30 dark:hover:bg-pink-500/5',
-        'touch-manipulation'
+        'hover:-translate-y-1 hover:shadow-lg hover:border-pink-500/50 hover:bg-white dark:hover:bg-white/10',
+        'active:scale-[0.98] touch-manipulation'
       )}
       onClick={onClick}
     >
@@ -176,6 +240,7 @@ export function CustomerSelectDialog({
 }: CustomerSelectDialogProps): ReactElement {
   const { t, i18n } = useTranslation();
   const [activeTab, setActiveTab] = useState('erp');
+  const [viewMode, setViewMode] = useState<'list' | 'card'>('list');
   const [searchQuery, setSearchQuery] = useState('');
   const [isListening, setIsListening] = useState(false);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
@@ -367,7 +432,7 @@ export function CustomerSelectDialog({
     }
 
     return (
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      <div className={cn("grid gap-3", viewMode === 'card' ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1')}>
         {filteredErpCustomers.map((customer, index) => (
           <CustomerCard
             key={`erp-${customer.cariKod}-${customer.subeKodu}-${index}`}
@@ -379,6 +444,7 @@ export function CustomerSelectDialog({
             city={customer.cariIl}
             district={customer.cariIlce}
             onClick={() => handleCustomerSelect({ type: 'erp', erpCode: customer.cariKod, name: customer.cariIsim || customer.cariKod })}
+            viewMode={viewMode}
           />
         ))}
       </div>
@@ -409,7 +475,7 @@ export function CustomerSelectDialog({
     }
 
     return (
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      <div className={cn("grid gap-3", viewMode === 'card' ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1')}>
         {filteredCrmCustomers.map((customer) => (
           <CustomerCard
             key={`crm-${customer.id}`}
@@ -421,6 +487,7 @@ export function CustomerSelectDialog({
             city={customer.cityName}
             district={customer.districtName}
             onClick={() => handleCustomerSelect({ type: 'crm', id: customer.id, name: customer.name })}
+            viewMode={viewMode}
           />
         ))}
       </div>
@@ -449,7 +516,7 @@ export function CustomerSelectDialog({
     }
 
     return (
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      <div className={cn("grid gap-3", viewMode === 'card' ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1')}>
         {allCustomers.map((customer, index) => (
           <CustomerCard
             key={`${customer.type}-${customer.id || customer.erpCode}-${index}`}
@@ -461,6 +528,7 @@ export function CustomerSelectDialog({
             city={customer.city}
             district={customer.district}
             onClick={() => handleCustomerSelect(customer)}
+            viewMode={viewMode}
           />
         ))}
       </div>
@@ -469,30 +537,34 @@ export function CustomerSelectDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-6xl max-h-[90vh] flex flex-col p-0 overflow-hidden bg-white/95 dark:bg-[#0c0516]/95 backdrop-blur-xl border-slate-200 dark:border-white/10 shadow-2xl">
-        <DialogHeader className="px-6 py-5 border-b border-slate-200/50 dark:border-white/5 bg-slate-50/50 dark:bg-white/5 shrink-0">
-          <DialogTitle className="flex items-center gap-3 text-slate-900 dark:text-white text-lg">
-             <div className="bg-linear-to-br from-indigo-500 to-violet-600 p-2.5 rounded-xl shadow-lg shadow-indigo-500/20 text-white">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
-                  <circle cx="12" cy="7" r="4" />
-                </svg>
-             </div>
-            {t('customerSelectDialog.title', 'Müşteri Seç')}
-          </DialogTitle>
-          <DialogDescription className="text-slate-500 dark:text-slate-400 text-sm leading-relaxed">
-            {t('customerSelectDialog.description', 'Müşteri seçmek için bir tab seçin ve listeden müşteriyi seçin')}
-          </DialogDescription>
+      <DialogContent className="max-w-6xl max-h-[90vh] flex flex-col p-0 overflow-hidden bg-white/95 dark:bg-[#0c0516]/95 backdrop-blur-xl rounded-2xl border-white/60 dark:border-white/10 shadow-2xl">
+        <DialogHeader className="px-6 py-5 border-b border-slate-200/50 dark:border-white/5 shrink-0">
+          <div className="flex items-center gap-3 mb-2">
+            <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-pink-100 to-orange-100 dark:from-pink-900/20 dark:to-orange-900/20 flex items-center justify-center text-pink-600 dark:text-pink-400">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+                <circle cx="12" cy="7" r="4" />
+              </svg>
+            </div>
+            <div>
+              <DialogTitle className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-pink-600 to-orange-600">
+                {t('customerSelectDialog.title', 'Müşteri Seç')}
+              </DialogTitle>
+              <DialogDescription className="text-slate-500 dark:text-slate-400 text-sm mt-1">
+                {t('customerSelectDialog.description', 'Müşteri seçmek için bir tab seçin ve listeden müşteriyi seçin')}
+              </DialogDescription>
+            </div>
+          </div>
         </DialogHeader>
 
         <div className="px-6 py-4 shrink-0 bg-white/50 dark:bg-white/5 border-b border-slate-200/50 dark:border-white/5">
@@ -576,17 +648,57 @@ export function CustomerSelectDialog({
 
         <div className="flex-1 min-h-0 flex flex-col px-6 pb-6 pt-4">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full flex-1 flex flex-col min-h-0">
-            <TabsList className="grid w-full grid-cols-3 mb-4 shrink-0 bg-slate-100/50 dark:bg-white/5 p-1 rounded-xl">
-              <TabsTrigger value="erp" className="rounded-lg data-[state=active]:bg-white dark:data-[state=active]:bg-white/10 data-[state=active]:shadow-sm transition-all">
-                {t('customerSelectDialog.erpCustomers', 'ERP Müşterisi')}
-              </TabsTrigger>
-              <TabsTrigger value="crm" className="rounded-lg data-[state=active]:bg-white dark:data-[state=active]:bg-white/10 data-[state=active]:shadow-sm transition-all">
-                {t('customerSelectDialog.crmCustomers', 'CRM Müşterileri')}
-              </TabsTrigger>
-              <TabsTrigger value="all" className="rounded-lg data-[state=active]:bg-white dark:data-[state=active]:bg-white/10 data-[state=active]:shadow-sm transition-all">
-                {t('customerSelectDialog.allCustomers', 'Tümü')}
-              </TabsTrigger>
-            </TabsList>
+            <div className="flex items-end justify-between border-b border-slate-200/50 dark:border-white/5 mb-4 px-1">
+              <TabsList className="bg-transparent p-0 h-auto rounded-none border-none gap-2">
+                <TabsTrigger 
+                  value="erp" 
+                  className="px-6 py-2.5 rounded-t-xl rounded-b-none border-b-2 border-transparent data-[state=active]:border-pink-500 data-[state=active]:bg-pink-500/5 dark:data-[state=active]:bg-pink-500/10 data-[state=active]:text-pink-600 dark:data-[state=active]:text-pink-400 font-semibold transition-all -mb-[1px]"
+                >
+                  {t('customerSelectDialog.erpCustomers', 'ERP Müşterisi')}
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="crm" 
+                  className="px-6 py-2.5 rounded-t-xl rounded-b-none border-b-2 border-transparent data-[state=active]:border-pink-500 data-[state=active]:bg-pink-500/5 dark:data-[state=active]:bg-pink-500/10 data-[state=active]:text-pink-600 dark:data-[state=active]:text-pink-400 font-semibold transition-all -mb-[1px]"
+                >
+                  {t('customerSelectDialog.crmCustomers', 'CRM Müşterileri')}
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="all" 
+                  className="px-6 py-2.5 rounded-t-xl rounded-b-none border-b-2 border-transparent data-[state=active]:border-pink-500 data-[state=active]:bg-pink-500/5 dark:data-[state=active]:bg-pink-500/10 data-[state=active]:text-pink-600 dark:data-[state=active]:text-pink-400 font-semibold transition-all -mb-[1px]"
+                >
+                  {t('customerSelectDialog.allCustomers', 'Tümü')}
+                </TabsTrigger>
+              </TabsList>
+
+              <div className="flex items-center p-1 rounded-xl bg-slate-100/50 dark:bg-white/5 border border-slate-200/50 dark:border-white/5 mb-2">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setViewMode('list')}
+                  className={cn(
+                    "h-8 w-8 p-0 rounded-lg transition-all",
+                    viewMode === 'list' 
+                      ? "bg-white dark:bg-white/10 text-pink-600 dark:text-white shadow-sm" 
+                      : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
+                  )}
+                >
+                  <LayoutList className="w-4 h-4" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setViewMode('card')}
+                  className={cn(
+                    "h-8 w-8 p-0 rounded-lg transition-all",
+                    viewMode === 'card' 
+                      ? "bg-white dark:bg-white/10 text-pink-600 dark:text-white shadow-sm" 
+                      : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
+                  )}
+                >
+                  <LayoutGrid className="w-4 h-4" />
+                </Button>
+              </div>
+            </div>
 
             <div
               ref={scrollContainerRef}

@@ -8,6 +8,19 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandItem,
+  CommandList,
+} from '@/components/ui/command';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
+import { Check } from 'lucide-react';
 import { VoiceSearchCombobox } from '@/components/shared/VoiceSearchCombobox';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -35,7 +48,7 @@ import { ExchangeRateDialog } from './ExchangeRateDialog';
 import { 
   DollarSign, Search, User, Truck, Briefcase, Globe, 
   Calendar, CreditCard, Hash, FileText, ArrowRightLeft, 
-  Layers, Quote
+  Layers, SearchX
 } from 'lucide-react';
 import { useAuthStore } from '@/stores/auth-store';
 import type { CreateQuotationSchema } from '../schemas/quotation-schema';
@@ -60,7 +73,7 @@ export function QuotationHeaderForm({
   lines = [],
   onLinesChange,
   initialCurrency,
-  revisionNo,
+  // revisionNo,
   quotationId,
   quotationOfferNo,
   readOnly = false,
@@ -74,6 +87,8 @@ export function QuotationHeaderForm({
   const [exchangeRateDialogOpen, setExchangeRateDialogOpen] = useState(false);
   const [currencyChangeDialogOpen, setCurrencyChangeDialogOpen] = useState(false);
   const [pendingCurrency, setPendingCurrency] = useState<string | null>(null);
+  const [customerComboboxOpen, setCustomerComboboxOpen] = useState(false);
+  const [customerSearchQuery, setCustomerSearchQuery] = useState("");
   const isInitialLoadRef = useRef(true);
 
   const watchedCustomerId = form.watch('quotation.potentialCustomerId');
@@ -102,16 +117,59 @@ export function QuotationHeaderForm({
   const customerDisplayValue = useMemo(() => {
     if (watchedCustomerId) {
       const customer = customerOptions.find((c) => c.id === watchedCustomerId);
-      if (customer) return `CRM: ${watchedCustomerId} / ${customer.name}`;
+      if (customer) return customer.name;
       return `CRM: ${watchedCustomerId}`;
     }
     if (watchedErpCustomerCode) {
       const erpCustomer = erpCustomers.find((c) => c.cariKod === watchedErpCustomerCode);
-      if (erpCustomer) return `ERP: ${watchedErpCustomerCode} / ${erpCustomer.cariIsim || watchedErpCustomerCode}`;
-      return `ERP: ${watchedErpCustomerCode}`;
+      if (erpCustomer) return erpCustomer.cariIsim || watchedErpCustomerCode;
+      return watchedErpCustomerCode;
     }
     return '';
   }, [watchedCustomerId, watchedErpCustomerCode, customerOptions, erpCustomers]);
+
+  useEffect(() => {
+    setCustomerSearchQuery(customerDisplayValue);
+  }, [customerDisplayValue]);
+
+  const allCustomerOptions = useMemo(() => {
+    const crmOptions = customerOptions.map((c) => ({
+      value: `crm-${c.id}`,
+      label: c.name,
+      type: 'crm' as const,
+      id: c.id,
+      code: c.customerCode,
+    }));
+
+    const erpOptions = erpCustomers.map((c) => ({
+      value: `erp-${c.cariKod}`,
+      label: c.cariIsim || c.cariKod,
+      type: 'erp' as const,
+      code: c.cariKod,
+    }));
+
+    return [...crmOptions, ...erpOptions];
+  }, [customerOptions, erpCustomers]);
+
+  const filteredCustomerOptions = useMemo(() => {
+    if (!customerSearchQuery) return [];
+    const lowerQuery = customerSearchQuery.toLowerCase();
+    return allCustomerOptions.filter((option) => 
+      option.label.toLowerCase().includes(lowerQuery) || 
+      (option.code && option.code.toLowerCase().includes(lowerQuery))
+    ).slice(0, 50); // Limit results for performance
+  }, [allCustomerOptions, customerSearchQuery]);
+
+  const handleComboboxSelect = (option: typeof allCustomerOptions[0]) => {
+    if (option.type === 'crm') {
+      form.setValue('quotation.potentialCustomerId', option.id);
+      form.setValue('quotation.erpCustomerCode', null);
+    } else {
+      form.setValue('quotation.erpCustomerCode', option.code);
+      form.setValue('quotation.potentialCustomerId', null);
+    }
+    setCustomerComboboxOpen(false);
+  };
 
   useEffect(() => {
     const currentRepresentativeId = form.watch('quotation.representativeId');
@@ -201,22 +259,6 @@ export function QuotationHeaderForm({
     <div className="relative space-y-6 pt-2 pb-8 animate-in fade-in slide-in-from-bottom-3 duration-700">
       <div className="absolute -top-10 -left-10 w-96 h-96 bg-pink-500/10 blur-[100px] pointer-events-none rounded-full" />
       <div className="absolute top-20 right-0 w-80 h-80 bg-orange-500/5 blur-[80px] pointer-events-none rounded-full" />
-      <div className="relative z-10 flex items-center gap-3 mb-6 px-1">
-        <div className="p-2.5 bg-gradient-to-br from-pink-500 to-rose-600 rounded-xl shadow-lg shadow-pink-500/30 text-white">
-           <Quote className="h-5 w-5" />
-        </div>
-        <div>
-          <h2 className="text-xl font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
-            {t('quotation.header.title', 'Teklif Detayları')}
-            {revisionNo && (
-              <span className="px-2 py-0.5 rounded-full bg-pink-100 dark:bg-pink-900/30 text-pink-700 dark:text-pink-300 text-[10px] font-bold border border-pink-200 dark:border-pink-800">
-                REV-{revisionNo}
-              </span>
-            )}
-          </h2>
-        </div>
-      </div>
-
       <div className={styles.glassCard}>
         <div className="p-6">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-5">
@@ -232,20 +274,104 @@ export function QuotationHeaderForm({
                     </FormLabel>
                     <div className="flex gap-2">
                       <div className="relative flex-1 group">
-                        <div className={styles.iconWrapper}>
+                        <div className={cn(styles.iconWrapper, "pointer-events-none")}>
                           <User className="h-4 w-4" />
                         </div>
                         <FormControl>
                           <Input
-                            className={cn(styles.inputBase, "font-semibold text-zinc-800 dark:text-zinc-100")}
+                            className={cn(styles.inputBase, "font-semibold text-zinc-900 dark:text-zinc-100 z-10 relative caret-pink-500")}
                             style={forcePaddingStyle}
-                            value={customerDisplayValue}
-                            placeholder={t('quotation.header.selectCustomer', 'Müşteri seçiniz...')}
-                            readOnly
-                            onClick={() => !readOnly && setCustomerSelectDialogOpen(true)}
+                            value={customerSearchQuery}
+                            onChange={(e) => {
+                              setCustomerSearchQuery(e.target.value);
+                              if (!customerComboboxOpen) setCustomerComboboxOpen(true);
+                            }}
+                            onFocus={() => setCustomerComboboxOpen(true)}
+                            onBlur={() => {
+                              setTimeout(() => {
+                                if (customerSearchQuery !== customerDisplayValue) {
+                                  if (!customerSearchQuery.trim()) {
+                                    form.setValue('quotation.potentialCustomerId', null);
+                                    form.setValue('quotation.erpCustomerCode', null);
+                                  } else {
+                                    setCustomerSearchQuery(customerDisplayValue);
+                                  }
+                                }
+                              }, 200);
+                            }}
+                            placeholder={t('quotation.header.selectCustomer', 'Müşteri ara veya seç...')}
                             disabled={readOnly}
+                            autoComplete="off"
                           />
                         </FormControl>
+                        <Popover open={customerComboboxOpen} onOpenChange={setCustomerComboboxOpen}>
+                          <PopoverTrigger asChild>
+                            <div className="absolute top-full left-0 w-full h-0" />
+                          </PopoverTrigger>
+                          <PopoverContent 
+                            className="p-0 w-[400px] max-h-[350px] overflow-hidden bg-white/90 dark:bg-[#0c0516]/95 backdrop-blur-2xl border border-zinc-200/50 dark:border-white/10 shadow-2xl rounded-2xl ring-1 ring-black/5" 
+                            align="start"
+                            sideOffset={8}
+                            onOpenAutoFocus={(e) => e.preventDefault()}
+                          >
+                            <Command shouldFilter={false} className="bg-transparent">
+                              <CommandList className="max-h-[350px] overflow-y-auto p-1 custom-scrollbar">
+                                {filteredCustomerOptions.length === 0 && (
+                                  <CommandEmpty className="py-10 text-center flex flex-col items-center justify-center gap-3">
+                                    <div className="p-3 rounded-full bg-zinc-100 dark:bg-white/5 text-zinc-400 dark:text-zinc-500">
+                                      <SearchX className="w-6 h-6" />
+                                    </div>
+                                    <div className="flex flex-col gap-0.5">
+                                      <span className="text-sm font-medium text-zinc-900 dark:text-zinc-200">
+                                        {t('common.noResults', 'Sonuç bulunamadı')}
+                                      </span>
+                                      <span className="text-xs text-zinc-500 dark:text-zinc-400">
+                                        {t('quotation.header.tryDifferentSearch', 'Farklı bir arama terimi deneyin')}
+                                      </span>
+                                    </div>
+                                  </CommandEmpty>
+                                )}
+                                <CommandGroup>
+                                  {filteredCustomerOptions.map((option) => (
+                                    <CommandItem
+                                      key={option.value}
+                                      value={option.value}
+                                      onSelect={() => handleComboboxSelect(option)}
+                                      className="cursor-pointer mb-1 last:mb-0 rounded-xl px-3 py-2.5 aria-selected:bg-pink-50 dark:aria-selected:bg-pink-500/10 aria-selected:text-pink-700 dark:aria-selected:text-pink-300 transition-colors"
+                                    >
+                                      <Check
+                                        className={cn(
+                                          "mr-3 h-4 w-4 shrink-0 transition-opacity",
+                                          ((option.type === 'crm' && watchedCustomerId === option.id) || (option.type === 'erp' && watchedErpCustomerCode === option.code))
+                                            ? "opacity-100 text-pink-600 dark:text-pink-400"
+                                            : "opacity-0"
+                                        )}
+                                      />
+                                      <div className="flex flex-col gap-0.5">
+                                        <span className="font-medium text-sm text-zinc-900 dark:text-zinc-100">{option.label}</span>
+                                        {option.code && (
+                                          <div className="flex items-center gap-2">
+                                            <span className={cn(
+                                              "text-[10px] px-1.5 py-0.5 rounded-md font-medium border",
+                                              option.type === 'erp' 
+                                                ? "bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-300 border-blue-100 dark:border-blue-800/30" 
+                                                : "bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-300 border-purple-100 dark:border-purple-800/30"
+                                            )}>
+                                              {option.type === 'erp' ? 'ERP' : 'CRM'}
+                                            </span>
+                                            <span className="text-xs text-zinc-500 dark:text-zinc-400 font-mono">
+                                              {option.code}
+                                            </span>
+                                          </div>
+                                        )}
+                                      </div>
+                                    </CommandItem>
+                                  ))}
+                                </CommandGroup>
+                              </CommandList>
+                            </Command>
+                          </PopoverContent>
+                        </Popover>
                       </div>
                       <Button
                         type="button"
@@ -254,7 +380,7 @@ export function QuotationHeaderForm({
                         className="h-11 px-6 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-white shadow-md hover:shadow-lg transition-all border border-zinc-800 active:scale-95"
                       >
                         <Search className="h-4 w-4 mr-2" />
-                        {t('quotation.select', 'Seç')}
+                        {t('quotation.guide', 'Rehber')}
                       </Button>
                     </div>
                     <FormMessage className="mt-1.5" />

@@ -12,7 +12,7 @@ import { QuotationHeaderForm } from './QuotationHeaderForm';
 import { QuotationLineTable } from './QuotationLineTable';
 import { QuotationSummaryCard } from './QuotationSummaryCard';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Calculator, Save, X, Layers } from 'lucide-react';
+import { ArrowLeft, Save, X } from 'lucide-react';
 import { createQuotationSchema, type CreateQuotationSchema } from '../schemas/quotation-schema';
 import type { QuotationLineFormState, QuotationExchangeRateFormState, QuotationBulkCreateDto, CreateQuotationDto, PricingRuleLineGetDto, UserDiscountLimitDto } from '../types/quotation-types';
 import { useUIStore } from '@/stores/ui-store';
@@ -250,15 +250,6 @@ export function QuotationCreateForm(): ReactElement {
 
           <div className="flex flex-col gap-6">
             <div className="space-y-1">
-              <div className="flex items-center gap-2 pb-2 mb-4 border-b border-zinc-200 dark:border-white/5">
-                <div className="p-2 rounded-lg bg-blue-100 dark:bg-blue-900/20 text-blue-600">
-                  <Layers className="h-5 w-5" />
-                </div>
-                <h3 className="text-lg font-semibold text-zinc-900 dark:text-white">
-                  {t('quotation.header.title', 'Teklif Bilgileri')}
-                </h3>
-              </div>
-              
               <QuotationHeaderForm 
                 exchangeRates={exchangeRates}
                 onExchangeRatesChange={setExchangeRates}
@@ -288,14 +279,6 @@ export function QuotationCreateForm(): ReactElement {
             </div>
 
             <div className="space-y-4 pt-4">
-              <div className="flex items-center gap-2 pb-2 border-b border-zinc-200 dark:border-white/5">
-                <div className="p-2 rounded-lg bg-green-100 dark:bg-green-900/20 text-green-600">
-                  <Calculator className="h-5 w-5" />
-                </div>
-                <h3 className="text-lg font-semibold text-zinc-900 dark:text-white">
-                  {t('quotation.summary.title', 'Teklif Özeti')}
-                </h3>
-              </div>
               <div className="grid md:grid-cols-2 gap-6">
                 <div className="hidden md:block">
                   {/* Sol taraf notlar için ayrıldı */}
