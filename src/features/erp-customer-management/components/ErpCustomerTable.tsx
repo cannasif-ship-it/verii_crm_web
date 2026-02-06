@@ -9,46 +9,39 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { 
-    DropdownMenu, 
-    DropdownMenuCheckboxItem, 
-    DropdownMenuContent, 
-    DropdownMenuTrigger,
-    DropdownMenuLabel,
-    DropdownMenuSeparator
-} from '@/components/ui/dropdown-menu';
-import { Button } from '@/components/ui/button';
-import { ArrowUpDown, ChevronDown, EyeOff, ArrowUp, ArrowDown } from 'lucide-react';
+import { ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
 import type { CariDto } from '@/services/erp-types';
+
 
 interface ErpCustomerTableProps {
   customers: CariDto[];
   isLoading: boolean;
+  visibleColumns: string[];
 }
-const getColumnsConfig = (t: TFunction) => [
-    { key: 'subeKodu', label: t('erpCustomerManagement.table.branchCode', 'Şube'), className: 'font-medium whitespace-nowrap' },
-    { key: 'isletmeKodu', label: t('erpCustomerManagement.table.businessUnitCode', 'İş Birimi'), className: 'whitespace-nowrap' },
-    { key: 'cariKod', label: t('erpCustomerManagement.table.customerCode', 'Müşteri Kodu'), className: 'font-semibold text-slate-900 dark:text-white group-hover:text-pink-600 dark:group-hover:text-pink-400 transition-colors whitespace-nowrap' },
-    { key: 'cariIsim', label: t('erpCustomerManagement.table.customerName', 'Müşteri Adı'), className: 'text-slate-800 dark:text-slate-200 font-medium min-w-[200px]' },
-    { key: 'cariTel', label: t('erpCustomerManagement.table.phone', 'Telefon'), className: 'whitespace-nowrap' },
-    { key: 'email', label: t('erpCustomerManagement.table.email', 'E-posta'), className: 'min-w-[200px] break-all' },
-    { key: 'cariIl', label: t('erpCustomerManagement.table.city', 'Şehir'), className: 'whitespace-nowrap' },
-    { key: 'cariIlce', label: t('erpCustomerManagement.table.district', 'İlçe'), className: 'whitespace-nowrap' },
-    { key: 'cariAdres', label: t('erpCustomerManagement.table.address', 'Adres'), className: 'min-w-[300px] leading-relaxed' },
-    { key: 'ulkeKodu', label: t('erpCustomerManagement.table.countryCode', 'Ülke'), className: '' },
-    { key: 'web', label: t('erpCustomerManagement.table.website', 'Web Sitesi'), className: 'text-blue-500 hover:underline min-w-[150px] break-all', isLink: true },
-    { key: 'vergiNumarasi', label: t('erpCustomerManagement.table.taxNumber', 'Vergi No'), className: 'font-mono text-xs whitespace-nowrap' },
-    { key: 'vergiDairesi', label: t('erpCustomerManagement.table.taxOffice', 'Vergi Dairesi'), className: 'whitespace-nowrap' },
-    { key: 'tcknNumber', label: t('erpCustomerManagement.table.tcknNumber', 'TCKN'), className: 'font-mono text-xs whitespace-nowrap' },
+
+export const getColumnsConfig = (t: TFunction) => [
+    { key: 'subeKodu', label: t('table.branchCode', 'Şube'), className: 'font-medium whitespace-nowrap' },
+    { key: 'isletmeKodu', label: t('table.businessUnitCode', 'İş Birimi'), className: 'whitespace-nowrap' },
+    { key: 'cariKod', label: t('table.customerCode', 'Müşteri Kodu'), className: 'font-semibold text-slate-900 dark:text-white group-hover:text-pink-600 dark:group-hover:text-pink-400 transition-colors whitespace-nowrap' },
+    { key: 'cariIsim', label: t('table.customerName', 'Müşteri Adı'), className: 'text-slate-800 dark:text-slate-200 font-medium min-w-[200px]' },
+    { key: 'cariTel', label: t('table.phone', 'Telefon'), className: 'whitespace-nowrap' },
+    { key: 'email', label: t('table.email', 'E-posta'), className: 'min-w-[200px] break-all' },
+    { key: 'cariIl', label: t('table.city', 'Şehir'), className: 'whitespace-nowrap' },
+    { key: 'cariIlce', label: t('table.district', 'İlçe'), className: 'whitespace-nowrap' },
+    { key: 'cariAdres', label: t('table.address', 'Adres'), className: 'min-w-[300px] leading-relaxed' },
+    { key: 'ulkeKodu', label: t('table.countryCode', 'Ülke'), className: '' },
+    { key: 'web', label: t('table.website', 'Web Sitesi'), className: 'text-blue-500 hover:underline min-w-[150px] break-all', isLink: true },
+    { key: 'vergiNumarasi', label: t('table.taxNumber', 'Vergi No'), className: 'font-mono text-xs whitespace-nowrap' },
+    { key: 'vergiDairesi', label: t('table.taxOffice', 'Vergi Dairesi'), className: 'whitespace-nowrap' },
+    { key: 'tcknNumber', label: t('table.tcknNumber', 'TCKN'), className: 'font-mono text-xs whitespace-nowrap' },
 ];
 
-export function ErpCustomerTable({ customers, isLoading }: ErpCustomerTableProps): ReactElement {
-  const { t } = useTranslation();
+export function ErpCustomerTable({ customers, isLoading, visibleColumns }: ErpCustomerTableProps): ReactElement {
+  const { t } = useTranslation('erp-customer-management');
 
   const [sortConfig, setSortConfig] = useState<{ key: keyof CariDto | string; direction: 'asc' | 'desc' } | null>(null);
   
   const allColumns = getColumnsConfig(t);
-  const [visibleColumns, setVisibleColumns] = useState<string[]>(allColumns.map(col => col.key));
 
   // Drag to Scroll Logic
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -61,9 +54,9 @@ export function ErpCustomerTable({ customers, isLoading }: ErpCustomerTableProps
   const handleMouseDown = (e: React.MouseEvent) => {
     if (!scrollRef.current) return;
     setIsDragging(true);
-    setStartX(e.pageX - scrollRef.current.offsetLeft);
+    setStartX(e.clientX);
     setScrollLeft(scrollRef.current.scrollLeft);
-    setStartY(e.pageY - scrollRef.current.offsetTop);
+    setStartY(e.clientY);
     setScrollTop(scrollRef.current.scrollTop);
     scrollRef.current.style.cursor = 'grabbing';
     scrollRef.current.style.userSelect = 'none';
@@ -80,9 +73,9 @@ export function ErpCustomerTable({ customers, isLoading }: ErpCustomerTableProps
   const handleMouseMove = (e: React.MouseEvent) => {
     if (!isDragging || !scrollRef.current) return;
     e.preventDefault();
-    const x = e.pageX - scrollRef.current.offsetLeft;
-    const y = e.pageY - scrollRef.current.offsetTop;
-    const walkX = (x - startX) * 2;
+    const x = e.clientX;
+    const y = e.clientY;
+    const walkX = (x - startX) * 2; // Increased scroll speed
     const walkY = (y - startY) * 2;
     scrollRef.current.scrollLeft = scrollLeft - walkX;
     scrollRef.current.scrollTop = scrollTop - walkY;
@@ -115,19 +108,13 @@ export function ErpCustomerTable({ customers, isLoading }: ErpCustomerTableProps
     setSortConfig({ key, direction });
   };
 
-  const toggleColumn = (key: string) => {
-    setVisibleColumns(prev => 
-      prev.includes(key) ? prev.filter(c => c !== key) : [...prev, key]
-    );
-  };
-
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-20 min-h-[500px]">
         <div className="flex flex-col items-center gap-3">
            <div className="h-10 w-10 animate-spin rounded-full border-b-2 border-current text-pink-500" />
            <span className="text-sm font-medium text-muted-foreground animate-pulse">
-             {t('erpCustomerManagement.loading', 'Yükleniyor...')}
+             {t('loading', 'Yükleniyor...')}
            </span>
         </div>
       </div>
@@ -138,7 +125,7 @@ export function ErpCustomerTable({ customers, isLoading }: ErpCustomerTableProps
     return (
       <div className="flex items-center justify-center py-20 min-h-[500px]">
         <div className="text-muted-foreground bg-slate-50 dark:bg-white/5 px-8 py-6 rounded-xl border border-dashed border-slate-200 dark:border-white/10 text-sm font-medium">
-          {t('erpCustomerManagement.noData', 'Müşteri bulunamadı')}
+          {t('noData', 'Müşteri bulunamadı')}
         </div>
       </div>
     );
@@ -163,48 +150,11 @@ export function ErpCustomerTable({ customers, isLoading }: ErpCustomerTableProps
   `;
 
   return (
-    <div className="flex flex-col gap-4">
-        <div className="flex justify-end p-2 sm:p-0">
-            <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                    <Button 
-                        variant="outline" 
-                        size="sm" 
-                        className="ml-auto h-9 lg:flex border-dashed border-slate-300 dark:border-white/20 bg-transparent hover:bg-slate-50 dark:hover:bg-white/5 text-xs sm:text-sm"
-                    >
-                        <EyeOff className="mr-2 h-4 w-4" />
-                        {t('erpCustomerManagement.table.editColumns')}
-                        <ChevronDown className="ml-2 h-4 w-4" />
-                    </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent 
-                    align="end" 
-                    className="w-56 max-h-[400px] overflow-y-auto bg-white/95 dark:bg-[#1a1025]/95 backdrop-blur-xl border border-slate-200 dark:border-white/10 shadow-xl rounded-xl p-2 z-50"
-                >
-                    <DropdownMenuLabel className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider px-2 py-1.5">
-                        {t('erpCustomerManagement.table.visibleColumns')}
-                    </DropdownMenuLabel>
-                    <DropdownMenuSeparator className="bg-slate-200 dark:bg-white/10 my-1" />
-                    
-                    {allColumns.map((col) => (
-                        <DropdownMenuCheckboxItem
-                            key={col.key}
-                            checked={visibleColumns.includes(col.key)}
-                            onSelect={(e) => e.preventDefault()} 
-                            onCheckedChange={() => toggleColumn(col.key)}
-                            className="text-sm text-slate-700 dark:text-slate-200 focus:bg-pink-50 dark:focus:bg-pink-500/10 focus:text-pink-600 dark:focus:text-pink-400 cursor-pointer rounded-lg px-2 py-1.5 pl-8 relative"
-                        >
-                            {col.label}
-                        </DropdownMenuCheckboxItem>
-                    ))}
-                </DropdownMenuContent>
-            </DropdownMenu>
-        </div>
-
-        <div className="rounded-xl border border-white/5 dark:border-white/10 overflow-hidden bg-white/40 dark:bg-[#1a1025]/40 backdrop-blur-sm min-h-[75vh] flex flex-col shadow-sm">
+    <div className="flex flex-col gap-4 h-full">
+        <div className="rounded-xl border border-white/5 dark:border-white/10 overflow-hidden bg-white/40 dark:bg-[#1a1025]/40 backdrop-blur-sm h-full flex flex-col shadow-sm">
             <div 
                 ref={scrollRef}
-                className="flex-1 overflow-auto custom-scrollbar w-full h-[600px] cursor-grab active:cursor-grabbing border border-white/5 rounded-2xl"
+                className="flex-1 overflow-auto w-full cursor-grab active:cursor-grabbing border border-white/5 rounded-2xl [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']"
                 onMouseDown={handleMouseDown}
                 onMouseLeave={handleMouseUpOrLeave}
                 onMouseUp={handleMouseUpOrLeave}

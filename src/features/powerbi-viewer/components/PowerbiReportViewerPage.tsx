@@ -20,6 +20,7 @@ export function PowerbiReportViewerPage(): ReactElement {
     let powerbiInstance: { reset: (el: HTMLElement) => void } | null = null;
 
     const initEmbed = async (): Promise<void> => {
+      // @ts-ignore
       const raw = await import('powerbi-client');
       const mod = (raw as unknown as { default?: unknown }).default && typeof (raw as unknown as { default: unknown }).default === 'object'
         ? ((raw as unknown as { default: typeof raw }).default)

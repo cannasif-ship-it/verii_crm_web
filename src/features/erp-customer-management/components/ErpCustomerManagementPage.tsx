@@ -1,11 +1,22 @@
 import { type ReactElement, useEffect, useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useUIStore } from '@/stores/ui-store';
-import { ErpCustomerTable } from './ErpCustomerTable';
+import { ErpCustomerTable, getColumnsConfig } from './ErpCustomerTable';
 import { useErpCustomers } from '@/services/hooks/useErpCustomers';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Search, RefreshCw, X, Filter, Trash2 } from 'lucide-react';
+import { Search, RefreshCw, X, Filter, Trash2, ChevronDown, Menu, FileSpreadsheet, FileText, Presentation, Check, SlidersHorizontal, CheckSquare } from 'lucide-react';
+import { 
+  DropdownMenu, 
+  DropdownMenuContent, 
+  DropdownMenuItem,
+  DropdownMenuTrigger
+} from '@/components/ui/dropdown-menu';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
 import { 
   Building03Icon, 
   Tag01Icon, 
@@ -16,6 +27,10 @@ import {
 } from 'hugeicons-react';
 import { useQueryClient } from '@tanstack/react-query';
 import type { CariDto } from '@/services/erp-types';
+import * as XLSX from 'xlsx';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
+import PptxGenJS from 'pptxgenjs';
 
 
 interface FilterState {
@@ -28,14 +43,25 @@ interface FilterState {
 }
 
 export function ErpCustomerManagementPage(): ReactElement {
-  const { t } = useTranslation();
+  const { t } = useTranslation('erp-customer-management');
   const { setPageTitle } = useUIStore();
   const { data: customers, isLoading } = useErpCustomers(null);
   
   const [searchTerm, setSearchTerm] = useState('');
-  const [activeFilter, setActiveFilter] = useState('all');
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
+  const [showColumns, setShowColumns] = useState(false);
+  const [pageSize, setPageSize] = useState<number>(20);
+
+  const allColumns = getColumnsConfig(t);
+  const [visibleColumns, setVisibleColumns] = useState<string[]>(allColumns.map(col => col.key));
+
+  const toggleColumn = (key: string) => {
+    setVisibleColumns(prev => 
+      prev.includes(key) ? prev.filter(c => c !== key) : [...prev, key]
+    );
+  };
+
 
 
   const initialFilters: FilterState = {
@@ -53,7 +79,7 @@ export function ErpCustomerManagementPage(): ReactElement {
   const queryClient = useQueryClient();
 
   useEffect(() => {
-    setPageTitle(t('erpCustomerManagement.menu'));
+    setPageTitle(t('menu'));
     return () => {
       setPageTitle(null);
     };
@@ -72,10 +98,6 @@ export function ErpCustomerManagementPage(): ReactElement {
         (c.cariIsim && c.cariIsim.toLowerCase().includes(lowerSearch)) ||
         (c.cariKod && c.cariKod.toLowerCase().includes(lowerSearch))
       );
-    }
-
-    if (activeFilter === 'inactive') {
-        result = []; 
     }
 
 
@@ -99,7 +121,7 @@ export function ErpCustomerManagementPage(): ReactElement {
     }
 
     return result;
-  }, [customers, searchTerm, activeFilter, appliedFilters]);
+  }, [customers, searchTerm, appliedFilters]);
 
   const clearSearch = () => setSearchTerm('');
 
@@ -120,29 +142,104 @@ export function ErpCustomerManagementPage(): ReactElement {
     setTimeout(() => setIsRefreshing(false), 500);
   };
 
-  const inputStyle = "h-10 pl-10 w-full bg-white dark:bg-black/40 border border-slate-200 dark:border-white/10 rounded-lg focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-pink-500 dark:focus-visible:border-pink-500 transition-colors duration-200 text-sm";
-  const iconStyle = "absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 pointer-events-none";
+  const handleExportExcel = () => {
+    const dataToExport = filteredCustomers.map(customer => {
+        const row: Record<string, string | number | boolean | null | undefined> = {};
+        visibleColumns.forEach(key => {
+            const col = allColumns.find(c => c.key === key);
+            if (col) {
+                // @ts-ignore - Accessing dynamic property
+                const value = customer[key];
+                row[col.label] = (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean')
+                  ? value
+                  : value ?? '';
+            }
+        });
+        return row;
+    });
+
+    const ws = XLSX.utils.json_to_sheet(dataToExport);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Customers");
+    XLSX.writeFile(wb, "erp_customers.xlsx");
+  };
+
+  const handleExportPDF = () => {
+    const doc = new jsPDF();
+    
+    const tableColumn = allColumns
+        .filter(col => visibleColumns.includes(col.key))
+        .map(col => col.label);
+
+    const tableRows = filteredCustomers.map(customer => {
+        return allColumns
+            .filter(col => visibleColumns.includes(col.key))
+            // @ts-ignore - Accessing dynamic property
+            .map(col => customer[col.key] || '');
+    });
+
+    autoTable(doc, {
+        head: [tableColumn],
+        body: tableRows,
+    });
+
+    doc.save("erp_customers.pdf");
+  };
+
+  type PptxTableRow = Array<{ text: string }>;
+
+  const handleExportPowerPoint = () => {
+    const pptx = new PptxGenJS();
+    const slide = pptx.addSlide();
+    
+    // Add Title
+    slide.addText("ERP Customer Report", { x: 0.5, y: 0.5, w: '90%', fontSize: 24, bold: true });
+
+    // Prepare Table Data
+    const headers = allColumns
+        .filter(col => visibleColumns.includes(col.key))
+        .map(col => col.label);
+
+    const rows = filteredCustomers.map(customer => {
+        return allColumns
+            .filter(col => visibleColumns.includes(col.key))
+            // @ts-ignore - Accessing dynamic property
+            .map(col => String(customer[col.key] || ''));
+    });
+
+    const tableData: PptxTableRow[] = [
+      headers.map(text => ({ text })),
+      ...rows.map(row => row.map(text => ({ text }))),
+    ];
+
+    slide.addTable(tableData, { x: 0.5, y: 1.5, w: '90%' });
+
+    pptx.writeFile({ fileName: "erp_customers.pptx" });
+  };
+
+// styles removed
 
   return (
-    <div className="w-full space-y-4 sm:space-y-6">
-      <div className="flex flex-col gap-2 pt-2">
+    <div className="w-full h-[calc(100vh-7rem)] flex flex-col gap-4 sm:gap-6 overflow-hidden">
+      <div className="flex flex-col gap-2 pt-2 shrink-0">
         <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-white transition-colors">
-          {t('erpCustomerManagement.menu')}
+          {t('menu')}
         </h1>
         <p className="text-slate-500 dark:text-slate-400 text-sm font-medium transition-colors">
-          {t('erpCustomerManagement.description')}
+          {t('description')}
         </p>
       </div>
 
-      <div className="bg-white/70 dark:bg-[#1a1025]/60 backdrop-blur-xl border border-white/60 dark:border-white/5 shadow-sm rounded-2xl p-4 sm:p-5 flex flex-col gap-5 transition-all duration-300">
+      <div className="bg-white/70 dark:bg-[#1a1025]/60 backdrop-blur-xl border border-white/60 dark:border-white/5 shadow-sm rounded-2xl p-4 sm:p-5 flex flex-col gap-5 transition-all duration-300 shrink-0">
           
-          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+          <div className="flex flex-col lg:flex-row items-center justify-between gap-4">
             
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full lg:w-auto">
-                <div className="relative group w-full sm:w-72 lg:w-96">
+            {/* Left Side: Search + Refresh */}
+            <div className="flex items-center gap-2 w-full lg:w-auto">
+                <div className="relative group w-full lg:w-96">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-pink-500 transition-colors" />
                     <Input
-                        placeholder={t('erpCustomerManagement.placeholders.quickSearch')}
+                        placeholder={t('placeholders.quickSearch')}
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         className="pl-10 h-10 bg-white/50 dark:bg-card/50 border-slate-200 dark:border-white/10 focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-pink-500 dark:focus-visible:border-pink-500 rounded-xl transition-all w-full"
@@ -156,175 +253,274 @@ export function ErpCustomerManagementPage(): ReactElement {
                         </button>
                     )}
                 </div>
-                
-                <div className="flex items-center gap-3">
-                    <div 
-                        className="h-10 w-10 flex items-center justify-center bg-white/50 dark:bg-card/50 border border-slate-200 dark:border-white/10 rounded-xl cursor-pointer hover:border-pink-500/30 hover:bg-pink-50/50 dark:hover:bg-pink-500/10 transition-all group shrink-0"
-                        onClick={handleRefresh}
-                    >
-                        <RefreshCw 
-                            size={18} 
-                            className={`text-slate-500 dark:text-slate-400 group-hover:text-pink-600 dark:group-hover:text-pink-400 transition-colors ${isRefreshing ? 'animate-spin' : ''}`} 
-                        />
-                    </div>
 
-                    <Button
-                        variant="outline"
-                        onClick={() => setShowFilters(!showFilters)}
-                        className={`h-10 flex-1 sm:flex-none gap-2 border-slate-200 dark:border-white/10 ${showFilters ? 'border-pink-500 text-pink-600 bg-pink-50 dark:bg-pink-500/10' : 'bg-white/50 dark:bg-white/5'}`}
-                    >
-                        <Filter size={16} />
-                        {t('erpCustomerManagement.actions.detailedFilter')}
-                    </Button>
+                <div 
+                    className="h-10 w-10 flex items-center justify-center bg-white/50 dark:bg-card/50 border border-slate-200 dark:border-white/10 rounded-xl cursor-pointer hover:border-pink-500/30 hover:bg-pink-50/50 dark:hover:bg-pink-500/10 transition-all group shrink-0"
+                    onClick={handleRefresh}
+                >
+                    <RefreshCw 
+                        size={18} 
+                        className={`text-slate-500 dark:text-slate-400 group-hover:text-pink-600 dark:group-hover:text-pink-400 transition-colors ${isRefreshing ? 'animate-spin' : ''}`} 
+                    />
                 </div>
             </div>
+            
+            {/* Right Side: Filter + Columns + Hamburger */}
+            <div className="flex items-center gap-2 justify-end flex-1 w-full lg:w-auto">
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <button 
+                            className="flex items-center gap-2 px-4 py-2 rounded-lg border transition-all duration-300 bg-transparent text-gray-400 border-white/10 hover:bg-white/5 hover:text-white"
+                        >
+                            <span className="font-medium text-sm">{pageSize}</span>
+                            <ChevronDown size={16} />
+                        </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-20 bg-[#151025] border border-white/10 shadow-2xl rounded-xl overflow-hidden p-1">
+                        {[10, 20, 50].map((size) => (
+                            <DropdownMenuItem 
+                                key={size} 
+                                onClick={() => setPageSize(size)}
+                                className={`flex items-center justify-center text-xs font-medium px-2 py-1.5 rounded-lg cursor-pointer transition-colors ${pageSize === size ? 'bg-pink-500/10 text-pink-500' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
+                            >
+                                {size}
+                            </DropdownMenuItem>
+                        ))}
+                    </DropdownMenuContent>
+                </DropdownMenu>
 
-            <div className="flex items-center gap-1 bg-slate-100/50 dark:bg-white/5 p-1 rounded-xl w-full lg:w-auto overflow-x-auto">
-                {['all', 'active', 'inactive'].map((filter) => (
-                    <button
-                        key={filter}
-                        onClick={() => setActiveFilter(filter)}
-                        className={`
-                            flex-1 lg:flex-none px-4 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all whitespace-nowrap
-                            ${activeFilter === filter 
-                            ? 'bg-white dark:bg-[#1a1025] text-pink-600 dark:text-pink-400 shadow-sm border border-slate-200 dark:border-white/10' 
-                            : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'}
-                        `}
-                    >
-                        {filter === 'all' 
-                            ? t('erpCustomerManagement.actions.all') 
-                            : filter === 'active' 
-                                ? t('erpCustomerManagement.actions.active') 
-                                : t('erpCustomerManagement.actions.passive')}
-                    </button>
-                ))}
+                <Popover open={showFilters} onOpenChange={setShowFilters}>
+                    <PopoverTrigger asChild>
+                        <button 
+                            className={`flex items-center gap-2 px-4 py-2 rounded-lg border transition-all duration-300 ${showFilters ? 'bg-white/10 text-white border-white/20' : 'bg-transparent text-gray-400 border-white/10 hover:bg-white/5 hover:text-white'}`}
+                        >
+                            <Filter size={16} />
+                            <span className="font-medium text-sm">{t('actions.detailedFilter')}</span>
+                        </button>
+                    </PopoverTrigger>
+                    <PopoverContent side="bottom" align="end" className="w-96 p-0 bg-[#151025] border border-white/10 shadow-2xl rounded-2xl overflow-hidden">
+                        
+                        {/* Header */}
+                        <div className="flex items-center justify-between p-3 border-b border-white/5 bg-[#151025]">
+                          <h3 className="text-sm font-semibold text-gray-200">{t('actions.detailedFilter')}</h3>
+                          <button onClick={() => setShowFilters(false)} className="text-gray-500 hover:text-white transition-colors">
+                            <X size={16} />
+                          </button>
+                        </div>
+
+                        {/* Scrollable Content */}
+                        <div className="p-3 overflow-y-auto custom-scrollbar max-h-[400px]">
+                            <div className="grid grid-cols-2 gap-3">
+                                
+                                {/* Branch Code */}
+                                <div className="col-span-2">
+                                    <div className="relative group">
+                                        <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-pink-500 transition-colors">
+                                            <Building03Icon size={14} />
+                                        </div>
+                                        <Input 
+                                            placeholder={t('filterLabels.branchCode')} 
+                                            value={draftFilters.subeKodu}
+                                            onChange={(e) => handleFilterChange('subeKodu', e.target.value)}
+                                            className="w-full bg-[#0b0818] border border-white/10 rounded-lg py-2 pl-9 pr-3 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-pink-500/50 focus:ring-1 focus:ring-pink-500/50 transition-all h-9"
+                                        />
+                                    </div>
+                                </div>
+
+                                {/* Customer Code */}
+                                <div className="relative group">
+                                    <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-pink-500 transition-colors">
+                                        <Tag01Icon size={14} />
+                                    </div>
+                                    <Input 
+                                        placeholder={t('filterLabels.customerCode')} 
+                                        value={draftFilters.cariKod}
+                                        onChange={(e) => handleFilterChange('cariKod', e.target.value)}
+                                        className="w-full bg-[#0b0818] border border-white/10 rounded-lg py-2 pl-9 pr-3 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-pink-500/50 focus:ring-1 focus:ring-pink-500/50 transition-all h-9"
+                                    />
+                                </div>
+
+                                {/* Customer Name */}
+                                <div className="relative group">
+                                    <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-pink-500 transition-colors">
+                                        <UserCircleIcon size={14} />
+                                    </div>
+                                    <Input 
+                                        placeholder={t('filterLabels.customerName')} 
+                                        value={draftFilters.cariIsim}
+                                        onChange={(e) => handleFilterChange('cariIsim', e.target.value)}
+                                        className="w-full bg-[#0b0818] border border-white/10 rounded-lg py-2 pl-9 pr-3 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-pink-500/50 focus:ring-1 focus:ring-pink-500/50 transition-all h-9"
+                                    />
+                                </div>
+
+                                {/* City */}
+                                <div className="relative group">
+                                    <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-pink-500 transition-colors">
+                                        <MapsLocation01Icon size={14} />
+                                    </div>
+                                    <Input 
+                                        placeholder={t('filterLabels.city')} 
+                                        value={draftFilters.cariIl}
+                                        onChange={(e) => handleFilterChange('cariIl', e.target.value)}
+                                        className="w-full bg-[#0b0818] border border-white/10 rounded-lg py-2 pl-9 pr-3 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-pink-500/50 focus:ring-1 focus:ring-pink-500/50 transition-all h-9"
+                                    />
+                                </div>
+
+                                {/* District */}
+                                <div className="relative group">
+                                    <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-pink-500 transition-colors">
+                                        <Location01Icon size={14} />
+                                    </div>
+                                    <Input 
+                                        placeholder={t('filterLabels.district')} 
+                                        value={draftFilters.cariIlce}
+                                        onChange={(e) => handleFilterChange('cariIlce', e.target.value)}
+                                        className="w-full bg-[#0b0818] border border-white/10 rounded-lg py-2 pl-9 pr-3 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-pink-500/50 focus:ring-1 focus:ring-pink-500/50 transition-all h-9"
+                                    />
+                                </div>
+
+                                {/* Tax Number - Col Span 2 */}
+                                <div className="col-span-2">
+                                    <div className="relative group">
+                                        <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-pink-500 transition-colors">
+                                            <Invoice01Icon size={14} />
+                                        </div>
+                                        <Input 
+                                            placeholder={t('filterLabels.taxNumber')} 
+                                            value={draftFilters.vergiNumarasi}
+                                            onChange={(e) => handleFilterChange('vergiNumarasi', e.target.value)}
+                                            className="w-full bg-[#0b0818] border border-white/10 rounded-lg py-2 pl-9 pr-3 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-pink-500/50 focus:ring-1 focus:ring-pink-500/50 transition-all h-9"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Footer */}
+                        <div className="p-3 border-t border-white/5 bg-[#0b0818]/50 flex justify-between items-center gap-3">
+                            <button 
+                                onClick={clearAdvancedFilters}
+                                className="flex items-center gap-2 text-xs font-medium text-gray-500 hover:text-red-400 transition-colors px-2 py-2"
+                            >
+                                <Trash2 size={14} />
+                                <span>{t('actions.clear')}</span>
+                            </button>
+                            
+                            <button 
+                                onClick={() => {
+                                    applyAdvancedFilters();
+                                    setShowFilters(false);
+                                }}
+                                className="flex-1 bg-gradient-to-r from-pink-600 to-orange-500 hover:from-pink-500 hover:to-orange-400 text-white text-xs font-bold py-2.5 rounded-lg shadow-lg shadow-pink-900/20 transition-all active:scale-95"
+                            >
+                                SONUÇLARI LİSTELE
+                            </button>
+                        </div>
+                    </PopoverContent>
+                </Popover>
+
+                <Popover open={showColumns} onOpenChange={setShowColumns}>
+                    <PopoverTrigger asChild>
+                        <button 
+                            onClick={() => setShowColumns(!showColumns)} 
+                            className={`flex items-center gap-2 px-4 py-2 rounded-lg border transition-all duration-300 ${showColumns ? 'bg-white/10 text-white border-white/20' : 'bg-transparent text-gray-400 border-white/10 hover:bg-white/5 hover:text-white'}`}
+                        >
+                            <SlidersHorizontal size={16} />
+                            <span className="font-medium text-sm">{t('table.editColumns')}</span>
+                        </button>
+                    </PopoverTrigger>
+                    <PopoverContent side="bottom" align="end" className="w-80 p-0 bg-[#151025] border border-white/10 shadow-2xl shadow-black/50 rounded-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+                        
+                        {/* Header */}
+                        <div className="flex items-center justify-between p-3 border-b border-white/5 bg-[#151025]">
+                            <h3 className="text-sm font-semibold text-gray-200">{t('table.visibleColumns')}</h3>
+                            <button onClick={() => setShowColumns(false)} className="text-gray-500 hover:text-white transition-colors">
+                                <X size={16} />
+                            </button>
+                        </div>
+
+                        {/* Checkbox List (Scrollable + Grid) */}
+                        <div className="p-3 max-h-[300px] overflow-y-auto custom-scrollbar bg-[#151025]">
+                            <div className="grid grid-cols-2 gap-2">
+                                {allColumns.map((col) => (
+                                    <label 
+                                        key={col.key} 
+                                        className={`flex items-center gap-2.5 p-2 rounded-lg cursor-pointer transition-all border border-transparent ${visibleColumns.includes(col.key) ? 'bg-pink-500/10 border-pink-500/20' : 'hover:bg-white/5'}`}
+                                        onClick={(e) => { e.stopPropagation(); toggleColumn(col.key); }}
+                                    >
+                                        <div className={`w-4 h-4 rounded flex items-center justify-center transition-colors border ${visibleColumns.includes(col.key) ? 'bg-pink-500 border-pink-500' : 'bg-transparent border-gray-600'}`}>
+                                            {visibleColumns.includes(col.key) && <Check size={10} className="text-white" />}
+                                        </div>
+                                        <span className={`text-xs font-medium ${visibleColumns.includes(col.key) ? 'text-white' : 'text-gray-400'} truncate`}>
+                                            {col.label}
+                                        </span>
+                                    </label>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Footer */}
+                        <div className="p-3 border-t border-white/5 bg-[#0b0818]/50 flex justify-between items-center gap-3">
+                            <button 
+                                onClick={() => setVisibleColumns(allColumns.map(c => c.key))}
+                                className="flex items-center gap-2 text-xs font-medium text-gray-500 hover:text-white transition-colors px-1"
+                            >
+                                <CheckSquare size={14} />
+                                <span>{t('common.selectAll', 'Tümünü Seç')}</span>
+                            </button>
+                            
+                            <button 
+                                onClick={() => setShowColumns(false)}
+                                className="bg-gradient-to-r from-pink-600 to-orange-500 hover:from-pink-500 hover:to-orange-400 text-white text-xs font-bold py-2 px-6 rounded-lg shadow-lg shadow-pink-900/20 transition-all active:scale-95"
+                            >
+                                {t('common.ok', 'TAMAM')}
+                            </button>
+                        </div>
+                    </PopoverContent>
+                </Popover>
+
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button variant="outline" className="h-10 w-10 p-0 border-slate-200 dark:border-white/10 bg-white/50 dark:bg-white/5 hover:bg-pink-50 dark:hover:bg-white/10 hover:border-pink-500/30 rounded-xl">
+                            <Menu size={18} className="text-slate-500 dark:text-slate-400" />
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-64 bg-[#151025] border border-white/10 shadow-2xl shadow-black/50 overflow-visible p-0 z-50">
+                        <div className="p-2">
+                            <div className="px-3 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                                {t('common.actions', 'İşlemler')}
+                            </div>
+                        </div>
+
+                        <div className="h-px bg-white/5 my-1"></div>
+
+                        <div className="p-2">
+                            <div className="px-3 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                                {t('common.export', 'Dışa Aktar')}
+                            </div>
+                            <button onClick={handleExportExcel} className="flex items-center gap-2 w-full px-3 py-2.5 rounded-lg text-sm text-gray-200 hover:bg-white/5 transition-colors text-left">
+                                <FileSpreadsheet size={16} className="text-emerald-500" />
+                                <span>{t('common.exportExcel', 'Excel İndir')}</span>
+                            </button>
+                            <button onClick={handleExportPDF} className="flex items-center gap-2 w-full px-3 py-2.5 rounded-lg text-sm text-gray-200 hover:bg-white/5 transition-colors text-left">
+                                <FileText size={16} className="text-red-400" />
+                                <span>{t('common.exportPDF', 'PDF İndir')}</span>
+                            </button>
+                            <button onClick={handleExportPowerPoint} className="flex items-center gap-2 w-full px-3 py-2.5 rounded-lg text-sm text-gray-200 hover:bg-white/5 transition-colors text-left">
+                                <Presentation size={16} className="text-orange-400" />
+                                <span>{t('common.exportPPT', 'PowerPoint İndir')}</span>
+                            </button>
+                        </div>
+                    </DropdownMenuContent>
+                </DropdownMenu>
             </div>
           </div>
 
-          {showFilters && (
-            <div className="bg-slate-50/80 dark:bg-[#130a1d]/50 rounded-xl border border-slate-200 dark:border-white/10 p-5 animate-in fade-in slide-in-from-top-2">
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-     
-                    <div className="space-y-1.5">
-                        <label className="text-xs font-semibold text-slate-500 dark:text-slate-400 ml-1">
-                            {t('erpCustomerManagement.filterLabels.branchCode')}
-                        </label>
-                        <div className="relative">
-                            <Building03Icon size={18} className={iconStyle} />
-                            <Input 
-                                placeholder={t('erpCustomerManagement.placeholders.all')} 
-                                value={draftFilters.subeKodu}
-                                onChange={(e) => handleFilterChange('subeKodu', e.target.value)}
-                                className={inputStyle}
-                            />
-                        </div>
-                    </div>
-
-
-                    <div className="space-y-1.5">
-                        <label className="text-xs font-semibold text-slate-500 dark:text-slate-400 ml-1">
-                            {t('erpCustomerManagement.filterLabels.customerCode')}
-                        </label>
-                        <div className="relative">
-                            <Tag01Icon size={18} className={iconStyle} />
-                            <Input 
-                                placeholder={t('erpCustomerManagement.placeholders.codeExample')} 
-                                value={draftFilters.cariKod}
-                                onChange={(e) => handleFilterChange('cariKod', e.target.value)}
-                                className={inputStyle}
-                            />
-                        </div>
-                    </div>
-
-
-                    <div className="space-y-1.5">
-                        <label className="text-xs font-semibold text-slate-500 dark:text-slate-400 ml-1">
-                            {t('erpCustomerManagement.filterLabels.customerName')}
-                        </label>
-                        <div className="relative">
-                            <UserCircleIcon size={18} className={iconStyle} />
-                            <Input 
-                                placeholder={t('erpCustomerManagement.placeholders.nameExample')} 
-                                value={draftFilters.cariIsim}
-                                onChange={(e) => handleFilterChange('cariIsim', e.target.value)}
-                                className={inputStyle}
-                            />
-                        </div>
-                    </div>
-
-
-                    <div className="space-y-1.5">
-                        <label className="text-xs font-semibold text-slate-500 dark:text-slate-400 ml-1">
-                            {t('erpCustomerManagement.filterLabels.city')}
-                        </label>
-                        <div className="relative">
-                            <MapsLocation01Icon size={18} className={iconStyle} />
-                            <Input 
-                                placeholder={t('erpCustomerManagement.placeholders.cityExample')} 
-                                value={draftFilters.cariIl}
-                                onChange={(e) => handleFilterChange('cariIl', e.target.value)}
-                                className={inputStyle}
-                            />
-                        </div>
-                    </div>
-
-                    <div className="space-y-1.5">
-                        <label className="text-xs font-semibold text-slate-500 dark:text-slate-400 ml-1">
-                            {t('erpCustomerManagement.filterLabels.district')}
-                        </label>
-                        <div className="relative">
-                            <Location01Icon size={18} className={iconStyle} />
-                            <Input 
-                                placeholder={t('erpCustomerManagement.placeholders.districtExample')} 
-                                value={draftFilters.cariIlce}
-                                onChange={(e) => handleFilterChange('cariIlce', e.target.value)}
-                                className={inputStyle}
-                            />
-                        </div>
-                    </div>
-
-                    {/* 6. Vergi No */}
-                    <div className="space-y-1.5">
-                        <label className="text-xs font-semibold text-slate-500 dark:text-slate-400 ml-1">
-                            {t('erpCustomerManagement.filterLabels.taxNumber')}
-                        </label>
-                        <div className="relative">
-                            <Invoice01Icon size={18} className={iconStyle} />
-                            <Input 
-                                placeholder={t('erpCustomerManagement.placeholders.taxExample')} 
-                                value={draftFilters.vergiNumarasi}
-                                onChange={(e) => handleFilterChange('vergiNumarasi', e.target.value)}
-                                className={inputStyle}
-                            />
-                        </div>
-                    </div>
-                </div>
-
-                <div className="flex flex-col sm:flex-row justify-end gap-3 mt-6 pt-4 border-t border-slate-200 dark:border-white/5">
-                    <Button 
-                        size="sm" 
-                        variant="ghost" 
-                        onClick={clearAdvancedFilters}
-                        className="text-slate-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 w-full sm:w-auto"
-                    >
-                        <Trash2 size={14} className="mr-2" />
-                        {t('erpCustomerManagement.actions.clear')}
-                    </Button>
-                    
-                    <Button 
-                        size="sm" 
-                        onClick={applyAdvancedFilters}
-                        className="bg-gradient-to-r from-pink-600 to-orange-600 hover:from-pink-700 hover:to-orange-700 text-white w-full sm:w-auto sm:min-w-[120px] shadow-md hover:shadow-lg transition-all border-0"
-                    >
-                        {t('erpCustomerManagement.actions.filter')}
-                    </Button>
-                </div>
-            </div>
-          )}
+{/* Old filters removed */}
       </div>
 
-      <div className="bg-white/70 dark:bg-[#1a1025]/60 backdrop-blur-xl border border-white/60 dark:border-white/5 shadow-sm rounded-2xl p-0 sm:p-1 transition-all duration-300 overflow-hidden">
-        <ErpCustomerTable customers={filteredCustomers} isLoading={isLoading} />
+      <div className="bg-white/70 dark:bg-[#1a1025]/60 backdrop-blur-xl border border-white/60 dark:border-white/5 shadow-sm rounded-2xl p-0 sm:p-1 transition-all duration-300 overflow-hidden flex-1 min-h-0">
+        <ErpCustomerTable customers={filteredCustomers.slice(0, pageSize)} isLoading={isLoading} visibleColumns={visibleColumns} />
       </div>
     </div>
   );
