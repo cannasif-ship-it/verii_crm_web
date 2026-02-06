@@ -26,6 +26,7 @@ interface CustomerSelectDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSelect: (result: CustomerSelectionResult) => void;
+  className?: string;
 }
 
 interface CustomerCardProps {
@@ -237,6 +238,7 @@ export function CustomerSelectDialog({
   open,
   onOpenChange,
   onSelect,
+  className,
 }: CustomerSelectDialogProps): ReactElement {
   const { t, i18n } = useTranslation();
   const [activeTab, setActiveTab] = useState('erp');
@@ -537,7 +539,7 @@ export function CustomerSelectDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-6xl max-h-[90vh] flex flex-col p-0 overflow-hidden bg-white/95 dark:bg-[#0c0516]/95 backdrop-blur-xl rounded-2xl border-white/60 dark:border-white/10 shadow-2xl">
+      <DialogContent className={cn("max-w-6xl max-h-[90vh] flex flex-col p-0 overflow-hidden bg-white/95 dark:bg-[#0c0516]/95 backdrop-blur-xl rounded-2xl border-white/60 dark:border-white/10 shadow-2xl", className)}>
         <DialogHeader className="px-6 py-5 border-b border-slate-200/50 dark:border-white/5 shrink-0">
           <div className="flex items-center gap-3 mb-2">
             <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-pink-100 to-orange-100 dark:from-pink-900/20 dark:to-orange-900/20 flex items-center justify-center text-pink-600 dark:text-pink-400">
@@ -702,7 +704,7 @@ export function CustomerSelectDialog({
 
             <div
               ref={scrollContainerRef}
-              className="flex-1 overflow-y-auto min-h-0 custom-scrollbar pr-2"
+              className="flex-1 overflow-y-auto min-h-0 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
             >
               <TabsContent value="erp" className="mt-0 space-y-3">
                 {renderErpCustomers()}

@@ -19,6 +19,11 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { QuotationLineForm } from './QuotationLineForm';
 import { ProductSelectDialog, type ProductSelectionResult } from '@/components/shared/ProductSelectDialog';
 import { useCurrencyOptions } from '@/services/hooks/useCurrencyOptions';
@@ -29,7 +34,11 @@ import { useUpdateQuotationLines } from '../hooks/useUpdateQuotationLines';
 import { useDeleteQuotationLine } from '../hooks/useDeleteQuotationLine';
 import { quotationApi } from '../api/quotation-api';
 import { formatCurrency } from '../utils/format-currency';
-import { Trash2, Edit, Plus, ShoppingCart, Box, AlertTriangle, Layers, Loader2 } from 'lucide-react';
+import { Trash2, Edit, Plus, ShoppingCart, Box, AlertTriangle, Layers, Loader2, Menu, FileSpreadsheet, FileText, Presentation } from 'lucide-react';
+import * as XLSX from 'xlsx';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
+import PptxGenJS from 'pptxgenjs';
 import type { QuotationLineFormState, QuotationExchangeRateFormState, PricingRuleLineGetDto, UserDiscountLimitDto, CreateQuotationLineDto, QuotationLineGetDto } from '../types/quotation-types';
 import { cn } from '@/lib/utils';
 
@@ -187,6 +196,88 @@ export function QuotationLineTable({
   }, [currency, currencyOptions]);
 
   const isCurrencySelected = currency !== undefined && currency !== null && !Number.isNaN(currency);
+
+  const handleExportExcel = () => {
+    const dataToExport = lines.map(line => ({
+      [t('quotation.lines.productCode', 'Ürün Kodu')]: line.productCode,
+      [t('quotation.lines.productName', 'Ürün Adı')]: line.productName,
+      [t('quotation.lines.quantity', 'Miktar')]: line.quantity,
+      [t('quotation.lines.unitPrice', 'Birim Fiyat')]: formatCurrency(line.unitPrice, currencyCode),
+      [t('quotation.lines.vatRate', 'KDV Oranı')]: `%${line.vatRate}`,
+      [t('quotation.lines.total', 'Toplam')]: formatCurrency(line.lineTotal, currencyCode),
+      [t('quotation.lines.description', 'Açıklama')]: line.description || '',
+    }));
+
+    const ws = XLSX.utils.json_to_sheet(dataToExport);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Teklif Kalemleri");
+    XLSX.writeFile(wb, "teklif-kalemleri.xlsx");
+  };
+
+  const handleExportPDF = () => {
+    const doc = new jsPDF();
+    
+    const headers = [[
+      t('quotation.lines.productCode', 'Ürün Kodu'),
+      t('quotation.lines.productName', 'Ürün Adı'),
+      t('quotation.lines.quantity', 'Miktar'),
+      t('quotation.lines.unitPrice', 'Birim Fiyat'),
+      t('quotation.lines.vatRate', 'KDV'),
+      t('quotation.lines.total', 'Toplam')
+    ]];
+
+    const data = lines.map(line => [
+      line.productCode,
+      line.productName,
+      line.quantity,
+      formatCurrency(line.unitPrice, currencyCode),
+      `%${line.vatRate}`,
+      formatCurrency(line.lineTotal, currencyCode)
+    ]);
+
+    autoTable(doc, {
+      head: headers,
+      body: data,
+      styles: { font: 'helvetica', fontStyle: 'normal' }, // Turkish characters support might need custom font, but helvetica is standard
+      theme: 'grid',
+    });
+
+    doc.save("teklif-kalemleri.pdf");
+  };
+
+  const handleExportPowerPoint = () => {
+    const pptx = new PptxGenJS();
+    const slide = pptx.addSlide();
+    
+    slide.addText("Teklif Kalemleri", { x: 0.5, y: 0.5, w: '90%', fontSize: 24, bold: true });
+
+    const headers = [
+      t('quotation.lines.productCode', 'Ürün Kodu'),
+      t('quotation.lines.productName', 'Ürün Adı'),
+      t('quotation.lines.quantity', 'Miktar'),
+      t('quotation.lines.unitPrice', 'Birim Fiyat'),
+      t('quotation.lines.vatRate', 'KDV'),
+      t('quotation.lines.total', 'Toplam')
+    ];
+
+    const rows = lines.map(line => [
+      line.productCode,
+      line.productName,
+      String(line.quantity),
+      formatCurrency(line.unitPrice, currencyCode),
+      `%${line.vatRate}`,
+      formatCurrency(line.lineTotal, currencyCode)
+    ]);
+
+    const tableData = [
+      headers.map(text => ({ text, options: { bold: true, fill: "F0F0F0" } })),
+      ...rows.map(row => row.map(text => ({ text })))
+    ];
+
+    slide.addTable(tableData, { x: 0.5, y: 1.5, w: '90%' });
+
+    pptx.writeFile({ fileName: "teklif-kalemleri.pptx" });
+  };
 
   const handleAddLine = (): void => {
     if (!linesEditable) return;
@@ -471,17 +562,55 @@ export function QuotationLineTable({
             </div>
           </div>
           
-          {linesEditable && (
-          <Button
-            type="button"
-            onClick={handleAddLine}
-            size="sm"
-            className="h-10 px-6 rounded-xl bg-gradient-to-r from-pink-600 to-orange-600 text-white font-bold shadow-lg shadow-pink-500/20 hover:scale-105 active:scale-95 transition-all duration-300 border-0 hover:text-white"
-          >
-            <Plus className="h-4 w-4 mr-2" />
-            {t('quotation.lines.add', 'Satır Ekle')}
-          </Button>
-          )}
+          <div className="flex items-center gap-3">
+            {linesEditable && (
+            <Button
+              type="button"
+              onClick={handleAddLine}
+              disabled={!linesEditable}
+              size="sm"
+              className="h-10 px-6 rounded-xl bg-gradient-to-r from-pink-600 to-orange-600 text-white font-bold shadow-lg shadow-pink-500/20 hover:scale-105 active:scale-95 transition-all duration-300 border-0 hover:text-white"
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              {t('quotation.lines.add', 'Satır Ekle')}
+            </Button>
+            )}
+
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="h-10 w-10 p-0 border-slate-200 dark:border-white/10 bg-white/50 dark:bg-white/5 hover:bg-pink-50 dark:hover:bg-white/10 hover:border-pink-500/30">
+                  <Menu size={18} className="text-slate-500 dark:text-slate-400" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-64 bg-[#151025] border border-white/10 shadow-2xl shadow-black/50 overflow-visible p-0">
+                <div className="p-2">
+                  <div className="px-3 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                    {t('common.actions', 'İşlemler')}
+                  </div>
+                </div>
+
+                <div className="h-px bg-white/5 my-1"></div>
+
+                <div className="p-2">
+                  <div className="px-3 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                    {t('common.export', 'Dışa Aktar')}
+                  </div>
+                  <button onClick={handleExportExcel} className="flex items-center gap-2 w-full px-3 py-2.5 rounded-lg text-sm text-gray-200 hover:bg-white/5 transition-colors text-left">
+                    <FileSpreadsheet size={16} className="text-emerald-500" />
+                    <span>{t('common.exportExcel', 'Excel İndir')}</span>
+                  </button>
+                  <button onClick={handleExportPDF} className="flex items-center gap-2 w-full px-3 py-2.5 rounded-lg text-sm text-gray-200 hover:bg-white/5 transition-colors text-left">
+                    <FileText size={16} className="text-red-400" />
+                    <span>{t('common.exportPDF', 'PDF İndir')}</span>
+                  </button>
+                  <button onClick={handleExportPowerPoint} className="flex items-center gap-2 w-full px-3 py-2.5 rounded-lg text-sm text-gray-200 hover:bg-white/5 transition-colors text-left">
+                    <Presentation size={16} className="text-orange-400" />
+                    <span>{t('common.exportPPT', 'PowerPoint İndir')}</span>
+                  </button>
+                </div>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </div>
 
         <div className="p-0">
@@ -650,7 +779,7 @@ export function QuotationLineTable({
           setAddLineDialogOpen(open);
         }}
       >
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-white/95 dark:bg-[#0c0516]/95 backdrop-blur-xl border-slate-200 dark:border-white/10 p-0 shadow-2xl">
+        <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto bg-white/95 dark:bg-[#0c0516]/95 backdrop-blur-xl border-slate-200 dark:border-white/10 p-0 shadow-2xl">
           <DialogHeader className="px-6 py-5 border-b border-slate-200/50 dark:border-white/5 bg-slate-50/50 dark:bg-white/5">
             <DialogTitle className="flex items-center gap-3 text-slate-900 dark:text-white text-lg">
               <div className="bg-gradient-to-br from-pink-500 to-rose-600 p-2.5 rounded-xl shadow-lg shadow-pink-500/20 text-white">
@@ -687,7 +816,7 @@ export function QuotationLineTable({
           setEditLineDialogOpen(open);
         }}
       >
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-white/95 dark:bg-[#0c0516]/95 backdrop-blur-xl border-slate-200 dark:border-white/10 p-0 shadow-2xl">
+        <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto bg-white/95 dark:bg-[#0c0516]/95 backdrop-blur-xl border-slate-200 dark:border-white/10 p-0 shadow-2xl">
           <DialogHeader className="px-6 py-5 border-b border-slate-200/50 dark:border-white/5 bg-slate-50/50 dark:bg-white/5">
             <DialogTitle className="flex items-center gap-3 text-slate-900 dark:text-white text-lg">
               <div className="bg-gradient-to-br from-blue-500 to-indigo-600 p-2.5 rounded-xl shadow-lg shadow-blue-500/20 text-white">

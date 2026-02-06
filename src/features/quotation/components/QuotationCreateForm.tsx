@@ -12,7 +12,7 @@ import { QuotationHeaderForm } from './QuotationHeaderForm';
 import { QuotationLineTable } from './QuotationLineTable';
 import { QuotationSummaryCard } from './QuotationSummaryCard';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Save, X } from 'lucide-react';
+import { Save, X } from 'lucide-react';
 import { createQuotationSchema, type CreateQuotationSchema } from '../schemas/quotation-schema';
 import type { QuotationLineFormState, QuotationExchangeRateFormState, QuotationBulkCreateDto, CreateQuotationDto, PricingRuleLineGetDto, UserDiscountLimitDto } from '../types/quotation-types';
 import { useUIStore } from '@/stores/ui-store';
@@ -233,19 +233,8 @@ export function QuotationCreateForm(): ReactElement {
     <div className="w-full space-y-8 relative pb-10">
       <FormProvider {...form}>
         <form onSubmit={handleFormSubmit} className="space-y-6">
-          <div className="flex items-center gap-5">
-            <Button
-              type="button"
-              variant="outline"
-              size="icon"
-              onClick={() => navigate(-1)}
-              className="group h-12 w-12 rounded-2xl bg-white/80 dark:bg-zinc-900/50 border-zinc-200 dark:border-white/10 shadow-sm hover:border-pink-500/50 hover:shadow-pink-500/20 transition-all duration-300"
-            >
-              <ArrowLeft className="h-5 w-5 text-zinc-500 group-hover:text-pink-600 transition-colors" />
-            </Button>
-            <div>
-              <h2 className="text-2xl font-bold tracking-tight">{t('quotation.create.title', 'Yeni Teklif Oluştur')}</h2>
-            </div>
+          <div>
+            <h2 className="text-2xl font-bold tracking-tight">{t('quotation.create.title', 'Yeni Teklif Oluştur')}</h2>
           </div>
 
           <div className="flex flex-col gap-6">

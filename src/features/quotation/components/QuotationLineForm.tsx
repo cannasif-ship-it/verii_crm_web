@@ -4,19 +4,18 @@ import { type ReactElement, useState, useEffect, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { useQuotationCalculations } from '../hooks/useQuotationCalculations';
 import { useDiscountLimitValidation } from '../hooks/useDiscountLimitValidation';
 import { useCurrencyOptions } from '@/services/hooks/useCurrencyOptions';
 import { useExchangeRate } from '@/services/hooks/useExchangeRate';
 import { ProductSelectDialog, type ProductSelectionResult } from '@/components/shared/ProductSelectDialog';
+import { CustomerSelectDialog, type CustomerSelectionResult } from '@/components/shared/CustomerSelectDialog';
 import { useProductSelection } from '../hooks/useProductSelection';
 import { formatCurrency } from '../utils/format-currency';
 import { findExchangeRateByDovizTipi } from '../utils/price-conversion';
 import { quotationApi } from '../api/quotation-api';
 import type { QuotationLineFormState, QuotationExchangeRateFormState, PricingRuleLineGetDto, UserDiscountLimitDto, ApprovalStatus } from '../types/quotation-types';
-import { X, Check, Package, Calculator, Percent, DollarSign, Loader2 } from 'lucide-react';
+import { Check, Package, Percent, Loader2, Coins, Layers, BadgePercent, AlertTriangle, Search } from 'lucide-react';
 
 interface TemporaryStockData {
   productCode: string;
@@ -55,12 +54,21 @@ export function QuotationLineForm({
   const { t } = useTranslation();
   const { calculateLineTotals } = useQuotationCalculations();
   const [productDialogOpen, setProductDialogOpen] = useState(false);
+  const [companyDialogOpen, setCompanyDialogOpen] = useState(false);
   const { currencyOptions } = useCurrencyOptions();
   const { data: erpRates = [] } = useExchangeRate();
   const { handleProductSelect: handleProductSelectHook, handleProductSelectWithRelatedStocks } = useProductSelection({
     currency,
     exchangeRates,
   });
+
+  const handleCompanySelect = (result: CustomerSelectionResult) => {
+    setFormData((prev) => ({
+      ...prev,
+      supplierCode: result.erpCustomerCode,
+      supplierName: result.customerName,
+    }));
+  };
 
   const currencyCode = useMemo(() => {
     const found = currencyOptions.find((opt) => opt.dovizTipi === currency);
@@ -624,424 +632,302 @@ export function QuotationLineForm({
   const hasApprovalWarning = discountValidation.exceedsLimit || formData.approvalStatus === 1;
 
   return (
-    <Card className={`border-2 ${hasApprovalWarning ? 'border-red-500 bg-red-50/50 dark:bg-red-950/20' : 'border-primary/20'} bg-card`}>
-      <CardContent className="p-4 space-y-4">
-        <div className="flex items-center justify-between pb-2 border-b">
-          <h4 className="text-base font-semibold flex items-center gap-2">
-            <Package className="h-4 w-4 text-primary" />
-            {t('quotation.lines.editLine', 'Satır Düzenle')}
-          </h4>
-          <div className="flex items-center gap-2">
-            {hasApprovalWarning && (
-              <Badge variant="outline" className="text-red-600 border-red-600 bg-red-50 dark:bg-red-950/30 text-xs">
-                {t('quotation.lines.approvalRequired', 'Onay Gerekli')}
-              </Badge>
-            )}
-            {(!formData.productCode || !formData.productName) && (
-              <Badge variant="outline" className="text-orange-600 border-orange-600 text-xs">
-                {t('quotation.lines.selectStockFirst', 'Stok seçilmedi')}
-              </Badge>
-            )}
-          </div>
+    <div className="space-y-8 animate-in fade-in zoom-in-95 duration-300">
+      {/* 1. SECTION: STOCK SELECTION */}
+      <div className="space-y-3">
+        <div className="flex items-center justify-between">
+          <label className="text-sm font-semibold text-zinc-700 dark:text-zinc-200 flex items-center gap-2">
+            <Package className="h-4 w-4 text-pink-600" />
+            {t('quotation.lines.stock', 'Stok Seçimi')} <span className="text-pink-600">*</span>
+          </label>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => setProductDialogOpen(true)}
+            className="gap-2 h-9 rounded-lg border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-900 text-zinc-700 dark:text-zinc-300"
+            size="sm"
+          >
+            <Search className="h-3.5 w-3.5" />
+            {t('quotation.lines.selectStock', 'Stok Rehberi')}
+          </Button>
         </div>
-
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-          <div className="space-y-1.5 md:col-span-2">
-            <div className="flex items-center justify-between">
-              <label className="text-sm font-medium flex items-center gap-2">
-                <Package className="h-3.5 w-3.5" />
-                {t('quotation.lines.stock', 'Stok')} *
-              </label>
-              <Button
-                type="button"
-                variant="default"
-                onClick={() => setProductDialogOpen(true)}
-                className="gap-2"
-                size="sm"
-              >
-                <Package className="h-3.5 w-3.5" />
-                {t('quotation.lines.selectStock', 'Stok Seç')}
-              </Button>
-            </div>
-            <div className="grid grid-cols-1 gap-2 md:grid-cols-3">
-              <Input
-                value={formData.productCode || ''}
-                placeholder={t('quotation.lines.productCode', 'Stok Kodu')}
-                readOnly
-                className="bg-muted/50 font-mono text-sm h-9"
-              />
-              <Input
-                value={formData.groupCode || ''}
-                placeholder={t('quotation.lines.groupCode', 'Grup Kodu')}
-                readOnly
-                className="bg-muted/50 font-mono text-sm h-9"
-              />
+        
+        <div className="grid grid-cols-12 gap-3">
+          <div className="col-span-3">
+             <div className="relative">
+                <Input
+                  value={formData.productCode || ''}
+                  placeholder={t('quotation.lines.productCode', 'Stok Kodu')}
+                  readOnly
+                  className="bg-zinc-50/50 dark:bg-zinc-900/50 border-zinc-200 dark:border-zinc-800 font-mono text-sm h-11 rounded-xl"
+                />
+             </div>
+          </div>
+          <div className="col-span-9">
+            <div className="relative">
               <Input
                 value={formData.productName || ''}
                 placeholder={t('quotation.lines.productName', 'Stok Adı')}
                 readOnly
-                className="bg-muted/50 text-sm h-9"
+                className="bg-zinc-50/50 dark:bg-zinc-900/50 border-zinc-200 dark:border-zinc-800 font-semibold text-sm h-11 rounded-xl"
               />
             </div>
           </div>
+        </div>
+      </div>
 
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-            <div className="space-y-2">
-              <label className="text-sm font-medium flex items-center gap-2">
-                <DollarSign className="h-3.5 w-3.5" />
-                {t('quotation.lines.unitPrice', 'Birim Fiyat')} *
-              </label>
-              <Input
-                type="number"
-                step="0.01"
-                min="0"
-                value={formData.unitPrice}
-                readOnly
-                className="bg-muted/50 font-medium"
-              />
-              <div className="space-y-2">
-                <label className="text-sm font-medium">
-                  {t('quotation.lines.quantity', 'Miktar')} *
-                </label>
-                <Input
-                  type="number"
-                  step="0.001"
-                  min="0.01"
-                  value={quantityInputValue}
-                  onChange={(e) => {
-                    const inputValue = e.target.value;
-                    setQuantityInputValue(inputValue);
-                    if (inputValue === '' || inputValue === '.') {
-                      handleFieldChange('quantity', 0);
-                    } else {
-                      const numValue = parseFloat(inputValue);
-                      if (!isNaN(numValue)) {
-                        handleFieldChange('quantity', numValue);
-                      }
-                    }
-                  }}
-                  onBlur={() => {
-                    if (quantityInputValue === '' || quantityInputValue === '.') {
-                      setQuantityInputValue('0');
-                      handleFieldChange('quantity', 0);
-                    } else {
-                      const numValue = parseFloat(quantityInputValue);
-                      if (!isNaN(numValue)) {
-                        setQuantityInputValue(String(numValue));
-                      }
-                    }
-                  }}
-                  className="font-medium"
-                />
-              </div>
-            </div>
-            <div className="space-y-2">
-              <label className="text-sm font-medium">
-                {t('quotation.lines.vatRate', 'KDV Oranı %')}
-              </label>
-              <Input
-                type="number"
-                step="0.01"
-                min="0"
-                max="100"
-                value={vatRateInputValue}
-                onChange={(e) => {
-                  const inputValue = e.target.value;
-                  setVatRateInputValue(inputValue);
-                  if (inputValue === '' || inputValue === '.') {
-                    handleFieldChange('vatRate', 0);
-                  } else {
-                    const numValue = parseFloat(inputValue);
-                    if (!isNaN(numValue)) {
-                      handleFieldChange('vatRate', numValue);
-                    }
+      {/* 2. SECTION: QUANTITY / PRICE / UNIT / VAT */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        {/* Quantity */}
+        <div className="space-y-2">
+          <label className="text-sm font-semibold text-zinc-700 dark:text-zinc-200 flex items-center gap-2">
+            <Layers className="h-4 w-4 text-blue-600" />
+            {t('quotation.lines.quantity', 'Miktar')}
+          </label>
+          <Input
+            type="number"
+            step="0.001"
+            min="0.01"
+            value={quantityInputValue}
+            onChange={(e) => {
+              const inputValue = e.target.value;
+              setQuantityInputValue(inputValue);
+              if (inputValue === '' || inputValue === '.') {
+                handleFieldChange('quantity', 0);
+              } else {
+                const numValue = parseFloat(inputValue);
+                if (!isNaN(numValue)) {
+                  handleFieldChange('quantity', numValue);
+                }
+              }
+            }}
+            onBlur={() => {
+              if (quantityInputValue === '' || quantityInputValue === '.') {
+                setQuantityInputValue('0');
+                handleFieldChange('quantity', 0);
+              } else {
+                const numValue = parseFloat(quantityInputValue);
+                if (!isNaN(numValue)) {
+                  setQuantityInputValue(String(numValue));
+                }
+              }
+            }}
+            className="h-12 rounded-xl border-zinc-200 dark:border-zinc-800 font-bold text-lg text-center focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all"
+          />
+        </div>
+
+        {/* Unit Price */}
+        <div className="space-y-2">
+          <label className="text-sm font-semibold text-zinc-700 dark:text-zinc-200 flex items-center gap-2">
+            <Coins className="h-4 w-4 text-emerald-600" />
+            {t('quotation.lines.unitPrice', 'Birim Fiyat')}
+          </label>
+          <div className="relative">
+             <Input
+              type="number"
+              step="0.01"
+              min="0"
+              value={formData.unitPrice}
+              readOnly
+              className="bg-zinc-50/50 dark:bg-zinc-900/50 border-zinc-200 dark:border-zinc-800 font-mono font-bold text-zinc-900 dark:text-zinc-100 h-12 rounded-xl text-lg pl-4"
+            />
+            <div className="absolute right-4 top-3.5 text-xs font-bold text-zinc-400">{currencyCode}</div>
+          </div>
+        </div>
+
+        {/* Unit (Birim) - Static for now */}
+        <div className="space-y-2">
+          <label className="text-sm font-semibold text-zinc-700 dark:text-zinc-200 flex items-center gap-2">
+            <Package className="h-4 w-4 text-purple-600" />
+            {t('quotation.lines.unit', 'Birim')}
+          </label>
+          <Input
+            value="Adet"
+            readOnly
+            className="bg-zinc-50/50 dark:bg-zinc-900/50 border-zinc-200 dark:border-zinc-800 font-medium text-zinc-900 dark:text-zinc-100 h-12 rounded-xl text-center"
+          />
+        </div>
+
+        {/* VAT Rate */}
+        <div className="space-y-2">
+          <label className="text-sm font-semibold text-zinc-700 dark:text-zinc-200 flex items-center gap-2">
+            <Percent className="h-4 w-4 text-orange-600" />
+            {t('quotation.lines.vatRate', 'KDV Oranı')}
+          </label>
+          <div className="relative">
+            <Input
+              type="number"
+              step="0.01"
+              min="0"
+              max="100"
+              value={vatRateInputValue}
+              onChange={(e) => {
+                const inputValue = e.target.value;
+                setVatRateInputValue(inputValue);
+                if (inputValue === '' || inputValue === '.') {
+                  handleFieldChange('vatRate', 0);
+                } else {
+                  const numValue = parseFloat(inputValue);
+                  if (!isNaN(numValue)) {
+                    handleFieldChange('vatRate', numValue);
                   }
-                }}
-                onBlur={() => {
-                  if (vatRateInputValue === '' || vatRateInputValue === '.') {
-                    setVatRateInputValue('0');
-                    handleFieldChange('vatRate', 0);
-                  } else {
-                    const numValue = parseFloat(vatRateInputValue);
-                    if (!isNaN(numValue)) {
-                      setVatRateInputValue(String(numValue));
-                    }
+                }
+              }}
+              onBlur={() => {
+                if (vatRateInputValue === '' || vatRateInputValue === '.') {
+                  setVatRateInputValue('0');
+                  handleFieldChange('vatRate', 0);
+                } else {
+                  const numValue = parseFloat(vatRateInputValue);
+                  if (!isNaN(numValue)) {
+                    setVatRateInputValue(String(numValue));
                   }
-                }}
-              />
-            </div>
-          </div>
-
-          <div className="space-y-2 md:col-span-2">
-            <label className="text-sm font-medium flex items-center gap-2">
-              <Percent className="h-3.5 w-3.5" />
-              {t('quotation.lines.discounts', 'İndirimler')}
-            </label>
-            <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
-              <div className="space-y-1.5 p-2 border rounded-md bg-muted/10">
-                <div className="flex items-center justify-between">
-                  <label className="text-xs font-medium text-muted-foreground">
-                    {t('quotation.lines.discount1', 'İndirim 1 %')}
-                  </label>
-                  <span className="text-xs font-semibold text-red-600 dark:text-red-400">
-                    {formData.discountAmount1 > 0 ? '-' : ''}{formatCurrency(formData.discountAmount1 || 0, currencyCode)}
-                  </span>
-                </div>
-                <Input
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  max="100"
-                  value={discountRate1InputValue}
-                  onChange={(e) => {
-                    const inputValue = e.target.value;
-                    setDiscountRate1InputValue(inputValue);
-                    if (inputValue === '' || inputValue === '.') {
-                      handleFieldChange('discountRate1', 0);
-                    } else {
-                      const numValue = parseFloat(inputValue);
-                      if (!isNaN(numValue)) {
-                        handleFieldChange('discountRate1', numValue);
-                      }
-                    }
-                  }}
-                  onBlur={() => {
-                    if (discountRate1InputValue === '' || discountRate1InputValue === '.') {
-                      setDiscountRate1InputValue('0');
-                      handleFieldChange('discountRate1', 0);
-                    } else {
-                      const numValue = parseFloat(discountRate1InputValue);
-                      if (!isNaN(numValue)) {
-                        setDiscountRate1InputValue(String(numValue));
-                      }
-                    }
-                  }}
-                  placeholder="0"
-                  className="text-sm h-9"
-                />
-              </div>
-              <div className="space-y-1.5 p-2 border rounded-md bg-muted/10">
-                <div className="flex items-center justify-between">
-                  <label className="text-xs font-medium text-muted-foreground">
-                    {t('quotation.lines.discount2', 'İndirim 2 %')}
-                  </label>
-                  <span className="text-xs font-semibold text-red-600 dark:text-red-400">
-                    {formData.discountAmount2 > 0 ? '-' : ''}{formatCurrency(formData.discountAmount2 || 0, currencyCode)}
-                  </span>
-                </div>
-                <Input
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  max="100"
-                  value={discountRate2InputValue}
-                  onChange={(e) => {
-                    const inputValue = e.target.value;
-                    setDiscountRate2InputValue(inputValue);
-                    if (inputValue === '' || inputValue === '.') {
-                      handleFieldChange('discountRate2', 0);
-                    } else {
-                      const numValue = parseFloat(inputValue);
-                      if (!isNaN(numValue)) {
-                        handleFieldChange('discountRate2', numValue);
-                      }
-                    }
-                  }}
-                  onBlur={() => {
-                    if (discountRate2InputValue === '' || discountRate2InputValue === '.') {
-                      setDiscountRate2InputValue('0');
-                      handleFieldChange('discountRate2', 0);
-                    } else {
-                      const numValue = parseFloat(discountRate2InputValue);
-                      if (!isNaN(numValue)) {
-                        setDiscountRate2InputValue(String(numValue));
-                      }
-                    }
-                  }}
-                  placeholder="0"
-                  className="text-sm h-9"
-                />
-              </div>
-              <div className="space-y-1.5 p-2 border rounded-md bg-muted/10">
-                <div className="flex items-center justify-between">
-                  <label className="text-xs font-medium text-muted-foreground">
-                    {t('quotation.lines.discount3', 'İndirim 3 %')}
-                  </label>
-                  <span className="text-xs font-semibold text-red-600 dark:text-red-400">
-                    {formData.discountAmount3 > 0 ? '-' : ''}{formatCurrency(formData.discountAmount3 || 0, currencyCode)}
-                  </span>
-                </div>
-                <Input
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  max="100"
-                  value={discountRate3InputValue}
-                  onChange={(e) => {
-                    const inputValue = e.target.value;
-                    setDiscountRate3InputValue(inputValue);
-                    if (inputValue === '' || inputValue === '.') {
-                      handleFieldChange('discountRate3', 0);
-                    } else {
-                      const numValue = parseFloat(inputValue);
-                      if (!isNaN(numValue)) {
-                        handleFieldChange('discountRate3', numValue);
-                      }
-                    }
-                  }}
-                  onBlur={() => {
-                    if (discountRate3InputValue === '' || discountRate3InputValue === '.') {
-                      setDiscountRate3InputValue('0');
-                      handleFieldChange('discountRate3', 0);
-                    } else {
-                      const numValue = parseFloat(discountRate3InputValue);
-                      if (!isNaN(numValue)) {
-                        setDiscountRate3InputValue(String(numValue));
-                      }
-                    }
-                  }}
-                  placeholder="0"
-                  className="text-sm h-9"
-                />
-              </div>
-            </div>
+                }
+              }}
+              className="h-12 rounded-xl border-zinc-200 dark:border-zinc-800 font-bold text-lg text-center focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 transition-all pr-8"
+            />
+            <div className="absolute right-4 top-3.5 text-zinc-400 font-bold">%</div>
           </div>
         </div>
+      </div>
 
-        <div className="bg-muted/30 rounded-lg p-3 space-y-2 border">
-          <div className="flex items-center gap-2 mb-2">
-            <Calculator className="h-3.5 w-3.5 text-primary" />
-            <span className="text-sm font-semibold">
-              {t('quotation.lines.calculations', 'Hesaplamalar')}
-            </span>
-          </div>
-          <div className="grid grid-cols-1 gap-2 text-sm">
-            <div className="flex justify-between items-center">
-              <span className="text-muted-foreground">
-                {t('quotation.lines.discountAmount', 'Toplam İndirim')}:
-              </span>
-              <span className={`font-medium ${hasDiscount ? 'text-red-600 dark:text-red-400' : 'text-muted-foreground'}`}>
-                {hasDiscount ? '-' : ''}{formatCurrency(totalDiscount, currencyCode)}
-              </span>
+      {/* 3. SECTION: DISCOUNTS & SUMMARY */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 pt-4 mt-2 border-t border-dashed border-zinc-200 dark:border-zinc-800">
+        {/* Left: Discounts */}
+        <div className="space-y-4">
+            <h5 className="text-sm font-semibold text-zinc-700 dark:text-zinc-200 flex items-center gap-2">
+              <BadgePercent className="h-4 w-4 text-purple-600" />
+              {t('quotation.lines.discounts', 'Satır İndirimleri')}
+            </h5>
+            <div className="grid grid-cols-3 gap-3">
+               {[
+                 { val: discountRate1InputValue, setVal: setDiscountRate1InputValue, field: 'discountRate1', label: '1. İndirim' },
+                 { val: discountRate2InputValue, setVal: setDiscountRate2InputValue, field: 'discountRate2', label: '2. İndirim' },
+                 { val: discountRate3InputValue, setVal: setDiscountRate3InputValue, field: 'discountRate3', label: '3. İndirim' }
+               ].map((item, idx) => (
+                 <div key={idx} className="space-y-1.5">
+                   <label className="text-xs font-medium text-zinc-500 ml-1">{item.label}</label>
+                   <Input
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      max="100"
+                      value={item.val}
+                      onChange={(e) => {
+                        const inputValue = e.target.value;
+                        item.setVal(inputValue);
+                        if (inputValue === '' || inputValue === '.') {
+                          handleFieldChange(item.field as any, 0);
+                        } else {
+                          const numValue = parseFloat(inputValue);
+                          if (!isNaN(numValue)) {
+                            handleFieldChange(item.field as any, numValue);
+                          }
+                        }
+                      }}
+                      onBlur={() => {
+                        if (item.val === '' || item.val === '.') {
+                          item.setVal('0');
+                          handleFieldChange(item.field as any, 0);
+                        } else {
+                          const numValue = parseFloat(item.val);
+                          if (!isNaN(numValue)) {
+                            item.setVal(String(numValue));
+                          }
+                        }
+                      }}
+                      placeholder="0"
+                      className="h-11 rounded-xl border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 focus:ring-4 focus:ring-purple-500/10 focus:border-purple-500 transition-all text-center"
+                    />
+                 </div>
+               ))}
             </div>
-            <div className="flex justify-between items-center">
-              <span className="text-muted-foreground">
-                {t('quotation.lines.netPrice', 'Net Fiyat')}:
-              </span>
-              <span className="font-medium text-green-600 dark:text-green-400">
-                {formatCurrency(formData.lineTotal || 0, currencyCode)}
-              </span>
-            </div>
-            <div className="flex justify-between items-center pt-2 border-t font-semibold">
-              <span>
-                {t('quotation.lines.lineTotal', 'Satır Toplamı (KDV Dahil)')}:
-              </span>
-              <span className="text-primary text-base">
-                {formatCurrency(formData.lineGrandTotal, currencyCode)}
-              </span>
-            </div>
-          </div>
-        </div>
 
-        {relatedLines.length > 0 && (
-          <div className="space-y-4 pt-4 border-t">
-            <div className="flex items-center gap-2">
-              <Package className="h-4 w-4 text-primary" />
-              <h5 className="text-sm font-semibold">
-                {t('quotation.lines.relatedStocks', 'Bağlı Stoklar')} ({relatedLines.length})
-              </h5>
-            </div>
-            <div className="space-y-3">
-              {relatedLines.map((relatedLine) => (
-                <div key={relatedLine.id} className="p-3 border rounded-md bg-muted/30">
-                  <div className="grid grid-cols-1 gap-2 md:grid-cols-2 mb-2">
-                    <div>
-                      <div className="text-xs text-muted-foreground mb-1">
-                        {t('quotation.lines.productCode', 'Stok Kodu')}
-                      </div>
-                      <div className="font-mono text-sm font-medium">
-                        {relatedLine.productCode || '-'}
-                      </div>
-                    </div>
-                    <div>
-                      <div className="text-xs text-muted-foreground mb-1">
-                        {t('quotation.lines.productName', 'Stok Adı')}
-                      </div>
-                      <div className="text-sm font-medium">
-                        {relatedLine.productName || '-'}
-                      </div>
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-2 gap-2 text-xs">
-                    <div>
-                      <span className="text-muted-foreground">
-                        {t('quotation.lines.quantity', 'Miktar')}:
-                      </span>
-                      <span className="ml-2 font-medium">{relatedLine.quantity}</span>
-                    </div>
-                    <div>
-                      <span className="text-muted-foreground">
-                        {t('quotation.lines.unitPrice', 'Birim Fiyat')}:
-                      </span>
-                      <span className="ml-2 font-medium">
-                        {formatCurrency(relatedLine.unitPrice, currencyCode)}
-                      </span>
-                    </div>
-                    <div>
-                      <span className="text-muted-foreground">
-                        {t('quotation.lines.netPrice', 'Net Fiyat')}:
-                      </span>
-                      <span className="ml-2 font-medium text-green-600 dark:text-green-400">
-                        {formatCurrency(relatedLine.lineTotal || 0, currencyCode)}
-                      </span>
-                    </div>
-                    <div>
-                      <span className="text-muted-foreground">
-                        {t('quotation.lines.lineTotal', 'Toplam')}:
-                      </span>
-                      <span className="ml-2 font-medium text-primary">
-                        {formatCurrency(relatedLine.lineGrandTotal, currencyCode)}
-                      </span>
-                    </div>
-                  </div>
+           {hasApprovalWarning && (
+              <div className="flex items-start gap-3 p-4 rounded-xl bg-red-50 dark:bg-red-950/20 border border-red-100 dark:border-red-900/30">
+                <div className="p-2 rounded-lg bg-white dark:bg-red-900/40 shadow-sm">
+                   <AlertTriangle className="h-5 w-5 text-red-600 dark:text-red-400" />
                 </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        <div className="flex justify-end gap-2 pt-2 border-t">
-          <Button type="button" variant="outline" onClick={onCancel} size="sm" className="gap-2" disabled={isSaving}>
-            <X className="h-4 w-4" />
-            {t('quotation.cancel', 'İptal')}
-          </Button>
-          <Button
-            type="button"
-            onClick={handleSave}
-            size="sm"
-            className="gap-2"
-            disabled={!formData.productCode || !formData.productName || isSaving}
-          >
-            {isSaving ? (
-              <>
-                <Loader2 className="h-4 w-4 animate-spin" />
-                {t('quotation.saving', 'Kaydediliyor...')}
-              </>
-            ) : (
-              <>
-                <Check className="h-4 w-4" />
-                {t('quotation.save', 'Kaydet')}
-              </>
-            )}
-          </Button>
+                <div>
+                   <h4 className="text-sm font-bold text-red-900 dark:text-red-300">Onay Gerekiyor</h4>
+                   <p className="text-xs text-red-700 dark:text-red-400 mt-1">İndirim oranları yetki limitlerinizi aşıyor.</p>
+                </div>
+              </div>
+           )}
         </div>
 
-        <ProductSelectDialog
-          open={productDialogOpen}
-          onOpenChange={setProductDialogOpen}
-          onSelect={handleProductSelect}
-        />
-      </CardContent>
-    </Card>
+        {/* Right: Summary Card & Buttons */}
+        <div className="flex flex-col gap-4">
+           {/* Summary Card */}
+           <div className="bg-zinc-100/80 dark:bg-zinc-900/80 rounded-2xl p-5 border border-zinc-200/50 dark:border-zinc-800 space-y-3 backdrop-blur-sm h-full">
+              <div className="flex justify-between items-center text-sm">
+                <span className="text-zinc-500 dark:text-zinc-400 font-medium">Ara Toplam</span>
+                <span className="font-semibold text-zinc-700 dark:text-zinc-300">{formatCurrency(formData.lineTotal || 0, currencyCode)}</span>
+              </div>
+              <div className="flex justify-between items-center text-sm">
+                 <span className="text-zinc-500 dark:text-zinc-400 font-medium">Toplam İndirim</span>
+                 <span className="font-semibold text-red-500">
+                    {hasDiscount ? '-' : ''}{formatCurrency(totalDiscount, currencyCode)}
+                 </span>
+              </div>
+              <div className="flex justify-between items-center text-sm">
+                 <span className="text-zinc-500 dark:text-zinc-400 font-medium">KDV Tutarı</span>
+                 <span className="font-semibold text-zinc-700 dark:text-zinc-300">{formatCurrency(formData.vatAmount || 0, currencyCode)}</span>
+              </div>
+              <div className="h-px bg-zinc-300 dark:bg-zinc-700/50 my-2 border-dashed" />
+              <div className="flex justify-between items-center">
+                 <span className="text-base font-bold text-zinc-900 dark:text-white">Genel Toplam</span>
+                 <span className="text-2xl font-black tracking-tight text-emerald-600 dark:text-emerald-400">
+                    {formatCurrency(formData.lineGrandTotal, currencyCode)}
+                 </span>
+              </div>
+           </div>
+
+           {/* Buttons */}
+           <div className="flex items-center justify-end gap-3">
+              <Button 
+                type="button" 
+                variant="ghost" 
+                onClick={onCancel} 
+                disabled={isSaving}
+                className="h-12 px-6 rounded-xl text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800 font-medium transition-all"
+              >
+                {t('quotation.cancel', 'Vazgeç')}
+              </Button>
+              <Button
+                type="button"
+                onClick={handleSave}
+                disabled={!formData.productCode || !formData.productName || isSaving}
+                className="h-12 px-8 rounded-xl bg-zinc-900 hover:bg-zinc-800 dark:bg-white dark:hover:bg-zinc-200 text-white dark:text-zinc-900 shadow-lg shadow-zinc-500/20 hover:shadow-xl font-bold transition-all active:scale-95"
+              >
+                {isSaving ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                    {t('quotation.saving', 'Kaydediliyor...')}
+                  </>
+                ) : (
+                  <>
+                    <Check className="h-4 w-4 mr-2" />
+                    {t('quotation.save', 'Kaydet')}
+                  </>
+                )}
+              </Button>
+           </div>
+        </div>
+      </div>
+
+      <CustomerSelectDialog
+              open={companyDialogOpen}
+              onOpenChange={setCompanyDialogOpen}
+              onSelect={handleCompanySelect}
+              className="z-[200]"
+            />
+
+            <ProductSelectDialog
+        open={productDialogOpen}
+        onOpenChange={setProductDialogOpen}
+        onSelect={handleProductSelect}
+      />
+    </div>
   );
 }

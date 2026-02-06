@@ -31,7 +31,6 @@ export function QuotationSummaryCard({
     row: "flex items-center justify-between text-sm py-1",
     label: "text-zinc-500 dark:text-zinc-400 font-medium",
     value: "font-semibold text-zinc-900 dark:text-zinc-100 font-mono",
-    footer: "mt-4 pt-4 border-t border-zinc-100 dark:border-zinc-800",
   };
 
   return (
@@ -58,15 +57,13 @@ export function QuotationSummaryCard({
         </div>
 
         {/* Genel Toplam */}
-        <div className={styles.footer}>
-          <div className="flex items-center justify-between">
-            <span className="text-sm font-bold text-zinc-500 uppercase tracking-wider flex items-center gap-2">
-              <Wallet className="h-4 w-4" />
+        <div className="mt-6">
+          <div className="rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 p-5 shadow-lg shadow-violet-500/30 text-white flex items-center justify-between transition-all hover:scale-[1.02] duration-300">
+            <span className="text-sm font-bold uppercase tracking-wider flex items-center gap-2 text-white/90">
+              <Wallet className="h-5 w-5" />
               {t('quotation.summary.grandTotal', 'Genel Toplam')}
             </span>
-            
-            {/* Vurgulu Alan: Sade ama renkli text */}
-            <span className="text-3xl font-black font-mono tracking-tight bg-gradient-to-r from-pink-600 to-orange-600 bg-clip-text text-transparent">
+            <span className="text-3xl font-black font-mono tracking-tight text-white drop-shadow-sm">
               {formatCurrency(totals.grandTotal, currencyCode)}
             </span>
           </div>

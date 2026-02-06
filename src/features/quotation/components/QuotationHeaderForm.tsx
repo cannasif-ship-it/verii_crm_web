@@ -46,9 +46,9 @@ import { PricingRuleType } from '@/features/pricing-rule/types/pricing-rule-type
 import type { KurDto } from '@/services/erp-types';
 import { ExchangeRateDialog } from './ExchangeRateDialog';
 import { 
-  DollarSign, Search, User, Truck, Briefcase, Globe, 
+  Search, User, Truck, Briefcase, Globe, 
   Calendar, CreditCard, Hash, FileText, ArrowRightLeft, 
-  Layers, SearchX
+  Layers, SearchX, Coins
 } from 'lucide-react';
 import { useAuthStore } from '@/stores/auth-store';
 import type { CreateQuotationSchema } from '../schemas/quotation-schema';
@@ -488,7 +488,7 @@ export function QuotationHeaderForm({
                   <FormItem className="space-y-0 relative group">
                     <FormLabel className={styles.label}>Para Birimi</FormLabel>
                     <div className="relative">
-                      <div className={styles.iconWrapper}><DollarSign className="h-4 w-4 text-emerald-600" /></div>
+                      <div className={styles.iconWrapper}><Coins className="h-4 w-4 text-emerald-500" /></div>
                       <VoiceSearchCombobox
                         className={cn(styles.inputBase, "font-bold tracking-wide text-emerald-700 dark:text-emerald-400 bg-emerald-50/50 dark:bg-emerald-950/20 border-emerald-100 dark:border-emerald-900/30")}
                         value={field.value ? String(field.value) : ''}

@@ -186,6 +186,8 @@ export interface QuotationLineFormState extends Omit<CreateQuotationLineDto, 'qu
   id: string;
   isEditing: boolean;
   relatedLines?: QuotationLineFormState[];
+  supplierCode?: string;
+  supplierName?: string;
 }
 
 export interface QuotationExchangeRateFormState {
