@@ -1,4 +1,5 @@
 import { type ReactElement, useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { type Resolver, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -61,6 +62,7 @@ export function ProductPricingForm({
   isLoading,
   excludeProductCodes,
 }: ProductPricingFormProps): ReactElement {
+  const { i18n } = useTranslation();
   const [productDialogOpen, setProductDialogOpen] = useState(false);
 
   const form = useForm<ProductPricingFormSchema>({
@@ -105,7 +107,7 @@ export function ProductPricingForm({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="bg-white dark:bg-[#130822] border border-slate-100 dark:border-white/10 text-slate-900 dark:text-white max-w-4xl max-h-[95vh] h-full flex flex-col gap-0 p-0 overflow-hidden sm:rounded-2xl">
         <DialogHeader className="border-b border-slate-100 dark:border-white/5 px-6 py-5 bg-white/80 dark:bg-[#130822]/90 backdrop-blur-md shrink-0 flex-row items-center gap-3 space-y-0">
-          <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-pink-500/20 to-orange-500/20 border border-pink-500/10 flex items-center justify-center text-pink-500 shrink-0">
+          <div className="h-10 w-10 rounded-xl bg-linear-to-br from-pink-500/20 to-orange-500/20 border border-pink-500/10 flex items-center justify-center text-pink-500 shrink-0">
             <Tag size={20} />
           </div>
           <div>
@@ -183,12 +185,12 @@ export function ProductPricingForm({
                     <div className="space-y-2">
                       <div className="flex justify-between text-sm">
                         <span className="text-slate-500 dark:text-slate-400">Son Fiyat:</span>
-                        <span className="font-bold text-slate-900 dark:text-white">{formatPrice(calculations.final, values.currency)}</span>
+                        <span className="font-bold text-slate-900 dark:text-white">{formatPrice(calculations.final, values.currency, i18n.language)}</span>
                       </div>
                       <div className="flex justify-between text-sm">
                         <span className="text-slate-500 dark:text-slate-400">Kar Tutarı:</span>
                         <span className={calculations.profit.amount >= 0 ? "text-green-600 font-medium" : "text-red-600 font-medium"}>
-                          {formatPrice(calculations.profit.amount, values.currency)}
+                          {formatPrice(calculations.profit.amount, values.currency, i18n.language)}
                         </span>
                       </div>
                       <div className="flex justify-between text-sm">
@@ -277,7 +279,7 @@ export function ProductPricingForm({
             <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isLoading}>
               İptal
             </Button>
-            <Button onClick={form.handleSubmit(onSubmit)} disabled={isLoading} className="bg-gradient-to-r from-pink-600 to-indigo-600 text-white border-0 hover:from-pink-700 hover:to-indigo-700">
+            <Button onClick={form.handleSubmit(onSubmit)} disabled={isLoading} className="bg-linear-to-r from-pink-600 to-indigo-600 text-white border-0 hover:from-pink-700 hover:to-indigo-700">
               <Save size={16} className="mr-2" />
               {isLoading ? 'Kaydediliyor...' : 'Kaydet'}
             </Button>

@@ -46,7 +46,7 @@ export function ProductPricingTable({
   onPageChange,
   onSortChange,
 }: ProductPricingTableProps): ReactElement {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedProductPricing, setSelectedProductPricing] = useState<ProductPricingGetDto | null>(null);
 
@@ -194,7 +194,7 @@ export function ProductPricingTable({
                     <TableCell className={cellStyle}>
                       <div className="flex flex-col gap-1.5">
                         <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
-                          <span className="line-through">{formatPrice(productPricing.listPrice, productPricing.currency)}</span>
+                          <span className="line-through">{formatPrice(productPricing.listPrice, productPricing.currency, i18n.language)}</span>
                           <span className="text-[10px] bg-slate-100 dark:bg-white/10 px-1 rounded">Liste</span>
                         </div>
                         
@@ -221,7 +221,7 @@ export function ProductPricingTable({
                         <div className="flex items-center gap-2">
                             <Calculator size={14} className="text-pink-500" />
                             <div className="font-bold text-pink-600 dark:text-pink-400 text-base">
-                                {formatPrice(finalPrice, productPricing.currency)}
+                                {formatPrice(finalPrice, productPricing.currency, i18n.language)}
                             </div>
                         </div>
                       </div>

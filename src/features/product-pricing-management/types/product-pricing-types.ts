@@ -75,7 +75,8 @@ export const calculateProfitMargin = (finalPrice: number, cost: number) => {
   return { amount: profit, percentage: (profit / c) * 100 };
 };
 
-export const formatPrice = (amount: number, currencyCode: string) => {
+export const formatPrice = (amount: number, currencyCode: string, locale?: string): string => {
   const symbol = CURRENCIES.find(c => c.value === currencyCode)?.symbol || currencyCode;
-  return new Intl.NumberFormat('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(amount) + ' ' + symbol;
+  const loc = locale || 'tr';
+  return new Intl.NumberFormat(loc, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(amount) + ' ' + symbol;
 };

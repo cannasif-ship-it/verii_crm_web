@@ -12,11 +12,11 @@ interface QuotationApprovalFlowTabProps {
   quotationId: number;
 }
 
-function formatActionDate(value: string | null | undefined): string {
+function formatActionDate(value: string | null | undefined, locale: string): string {
   if (!value) return '—';
   try {
     const d = new Date(value);
-    return d.toLocaleString('tr-TR', {
+    return d.toLocaleString(locale, {
       dateStyle: 'short',
       timeStyle: 'short',
     });
@@ -44,7 +44,7 @@ function ActionStatusBadge({ status, statusName }: { status: number; statusName:
   return <Badge variant={variant} className={className}>{statusName}</Badge>;
 }
 
-function StepCard({ step }: { step: ApprovalFlowStepReportDto }): ReactElement {
+function StepCard({ step, locale }: { step: ApprovalFlowStepReportDto; locale: string }): ReactElement {
   const { t } = useTranslation();
   const stepStatusLabel =
     step.stepStatus === 'Completed'
@@ -80,7 +80,7 @@ function StepCard({ step }: { step: ApprovalFlowStepReportDto }): ReactElement {
                 </div>
                 <ActionStatusBadge status={action.status} statusName={action.statusName} />
                 <span className="text-xs text-muted-foreground whitespace-nowrap">
-                  {formatActionDate(action.actionDate)}
+                  {formatActionDate(action.actionDate, locale)}
                 </span>
                 {action.rejectedReason && (
                   <p className="w-full text-sm text-red-600 dark:text-red-400 mt-1">{action.rejectedReason}</p>
@@ -95,7 +95,7 @@ function StepCard({ step }: { step: ApprovalFlowStepReportDto }): ReactElement {
 }
 
 export function QuotationApprovalFlowTab({ quotationId }: QuotationApprovalFlowTabProps): ReactElement {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { data: report, isLoading, error } = useQuotationApprovalFlowReport(quotationId);
 
   if (isLoading) {
@@ -159,7 +159,7 @@ export function QuotationApprovalFlowTab({ quotationId }: QuotationApprovalFlowT
 
       <div className={cn('space-y-4', !dto.steps?.length && 'hidden')}>
         {dto.steps?.map((step) => (
-          <StepCard key={step.stepOrder} step={step} />
+          <StepCard key={step.stepOrder} step={step} locale={i18n.language} />
         ))}
       </div>
     </div>

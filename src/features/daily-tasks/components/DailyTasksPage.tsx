@@ -492,7 +492,7 @@ export function DailyTasksPage(): ReactElement {
                                             <ActivityStatusBadge status={activity.status} />
                                         </div>
                                         <div className="flex flex-wrap items-center gap-2 md:gap-4 mt-1 text-xs text-slate-500 dark:text-slate-400">
-                                            <span className="flex items-center gap-1"><CalendarDays size={12} className="text-pink-500" /> {activity.activityDate ? new Date(activity.activityDate).toLocaleDateString() : '-'}</span>
+                                            <span className="flex items-center gap-1"><CalendarDays size={12} className="text-pink-500" /> {activity.activityDate ? new Date(activity.activityDate).toLocaleDateString(i18n.language) : '-'}</span>
                                             <span className="flex items-center gap-1"><User size={12} className="text-blue-500" /> {getAssignedUserName(activity.assignedUserId)}</span>
                                             <div className="md:hidden flex gap-2">
                                                 <ActivityStatusBadge status={activity.status} />

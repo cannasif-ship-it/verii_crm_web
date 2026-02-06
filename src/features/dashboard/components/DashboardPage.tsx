@@ -178,15 +178,14 @@ export function DashboardPage(): ReactElement {
     const createdAt = typeof activity.createdAt === 'string' ? activity.createdAt : '';
     const amount = typeof activity.amount === 'number' ? activity.amount : null;
     return {
-      c: title || subject || konu || description || 'İsimsiz Aktivite',
+      c: title || subject || konu || description || t('dashboard.unnamedActivity', 'İsimsiz Aktivite'),
       a: amount !== null ? formatCurrency(amount) : '',
-      s: t(`dashboard.activityType.${type}`) || type || 'Genel',
-      d: timeAgo || (createdAt ? new Date(createdAt).toLocaleDateString() : 'Tarih yok'),
+      s: t(`dashboard.activityType.${type}`) || type || t('dashboard.activityType.general', 'Genel'),
+      d: timeAgo || (createdAt ? new Date(createdAt).toLocaleDateString(i18n.language) : t('dashboard.noDate', 'Tarih yok')),
     };
   });
 
   const handleDownloadReport = () => {
-    console.log("Rapor indiriliyor...");
   };
 
   const handleQuickAction = () => {

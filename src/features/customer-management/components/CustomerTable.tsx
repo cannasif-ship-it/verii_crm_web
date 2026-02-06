@@ -182,7 +182,7 @@ export function CustomerTable({
         case 'location':
             return <div className="flex items-center gap-2 text-xs"><MapPin size={14} className="text-green-500 shrink-0" />{String(value)}</div>;
         case 'money':
-            return <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 font-mono"><CreditCard size={14} className="shrink-0" />{Number(value).toLocaleString('tr-TR', { minimumFractionDigits: 2 })} ₺</div>;
+            return <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 font-mono"><CreditCard size={14} className="shrink-0" />{Number(value).toLocaleString(i18n.language, { minimumFractionDigits: 2 })} ₺</div>;
         case 'user':
             return <div className="flex items-center gap-2 text-xs"><User size={14} className="text-indigo-500/50 shrink-0" />{String(value)}</div>;
         case 'link':

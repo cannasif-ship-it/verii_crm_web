@@ -1,38 +1,19 @@
 import type { ReactElement } from 'react';
-import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useReportsStore } from '../store';
-import { reportsApi } from '../api';
+import { useReportsList } from '../hooks/useReportsList';
 import { Card, CardContent } from '@/components/ui/card';
 import { Loader2, Plus, Search } from 'lucide-react';
 
 export function ReportsListPage(): ReactElement {
-  const { t } = useTranslation('common');
+  const { t, i18n } = useTranslation('common');
   const navigate = useNavigate();
-  const { search, items, loading, error, setSearch, setItems, setLoading, setError } = useReportsStore();
-
-  useEffect(() => {
-    let cancelled = false;
-    setLoading(true);
-    setError(null);
-    reportsApi
-      .list(search || undefined)
-      .then((list) => {
-        if (!cancelled) setItems(Array.isArray(list) ? list : []);
-      })
-      .catch((e) => {
-        if (!cancelled) setError(e instanceof Error ? e.message : 'Failed to load');
-      })
-      .finally(() => {
-        if (!cancelled) setLoading(false);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [search, setItems, setLoading, setError]);
+  const { search, setSearch } = useReportsStore();
+  const { data: items = [], isLoading: loading, error: queryError } = useReportsList(search || undefined);
+  const error = queryError?.message ?? null;
 
   return (
     <div className="space-y-6 p-6">
@@ -91,7 +72,7 @@ export function ReportsListPage(): ReactElement {
                   </p>
                 </div>
                 <p className="text-muted-foreground text-xs">
-                  {r.updatedAt ? new Date(r.updatedAt).toLocaleDateString() : ''}
+                  {r.updatedAt ? new Date(r.updatedAt).toLocaleDateString(i18n.language) : ''}
                 </p>
               </CardContent>
             </Card>
