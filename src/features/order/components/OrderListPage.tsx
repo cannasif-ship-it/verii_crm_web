@@ -4,6 +4,13 @@ import { useNavigate } from 'react-router-dom';
 import { useUIStore } from '@/stores/ui-store';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { OrderTable } from './OrderTable';
 import { Search, RefreshCw, Plus, X } from 'lucide-react';
 import type { PagedFilter } from '@/types/api';
@@ -17,6 +24,7 @@ export function OrderListPage(): ReactElement {
   const [sortBy, setSortBy] = useState('Id');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
   const [searchTerm, setSearchTerm] = useState('');
+  const [approvalStatusFilter, setApprovalStatusFilter] = useState<string>('all');
   const [filters, setFilters] = useState<Record<string, unknown>>({});
 
   useEffect(() => {
@@ -32,9 +40,12 @@ export function OrderListPage(): ReactElement {
         { column: 'PotentialCustomerName', operator: 'contains', value: searchTerm }
       );
     }
+    if (approvalStatusFilter !== 'all') {
+      newFilters.push({ column: 'Status', operator: 'equals', value: approvalStatusFilter });
+    }
     setFilters(newFilters.length > 0 ? { filters: newFilters } : {});
     setPageNumber(1);
-  }, [searchTerm]);
+  }, [searchTerm, approvalStatusFilter]);
 
   const handleSortChange = (newSortBy: string, newSortDirection: 'asc' | 'desc'): void => {
     setSortBy(newSortBy);
@@ -110,6 +121,20 @@ export function OrderListPage(): ReactElement {
               </Button>
             )}
           </div>
+
+          <Select value={approvalStatusFilter} onValueChange={setApprovalStatusFilter}>
+            <SelectTrigger className="h-12 w-[200px] rounded-xl border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950/50">
+              <SelectValue placeholder={t('approval.statusFilterLabel', 'Onay durumu')} />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">{t('common.all', 'Tümü')}</SelectItem>
+              <SelectItem value="0">{t('approval.status.notRequired', 'Gerekli Değil')}</SelectItem>
+              <SelectItem value="1">{t('approval.status.waiting', 'Bekliyor')}</SelectItem>
+              <SelectItem value="2">{t('approval.status.approved', 'Onaylandı')}</SelectItem>
+              <SelectItem value="3">{t('approval.status.rejected', 'Reddedildi')}</SelectItem>
+              <SelectItem value="4">{t('approval.status.closed', 'Kapandı')}</SelectItem>
+            </SelectContent>
+          </Select>
           
           <Button
             variant="outline"

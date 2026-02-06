@@ -9,8 +9,9 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { ApprovalStatusBadge } from '@/features/approval/components/ApprovalStatusBadge';
+import type { ApprovalStatus } from '@/features/approval/types/approval-types';
 import { useOrderList } from '../hooks/useOrderList';
 import { useCreateRevisionOfOrder } from '../hooks/useCreateRevisionOfOrder';
 import type { OrderGetDto } from '../types/order-types';
@@ -206,9 +207,11 @@ export function OrderTable({
                   {formatCurrency(order.grandTotal, order.currency || 'TRY')}
                 </TableCell>
                 <TableCell>
-                  <Badge variant={order.status === 1 ? 'default' : 'secondary'}>
-                    {order.status ? t('order.list.statusActive', 'Aktif') : t('order.list.statusInactive', 'Pasif')}
-                  </Badge>
+                  {typeof order.status === 'number' && order.status >= 0 && order.status <= 4 ? (
+                    <ApprovalStatusBadge status={order.status as ApprovalStatus} />
+                  ) : (
+                    <span className="text-muted-foreground text-sm">-</span>
+                  )}
                 </TableCell>
                 <TableCell>
                   {(order.status === 0 || order.status === 1) && (

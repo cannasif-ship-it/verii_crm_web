@@ -9,8 +9,9 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { ApprovalStatusBadge } from '@/features/approval/components/ApprovalStatusBadge';
+import type { ApprovalStatus } from '@/features/approval/types/approval-types';
 import { useDemandList } from '../hooks/useDemandList';
 import { useCreateRevisionOfDemand } from '../hooks/useCreateRevisionOfDemand';
 import type { DemandGetDto } from '../types/demand-types';
@@ -206,9 +207,11 @@ export function DemandTable({
                   {formatCurrency(demand.grandTotal, demand.currency || 'TRY')}
                 </TableCell>
                 <TableCell>
-                  <Badge variant={demand.status === 1 ? 'default' : 'secondary'}>
-                    {demand.status ? t('demand.list.statusActive', 'Aktif') : t('demand.list.statusInactive', 'Pasif')}
-                  </Badge>
+                  {typeof demand.status === 'number' && demand.status >= 0 && demand.status <= 4 ? (
+                    <ApprovalStatusBadge status={demand.status as ApprovalStatus} />
+                  ) : (
+                    <span className="text-muted-foreground text-sm">-</span>
+                  )}
                 </TableCell>
                 <TableCell>
                   {(demand.status === 0 || demand.status === 1) && (

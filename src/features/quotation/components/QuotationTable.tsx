@@ -9,8 +9,9 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { ApprovalStatusBadge } from '@/features/approval/components/ApprovalStatusBadge';
+import type { ApprovalStatus } from '@/features/approval/types/approval-types';
 import { useQuotationList } from '../hooks/useQuotationList';
 import { useCreateRevisionOfQuotation } from '../hooks/useCreateRevisionOfQuotation';
 import type { QuotationGetDto } from '../types/quotation-types';
@@ -206,9 +207,11 @@ export function QuotationTable({
                   {formatCurrency(quotation.grandTotal, quotation.currency || 'TRY')}
                 </TableCell>
                 <TableCell>
-                  <Badge variant={quotation.status === 1 ? 'default' : 'secondary'}>
-                    {quotation.status ? t('quotation.list.statusActive', 'Aktif') : t('quotation.list.statusInactive', 'Pasif')}
-                  </Badge>
+                  {typeof quotation.status === 'number' && quotation.status >= 0 && quotation.status <= 4 ? (
+                    <ApprovalStatusBadge status={quotation.status as ApprovalStatus} />
+                  ) : (
+                    <span className="text-muted-foreground text-sm">-</span>
+                  )}
                 </TableCell>
                 <TableCell>
                   {(quotation.status === 0 || quotation.status === 1) && (
