@@ -16,8 +16,11 @@
   "activityType": {
     "meeting": "Toplantı",
     "call": "Arama",
-    "email": "E-posta"
+    "email": "E-posta",
+    "general": "Genel"
   },
+  "noDate": "Tarih yok",
+  "unnamedActivity": "İsimsiz Aktivite",
   "monthsShort": {
     "jan": "Oca",
     "feb": "Şub",

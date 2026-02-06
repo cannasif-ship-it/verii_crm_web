@@ -16,8 +16,11 @@
   "activityType": {
     "meeting": "Meeting",
     "call": "Call",
-    "email": "Email"
+    "email": "Email",
+    "general": "General"
   },
+  "noDate": "No date",
+  "unnamedActivity": "Unnamed Activity",
   "monthsShort": {
     "jan": "Jan",
     "feb": "Feb",
