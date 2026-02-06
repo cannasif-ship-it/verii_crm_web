@@ -33,8 +33,9 @@ const normalizeLang = (lng?: string | null): string | undefined => {
   return mapped;
 };
 
-const storedLng = localStorage.getItem('i18nextLng');
+const storedLng = typeof localStorage !== 'undefined' ? localStorage.getItem('i18nextLng') : null;
 const initialLng = storedLng ? (normalizeLang(storedLng) ?? DEFAULT_LANG) : DEFAULT_LANG;
+const resolvedLng = supportedLngs.includes(initialLng) ? initialLng : DEFAULT_LANG;
 
 export async function loadLanguage(lang: string): Promise<void> {
   const target = normalizeLang(lang) ?? fallbackLng;
@@ -52,7 +53,7 @@ const initPromise = (async () => {
   const namespaces = Object.keys(loaders[fallbackLng] || {});
   const defaultNS = namespaces.includes('common') ? 'common' : namespaces[0] ?? 'translation';
   await i18n.use(initReactI18next).init({
-    lng: initialLng,
+    lng: resolvedLng,
     fallbackLng,
     supportedLngs,
     load: 'languageOnly',
@@ -61,10 +62,14 @@ const initPromise = (async () => {
     defaultNS,
     resources: {},
     interpolation: { escapeValue: false },
+    detection: {
+      order: [],
+      caches: [],
+    },
   });
   await loadLanguage(fallbackLng);
-  if (initialLng !== fallbackLng) {
-    await loadLanguage(initialLng);
+  if (resolvedLng !== fallbackLng) {
+    await loadLanguage(resolvedLng);
   }
 })();
 
