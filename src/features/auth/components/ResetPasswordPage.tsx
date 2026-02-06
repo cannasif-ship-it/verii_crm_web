@@ -20,7 +20,7 @@ import { LockKeyIcon, ViewIcon, ViewOffIcon } from 'hugeicons-react';
 import loginImage from '../../../../public/veriicrmlogo.png';
 
 export function ResetPasswordPage(): React.JSX.Element {
-  const { t } = useTranslation();
+  const { t } = useTranslation('auth');
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const token = searchParams.get('token');
