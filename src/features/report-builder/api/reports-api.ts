@@ -1,4 +1,4 @@
-import { api } from '@/shared/api';
+import { api } from '@/lib/axios';
 import type { ReportDto, ReportPreviewRequest, ReportPreviewResponse, PreviewColumnDto, PreviewDataDto } from '../types';
 
 const BASE = '/api/reportbuilder';

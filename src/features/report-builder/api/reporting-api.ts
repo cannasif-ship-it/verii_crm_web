@@ -1,4 +1,4 @@
-import { api } from '@/shared/api';
+import { api } from '@/lib/axios';
 import type { ConnectionDto, DataSourceCheckResponseDto, Field } from '../types';
 
 const BASE = '/api/reportbuilder';
