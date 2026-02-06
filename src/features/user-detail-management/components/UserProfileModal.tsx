@@ -1,6 +1,7 @@
-import { type ReactElement } from 'react';
+import { type ReactElement, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import * as SelectPrimitive from '@radix-ui/react-select';
+import { loadLanguage } from '@/lib/i18n';
 import { 
   Select,
   SelectContent,
@@ -53,8 +54,9 @@ export function UserProfileModal({
   const navigate = useNavigate();
   const { data: userDetail } = useUserDetailByUserId(user?.id || 0);
 
-  const langCode = i18n.language?.toLowerCase() === 'sa' ? 'ar' : i18n.language?.toLowerCase().split('-')[0] ?? 'tr';
-  const currentLanguage = languages.find((lang) => lang.code === langCode) || languages[0];
+  const normalizedLang = i18n.language?.toLowerCase() === 'sa' ? 'ar' : i18n.language?.toLowerCase().split('-')[0] ?? 'tr';
+  const currentLanguage = languages.find((lang) => lang.code === normalizedLang) || languages[0];
+  const [isChangingLanguage, setIsChangingLanguage] = useState(false);
 
   const displayName = user?.name || user?.email || 'Kullanıcı';
   const displayInitials = user?.name?.[0]?.toUpperCase() || user?.email?.[0]?.toUpperCase() || 'MK';
@@ -71,13 +73,22 @@ export function UserProfileModal({
     setTheme(theme === 'dark' ? 'light' : 'dark');
   };
 
-  const handleLanguageChange = (value: string): void => {
-    i18n.changeLanguage(value);
+  const handleLanguageChange = async (value: string): Promise<void> => {
+    const target = value.toLowerCase() === 'sa' ? 'ar' : value.toLowerCase();
+    if (target === normalizedLang) return;
+    setIsChangingLanguage(true);
+    try {
+      await loadLanguage(target);
+      await i18n.changeLanguage(target);
+      if (typeof window !== 'undefined') window.localStorage.setItem('i18nextLng', target);
+    } finally {
+      setIsChangingLanguage(false);
+    }
   };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className={cn(
+      <DialogContent aria-describedby={undefined} className={cn(
         "p-0 gap-0 border-none shadow-2xl overflow-hidden focus:outline-none flex flex-col md:flex-row transition-all duration-300 max-h-[90dvh] md:max-h-[85vh] w-[95vw] sm:w-full max-w-5xl rounded-2xl",
         darkMode ? "bg-[#1a1025]/98 backdrop-blur-xl border-white/10 shadow-purple-900/20" : "bg-white/98 backdrop-blur-xl border-gray-200/80 shadow-xl"
       )}>
@@ -178,7 +189,7 @@ export function UserProfileModal({
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
               <div className="relative w-full min-w-0">
-                <Select value={currentLanguage.code} onValueChange={handleLanguageChange}>
+                <Select value={currentLanguage.code} onValueChange={handleLanguageChange} disabled={isChangingLanguage}>
                   <SelectPrimitive.Trigger asChild>
                     <button
                       type="button"
