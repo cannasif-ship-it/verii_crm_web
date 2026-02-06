@@ -261,6 +261,16 @@
       "openQuotationAmount": "Open Quotation Amount",
       "openOrderAmount": "Open Order Amount"
     },
+    "currencyFilter": {
+      "label": "Currency",
+      "all": "All"
+    },
+    "currencyTotals": {
+      "currency": "Currency",
+      "demandAmount": "Demand amount",
+      "quotationAmount": "Quotation amount",
+      "orderAmount": "Order amount"
+    },
     "sections": {
       "contacts": "Contacts",
       "shippingAddresses": "Shipping Addresses",

@@ -265,6 +265,16 @@
       "openQuotationAmount": "Importe cotizaciones abiertas",
       "openOrderAmount": "Importe pedidos abiertos"
     },
+    "currencyFilter": {
+      "label": "Moneda",
+      "all": "Todas"
+    },
+    "currencyTotals": {
+      "currency": "Moneda",
+      "demandAmount": "Importe demanda",
+      "quotationAmount": "Importe cotización",
+      "orderAmount": "Importe pedido"
+    },
     "sections": {
       "contacts": "Contactos",
       "shippingAddresses": "Direcciones de envío",

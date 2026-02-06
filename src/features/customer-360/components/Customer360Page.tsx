@@ -1,4 +1,4 @@
-import { type ReactElement } from 'react';
+import { type ReactElement, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { RefreshCw, User, MapPin, FileText, ClipboardList, ShoppingCart, Activity, Clock } from 'lucide-react';
@@ -21,9 +21,20 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useCustomer360Overview } from '../hooks/useCustomer360Overview';
-import { useCustomer360AnalyticsSummary } from '../hooks/useCustomer360AnalyticsSummary';
-import { useCustomer360AnalyticsCharts } from '../hooks/useCustomer360AnalyticsCharts';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
+  useCustomer360OverviewQuery,
+  useCustomer360AnalyticsSummaryQuery,
+  useCustomer360AnalyticsChartsQuery,
+} from '../hooks/useCustomer360';
+import { CustomerCurrencySummaryCards } from './CustomerCurrencySummaryCards';
+import { CustomerAmountComparisonByCurrencyTable } from './CustomerAmountComparisonByCurrencyTable';
 import type {
   Customer360SimpleItemDto,
   Customer360TimelineItemDto,
@@ -129,6 +140,7 @@ function AnalyticsChartsSection({
   currencyFormatter,
   t,
   noDataKey,
+  showAmountBar = true,
 }: {
   distribution: Customer360DistributionDto;
   monthlyTrend: { month: string; demandCount: number; quotationCount: number; orderCount: number }[];
@@ -136,6 +148,7 @@ function AnalyticsChartsSection({
   currencyFormatter: Intl.NumberFormat;
   t: (key: string) => string;
   noDataKey: string;
+  showAmountBar?: boolean;
 }): ReactElement {
   const pieData = [
     { name: t('customer360.analyticsCharts.demand'), value: distribution.demandCount },
@@ -210,43 +223,54 @@ function AnalyticsChartsSection({
         </CardContent>
       </Card>
 
-      <Card className="rounded-xl border border-slate-200 dark:border-white/10 lg:col-span-3">
-        <CardHeader>
-          <CardTitle className="text-base">{t('customer360.analyticsCharts.amountComparisonTitle')}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {barData.every((d) => d.value === 0) ? (
-            <p className="text-sm text-muted-foreground py-8 text-center">{t(noDataKey)}</p>
-          ) : (
-            <div className="h-64">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={barData} layout="vertical" margin={{ top: 5, right: 20, left: 80, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-                  <XAxis type="number" tickFormatter={(v) => currencyFormatter.format(v)} tick={{ fontSize: 11 }} />
-                  <YAxis type="category" dataKey="name" width={75} tick={{ fontSize: 11 }} />
-                  <Tooltip formatter={(value: number | undefined) => [currencyFormatter.format(value ?? 0), '']} />
-                  <Bar dataKey="value" fill={CHART_COLORS[0]} radius={[0, 4, 4, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          )}
-        </CardContent>
-      </Card>
+      {showAmountBar && (
+        <Card className="rounded-xl border border-slate-200 dark:border-white/10 lg:col-span-3">
+          <CardHeader>
+            <CardTitle className="text-base">{t('customer360.analyticsCharts.amountComparisonTitle')}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {barData.every((d) => d.value === 0) ? (
+              <p className="text-sm text-muted-foreground py-8 text-center">{t(noDataKey)}</p>
+            ) : (
+              <div className="h-64">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={barData} layout="vertical" margin={{ top: 5, right: 20, left: 80, bottom: 5 }}>
+                    <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                    <XAxis type="number" tickFormatter={(v) => currencyFormatter.format(v)} tick={{ fontSize: 11 }} />
+                    <YAxis type="category" dataKey="name" width={75} tick={{ fontSize: 11 }} />
+                    <Tooltip formatter={(value: number | undefined) => [currencyFormatter.format(value ?? 0), '']} />
+                    <Bar dataKey="value" fill={CHART_COLORS[0]} radius={[0, 4, 4, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }
+
+const ALL_CURRENCY = 'ALL';
 
 export function Customer360Page(): ReactElement {
   const { customerId } = useParams<{ customerId: string }>();
   const { t, i18n } = useTranslation();
   const id = Number(customerId ?? 0);
-  const { data, isLoading, isError, error, refetch } = useCustomer360Overview(id);
-  const { data: analytics, isLoading: isAnalyticsLoading, isError: isAnalyticsError } = useCustomer360AnalyticsSummary(id);
-  const {
-    data: chartsData,
-    isLoading: isChartsLoading,
-    isError: isChartsError,
-  } = useCustomer360AnalyticsCharts(id, 12);
+  const [currency, setCurrency] = useState<string>(ALL_CURRENCY);
+  const currencyParam = currency === ALL_CURRENCY ? undefined : currency;
+  const { data, isLoading, isError, error, refetch } = useCustomer360OverviewQuery(id, currencyParam);
+  const { data: analytics, isLoading: isAnalyticsLoading, isError: isAnalyticsError } =
+    useCustomer360AnalyticsSummaryQuery(id, currencyParam);
+  const { data: chartsData, isLoading: isChartsLoading, isError: isChartsError } =
+    useCustomer360AnalyticsChartsQuery(id, 12, currencyParam);
+  const currencyOptions = useMemo(() => {
+    const set = new Set<string>();
+    analytics?.totalsByCurrency?.forEach((r) => set.add(r.currency));
+    chartsData?.amountComparisonByCurrency?.forEach((r) => (r.currency ? set.add(r.currency) : null));
+    return [ALL_CURRENCY, ...Array.from(set).sort()];
+  }, [analytics?.totalsByCurrency, chartsData?.amountComparisonByCurrency]);
+  const isAllCurrencies = currency === ALL_CURRENCY;
 
   if (id <= 0) {
     return (
@@ -328,7 +352,11 @@ export function Customer360Page(): ReactElement {
     openOrderAmount: 0,
     activityCount: 0,
     lastActivityDate: null,
+    totalsByCurrency: [],
   };
+  const lastActivityDateFormatted = analyticsSummary.lastActivityDate
+    ? new Date(analyticsSummary.lastActivityDate).toLocaleDateString(i18n.language)
+    : '-';
   const currencyFormatter = new Intl.NumberFormat(undefined, {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
@@ -336,12 +364,28 @@ export function Customer360Page(): ReactElement {
 
   return (
     <div className="container py-6 space-y-6">
-      <header className="flex flex-col gap-1">
-        <h1 className="text-2xl font-bold tracking-tight">{t('customer360.title')}</h1>
-        <p className="text-muted-foreground text-sm">
-          {profile.name ?? ''}
-          {profile.customerCode ? ` · ${profile.customerCode}` : ''}
-        </p>
+      <header className="flex flex-col gap-2">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div className="flex flex-col gap-1">
+            <h1 className="text-2xl font-bold tracking-tight">{t('customer360.title')}</h1>
+            <p className="text-muted-foreground text-sm">
+              {profile.name ?? ''}
+              {profile.customerCode ? ` · ${profile.customerCode}` : ''}
+            </p>
+          </div>
+          <Select value={currency} onValueChange={setCurrency}>
+            <SelectTrigger className="w-[180px]" size="default">
+              <SelectValue placeholder={t('customer360.currencyFilter.label')} />
+            </SelectTrigger>
+            <SelectContent>
+              {currencyOptions.map((opt) => (
+                <SelectItem key={opt} value={opt}>
+                  {opt === ALL_CURRENCY ? t('customer360.currencyFilter.all') : opt}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
       </header>
 
       <Tabs defaultValue="overview" className="space-y-4">
@@ -457,62 +501,20 @@ export function Customer360Page(): ReactElement {
             </Card>
           ) : (
             <>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-                <Card className="rounded-xl border border-slate-200 dark:border-white/10">
-                  <CardContent className="pt-6">
-                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                      {t('customer360.analytics.last12MonthsOrderAmount')}
-                    </p>
-                    <p className="text-2xl font-bold mt-1">
-                      {isAnalyticsLoading ? '-' : currencyFormatter.format(analyticsSummary.last12MonthsOrderAmount ?? 0)}
-                    </p>
-                  </CardContent>
-                </Card>
-                <Card className="rounded-xl border border-slate-200 dark:border-white/10">
-                  <CardContent className="pt-6">
-                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                      {t('customer360.analytics.openQuotationAmount')}
-                    </p>
-                    <p className="text-2xl font-bold mt-1">
-                      {isAnalyticsLoading ? '-' : currencyFormatter.format(analyticsSummary.openQuotationAmount ?? 0)}
-                    </p>
-                  </CardContent>
-                </Card>
-                <Card className="rounded-xl border border-slate-200 dark:border-white/10">
-                  <CardContent className="pt-6">
-                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                      {t('customer360.analytics.openOrderAmount')}
-                    </p>
-                    <p className="text-2xl font-bold mt-1">
-                      {isAnalyticsLoading ? '-' : currencyFormatter.format(analyticsSummary.openOrderAmount ?? 0)}
-                    </p>
-                  </CardContent>
-                </Card>
-                <Card className="rounded-xl border border-slate-200 dark:border-white/10">
-                  <CardContent className="pt-6">
-                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                      {t('customer360.analytics.activityCount')}
-                    </p>
-                    <p className="text-2xl font-bold mt-1">
-                      {isAnalyticsLoading ? '-' : analyticsSummary.activityCount ?? 0}
-                    </p>
-                  </CardContent>
-                </Card>
-                <Card className="rounded-xl border border-slate-200 dark:border-white/10">
-                  <CardContent className="pt-6">
-                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                      {t('customer360.analytics.lastActivityDate')}
-                    </p>
-                    <p className="text-2xl font-bold mt-1">
-                      {isAnalyticsLoading
-                        ? '-'
-                        : analyticsSummary.lastActivityDate
-                          ? new Date(analyticsSummary.lastActivityDate).toLocaleDateString(i18n.language)
-                          : '-'}
-                    </p>
-                  </CardContent>
-                </Card>
-              </div>
+              <CustomerCurrencySummaryCards
+                isAllCurrencies={isAllCurrencies}
+                summary={analytics}
+                totalsByCurrency={analytics?.totalsByCurrency ?? []}
+                isLoading={isAnalyticsLoading}
+                lastActivityDateFormatted={lastActivityDateFormatted}
+              />
+
+              {isAllCurrencies && (
+                <CustomerAmountComparisonByCurrencyTable
+                  rows={chartsData?.amountComparisonByCurrency ?? []}
+                  isLoading={isChartsLoading}
+                />
+              )}
 
               {isChartsError ? (
                 <Card className="rounded-xl border border-dashed border-slate-200 dark:border-white/10">
@@ -536,14 +538,17 @@ export function Customer360Page(): ReactElement {
                   </Card>
                 </div>
               ) : chartsData ? (
-                <AnalyticsChartsSection
-                  distribution={chartsData.distribution}
-                  monthlyTrend={chartsData.monthlyTrend}
-                  amountComparison={chartsData.amountComparison}
-                  currencyFormatter={currencyFormatter}
-                  t={t}
-                  noDataKey="common.noData"
-                />
+                <>
+                  <AnalyticsChartsSection
+                    distribution={chartsData.distribution}
+                    monthlyTrend={chartsData.monthlyTrend}
+                    amountComparison={chartsData.amountComparison}
+                    currencyFormatter={currencyFormatter}
+                    t={t}
+                    noDataKey="common.noData"
+                    showAmountBar={!isAllCurrencies}
+                  />
+                </>
               ) : null}
             </>
           )}

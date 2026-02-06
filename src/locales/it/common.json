@@ -255,6 +255,16 @@
       "openQuotationAmount": "Importo preventivi aperti",
       "openOrderAmount": "Importo ordini aperti"
     },
+    "currencyFilter": {
+      "label": "Valuta",
+      "all": "Tutte"
+    },
+    "currencyTotals": {
+      "currency": "Valuta",
+      "demandAmount": "Importo richiesta",
+      "quotationAmount": "Importo preventivo",
+      "orderAmount": "Importo ordine"
+    },
     "sections": {
       "contacts": "Contatti",
       "shippingAddresses": "Indirizzi di spedizione",

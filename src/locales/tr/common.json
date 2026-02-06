@@ -264,6 +264,16 @@
       "openQuotationAmount": "Açık Teklif Tutarı",
       "openOrderAmount": "Açık Sipariş Tutarı"
     },
+    "currencyFilter": {
+      "label": "Para birimi",
+      "all": "Tümü"
+    },
+    "currencyTotals": {
+      "currency": "Para birimi",
+      "demandAmount": "Talep tutarı",
+      "quotationAmount": "Teklif tutarı",
+      "orderAmount": "Sipariş tutarı"
+    },
     "sections": {
       "contacts": "İletişimler",
       "shippingAddresses": "Teslimat Adresleri",

@@ -249,6 +249,16 @@
       "openQuotationAmount": "Offener Angebotsbetrag",
       "openOrderAmount": "Offener Bestellbetrag"
     },
+    "currencyFilter": {
+      "label": "Währung",
+      "all": "Alle"
+    },
+    "currencyTotals": {
+      "currency": "Währung",
+      "demandAmount": "Anfragebetrag",
+      "quotationAmount": "Angebotsbetrag",
+      "orderAmount": "Bestellbetrag"
+    },
     "sections": {
       "contacts": "Kontakte",
       "shippingAddresses": "Lieferadressen",

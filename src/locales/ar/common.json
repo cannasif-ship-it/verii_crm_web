@@ -265,6 +265,16 @@
       "openQuotationAmount": "قيمة عروض الأسعار المفتوحة",
       "openOrderAmount": "قيمة الطلبات المفتوحة"
     },
+    "currencyFilter": {
+      "label": "العملة",
+      "all": "الكل"
+    },
+    "currencyTotals": {
+      "currency": "العملة",
+      "demandAmount": "مبلغ الطلب",
+      "quotationAmount": "مبلغ عرض السعر",
+      "orderAmount": "مبلغ الأمر"
+    },
     "sections": {
       "contacts": "جهات الاتصال",
       "shippingAddresses": "عناوين الشحن",

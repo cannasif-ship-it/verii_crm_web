@@ -249,6 +249,16 @@
       "openQuotationAmount": "Montant devis ouverts",
       "openOrderAmount": "Montant commandes ouvertes"
     },
+    "currencyFilter": {
+      "label": "Devise",
+      "all": "Toutes"
+    },
+    "currencyTotals": {
+      "currency": "Devise",
+      "demandAmount": "Montant demande",
+      "quotationAmount": "Montant devis",
+      "orderAmount": "Montant commande"
+    },
     "sections": {
       "contacts": "Contacts",
       "shippingAddresses": "Adresses de livraison",
