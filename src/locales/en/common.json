@@ -122,6 +122,7 @@
     "orders": "Orders",
     "campaigns": "Campaigns",
     "reports": "Reports",
+    "salesKpi": "Sales KPI",
     "reportBuilder": "Report Builder",
     "pdfBuilder": "PDF Builder",
     "powerbi": "Power BI",
@@ -278,6 +279,59 @@
       "Approved": "Approved",
       "Rejected": "Rejected",
       "Completed": "Completed"
+    }
+  },
+  "salesman360": {
+    "title": "Salesman 360",
+    "subtitle": "Sales representative overview",
+    "notFound": "User not found",
+    "error": "An error occurred while loading the overview",
+    "retry": "Retry",
+    "button": "Salesman 360",
+    "currencyFilter": {
+      "label": "Currency",
+      "all": "All"
+    },
+    "currencyTotals": {
+      "title": "Totals by currency",
+      "currency": "Currency",
+      "demandAmount": "Demand amount",
+      "quotationAmount": "Quotation amount",
+      "orderAmount": "Order amount"
+    },
+    "tabs": {
+      "overview": "Overview",
+      "analytics": "Analytics"
+    },
+    "kpi": {
+      "totalDemands": "Total Demands",
+      "totalQuotations": "Total Quotations",
+      "totalOrders": "Total Orders",
+      "totalActivities": "Total Activities",
+      "totalDemandAmount": "Total Demand Amount",
+      "totalQuotationAmount": "Total Quotation Amount",
+      "totalOrderAmount": "Total Order Amount"
+    },
+    "analytics": {
+      "last12MonthsOrderAmount": "Last 12 Months Order Amount",
+      "openQuotationAmount": "Open Quotation Amount",
+      "openOrderAmount": "Open Order Amount",
+      "activityCount": "Activity Count",
+      "lastActivityDate": "Last Activity Date",
+      "error": "Analytics data could not be loaded",
+      "allCurrencies": "All currencies",
+      "selectedCurrency": "Selected"
+    },
+    "analyticsCharts": {
+      "distributionTitle": "Transaction Distribution",
+      "monthlyTrendTitle": "Monthly Trend",
+      "amountComparisonTitle": "Amount Comparison",
+      "demand": "Demand",
+      "quotation": "Quotation",
+      "order": "Order",
+      "last12MonthsOrderAmount": "Last 12 Months Order Amount",
+      "openQuotationAmount": "Open Quotation Amount",
+      "openOrderAmount": "Open Order Amount"
     }
   },
   "goodsReceipt": {

@@ -121,6 +121,7 @@ export function MainLayout({ navItems }: MainLayoutProps): ReactElement {
         title: t('sidebar.reports', 'Raporlar'),
         icon: <File01Icon size={iconSize} className="text-cyan-500" />,
         children: [
+          { title: t('sidebar.salesKpi', 'Satış KPI'), href: '/salesmen-360/me' },
           {
             title: t('sidebar.reportBuilder', 'Report Builder'),
             children: [

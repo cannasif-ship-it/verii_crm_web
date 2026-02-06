@@ -113,6 +113,7 @@
     "orders": "Commandes",
     "campaigns": "Campagnes",
     "reports": "Rapports",
+    "salesKpi": "KPI ventes",
     "powerbi": "Power BI",
     "powerbiReportDefinitions": "Rapports Power BI",
     "powerbiRls": "Gestion RLS",
@@ -266,6 +267,59 @@
       "Approved": "Approuvé",
       "Rejected": "Rejeté",
       "Completed": "Terminé"
+    }
+  },
+  "salesman360": {
+    "title": "Salesman 360",
+    "subtitle": "Aperçu du représentant",
+    "notFound": "Utilisateur introuvable",
+    "error": "Erreur lors du chargement de l'aperçu",
+    "retry": "Réessayer",
+    "button": "Salesman 360",
+    "currencyFilter": {
+      "label": "Devise",
+      "all": "Toutes"
+    },
+    "currencyTotals": {
+      "title": "Totaux par devise",
+      "currency": "Devise",
+      "demandAmount": "Montant demandes",
+      "quotationAmount": "Montant devis",
+      "orderAmount": "Montant commandes"
+    },
+    "tabs": {
+      "overview": "Aperçu",
+      "analytics": "Analytique"
+    },
+    "kpi": {
+      "totalDemands": "Total demandes",
+      "totalQuotations": "Total devis",
+      "totalOrders": "Total commandes",
+      "totalActivities": "Total activités",
+      "totalDemandAmount": "Montant total demandes",
+      "totalQuotationAmount": "Montant total devis",
+      "totalOrderAmount": "Montant total commandes"
+    },
+    "analytics": {
+      "last12MonthsOrderAmount": "Montant commandes 12 derniers mois",
+      "openQuotationAmount": "Montant devis ouverts",
+      "openOrderAmount": "Montant commandes ouvertes",
+      "activityCount": "Nombre d'activités",
+      "lastActivityDate": "Date dernière activité",
+      "error": "Impossible de charger les données analytiques",
+      "allCurrencies": "Toutes les devises",
+      "selectedCurrency": "Sélectionnée"
+    },
+    "analyticsCharts": {
+      "distributionTitle": "Distribution des transactions",
+      "monthlyTrendTitle": "Tendance mensuelle",
+      "amountComparisonTitle": "Comparaison des montants",
+      "demand": "Demande",
+      "quotation": "Devis",
+      "order": "Commande",
+      "last12MonthsOrderAmount": "Montant commandes 12 derniers mois",
+      "openQuotationAmount": "Montant devis ouverts",
+      "openOrderAmount": "Montant commandes ouvertes"
     }
   },
   "goodsReceipt": {

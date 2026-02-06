@@ -121,6 +121,7 @@
     "orders": "Pedidos",
     "campaigns": "Campañas",
     "reports": "Informes",
+    "salesKpi": "KPI de ventas",
     "powerbi": "Power BI",
     "powerbiReportDefinitions": "Informes Power BI",
     "powerbiRls": "Gestión RLS",
@@ -282,6 +283,59 @@
       "Approved": "Aprobado",
       "Rejected": "Rechazado",
       "Completed": "Completado"
+    }
+  },
+  "salesman360": {
+    "title": "Salesman 360",
+    "subtitle": "Resumen del representante",
+    "notFound": "Usuario no encontrado",
+    "error": "Error al cargar el resumen",
+    "retry": "Reintentar",
+    "button": "Salesman 360",
+    "currencyFilter": {
+      "label": "Moneda",
+      "all": "Todas"
+    },
+    "currencyTotals": {
+      "title": "Totales por moneda",
+      "currency": "Moneda",
+      "demandAmount": "Importe demandas",
+      "quotationAmount": "Importe cotizaciones",
+      "orderAmount": "Importe pedidos"
+    },
+    "tabs": {
+      "overview": "Resumen",
+      "analytics": "Analíticas"
+    },
+    "kpi": {
+      "totalDemands": "Total demandas",
+      "totalQuotations": "Total cotizaciones",
+      "totalOrders": "Total pedidos",
+      "totalActivities": "Total actividades",
+      "totalDemandAmount": "Importe total demandas",
+      "totalQuotationAmount": "Importe total cotizaciones",
+      "totalOrderAmount": "Importe total pedidos"
+    },
+    "analytics": {
+      "last12MonthsOrderAmount": "Importe pedidos últimos 12 meses",
+      "openQuotationAmount": "Importe cotizaciones abiertas",
+      "openOrderAmount": "Importe pedidos abiertos",
+      "activityCount": "Número de actividades",
+      "lastActivityDate": "Fecha última actividad",
+      "error": "No se pudieron cargar los datos analíticos",
+      "allCurrencies": "Todas las monedas",
+      "selectedCurrency": "Seleccionada"
+    },
+    "analyticsCharts": {
+      "distributionTitle": "Distribución de transacciones",
+      "monthlyTrendTitle": "Tendencia mensual",
+      "amountComparisonTitle": "Comparación de importes",
+      "demand": "Demanda",
+      "quotation": "Cotización",
+      "order": "Pedido",
+      "last12MonthsOrderAmount": "Importe pedidos últimos 12 meses",
+      "openQuotationAmount": "Importe cotizaciones abiertas",
+      "openOrderAmount": "Importe pedidos abiertos"
     }
   },
   "goodsReceipt": {

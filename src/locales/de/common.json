@@ -113,6 +113,7 @@
     "orders": "Bestellungen",
     "campaigns": "Kampagnen",
     "reports": "Berichte",
+    "salesKpi": "Verkaufs-KPI",
     "powerbi": "Power BI",
     "powerbiReportDefinitions": "Power BI Berichte",
     "powerbiRls": "RLS-Verwaltung",
@@ -266,6 +267,59 @@
       "Approved": "Genehmigt",
       "Rejected": "Abgelehnt",
       "Completed": "Abgeschlossen"
+    }
+  },
+  "salesman360": {
+    "title": "Salesman 360",
+    "subtitle": "Vertreterübersicht",
+    "notFound": "Benutzer nicht gefunden",
+    "error": "Beim Laden der Übersicht ist ein Fehler aufgetreten",
+    "retry": "Erneut versuchen",
+    "button": "Salesman 360",
+    "currencyFilter": {
+      "label": "Währung",
+      "all": "Alle"
+    },
+    "currencyTotals": {
+      "title": "Summen nach Währung",
+      "currency": "Währung",
+      "demandAmount": "Anfragebetrag",
+      "quotationAmount": "Angebotsbetrag",
+      "orderAmount": "Bestellbetrag"
+    },
+    "tabs": {
+      "overview": "Übersicht",
+      "analytics": "Analytik"
+    },
+    "kpi": {
+      "totalDemands": "Gesamte Anfragen",
+      "totalQuotations": "Gesamte Angebote",
+      "totalOrders": "Gesamte Bestellungen",
+      "totalActivities": "Gesamte Aktivitäten",
+      "totalDemandAmount": "Gesamter Anfragebetrag",
+      "totalQuotationAmount": "Gesamter Angebotsbetrag",
+      "totalOrderAmount": "Gesamter Bestellbetrag"
+    },
+    "analytics": {
+      "last12MonthsOrderAmount": "Bestellbetrag der letzten 12 Monate",
+      "openQuotationAmount": "Offener Angebotsbetrag",
+      "openOrderAmount": "Offener Bestellbetrag",
+      "activityCount": "Aktivitätsanzahl",
+      "lastActivityDate": "Letztes Aktivitätsdatum",
+      "error": "Analysedaten konnten nicht geladen werden",
+      "allCurrencies": "Alle Währungen",
+      "selectedCurrency": "Ausgewählt"
+    },
+    "analyticsCharts": {
+      "distributionTitle": "Transaktionsverteilung",
+      "monthlyTrendTitle": "Monatlicher Trend",
+      "amountComparisonTitle": "Betragsvergleich",
+      "demand": "Anfrage",
+      "quotation": "Angebot",
+      "order": "Bestellung",
+      "last12MonthsOrderAmount": "Bestellbetrag der letzten 12 Monate",
+      "openQuotationAmount": "Offener Angebotsbetrag",
+      "openOrderAmount": "Offener Bestellbetrag"
     }
   },
   "goodsReceipt": {

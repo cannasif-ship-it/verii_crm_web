@@ -121,6 +121,7 @@
     "orders": "الطلبات",
     "campaigns": "الحملات",
     "reports": "التقارير",
+    "salesKpi": "مؤشرات المبيعات",
     "powerbi": "Power BI",
     "powerbiReportDefinitions": "تقارير Power BI",
     "powerbiRls": "إدارة RLS",
@@ -282,6 +283,59 @@
       "Approved": "موافق عليه",
       "Rejected": "مرفوض",
       "Completed": "مكتمل"
+    }
+  },
+  "salesman360": {
+    "title": "Salesman 360",
+    "subtitle": "نظرة عامة على الممثل",
+    "notFound": "المستخدم غير موجود",
+    "error": "حدث خطأ أثناء تحميل النظرة العامة",
+    "retry": "إعادة المحاولة",
+    "button": "Salesman 360",
+    "currencyFilter": {
+      "label": "العملة",
+      "all": "الكل"
+    },
+    "currencyTotals": {
+      "title": "المجاميع حسب العملة",
+      "currency": "العملة",
+      "demandAmount": "مبلغ الطلب",
+      "quotationAmount": "مبلغ عرض السعر",
+      "orderAmount": "مبلغ الأمر"
+    },
+    "tabs": {
+      "overview": "نظرة عامة",
+      "analytics": "تحليلات"
+    },
+    "kpi": {
+      "totalDemands": "إجمالي الطلبات",
+      "totalQuotations": "إجمالي عروض الأسعار",
+      "totalOrders": "إجمالي الطلبات",
+      "totalActivities": "إجمالي الأنشطة",
+      "totalDemandAmount": "إجمالي مبلغ الطلبات",
+      "totalQuotationAmount": "إجمالي مبلغ عروض الأسعار",
+      "totalOrderAmount": "إجمالي مبلغ الطلبات"
+    },
+    "analytics": {
+      "last12MonthsOrderAmount": "قيمة الطلبات خلال آخر 12 شهرًا",
+      "openQuotationAmount": "قيمة عروض الأسعار المفتوحة",
+      "openOrderAmount": "قيمة الطلبات المفتوحة",
+      "activityCount": "عدد الأنشطة",
+      "lastActivityDate": "تاريخ آخر نشاط",
+      "error": "تعذر تحميل البيانات التحليلية",
+      "allCurrencies": "جميع العملات",
+      "selectedCurrency": "المحدد"
+    },
+    "analyticsCharts": {
+      "distributionTitle": "توزيع المعاملات",
+      "monthlyTrendTitle": "الاتجاه الشهري",
+      "amountComparisonTitle": "مقارنة المبالغ",
+      "demand": "طلب",
+      "quotation": "عرض سعر",
+      "order": "أمر",
+      "last12MonthsOrderAmount": "قيمة الطلبات آخر 12 شهرًا",
+      "openQuotationAmount": "قيمة عروض الأسعار المفتوحة",
+      "openOrderAmount": "قيمة الطلبات المفتوحة"
     }
   },
   "goodsReceipt": {

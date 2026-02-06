@@ -121,6 +121,7 @@
     "orders": "Ordini",
     "campaigns": "Campagne",
     "reports": "Report",
+    "salesKpi": "KPI vendite",
     "powerbi": "Power BI",
     "powerbiReportDefinitions": "Report Power BI",
     "powerbiRls": "Gestione RLS",
@@ -272,6 +273,59 @@
       "Approved": "Approvato",
       "Rejected": "Rifiutato",
       "Completed": "Completato"
+    }
+  },
+  "salesman360": {
+    "title": "Salesman 360",
+    "subtitle": "Panoramica rappresentante",
+    "notFound": "Utente non trovato",
+    "error": "Errore durante il caricamento del riepilogo",
+    "retry": "Riprova",
+    "button": "Salesman 360",
+    "currencyFilter": {
+      "label": "Valuta",
+      "all": "Tutte"
+    },
+    "currencyTotals": {
+      "title": "Totali per valuta",
+      "currency": "Valuta",
+      "demandAmount": "Importo richieste",
+      "quotationAmount": "Importo preventivi",
+      "orderAmount": "Importo ordini"
+    },
+    "tabs": {
+      "overview": "Panoramica",
+      "analytics": "Analisi"
+    },
+    "kpi": {
+      "totalDemands": "Totale richieste",
+      "totalQuotations": "Totale preventivi",
+      "totalOrders": "Totale ordini",
+      "totalActivities": "Totale attività",
+      "totalDemandAmount": "Importo totale richieste",
+      "totalQuotationAmount": "Importo totale preventivi",
+      "totalOrderAmount": "Importo totale ordini"
+    },
+    "analytics": {
+      "last12MonthsOrderAmount": "Importo ordini ultimi 12 mesi",
+      "openQuotationAmount": "Importo preventivi aperti",
+      "openOrderAmount": "Importo ordini aperti",
+      "activityCount": "Numero attività",
+      "lastActivityDate": "Data ultima attività",
+      "error": "Impossibile caricare i dati analitici",
+      "allCurrencies": "Tutte le valute",
+      "selectedCurrency": "Selezionata"
+    },
+    "analyticsCharts": {
+      "distributionTitle": "Distribuzione transazioni",
+      "monthlyTrendTitle": "Andamento mensile",
+      "amountComparisonTitle": "Confronto importi",
+      "demand": "Richiesta",
+      "quotation": "Preventivo",
+      "order": "Ordine",
+      "last12MonthsOrderAmount": "Importo ordini ultimi 12 mesi",
+      "openQuotationAmount": "Importo preventivi aperti",
+      "openOrderAmount": "Importo ordini aperti"
     }
   },
   "goodsReceipt": {
