@@ -238,7 +238,7 @@ export function QuotationLineTable({
     autoTable(doc, {
       head: headers,
       body: data,
-      styles: { font: 'helvetica', fontStyle: 'normal' }, // Turkish characters support might need custom font, but helvetica is standard
+      styles: { font: 'helvetica', fontStyle: 'normal' },
       theme: 'grid',
     });
 

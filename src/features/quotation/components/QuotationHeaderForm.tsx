@@ -73,7 +73,6 @@ export function QuotationHeaderForm({
   lines = [],
   onLinesChange,
   initialCurrency,
-  // revisionNo,
   quotationId,
   quotationOfferNo,
   readOnly = false,
@@ -260,14 +259,11 @@ export function QuotationHeaderForm({
       <div className="absolute -top-10 -left-10 w-96 h-96 bg-pink-500/10 blur-[100px] pointer-events-none rounded-full" />
       <div className="absolute top-20 right-0 w-80 h-80 bg-orange-500/5 blur-[80px] pointer-events-none rounded-full" />
       
-      {/* Top Section: Main Info (Full Width) */}
       <div className={cn(styles.glassCard, "flex flex-col")}>
         <div className="p-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             
-            {/* Left Column: Document Details */}
             <div className="flex flex-col gap-6">
-              {/* Document Details Header */}
               <div className="flex items-center gap-2">
                 <div className="p-1.5 rounded-md bg-purple-100 dark:bg-purple-900/30 text-purple-600">
                   <FileText className="h-4 w-4" />
@@ -503,7 +499,6 @@ export function QuotationHeaderForm({
                   />
                 </div>
 
-                {/* Shipping Address - Conditional */}
                 {selectedCustomer && (
                   <div className="animate-in slide-in-from-top-2 fade-in duration-500">
                     <FormField
