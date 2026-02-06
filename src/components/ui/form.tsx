@@ -143,7 +143,10 @@ function FormMessage({ className, ...props }: React.ComponentProps<"p">) {
     return null
   }
 
-  const text = body.startsWith("auth.") ? t(body as string, { ns: "auth" }) : t(body as string)
+  const text =
+    typeof body === "string" && body.startsWith("auth.")
+      ? t(body, { ns: "auth" })
+      : t(String(body))
 
   return (
     <p
