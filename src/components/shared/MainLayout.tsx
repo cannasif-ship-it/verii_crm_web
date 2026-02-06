@@ -51,25 +51,25 @@ export function MainLayout({ navItems }: MainLayoutProps): ReactElement {
           {
             title: t('sidebar.demands', 'Talepler'),
             children: [
-              { title: t('sidebar.demandList', 'Talep Listesi'), href: '/demands' },
               { title: t('sidebar.demandCreateWizard', 'Yeni Talep Oluştur'), href: '/demands/create' },
               { title: t('sidebar.waitingApprovalDemands', 'Onay Bekleyen Talepler'), href: '/demands/waiting-approvals' },
+              { title: t('sidebar.demandList', 'Talep Listesi'), href: '/demands' },
             ],
           },
           {
             title: t('sidebar.proposals', 'Teklifler'),
             children: [
-              { title: t('sidebar.quotationList', 'Teklif Listesi'), href: '/quotations' },
               { title: t('sidebar.quotationCreateWizard', 'Yeni Teklif Oluştur'), href: '/quotations/create' },
               { title: t('sidebar.waitingApprovals', 'Onay Bekleyen Teklifler'), href: '/quotations/waiting-approvals' },
+              { title: t('sidebar.quotationList', 'Teklif Listesi'), href: '/quotations' },
             ],
           },
           {
             title: t('sidebar.orders', 'Siparişler'),
             children: [
-              { title: t('sidebar.orderList', 'Sipariş Listesi'), href: '/orders' },
               { title: t('sidebar.orderCreateWizard', 'Yeni Sipariş Oluştur'), href: '/orders/create' },
               { title: t('sidebar.waitingApprovalOrders', 'Onay Bekleyen Siparişler'), href: '/orders/waiting-approvals' },
+              { title: t('sidebar.orderList', 'Sipariş Listesi'), href: '/orders' },
             ],
           },
         ],
