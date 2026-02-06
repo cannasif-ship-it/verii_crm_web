@@ -12,6 +12,7 @@ export const ApprovalStatus = {
   Waiting: 1,
   Approved: 2,
   Rejected: 3,
+  Closed: 4,
 } as const;
 
 export type ApprovalStatus = typeof ApprovalStatus[keyof typeof ApprovalStatus];
