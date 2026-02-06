@@ -226,6 +226,60 @@
       }
     }
   },
+  "customer360": {
+    "title": "Customer 360",
+    "subtitle": "Customer overview and activity",
+    "button": "Customer 360",
+    "tabs": {
+      "overview": "Overview",
+      "analytics": "Analytics"
+    },
+    "kpi": {
+      "totalDemands": "Total Demands",
+      "totalQuotations": "Total Quotations",
+      "totalOrders": "Total Orders",
+      "openQuotations": "Open Quotations",
+      "openOrders": "Open Orders"
+    },
+    "analytics": {
+      "last12MonthsOrderAmount": "Last 12 Months Order Amount",
+      "openQuotationAmount": "Open Quotation Amount",
+      "openOrderAmount": "Open Order Amount",
+      "activityCount": "Activity Count",
+      "lastActivityDate": "Last Activity Date",
+      "error": "Analytics data could not be loaded"
+    },
+    "analyticsCharts": {
+      "distributionTitle": "Transaction Distribution",
+      "monthlyTrendTitle": "Monthly Trend",
+      "amountComparisonTitle": "Amount Comparison",
+      "demand": "Demand",
+      "quotation": "Quotation",
+      "order": "Order",
+      "last12MonthsOrderAmount": "Last 12 Months Order Amount",
+      "openQuotationAmount": "Open Quotation Amount",
+      "openOrderAmount": "Open Order Amount"
+    },
+    "sections": {
+      "contacts": "Contacts",
+      "shippingAddresses": "Shipping Addresses",
+      "recentDemands": "Recent Demands",
+      "recentQuotations": "Recent Quotations",
+      "recentOrders": "Recent Orders",
+      "recentActivities": "Recent Activities",
+      "timeline": "Timeline"
+    },
+    "notFound": "Customer not found",
+    "error": "An error occurred while loading the overview",
+    "retry": "Retry",
+    "status": {
+      "HavenotStarted": "Not Started",
+      "Waiting": "Waiting",
+      "Approved": "Approved",
+      "Rejected": "Rejected",
+      "Completed": "Completed"
+    }
+  },
   "goodsReceipt": {
     "create": {
       "title": "New Goods Receipt Entry",

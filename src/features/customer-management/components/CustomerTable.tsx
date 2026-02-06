@@ -1,4 +1,5 @@
 import { type ReactElement, useState, useMemo, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import type { TFunction } from 'i18next';
 import {
@@ -33,7 +34,8 @@ import {
   Phone,
   Globe,
   CreditCard,
-  Hash
+  Hash,
+  LayoutGrid
 } from 'lucide-react';
 import { Alert02Icon } from 'hugeicons-react';
 
@@ -76,6 +78,7 @@ export function CustomerTable({
   visibleColumns,
 }: CustomerTableProps): ReactElement {
   const { t, i18n } = useTranslation();
+  const navigate = useNavigate();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedCustomer, setSelectedCustomer] = useState<CustomerDto | null>(null);
 
@@ -276,6 +279,7 @@ export function CustomerTable({
 
                   <TableCell className={`${cellStyle} text-right`}>
                     <div className="flex justify-end gap-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
+                      <Button variant="ghost" size="icon" className="h-8 w-8 text-violet-600 hover:text-violet-700 hover:bg-violet-50 dark:text-violet-400 dark:hover:bg-violet-500/10" onClick={() => navigate(`/customer-360/${customer.id}`)} title={t('customer360.button')}><LayoutGrid size={16} /></Button>
                       <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-500/10" onClick={() => onEdit(customer)}><Edit2 size={16} /></Button>
                       <Button variant="ghost" size="icon" className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-500/10" onClick={() => handleDeleteClick(customer)}><Trash2 size={16} /></Button>
                     </div>
@@ -334,7 +338,7 @@ export function CustomerTable({
               variant="destructive"
               onClick={handleDeleteConfirm}
               disabled={deleteCustomer.isPending}
-              className="flex-1 h-12 rounded-xl bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white border-0 shadow-lg shadow-red-500/20 transition-all hover:scale-[1.02] font-bold"
+              className="flex-1 h-12 rounded-xl bg-linear-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white border-0 shadow-lg shadow-red-500/20 transition-all hover:scale-[1.02] font-bold"
             >
               {deleteCustomer.isPending
                 ? t('customerManagement.loading', 'Siliniyor...')

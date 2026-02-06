@@ -230,6 +230,60 @@
       }
     }
   },
+  "customer360": {
+    "title": "Customer 360",
+    "subtitle": "Resumen del cliente y actividad",
+    "button": "Customer 360",
+    "tabs": {
+      "overview": "Resumen",
+      "analytics": "Analítica"
+    },
+    "kpi": {
+      "totalDemands": "Total de demandas",
+      "totalQuotations": "Total de cotizaciones",
+      "totalOrders": "Total de pedidos",
+      "openQuotations": "Cotizaciones abiertas",
+      "openOrders": "Pedidos abiertos"
+    },
+    "analytics": {
+      "last12MonthsOrderAmount": "Importe de pedidos de los últimos 12 meses",
+      "openQuotationAmount": "Importe de cotizaciones abiertas",
+      "openOrderAmount": "Importe de pedidos abiertos",
+      "activityCount": "Cantidad de actividades",
+      "lastActivityDate": "Fecha de la última actividad",
+      "error": "No se pudieron cargar los datos analíticos"
+    },
+    "analyticsCharts": {
+      "distributionTitle": "Distribución de transacciones",
+      "monthlyTrendTitle": "Tendencia mensual",
+      "amountComparisonTitle": "Comparación de importes",
+      "demand": "Demanda",
+      "quotation": "Cotización",
+      "order": "Pedido",
+      "last12MonthsOrderAmount": "Importe pedidos últimos 12 meses",
+      "openQuotationAmount": "Importe cotizaciones abiertas",
+      "openOrderAmount": "Importe pedidos abiertos"
+    },
+    "sections": {
+      "contacts": "Contactos",
+      "shippingAddresses": "Direcciones de envío",
+      "recentDemands": "Demandas recientes",
+      "recentQuotations": "Cotizaciones recientes",
+      "recentOrders": "Pedidos recientes",
+      "recentActivities": "Actividades recientes",
+      "timeline": "Línea de tiempo"
+    },
+    "notFound": "Cliente no encontrado",
+    "error": "Error al cargar el resumen",
+    "retry": "Reintentar",
+    "status": {
+      "HavenotStarted": "No iniciado",
+      "Waiting": "Pendiente",
+      "Approved": "Aprobado",
+      "Rejected": "Rechazado",
+      "Completed": "Completado"
+    }
+  },
   "goodsReceipt": {
     "create": {
       "title": "Nueva Entrada de Mercancías",

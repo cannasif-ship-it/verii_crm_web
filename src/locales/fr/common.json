@@ -214,6 +214,60 @@
       }
     }
   },
+  "customer360": {
+    "title": "Customer 360",
+    "subtitle": "Aperçu client et activité",
+    "button": "Customer 360",
+    "tabs": {
+      "overview": "Vue d'ensemble",
+      "analytics": "Analytique"
+    },
+    "kpi": {
+      "totalDemands": "Total des demandes",
+      "totalQuotations": "Total des devis",
+      "totalOrders": "Total des commandes",
+      "openQuotations": "Devis ouverts",
+      "openOrders": "Commandes ouvertes"
+    },
+    "analytics": {
+      "last12MonthsOrderAmount": "Montant des commandes des 12 derniers mois",
+      "openQuotationAmount": "Montant des devis ouverts",
+      "openOrderAmount": "Montant des commandes ouvertes",
+      "activityCount": "Nombre d'activités",
+      "lastActivityDate": "Date de la dernière activité",
+      "error": "Les données analytiques n'ont pas pu être chargées"
+    },
+    "analyticsCharts": {
+      "distributionTitle": "Répartition des transactions",
+      "monthlyTrendTitle": "Tendance mensuelle",
+      "amountComparisonTitle": "Comparaison des montants",
+      "demand": "Demande",
+      "quotation": "Devis",
+      "order": "Commande",
+      "last12MonthsOrderAmount": "Montant commandes 12 derniers mois",
+      "openQuotationAmount": "Montant devis ouverts",
+      "openOrderAmount": "Montant commandes ouvertes"
+    },
+    "sections": {
+      "contacts": "Contacts",
+      "shippingAddresses": "Adresses de livraison",
+      "recentDemands": "Demandes récentes",
+      "recentQuotations": "Devis récents",
+      "recentOrders": "Commandes récentes",
+      "recentActivities": "Activités récentes",
+      "timeline": "Chronologie"
+    },
+    "notFound": "Client introuvable",
+    "error": "Une erreur s'est produite lors du chargement",
+    "retry": "Réessayer",
+    "status": {
+      "HavenotStarted": "Non commencé",
+      "Waiting": "En attente",
+      "Approved": "Approuvé",
+      "Rejected": "Rejeté",
+      "Completed": "Terminé"
+    }
+  },
   "goodsReceipt": {
     "create": {
       "title": "Nouvelle réception de marchandises",

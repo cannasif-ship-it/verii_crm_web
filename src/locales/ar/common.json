@@ -230,6 +230,60 @@
       }
     }
   },
+  "customer360": {
+    "title": "Customer 360",
+    "subtitle": "نظرة عامة على العميل والنشاط",
+    "button": "Customer 360",
+    "tabs": {
+      "overview": "نظرة عامة",
+      "analytics": "تحليلات"
+    },
+    "kpi": {
+      "totalDemands": "إجمالي الطلبات",
+      "totalQuotations": "إجمالي عروض الأسعار",
+      "totalOrders": "إجمالي الطلبات",
+      "openQuotations": "عروض أسعار مفتوحة",
+      "openOrders": "طلبات مفتوحة"
+    },
+    "analytics": {
+      "last12MonthsOrderAmount": "قيمة الطلبات خلال آخر 12 شهرًا",
+      "openQuotationAmount": "قيمة عروض الأسعار المفتوحة",
+      "openOrderAmount": "قيمة الطلبات المفتوحة",
+      "activityCount": "عدد الأنشطة",
+      "lastActivityDate": "تاريخ آخر نشاط",
+      "error": "تعذر تحميل البيانات التحليلية"
+    },
+    "analyticsCharts": {
+      "distributionTitle": "توزيع المعاملات",
+      "monthlyTrendTitle": "الاتجاه الشهري",
+      "amountComparisonTitle": "مقارنة المبالغ",
+      "demand": "طلب",
+      "quotation": "عرض سعر",
+      "order": "أمر",
+      "last12MonthsOrderAmount": "قيمة الطلبات آخر 12 شهرًا",
+      "openQuotationAmount": "قيمة عروض الأسعار المفتوحة",
+      "openOrderAmount": "قيمة الطلبات المفتوحة"
+    },
+    "sections": {
+      "contacts": "جهات الاتصال",
+      "shippingAddresses": "عناوين الشحن",
+      "recentDemands": "الطلبات الأخيرة",
+      "recentQuotations": "عروض الأسعار الأخيرة",
+      "recentOrders": "الطلبات الأخيرة",
+      "recentActivities": "الأنشطة الأخيرة",
+      "timeline": "الجدول الزمني"
+    },
+    "notFound": "العميل غير موجود",
+    "error": "حدث خطأ أثناء تحميل النظرة العامة",
+    "retry": "إعادة المحاولة",
+    "status": {
+      "HavenotStarted": "لم يبدأ",
+      "Waiting": "قيد الانتظار",
+      "Approved": "موافق عليه",
+      "Rejected": "مرفوض",
+      "Completed": "مكتمل"
+    }
+  },
   "goodsReceipt": {
     "create": {
       "title": "إدخال استلام بضائع جديد",

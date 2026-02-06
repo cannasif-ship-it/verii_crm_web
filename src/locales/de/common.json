@@ -214,6 +214,60 @@
       }
     }
   },
+  "customer360": {
+    "title": "Customer 360",
+    "subtitle": "Kundenübersicht und Aktivitäten",
+    "button": "Customer 360",
+    "tabs": {
+      "overview": "Übersicht",
+      "analytics": "Analytik"
+    },
+    "kpi": {
+      "totalDemands": "Gesamte Anfragen",
+      "totalQuotations": "Gesamte Angebote",
+      "totalOrders": "Gesamte Bestellungen",
+      "openQuotations": "Offene Angebote",
+      "openOrders": "Offene Bestellungen"
+    },
+    "analytics": {
+      "last12MonthsOrderAmount": "Bestellbetrag der letzten 12 Monate",
+      "openQuotationAmount": "Offener Angebotsbetrag",
+      "openOrderAmount": "Offener Bestellbetrag",
+      "activityCount": "Aktivitätsanzahl",
+      "lastActivityDate": "Letztes Aktivitätsdatum",
+      "error": "Analysedaten konnten nicht geladen werden"
+    },
+    "analyticsCharts": {
+      "distributionTitle": "Transaktionsverteilung",
+      "monthlyTrendTitle": "Monatlicher Trend",
+      "amountComparisonTitle": "Betragsvergleich",
+      "demand": "Anfrage",
+      "quotation": "Angebot",
+      "order": "Bestellung",
+      "last12MonthsOrderAmount": "Bestellbetrag der letzten 12 Monate",
+      "openQuotationAmount": "Offener Angebotsbetrag",
+      "openOrderAmount": "Offener Bestellbetrag"
+    },
+    "sections": {
+      "contacts": "Kontakte",
+      "shippingAddresses": "Lieferadressen",
+      "recentDemands": "Letzte Anfragen",
+      "recentQuotations": "Letzte Angebote",
+      "recentOrders": "Letzte Bestellungen",
+      "recentActivities": "Letzte Aktivitäten",
+      "timeline": "Zeitachse"
+    },
+    "notFound": "Kunde nicht gefunden",
+    "error": "Beim Laden der Übersicht ist ein Fehler aufgetreten",
+    "retry": "Erneut versuchen",
+    "status": {
+      "HavenotStarted": "Nicht begonnen",
+      "Waiting": "Wartend",
+      "Approved": "Genehmigt",
+      "Rejected": "Abgelehnt",
+      "Completed": "Abgeschlossen"
+    }
+  },
   "goodsReceipt": {
     "create": {
       "title": "Neuer Wareneingang",

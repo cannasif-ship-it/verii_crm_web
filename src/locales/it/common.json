@@ -220,6 +220,60 @@
       }
     }
   },
+  "customer360": {
+    "title": "Customer 360",
+    "subtitle": "Panoramica cliente e attività",
+    "button": "Customer 360",
+    "tabs": {
+      "overview": "Panoramica",
+      "analytics": "Analisi"
+    },
+    "kpi": {
+      "totalDemands": "Totale richieste",
+      "totalQuotations": "Totale preventivi",
+      "totalOrders": "Totale ordini",
+      "openQuotations": "Preventivi aperti",
+      "openOrders": "Ordini aperti"
+    },
+    "analytics": {
+      "last12MonthsOrderAmount": "Importo ordini ultimi 12 mesi",
+      "openQuotationAmount": "Importo preventivi aperti",
+      "openOrderAmount": "Importo ordini aperti",
+      "activityCount": "Numero attività",
+      "lastActivityDate": "Data ultima attività",
+      "error": "Impossibile caricare i dati analitici"
+    },
+    "analyticsCharts": {
+      "distributionTitle": "Distribuzione transazioni",
+      "monthlyTrendTitle": "Andamento mensile",
+      "amountComparisonTitle": "Confronto importi",
+      "demand": "Richiesta",
+      "quotation": "Preventivo",
+      "order": "Ordine",
+      "last12MonthsOrderAmount": "Importo ordini ultimi 12 mesi",
+      "openQuotationAmount": "Importo preventivi aperti",
+      "openOrderAmount": "Importo ordini aperti"
+    },
+    "sections": {
+      "contacts": "Contatti",
+      "shippingAddresses": "Indirizzi di spedizione",
+      "recentDemands": "Richieste recenti",
+      "recentQuotations": "Preventivi recenti",
+      "recentOrders": "Ordini recenti",
+      "recentActivities": "Attività recenti",
+      "timeline": "Cronologia"
+    },
+    "notFound": "Cliente non trovato",
+    "error": "Errore durante il caricamento del riepilogo",
+    "retry": "Riprova",
+    "status": {
+      "HavenotStarted": "Non iniziato",
+      "Waiting": "In attesa",
+      "Approved": "Approvato",
+      "Rejected": "Rifiutato",
+      "Completed": "Completato"
+    }
+  },
   "goodsReceipt": {
     "create": {
       "title": "Nuova Entrata Merci",
