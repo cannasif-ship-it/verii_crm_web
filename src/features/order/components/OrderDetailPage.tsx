@@ -13,6 +13,7 @@ import { usePriceRuleOfOrder } from '../hooks/usePriceRuleOfOrder';
 import { useUserDiscountLimitsBySalesperson } from '../hooks/useUserDiscountLimitsBySalesperson';
 import { useCustomerOptions } from '@/features/customer-management/hooks/useCustomerOptions';
 import { useUIStore } from '@/stores/ui-store';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Send, Calculator, Layers, Loader2, FileCheck, FileText } from 'lucide-react';
@@ -55,7 +56,8 @@ export function OrderDetailPage(): ReactElement {
   const formInitializedRef = useRef(false);
   const [activeTab, setActiveTab] = useState('detail');
   const orderStatus = Number((order as { status?: number; Status?: number })?.status ?? (order as { status?: number; Status?: number })?.Status);
-  const isReadOnly = orderStatus === 2 || orderStatus === 3;
+  const isReadOnly = orderStatus === 2 || orderStatus === 3 || orderStatus === 4;
+  const isClosed = orderStatus === 4;
   const linesEnabled = !isReadOnly;
 
   const form = useForm<CreateOrderSchema>({
@@ -428,6 +430,11 @@ export function OrderDetailPage(): ReactElement {
         </TabsList>
 
         <TabsContent value="detail" className="mt-6 focus-visible:outline-none">
+          {isClosed && (
+            <Alert className="mb-4 border-zinc-300 bg-zinc-100 dark:bg-zinc-800/50 dark:border-zinc-600">
+              <AlertDescription>{t('approval.closedReason')}</AlertDescription>
+            </Alert>
+          )}
           <FormProvider {...form}>
             <form onSubmit={handleFormSubmit} className="space-y-6">
               <div className="flex flex-col gap-6">
@@ -494,7 +501,7 @@ export function OrderDetailPage(): ReactElement {
 
             {/* ACTION BUTTONS */}
             <div className="flex items-center justify-end gap-3 pt-6 border-t border-zinc-200 dark:border-white/10">
-              {order?.status === 0 && !isReadOnly && (
+              {order?.status === 0 && !isReadOnly && orderStatus !== 4 && (
                 <Button 
                   type="button"
                   variant="secondary"
