@@ -259,437 +259,466 @@ export function QuotationHeaderForm({
     <div className="relative space-y-6 pt-2 pb-8 animate-in fade-in slide-in-from-bottom-3 duration-700">
       <div className="absolute -top-10 -left-10 w-96 h-96 bg-pink-500/10 blur-[100px] pointer-events-none rounded-full" />
       <div className="absolute top-20 right-0 w-80 h-80 bg-orange-500/5 blur-[80px] pointer-events-none rounded-full" />
-      <div className={styles.glassCard}>
+      
+      {/* Top Section: Main Info (Full Width) */}
+      <div className={cn(styles.glassCard, "flex flex-col")}>
         <div className="p-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-5">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             
-            <div className="lg:col-span-8">
-              <FormField
-                control={form.control}
-                name="quotation.potentialCustomerId"
-                render={() => (
-                  <FormItem className="space-y-0 relative group">
-                    <FormLabel className={styles.label}>
-                      {t('quotation.header.customer', 'Müşteri Hesabı')} <span className="text-pink-500">*</span>
-                    </FormLabel>
-                    <div className="flex gap-2">
-                      <div className="relative flex-1 group">
-                        <div className={cn(styles.iconWrapper, "pointer-events-none")}>
-                          <User className="h-4 w-4" />
-                        </div>
-                        <FormControl>
-                          <Input
-                            className={cn(styles.inputBase, "font-semibold text-zinc-900 dark:text-zinc-100 z-10 relative caret-pink-500")}
-                            style={forcePaddingStyle}
-                            value={customerSearchQuery}
-                            onChange={(e) => {
-                              setCustomerSearchQuery(e.target.value);
-                              if (!customerComboboxOpen) setCustomerComboboxOpen(true);
-                            }}
-                            onFocus={() => setCustomerComboboxOpen(true)}
-                            onBlur={() => {
-                              setTimeout(() => {
-                                if (customerSearchQuery !== customerDisplayValue) {
-                                  if (!customerSearchQuery.trim()) {
-                                    form.setValue('quotation.potentialCustomerId', null);
-                                    form.setValue('quotation.erpCustomerCode', null);
-                                  } else {
-                                    setCustomerSearchQuery(customerDisplayValue);
-                                  }
-                                }
-                              }, 200);
-                            }}
-                            placeholder={t('quotation.header.selectCustomer', 'Müşteri ara veya seç...')}
-                            disabled={readOnly}
-                            autoComplete="off"
-                          />
-                        </FormControl>
-                        <Popover open={customerComboboxOpen} onOpenChange={setCustomerComboboxOpen}>
-                          <PopoverTrigger asChild>
-                            <div className="absolute top-full left-0 w-full h-0" />
-                          </PopoverTrigger>
-                          <PopoverContent 
-                            className="p-0 w-[400px] max-h-[350px] overflow-hidden bg-white/90 dark:bg-[#0c0516]/95 backdrop-blur-2xl border border-zinc-200/50 dark:border-white/10 shadow-2xl rounded-2xl ring-1 ring-black/5" 
-                            align="start"
-                            sideOffset={8}
-                            onOpenAutoFocus={(e) => e.preventDefault()}
-                          >
-                            <Command shouldFilter={false} className="bg-transparent">
-                              <CommandList className="max-h-[350px] overflow-y-auto p-1 custom-scrollbar">
-                                {filteredCustomerOptions.length === 0 && (
-                                  <CommandEmpty className="py-10 text-center flex flex-col items-center justify-center gap-3">
-                                    <div className="p-3 rounded-full bg-zinc-100 dark:bg-white/5 text-zinc-400 dark:text-zinc-500">
-                                      <SearchX className="w-6 h-6" />
-                                    </div>
-                                    <div className="flex flex-col gap-0.5">
-                                      <span className="text-sm font-medium text-zinc-900 dark:text-zinc-200">
-                                        {t('common.noResults', 'Sonuç bulunamadı')}
-                                      </span>
-                                      <span className="text-xs text-zinc-500 dark:text-zinc-400">
-                                        {t('quotation.header.tryDifferentSearch', 'Farklı bir arama terimi deneyin')}
-                                      </span>
-                                    </div>
-                                  </CommandEmpty>
-                                )}
-                                <CommandGroup>
-                                  {filteredCustomerOptions.map((option) => (
-                                    <CommandItem
-                                      key={option.value}
-                                      value={option.value}
-                                      onSelect={() => handleComboboxSelect(option)}
-                                      className="cursor-pointer mb-1 last:mb-0 rounded-xl px-3 py-2.5 aria-selected:bg-pink-50 dark:aria-selected:bg-pink-500/10 aria-selected:text-pink-700 dark:aria-selected:text-pink-300 transition-colors"
-                                    >
-                                      <Check
-                                        className={cn(
-                                          "mr-3 h-4 w-4 shrink-0 transition-opacity",
-                                          ((option.type === 'crm' && watchedCustomerId === option.id) || (option.type === 'erp' && watchedErpCustomerCode === option.code))
-                                            ? "opacity-100 text-pink-600 dark:text-pink-400"
-                                            : "opacity-0"
-                                        )}
-                                      />
-                                      <div className="flex flex-col gap-0.5">
-                                        <span className="font-medium text-sm text-zinc-900 dark:text-zinc-100">{option.label}</span>
-                                        {option.code && (
-                                          <div className="flex items-center gap-2">
-                                            <span className={cn(
-                                              "text-[10px] px-1.5 py-0.5 rounded-md font-medium border",
-                                              option.type === 'erp' 
-                                                ? "bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-300 border-blue-100 dark:border-blue-800/30" 
-                                                : "bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-300 border-purple-100 dark:border-purple-800/30"
-                                            )}>
-                                              {option.type === 'erp' ? 'ERP' : 'CRM'}
-                                            </span>
-                                            <span className="text-xs text-zinc-500 dark:text-zinc-400 font-mono">
-                                              {option.code}
-                                            </span>
-                                          </div>
-                                        )}
-                                      </div>
-                                    </CommandItem>
-                                  ))}
-                                </CommandGroup>
-                              </CommandList>
-                            </Command>
-                          </PopoverContent>
-                        </Popover>
-                      </div>
-                      <Button
-                        type="button"
-                        onClick={() => setCustomerSelectDialogOpen(true)}
-                        disabled={readOnly}
-                        className="h-11 px-6 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-white shadow-md hover:shadow-lg transition-all border border-zinc-800 active:scale-95"
-                      >
-                        <Search className="h-4 w-4 mr-2" />
-                        {t('quotation.guide', 'Rehber')}
-                      </Button>
-                    </div>
-                    <FormMessage className="mt-1.5" />
-                  </FormItem>
-                )}
-              />
-            </div>
-
-            <div className="lg:col-span-4">
-              <FormField
-                control={form.control}
-                name="quotation.representativeId"
-                render={({ field }) => (
-                  <FormItem className="space-y-0 relative group">
-                    <FormLabel className={styles.label}>
-                      {t('quotation.header.representative', 'Satış Temsilcisi')}
-                    </FormLabel>
-                    <div className="relative">
-                        <div className={styles.iconWrapper}><Briefcase className="h-4 w-4" /></div>
-                        <VoiceSearchCombobox
-                          className={styles.inputBase}
-                          value={field.value?.toString() || ''}
-                          onSelect={(value) => field.onChange(value ? Number(value) : null)}
-                          options={relatedUsers.map((u) => ({
-                           value: u.userId.toString(),
-                           label: [u.firstName, u.lastName].filter(Boolean).join(' ')
-                          }))}
-                          placeholder={t('quotation.select', 'Seçiniz')}
-                          searchPlaceholder={t('common.search', 'Ara...')}
-                          disabled={readOnly}
-                        />
-                    </div>
-                    <FormMessage className="mt-1.5" />
-                  </FormItem>
-                )}
-              />
-            </div>
-            
-            {selectedCustomer && (
-              <div className="lg:col-span-12 animate-in slide-in-from-top-2 fade-in duration-500">
-                <FormField
-                  control={form.control}
-                  name="quotation.shippingAddressId"
-                  render={({ field }) => (
-                    <FormItem className="space-y-0 relative group">
-                      <FormLabel className={styles.label}>
-                          <Truck className="h-3.5 w-3.5 text-orange-500" />
-                        {t('quotation.header.shippingAddress', 'Sevk Adresi')}
-                      </FormLabel>
-                      <div className="relative">
-                          <div className={styles.iconWrapper}><Truck className="h-4 w-4" /></div>
-                          <VoiceSearchCombobox
-                            className={cn(styles.inputBase, "bg-orange-50/30 dark:bg-orange-950/10 border-orange-100 dark:border-orange-900/30")}
-                            value={field.value?.toString() || ''}
-                            onSelect={(value) => field.onChange(value ? Number(value) : null)}
-                            options={shippingAddresses.map((address) => ({
-                              value: address.id.toString(),
-                              label: address.addressText
-                            }))}
-                            placeholder={t('quotation.header.selectShippingAddress', 'Sevk adresi seçin')}
-                            searchPlaceholder={t('common.search', 'Ara...')}
-                            disabled={readOnly}
-                          />
-                      </div>
-                      <FormMessage className="mt-1.5" />
-                    </FormItem>
-                  )}
-                />
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        
-        <div className={styles.glassCard}>
-          <div className="p-5 h-full flex flex-col">
-            <div className="flex items-center justify-between mb-4">
-              <h4 className="text-sm font-bold text-zinc-700 dark:text-zinc-200 flex items-center gap-2">
-                <div className="p-1.5 rounded-md bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600">
-                  <CreditCard className="h-4 w-4" />
-                </div>
-                Finansal
-              </h4>
-              {onExchangeRatesChange && (
-                 <Button
-                   type="button"
-                   variant="ghost"
-                   size="sm"
-                   onClick={() => setExchangeRateDialogOpen(true)}
-                   className="h-7 px-2 text-xs font-medium text-pink-600 hover:text-pink-700 hover:bg-pink-50 dark:hover:bg-pink-900/20"
-                 >
-                   <ArrowRightLeft className="w-3.5 h-3.5 mr-1" />
-                   Kurlar
-                 </Button>
-               )}
-            </div>
-            
-            <div className="space-y-4 flex-1">
-              <FormField
-                control={form.control}
-                name="quotation.currency"
-                render={({ field }) => (
-                  <FormItem className="space-y-0 relative group">
-                    <FormLabel className={styles.label}>Para Birimi</FormLabel>
-                    <div className="relative">
-                      <div className={styles.iconWrapper}><Coins className="h-4 w-4 text-emerald-500" /></div>
-                      <VoiceSearchCombobox
-                        className={cn(styles.inputBase, "font-bold tracking-wide text-emerald-700 dark:text-emerald-400 bg-emerald-50/50 dark:bg-emerald-950/20 border-emerald-100 dark:border-emerald-900/30")}
-                        value={field.value ? String(field.value) : ''}
-                        onSelect={(value) => value && handleCurrencyChange(value)}
-                        options={erpRates.map((currency: KurDto) => ({
-                          value: String(currency.dovizTipi),
-                          label: currency.dovizIsmi || `Döviz ${currency.dovizTipi}`
-                        }))}
-                        placeholder={t('quotation.select', 'Seçiniz')}
-                        searchPlaceholder={t('common.search', 'Ara...')}
-                        disabled={readOnly}
-                      />
-                    </div>
-                    <FormMessage className="mt-1" />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="quotation.paymentTypeId"
-                render={({ field }) => (
-                  <FormItem className="space-y-0 relative group">
-                    <FormLabel className={styles.label}>Ödeme Planı</FormLabel>
-                    <div className="relative">
-                       <div className={styles.iconWrapper}><CreditCard className="h-4 w-4" /></div>
-                       <VoiceSearchCombobox
-                         className={styles.inputBase}
-                         value={field.value?.toString() || ''}
-                         onSelect={(value) => field.onChange(value ? Number(value) : null)}
-                         options={paymentTypes.map((pt) => ({
-                           value: pt.id.toString(),
-                           label: pt.name
-                         }))}
-                         placeholder={t('quotation.select', 'Seçiniz')}
-                         searchPlaceholder={t('common.search', 'Ara...')}
-                         disabled={readOnly}
-                       />
-                    </div>
-                    <FormMessage className="mt-1" />
-                  </FormItem>
-                )}
-              />
-            </div>
-          </div>
-        </div>
-
-        <div className={styles.glassCard}>
-          <div className="p-5 h-full flex flex-col">
-            <div className="flex items-center gap-2 mb-4">
-              <div className="p-1.5 rounded-md bg-pink-100 dark:bg-pink-900/30 text-pink-600 dark:text-pink-400">
-                <Globe className="h-4 w-4" />
-              </div>
-              <h4 className="text-sm font-bold text-zinc-700 dark:text-zinc-200">Tip & Tarihler</h4>
-            </div>
-
-            <div className="space-y-4 flex-1">
-              <FormField
-                control={form.control}
-                name="quotation.offerType"
-                render={({ field }) => (
-                  <FormItem className="space-y-0 relative group">
-                    <FormLabel className={styles.label}>
-                      Teklif Tipi <span className="text-pink-500 ml-0.5">*</span>
-                    </FormLabel>
-                    <div className="relative">
-                       <div className={styles.iconWrapper}><Layers className="h-4 w-4" /></div>
-                       <VoiceSearchCombobox
-                         className={styles.inputBase}
-                         value={field.value || ''}
-                         onSelect={(value) => field.onChange(value)}
-                         options={[
-                           { value: 'Domestic', label: t('quotation.offerType.domestic', 'Yurtiçi') },
-                           { value: 'Export', label: t('quotation.offerType.export', 'Yurtdışı') }
-                         ]}
-                         placeholder={t('quotation.select', 'Seçiniz')}
-                         searchPlaceholder={t('common.search', 'Ara...')}
-                         disabled={readOnly}
-                       />
-                    </div>
-                    <FormMessage className="mt-1" />
-                  </FormItem>
-                )}
-              />
-
-              <div className="grid grid-cols-2 gap-3">
-                 <FormField
-                  control={form.control}
-                  name="quotation.offerDate"
-                  render={({ field }) => (
-                    <FormItem className="space-y-0 relative group">
-                      <FormLabel className={styles.label}>Teklif T.</FormLabel>
-                      <div className="relative">
-                        <div className={styles.iconWrapper}><Calendar className="h-4 w-4" /></div>
-                        <FormControl>
-                          <Input 
-                            type="date" 
-                            className={cn(styles.inputBase, "text-xs")} 
-                            style={forcePaddingStyle}
-                            {...field}
-                            value={field.value ? new Date(field.value).toISOString().split('T')[0] : ''}
-                            onChange={(e) => field.onChange(e.target.value)}
-                            disabled={readOnly}
-                          />
-                        </FormControl>
-                      </div>
-                      <FormMessage className="mt-1" />
-                    </FormItem>
-                  )}
-                />
-                 <FormField
-                  control={form.control}
-                  name="quotation.deliveryDate"
-                  render={({ field }) => (
-                    <FormItem className="space-y-0 relative group">
-                      <FormLabel className={styles.label}>Teslim T.</FormLabel>
-                      <div className="relative">
-                        <div className={styles.iconWrapper}><Truck className="h-4 w-4" /></div>
-                        <FormControl>
-                          <Input 
-                            type="date" 
-                            className={cn(styles.inputBase, "text-xs")}
-                            style={forcePaddingStyle}
-                            {...field}
-                            value={field.value ? new Date(field.value).toISOString().split('T')[0] : ''}
-                            onChange={(e) => field.onChange(e.target.value)}
-                            disabled={readOnly}
-                          />
-                        </FormControl>
-                      </div>
-                      <FormMessage className="mt-1" />
-                    </FormItem>
-                  )}
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className={styles.glassCard}>
-           <div className="p-5 h-full flex flex-col">
-              <div className="flex items-center gap-2 mb-4">
+            {/* Left Column: Document Details */}
+            <div className="flex flex-col gap-6">
+              {/* Document Details Header */}
+              <div className="flex items-center gap-2">
                 <div className="p-1.5 rounded-md bg-purple-100 dark:bg-purple-900/30 text-purple-600">
                   <FileText className="h-4 w-4" />
                 </div>
                 <h4 className="text-sm font-bold text-zinc-700 dark:text-zinc-200">Belge Detayı</h4>
               </div>
 
+              <div className="grid grid-cols-1 gap-6">
+                 <div>
+                   <FormField
+                    control={form.control}
+                    name="quotation.documentSerialTypeId"
+                    render={({ field }) => (
+                      <FormItem className="space-y-0 relative group">
+                        <FormLabel className={styles.label}>Seri No</FormLabel>
+                        <div className="relative">
+                          <div className={styles.iconWrapper}><Hash className="h-4 w-4" /></div>
+                          <VoiceSearchCombobox
+                            className={styles.inputBase}
+                            value={field.value?.toString() || ''}
+                            onSelect={(value) => field.onChange(value ? Number(value) : null)}
+                            options={availableDocumentSerialTypes
+                              .filter((d) => d.serialPrefix?.trim() !== '')
+                              .map((d) => ({
+                                value: d.id.toString(),
+                                label: d.serialPrefix || ''
+                              }))}
+                            placeholder={t('quotation.select', 'Seç')}
+                            searchPlaceholder={t('common.search', 'Ara...')}
+                            disabled={readOnly || customerTypeId === undefined || !watchedRepresentativeId}
+                          />
+                        </div>
+                        <FormMessage className="mt-1" />
+                      </FormItem>
+                    )}
+                  />
+                 </div>
+
+                 <div className="flex-1">
+                  <FormField
+                    control={form.control}
+                    name="quotation.description"
+                    render={({ field }) => (
+                      <FormItem className="space-y-0 relative group h-full">
+                        <FormLabel className={styles.label}>
+                          Notlar
+                        </FormLabel>
+                        <FormControl>
+                          <Textarea
+                            {...field}
+                            value={field.value || ''}
+                            placeholder={t('quotation.header.descriptionPlaceholder', 'Özel koşullar...')}
+                            className="min-h-[120px] h-full rounded-xl border-zinc-200 dark:border-zinc-800 bg-white/50 dark:bg-zinc-950/30 resize-none focus-visible:border-pink-500 focus-visible:ring-4 focus-visible:ring-pink-500/20 transition-all text-sm py-2.5"
+                            disabled={readOnly}
+                          />
+                        </FormControl>
+                        <FormMessage className="mt-1" />
+                      </FormItem>
+                    )}
+                  />
+                 </div>
+              </div>
+            </div>
+
+            {/* Right Column: Customer & Sales Info */}
+            <div className="flex flex-col gap-6">
+              {/* Main Info Header */}
+              <div className="flex items-center gap-2">
+                <div className="p-1.5 rounded-md bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300">
+                  <User className="h-4 w-4" />
+                </div>
+                <h4 className="text-sm font-bold text-zinc-700 dark:text-zinc-200">
+                  {t('quotation.header.mainInfo', 'Müşteri & Satış Bilgileri')}
+                </h4>
+              </div>
+
+              <div className="space-y-6">
+                {/* Customer Account */}
+                <div>
+                  <FormField
+                    control={form.control}
+                    name="quotation.potentialCustomerId"
+                    render={() => (
+                      <FormItem className="space-y-0 relative group">
+                        <FormLabel className={styles.label}>
+                          {t('quotation.header.customer', 'Müşteri Hesabı')} <span className="text-pink-500">*</span>
+                        </FormLabel>
+                        <div className="flex gap-2">
+                          <div className="relative flex-1 group">
+                            <div className={cn(styles.iconWrapper, "pointer-events-none")}>
+                              <User className="h-4 w-4" />
+                            </div>
+                            <FormControl>
+                              <Input
+                                className={cn(styles.inputBase, "font-semibold text-zinc-900 dark:text-zinc-100 z-10 relative caret-pink-500")}
+                                style={forcePaddingStyle}
+                                value={customerSearchQuery}
+                                onChange={(e) => {
+                                  setCustomerSearchQuery(e.target.value);
+                                  if (!customerComboboxOpen) setCustomerComboboxOpen(true);
+                                }}
+                                onFocus={() => setCustomerComboboxOpen(true)}
+                                onBlur={() => {
+                                  setTimeout(() => {
+                                    if (customerSearchQuery !== customerDisplayValue) {
+                                      if (!customerSearchQuery.trim()) {
+                                        form.setValue('quotation.potentialCustomerId', null);
+                                        form.setValue('quotation.erpCustomerCode', null);
+                                      } else {
+                                        setCustomerSearchQuery(customerDisplayValue);
+                                      }
+                                    }
+                                  }, 200);
+                                }}
+                                placeholder={t('quotation.header.selectCustomer', 'Müşteri ara veya seç...')}
+                                disabled={readOnly}
+                                autoComplete="off"
+                              />
+                            </FormControl>
+                            <Popover open={customerComboboxOpen} onOpenChange={setCustomerComboboxOpen}>
+                              <PopoverTrigger asChild>
+                                <div className="absolute top-full left-0 w-full h-0" />
+                              </PopoverTrigger>
+                              <PopoverContent 
+                                className="p-0 w-[400px] max-h-[350px] overflow-hidden bg-white/90 dark:bg-[#0c0516]/95 backdrop-blur-2xl border border-zinc-200/50 dark:border-white/10 shadow-2xl rounded-2xl ring-1 ring-black/5" 
+                                align="start"
+                                sideOffset={8}
+                                onOpenAutoFocus={(e) => e.preventDefault()}
+                              >
+                                <Command shouldFilter={false} className="bg-transparent">
+                                  <CommandList className="max-h-[350px] overflow-y-auto p-1 custom-scrollbar">
+                                    {filteredCustomerOptions.length === 0 && (
+                                      <CommandEmpty className="py-10 text-center flex flex-col items-center justify-center gap-3">
+                                        <div className="p-3 rounded-full bg-zinc-100 dark:bg-white/5 text-zinc-400 dark:text-zinc-500">
+                                          <SearchX className="w-6 h-6" />
+                                        </div>
+                                        <div className="flex flex-col gap-0.5">
+                                          <span className="text-sm font-medium text-zinc-900 dark:text-zinc-200">
+                                            {t('common.noResults', 'Sonuç bulunamadı')}
+                                          </span>
+                                          <span className="text-xs text-zinc-500 dark:text-zinc-400">
+                                            {t('quotation.header.tryDifferentSearch', 'Farklı bir arama terimi deneyin')}
+                                          </span>
+                                        </div>
+                                      </CommandEmpty>
+                                    )}
+                                    <CommandGroup>
+                                      {filteredCustomerOptions.map((option) => (
+                                        <CommandItem
+                                          key={option.value}
+                                          value={option.value}
+                                          onSelect={() => handleComboboxSelect(option)}
+                                          className="cursor-pointer mb-1 last:mb-0 rounded-xl px-3 py-2.5 aria-selected:bg-pink-50 dark:aria-selected:bg-pink-500/10 aria-selected:text-pink-700 dark:aria-selected:text-pink-300 transition-colors"
+                                        >
+                                          <Check
+                                            className={cn(
+                                              "mr-3 h-4 w-4 shrink-0 transition-opacity",
+                                              ((option.type === 'crm' && watchedCustomerId === option.id) || (option.type === 'erp' && watchedErpCustomerCode === option.code))
+                                                ? "opacity-100 text-pink-600 dark:text-pink-400"
+                                                : "opacity-0"
+                                            )}
+                                          />
+                                          <div className="flex flex-col gap-0.5">
+                                            <span className="font-medium text-sm text-zinc-900 dark:text-zinc-100">{option.label}</span>
+                                            {option.code && (
+                                              <div className="flex items-center gap-2">
+                                                <span className={cn(
+                                                  "text-[10px] px-1.5 py-0.5 rounded-md font-medium border",
+                                                  option.type === 'erp' 
+                                                    ? "bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-300 border-blue-100 dark:border-blue-800/30" 
+                                                    : "bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-300 border-purple-100 dark:border-purple-800/30"
+                                                )}>
+                                                  {option.type === 'erp' ? 'ERP' : 'CRM'}
+                                                </span>
+                                                <span className="text-xs text-zinc-500 dark:text-zinc-400 font-mono">
+                                                  {option.code}
+                                                </span>
+                                              </div>
+                                            )}
+                                          </div>
+                                        </CommandItem>
+                                      ))}
+                                    </CommandGroup>
+                                  </CommandList>
+                                </Command>
+                              </PopoverContent>
+                            </Popover>
+                          </div>
+                          <Button
+                            type="button"
+                            onClick={() => setCustomerSelectDialogOpen(true)}
+                            disabled={readOnly}
+                            className="h-11 px-6 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-white shadow-md hover:shadow-lg transition-all border border-zinc-800 active:scale-95"
+                          >
+                            <Search className="h-4 w-4 mr-2" />
+                            {t('quotation.guide', 'Rehber')}
+                          </Button>
+                        </div>
+                        <FormMessage className="mt-1.5" />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                {/* Representative */}
+                <div>
+                  <FormField
+                    control={form.control}
+                    name="quotation.representativeId"
+                    render={({ field }) => (
+                      <FormItem className="space-y-0 relative group">
+                        <FormLabel className={styles.label}>
+                          {t('quotation.header.representative', 'Satış Temsilcisi')}
+                        </FormLabel>
+                        <div className="relative">
+                            <div className={styles.iconWrapper}><Briefcase className="h-4 w-4" /></div>
+                            <VoiceSearchCombobox
+                              className={styles.inputBase}
+                              value={field.value?.toString() || ''}
+                              onSelect={(value) => field.onChange(value ? Number(value) : null)}
+                              options={relatedUsers.map((u) => ({
+                               value: u.userId.toString(),
+                               label: [u.firstName, u.lastName].filter(Boolean).join(' ')
+                              }))}
+                              placeholder={t('quotation.select', 'Seçiniz')}
+                              searchPlaceholder={t('common.search', 'Ara...')}
+                              disabled={readOnly}
+                            />
+                        </div>
+                        <FormMessage className="mt-1.5" />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                {/* Shipping Address - Conditional */}
+                {selectedCustomer && (
+                  <div className="animate-in slide-in-from-top-2 fade-in duration-500">
+                    <FormField
+                      control={form.control}
+                      name="quotation.shippingAddressId"
+                      render={({ field }) => (
+                        <FormItem className="space-y-0 relative group">
+                          <FormLabel className={styles.label}>
+                              <Truck className="h-3.5 w-3.5 text-orange-500" />
+                            {t('quotation.header.shippingAddress', 'Sevk Adresi')}
+                          </FormLabel>
+                          <div className="relative">
+                              <div className={styles.iconWrapper}><Truck className="h-4 w-4" /></div>
+                              <VoiceSearchCombobox
+                                className={cn(styles.inputBase, "bg-orange-50/30 dark:bg-orange-950/10 border-orange-100 dark:border-orange-900/30")}
+                                value={field.value?.toString() || ''}
+                                onSelect={(value) => field.onChange(value ? Number(value) : null)}
+                                options={shippingAddresses.map((address) => ({
+                                  value: address.id.toString(),
+                                  label: address.addressText
+                                }))}
+                                placeholder={t('quotation.header.selectShippingAddress', 'Sevk adresi seçin')}
+                                searchPlaceholder={t('common.search', 'Ara...')}
+                                disabled={readOnly}
+                              />
+                          </div>
+                          <FormMessage className="mt-1.5" />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Bottom Section: 2 Columns */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
+        
+        {/* Left Column: Type & Dates */}
+        <div className={cn(styles.glassCard, "flex flex-col")}>
+            <div className="p-5 flex flex-col h-full">
+              <div className="flex items-center gap-2 mb-4">
+                <div className="p-1.5 rounded-md bg-pink-100 dark:bg-pink-900/30 text-pink-600 dark:text-pink-400">
+                  <Globe className="h-4 w-4" />
+                </div>
+                <h4 className="text-sm font-bold text-zinc-700 dark:text-zinc-200">Tip & Tarihler</h4>
+              </div>
+
               <div className="space-y-4 flex-1">
-                 <FormField
+                <FormField
                   control={form.control}
-                  name="quotation.documentSerialTypeId"
+                  name="quotation.offerType"
                   render={({ field }) => (
                     <FormItem className="space-y-0 relative group">
-                      <FormLabel className={styles.label}>Seri No</FormLabel>
+                      <FormLabel className={styles.label}>
+                        Teklif Tipi <span className="text-pink-500 ml-0.5">*</span>
+                      </FormLabel>
                       <div className="relative">
-                        <div className={styles.iconWrapper}><Hash className="h-4 w-4" /></div>
+                         <div className={styles.iconWrapper}><Layers className="h-4 w-4" /></div>
+                         <VoiceSearchCombobox
+                           className={styles.inputBase}
+                           value={field.value || ''}
+                           onSelect={(value) => field.onChange(value)}
+                           options={[
+                             { value: 'Domestic', label: t('quotation.offerType.domestic', 'Yurtiçi') },
+                             { value: 'Export', label: t('quotation.offerType.export', 'Yurtdışı') }
+                           ]}
+                           placeholder={t('quotation.select', 'Seçiniz')}
+                           searchPlaceholder={t('common.search', 'Ara...')}
+                           disabled={readOnly}
+                         />
+                      </div>
+                      <FormMessage className="mt-1" />
+                    </FormItem>
+                  )}
+                />
+
+                <div className="grid grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="quotation.offerDate"
+                    render={({ field }) => (
+                      <FormItem className="space-y-0 relative group">
+                        <FormLabel className={styles.label}>Teklif T.</FormLabel>
+                        <div className="relative">
+                          <div className={styles.iconWrapper}><Calendar className="h-4 w-4" /></div>
+                          <FormControl>
+                            <Input 
+                              type="date" 
+                              className={cn(styles.inputBase, "text-xs")} 
+                              style={forcePaddingStyle}
+                              {...field}
+                              value={field.value ? new Date(field.value).toISOString().split('T')[0] : ''}
+                              onChange={(e) => field.onChange(e.target.value)}
+                              disabled={readOnly}
+                            />
+                          </FormControl>
+                        </div>
+                        <FormMessage className="mt-1" />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="quotation.deliveryDate"
+                    render={({ field }) => (
+                      <FormItem className="space-y-0 relative group">
+                        <FormLabel className={styles.label}>Teslim T.</FormLabel>
+                        <div className="relative">
+                          <div className={styles.iconWrapper}><Truck className="h-4 w-4" /></div>
+                          <FormControl>
+                            <Input 
+                              type="date" 
+                              className={cn(styles.inputBase, "text-xs")}
+                              style={forcePaddingStyle}
+                              {...field}
+                              value={field.value ? new Date(field.value).toISOString().split('T')[0] : ''}
+                              onChange={(e) => field.onChange(e.target.value)}
+                              disabled={readOnly}
+                            />
+                          </FormControl>
+                        </div>
+                        <FormMessage className="mt-1" />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
+            </div>
+        </div>
+
+        {/* Right Column: Financial */}
+        <div className={cn(styles.glassCard, "flex flex-col")}>
+            <div className="p-5 flex flex-col h-full">
+              <div className="flex items-center justify-between mb-4">
+                <h4 className="text-sm font-bold text-zinc-700 dark:text-zinc-200 flex items-center gap-2">
+                  <div className="p-1.5 rounded-md bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600">
+                    <CreditCard className="h-4 w-4" />
+                  </div>
+                  Finansal
+                </h4>
+                {onExchangeRatesChange && (
+                   <Button
+                     type="button"
+                     variant="ghost"
+                     size="sm"
+                     onClick={() => setExchangeRateDialogOpen(true)}
+                     className="h-7 px-2 text-xs font-medium text-pink-600 hover:text-pink-700 hover:bg-pink-50 dark:hover:bg-pink-900/20"
+                   >
+                     <ArrowRightLeft className="w-3.5 h-3.5 mr-1" />
+                     Kurlar
+                   </Button>
+                 )}
+              </div>
+
+              <div className="space-y-4 flex-1">
+                <FormField
+                  control={form.control}
+                  name="quotation.currency"
+                  render={({ field }) => (
+                    <FormItem className="space-y-0 relative group">
+                      <FormLabel className={styles.label}>Para Birimi</FormLabel>
+                      <div className="relative">
+                        <div className={styles.iconWrapper}><Coins className="h-4 w-4 text-emerald-500" /></div>
                         <VoiceSearchCombobox
-                          className={styles.inputBase}
-                          value={field.value?.toString() || ''}
-                          onSelect={(value) => field.onChange(value ? Number(value) : null)}
-                          options={availableDocumentSerialTypes
-                            .filter((d) => d.serialPrefix?.trim() !== '')
-                            .map((d) => ({
-                              value: d.id.toString(),
-                              label: d.serialPrefix || ''
-                            }))}
-                          placeholder={t('quotation.select', 'Seç')}
+                          className={cn(styles.inputBase, "font-bold tracking-wide text-emerald-700 dark:text-emerald-400 bg-emerald-50/50 dark:bg-emerald-950/20 border-emerald-100 dark:border-emerald-900/30")}
+                          value={field.value ? String(field.value) : ''}
+                          onSelect={(value) => value && handleCurrencyChange(value)}
+                          options={erpRates.map((currency: KurDto) => ({
+                            value: String(currency.dovizTipi),
+                            label: currency.dovizIsmi || `Döviz ${currency.dovizTipi}`
+                          }))}
+                          placeholder={t('quotation.select', 'Seçiniz')}
                           searchPlaceholder={t('common.search', 'Ara...')}
-                          disabled={readOnly || customerTypeId === undefined || !watchedRepresentativeId}
+                          disabled={readOnly}
                         />
                       </div>
                       <FormMessage className="mt-1" />
                     </FormItem>
                   )}
                 />
-                
+
                 <FormField
                   control={form.control}
-                  name="quotation.description"
+                  name="quotation.paymentTypeId"
                   render={({ field }) => (
                     <FormItem className="space-y-0 relative group">
-                      <FormLabel className={styles.label}>
-                        Notlar
-                      </FormLabel>
-                      <FormControl>
-                        <Textarea
-                          {...field}
-                          value={field.value || ''}
-                          placeholder={t('quotation.header.descriptionPlaceholder', 'Özel koşullar...')}
-                          className="min-h-[80px] rounded-xl border-zinc-200 dark:border-zinc-800 bg-white/50 dark:bg-zinc-950/30 resize-none focus-visible:border-pink-500 focus-visible:ring-4 focus-visible:ring-pink-500/20 transition-all text-sm"
-                          disabled={readOnly}
-                        />
-                      </FormControl>
+                      <FormLabel className={styles.label}>Ödeme Planı</FormLabel>
+                      <div className="relative">
+                         <div className={styles.iconWrapper}><CreditCard className="h-4 w-4" /></div>
+                         <VoiceSearchCombobox
+                           className={styles.inputBase}
+                           value={field.value?.toString() || ''}
+                           onSelect={(value) => field.onChange(value ? Number(value) : null)}
+                           options={paymentTypes.map((pt) => ({
+                             value: pt.id.toString(),
+                             label: pt.name
+                           }))}
+                           placeholder={t('quotation.select', 'Seçiniz')}
+                           searchPlaceholder={t('common.search', 'Ara...')}
+                           disabled={readOnly}
+                         />
+                      </div>
                       <FormMessage className="mt-1" />
                     </FormItem>
                   )}
                 />
               </div>
-           </div>
+            </div>
         </div>
+
       </div>
 
       <CustomerSelectDialog
