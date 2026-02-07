@@ -13,7 +13,7 @@ import { Button } from '@/components/ui/button';
 import { useCustomerList } from '@/features/customer-management/hooks/useCustomerList';
 import type { CustomerDto } from '@/features/customer-management/types/customer-types';
 import { cn } from '@/lib/utils';
-import { Phone, Mail, ChevronRight, Search, Mic, Building2, User, X, Users } from 'lucide-react';
+import { Phone, Mail, ChevronRight, Search, Mic, Building2, User, X, Users, LayoutGrid, List } from 'lucide-react';
 
 export interface CustomerSelectionResult {
   customerId?: number;
@@ -37,6 +37,7 @@ interface CustomerCardProps {
   city?: string;
   district?: string;
   onClick: () => void;
+  viewMode: 'list' | 'grid';
 }
 
 const INPUT_STYLE = `
@@ -62,7 +63,51 @@ function CustomerCard({
   phone,
   email,
   onClick,
+  viewMode,
 }: CustomerCardProps): ReactElement {
+  if (viewMode === 'grid') {
+    return (
+      <div
+        onClick={onClick}
+        className={cn(
+          "group flex flex-col gap-3 p-4 rounded-xl border transition-all duration-200 cursor-pointer h-full",
+          "bg-slate-50 dark:bg-white/5 border-slate-200 dark:border-white/5 hover:bg-slate-100 dark:hover:bg-white/10 hover:-translate-y-1 hover:shadow-lg"
+        )}
+      >
+        <div className="flex items-start justify-between w-full">
+          <div className={cn(
+            "w-12 h-12 rounded-xl flex items-center justify-center shrink-0 shadow-sm",
+            type === 'erp' 
+              ? "bg-purple-100 dark:bg-purple-500/10 text-purple-600 dark:text-purple-400" 
+              : "bg-pink-100 dark:bg-pink-500/10 text-pink-600 dark:text-pink-400"
+          )}>
+            {type === 'erp' ? <Building2 size={24} /> : <User size={24} />}
+          </div>
+          {customerCode && (
+            <span className="text-[10px] font-mono font-medium px-2 py-1 rounded-md bg-slate-200/50 dark:bg-white/5 text-slate-600 dark:text-slate-400">
+              {customerCode}
+            </span>
+          )}
+        </div>
+
+        <div className="flex flex-col gap-1 mt-1">
+          <span className="font-semibold text-base text-slate-900 dark:text-zinc-100 line-clamp-2 leading-tight min-h-[2.5rem]">{name}</span>
+        </div>
+
+        <div className="mt-auto pt-3 space-y-2 border-t border-slate-200/50 dark:border-white/5">
+          <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-zinc-400">
+            <Phone size={14} className="shrink-0 opacity-70" />
+            <span className="truncate">{phone || '-'}</span>
+          </div>
+          <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-zinc-400">
+            <Mail size={14} className="shrink-0 opacity-70" />
+            <span className="truncate">{email || '-'}</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div
       onClick={onClick}
@@ -113,6 +158,7 @@ export function CustomerSelectDialog({
   const { t, i18n } = useTranslation();
   const [activeTab, setActiveTab] = useState<'erp' | 'potential' | 'all'>('erp');
   const [searchQuery, setSearchQuery] = useState('');
+  const [viewMode, setViewMode] = useState<'list' | 'grid'>('list');
   const [isListening, setIsListening] = useState(false);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
 
@@ -254,7 +300,10 @@ export function CustomerSelectDialog({
     }
 
     return (
-      <div className="grid grid-cols-1 gap-2">
+      <div className={cn(
+        "grid gap-3",
+        viewMode === 'list' ? "grid-cols-1" : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
+      )}>
         {list.map((customer) => (
           <CustomerCard
             key={`customer-${customer.id}`}
@@ -266,6 +315,7 @@ export function CustomerSelectDialog({
             city={customer.cityName}
             district={customer.districtName}
             onClick={() => handleCustomerSelect(customer)}
+            viewMode={viewMode}
           />
         ))}
       </div>
@@ -298,28 +348,59 @@ export function CustomerSelectDialog({
           </DialogHeader>
 
           <div className="p-6 pb-0 space-y-4 bg-white dark:bg-[#130822] shrink-0">
-            <div className="relative w-full group">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500 group-focus-within:text-pink-500 transition-colors" />
-              <Input
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder={t('customerSelectDialog.searchPlaceholder', 'İsim, kod veya telefon ile ara...')}
-                className={cn(INPUT_STYLE, "pl-9")}
-              />
-              {recognitionRef.current && (
-                <Button
-                  type="button"
-                  size="icon"
-                  variant="ghost"
-                  onClick={handleVoiceSearch}
+            <div className="flex items-center gap-3">
+              <div className="relative flex-1 group">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500 group-focus-within:text-pink-500 transition-colors" />
+                <Input
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder={t('customerSelectDialog.searchPlaceholder', 'İsim, kod veya telefon ile ara...')}
+                  className={cn(INPUT_STYLE, "pl-9")}
+                />
+                {recognitionRef.current && (
+                  <Button
+                    type="button"
+                    size="icon"
+                    variant="ghost"
+                    onClick={handleVoiceSearch}
+                    className={cn(
+                      "absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 hover:bg-slate-100 dark:hover:bg-white/5 rounded-lg",
+                      isListening ? "text-pink-500" : "text-zinc-500"
+                    )}
+                  >
+                    <Mic size={16} />
+                  </Button>
+                )}
+              </div>
+              
+              <div className="flex bg-slate-100 dark:bg-[#1a1025] p-1 rounded-xl border border-slate-200 dark:border-white/5 shrink-0 h-12 items-center">
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  onClick={() => setViewMode('list')}
                   className={cn(
-                    "absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 hover:bg-slate-100 dark:hover:bg-white/5 rounded-lg",
-                    isListening ? "text-pink-500" : "text-zinc-500"
+                    "w-10 h-10 rounded-lg transition-all",
+                    viewMode === 'list' 
+                      ? "bg-white dark:bg-pink-500 text-slate-900 dark:text-white shadow-sm" 
+                      : "text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
                   )}
                 >
-                  <Mic size={16} />
+                  <List size={20} />
                 </Button>
-              )}
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  onClick={() => setViewMode('grid')}
+                  className={cn(
+                    "w-10 h-10 rounded-lg transition-all",
+                    viewMode === 'grid' 
+                      ? "bg-white dark:bg-pink-500 text-slate-900 dark:text-white shadow-sm" 
+                      : "text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
+                  )}
+                >
+                  <LayoutGrid size={20} />
+                </Button>
+              </div>
             </div>
 
             <TabsList className="bg-slate-100 dark:bg-[#1a1025] p-1 h-auto w-full grid grid-cols-3 rounded-xl border border-slate-200 dark:border-white/5">
