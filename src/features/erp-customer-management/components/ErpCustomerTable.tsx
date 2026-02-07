@@ -1,4 +1,4 @@
-import { type ReactElement, useState, useMemo, useRef } from 'react';
+import { type ReactElement, useState, useMemo, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { TFunction } from 'i18next';
 import {
@@ -9,7 +9,15 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { 
+  ArrowUpDown, 
+  ArrowUp, 
+  ArrowDown, 
+  ChevronLeft, 
+  ChevronRight, 
+} from 'lucide-react';
 import type { CariDto } from '@/services/erp-types';
 
 
@@ -17,6 +25,7 @@ interface ErpCustomerTableProps {
   customers: CariDto[];
   isLoading: boolean;
   visibleColumns: string[];
+  pageSize?: number;
 }
 
 export const getColumnsConfig = (t: TFunction) => [
@@ -36,14 +45,15 @@ export const getColumnsConfig = (t: TFunction) => [
     { key: 'tcknNumber', label: t('table.tcknNumber', 'TCKN'), className: 'font-mono text-xs whitespace-nowrap' },
 ];
 
-export function ErpCustomerTable({ customers, isLoading, visibleColumns }: ErpCustomerTableProps): ReactElement {
+export function ErpCustomerTable({ customers, isLoading, visibleColumns, pageSize = 20 }: ErpCustomerTableProps): ReactElement {
   const { t } = useTranslation('erp-customer-management');
 
   const [sortConfig, setSortConfig] = useState<{ key: keyof CariDto | string; direction: 'asc' | 'desc' } | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [jumpPage, setJumpPage] = useState('');
   
   const allColumns = getColumnsConfig(t);
 
-  // Drag to Scroll Logic
   const scrollRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
@@ -100,12 +110,47 @@ export function ErpCustomerTable({ customers, isLoading, visibleColumns }: ErpCu
     });
   }, [customers, sortConfig]);
 
+  const totalPages = Math.ceil(sortedCustomers.length / pageSize);
+  const paginatedCustomers = useMemo(() => {
+    const startIndex = (currentPage - 1) * pageSize;
+    return sortedCustomers.slice(startIndex, startIndex + pageSize);
+  }, [sortedCustomers, currentPage, pageSize]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+    setJumpPage('');
+  }, [customers]);
+
   const handleSort = (key: string) => {
     let direction: 'asc' | 'desc' = 'asc';
     if (sortConfig && sortConfig.key === key && sortConfig.direction === 'asc') {
       direction = 'desc';
     }
     setSortConfig({ key, direction });
+  };
+
+  const handlePageChange = (page: number) => {
+    if (page < 1 || page > totalPages) return;
+    setCurrentPage(page);
+    setJumpPage('');
+  };
+
+  const handleJumpToPage = () => {
+    const page = parseInt(jumpPage);
+    if (!isNaN(page) && page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
+      setJumpPage('');
+    }
+  };
+
+  const handleJumpInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setJumpPage(e.target.value);
+  };
+
+  const handleJumpInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      handleJumpToPage();
+    }
   };
 
   if (isLoading) {
@@ -182,7 +227,7 @@ export function ErpCustomerTable({ customers, isLoading, visibleColumns }: ErpCu
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {sortedCustomers.map((customer: CariDto, index: number) => (
+                        {paginatedCustomers.map((customer: CariDto, index: number) => (
                         <TableRow 
                             key={`${customer.cariKod}-${index}`}
                             className="border-b border-slate-100 dark:border-white/5 transition-colors duration-200 hover:bg-pink-50/40 dark:hover:bg-pink-500/5 group last:border-0"
@@ -204,6 +249,63 @@ export function ErpCustomerTable({ customers, isLoading, visibleColumns }: ErpCu
                     </TableBody>
                 </Table>
             </div>
+        </div>
+
+        <div className="mt-4 flex flex-col sm:flex-row items-center justify-between gap-4 px-2">
+          <div className="text-sm text-slate-500 dark:text-slate-400 font-medium">
+            Toplam <span className="text-slate-900 dark:text-white font-bold">{sortedCustomers.length}</span> kayıt bulundu
+          </div>
+          
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-8 w-8 rounded-lg border-slate-200 dark:border-white/10 bg-white dark:bg-white/5 hover:bg-slate-100 dark:hover:bg-white/10"
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+
+            <div className="flex items-center gap-2 bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-lg px-3 py-1">
+              <span className="text-sm font-medium text-slate-600 dark:text-slate-300 whitespace-nowrap">
+                Sayfa
+              </span>
+              <Input
+                type="number"
+                min={1}
+                max={totalPages}
+                value={jumpPage}
+                onChange={handleJumpInputChange}
+                onKeyDown={handleJumpInputKeyDown}
+                placeholder={currentPage.toString()}
+                className="h-6 w-16 px-1 text-center text-xs border-slate-200 dark:border-white/10 bg-transparent focus-visible:ring-0 focus-visible:border-pink-500"
+              />
+              <span className="text-sm font-medium text-slate-400">
+                / {totalPages}
+              </span>
+            </div>
+
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={handleJumpToPage}
+              disabled={!jumpPage || parseInt(jumpPage) < 1 || parseInt(jumpPage) > totalPages}
+              className="h-8 px-2 text-xs font-medium hover:bg-slate-100 dark:hover:bg-white/10 text-pink-600 dark:text-pink-400"
+            >
+              Git
+            </Button>
+
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-8 w-8 rounded-lg border-slate-200 dark:border-white/10 bg-white dark:bg-white/5 hover:bg-slate-100 dark:hover:bg-white/10"
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage === totalPages}
+            >
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
     </div>
   );

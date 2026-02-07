@@ -520,7 +520,7 @@ export function ErpCustomerManagementPage(): ReactElement {
       </div>
 
       <div className="bg-white/70 dark:bg-[#1a1025]/60 backdrop-blur-xl border border-white/60 dark:border-white/5 shadow-sm rounded-2xl p-0 sm:p-1 transition-all duration-300 overflow-hidden flex-1 min-h-0">
-        <ErpCustomerTable customers={filteredCustomers.slice(0, pageSize)} isLoading={isLoading} visibleColumns={visibleColumns} />
+        <ErpCustomerTable customers={filteredCustomers} isLoading={isLoading} visibleColumns={visibleColumns} pageSize={pageSize} />
       </div>
     </div>
   );
