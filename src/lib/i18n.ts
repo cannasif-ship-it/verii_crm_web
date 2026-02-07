@@ -54,7 +54,7 @@ const initPromise = (async () => {
   const defaultNS = namespaces.includes('common') ? 'common' : namespaces[0] ?? 'translation';
   await i18n.use(initReactI18next).init({
     lng: resolvedLng,
-    fallbackLng,
+    fallbackLng: supportedLngs.includes('en') ? [fallbackLng, 'en'] : fallbackLng,
     supportedLngs,
     load: 'languageOnly',
     nonExplicitSupportedLngs: true,
