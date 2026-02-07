@@ -220,19 +220,16 @@ export function ErpCustomerManagementPage(): ReactElement {
 // styles removed
 
   return (
-    <div className="w-full h-[calc(100vh-7rem)] flex flex-col gap-4 sm:gap-6 overflow-hidden">
-      <div className="flex flex-col gap-2 pt-2 shrink-0">
+    <div className="w-full h-[calc(100vh-6rem)] flex flex-col gap-2 overflow-hidden">
+      <div className="flex flex-col gap-1 pt-1 shrink-0 px-0 sm:px-1">
         <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-white transition-colors">
           {t('menu')}
         </h1>
-        <p className="text-slate-500 dark:text-slate-400 text-sm font-medium transition-colors">
-          {t('description')}
-        </p>
       </div>
 
-      <div className="bg-white/70 dark:bg-[#1a1025]/60 backdrop-blur-xl border border-white/60 dark:border-white/5 shadow-sm rounded-2xl p-4 sm:p-5 flex flex-col gap-5 transition-all duration-300 shrink-0">
+      <div className="bg-white/70 dark:bg-[#1a1025]/60 backdrop-blur-xl border border-white/60 dark:border-white/5 shadow-sm rounded-2xl p-3 sm:p-4 flex flex-col gap-4 transition-all duration-300 shrink-0">
           
-          <div className="flex flex-col lg:flex-row items-center justify-between gap-4">
+          <div className="flex flex-col lg:flex-row items-center justify-between gap-3">
             
             {/* Left Side: Search + Refresh */}
             <div className="flex items-center gap-2 w-full lg:w-auto">

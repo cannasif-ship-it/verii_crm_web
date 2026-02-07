@@ -195,11 +195,11 @@ export function ErpCustomerTable({ customers, isLoading, visibleColumns, pageSiz
   `;
 
   return (
-    <div className="flex flex-col gap-4 h-full">
-        <div className="rounded-xl border border-white/5 dark:border-white/10 overflow-hidden bg-white/40 dark:bg-[#1a1025]/40 backdrop-blur-sm h-full flex flex-col shadow-sm">
+    <div className="flex flex-col gap-4 max-h-full">
+        <div className="rounded-xl border border-white/5 dark:border-white/10 overflow-hidden bg-white/40 dark:bg-[#1a1025]/40 backdrop-blur-sm flex flex-col shadow-sm shrink min-h-0">
             <div 
                 ref={scrollRef}
-                className="flex-1 overflow-auto w-full cursor-grab active:cursor-grabbing border border-white/5 rounded-2xl [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']"
+                className="overflow-auto w-full cursor-grab active:cursor-grabbing border border-white/5 rounded-2xl [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']"
                 onMouseDown={handleMouseDown}
                 onMouseLeave={handleMouseUpOrLeave}
                 onMouseUp={handleMouseUpOrLeave}
@@ -251,7 +251,7 @@ export function ErpCustomerTable({ customers, isLoading, visibleColumns, pageSiz
             </div>
         </div>
 
-        <div className="mt-4 flex flex-col sm:flex-row items-center justify-between gap-4 px-2">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 px-2">
           <div className="text-sm text-slate-500 dark:text-slate-400 font-medium">
             Toplam <span className="text-slate-900 dark:text-white font-bold">{sortedCustomers.length}</span> kayıt bulundu
           </div>
