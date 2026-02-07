@@ -58,7 +58,7 @@ export function QuotationSummaryCard({
 
         {/* Genel Toplam */}
         <div className="mt-6">
-          <div className="rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 p-5 shadow-lg shadow-violet-500/30 text-white flex items-center justify-between transition-all hover:scale-[1.02] duration-300">
+          <div className="rounded-xl bg-gradient-to-r from-orange-600 to-pink-600 p-5 shadow-lg shadow-orange-500/30 text-white flex items-center justify-between transition-all hover:scale-[1.02] duration-300">
             <span className="text-sm font-bold uppercase tracking-wider flex items-center gap-2 text-white/90">
               <Wallet className="h-5 w-5" />
               {t('quotation.summary.grandTotal', 'Genel Toplam')}

@@ -863,7 +863,7 @@ export function QuotationLineForm({
             <div className="h-px bg-slate-200 dark:bg-white/10 my-2 border-dashed" />
             <div className="flex justify-between items-center">
               <span className="text-base font-bold text-slate-900 dark:text-white">Genel Toplam</span>
-              <span className="text-2xl font-black tracking-tight text-emerald-600 dark:text-emerald-500">
+              <span className="text-2xl font-black tracking-tight text-orange-600 dark:text-orange-500">
                 {formatCurrency(formData.lineGrandTotal, currencyCode)}
               </span>
             </div>
