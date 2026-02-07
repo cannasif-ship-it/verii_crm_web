@@ -1,12 +1,12 @@
 {
   "menu": "Genehmigungsrollengruppen-Verwaltung",
   "description": "Verwalten und bearbeiten Sie Genehmigungsrollengruppen",
-  "addButton": "Neue Gruppe hinzufügen",
+  "addButton": "Add New Group",
   "refresh": "Aktualisieren",
   "searchPlaceholder": "Suchen...",
   "loading": "Laden...",
   "noData": "Keine Daten gefunden",
-  "noDataDescription": "Es wurden keine Datensätze gefunden, die Ihren Suchkriterien entsprechen, oder es wurden noch keine Datensätze hinzugefügt.",
+  "noDataDescription": "No records found matching your search criteria or no records added yet.",
   "table": {
     "id": "ID",
     "name": "Gruppenname",
@@ -16,21 +16,23 @@
     "showing": "Zeige {{from}}-{{to}} von {{total}} Einträgen"
   },
   "delete": {
-      "confirmTitle": "Löschbestätigung",
-      "confirmMessage": "Diese Aktion kann nicht rückgängig gemacht werden. Möchten Sie fortfahren?"
+    "confirmTitle": "Delete Confirmation",
+    "confirmMessage": "This action cannot be undone. Do you want to continue?"
   },
   "cancel": "Abbrechen",
   "save": "Speichern",
   "saving": "Wird gespeichert...",
-  "deleteButton": "Löschen",
+  "deleteButton": "Delete",
   "form": {
     "editTitle": "Genehmigungsrollengruppe bearbeiten",
-    "addTitle": "Neue Genehmigungsrollengruppe hinzufügen",
+    "addTitle": "Add New Approval Role Group",
     "editDescription": "Genehmigungsrollengruppen-Informationen bearbeiten",
     "addDescription": "Neue Genehmigungsrollengruppen-Informationen eingeben",
     "name": "Gruppenname",
     "namePlaceholder": "Gruppenname eingeben",
     "name.required": "Gruppenname ist erforderlich",
-    "name.maxLength": "Gruppenname darf höchstens 100 Zeichen lang sein"
+    "name.maxLength": "Gruppenname darf höchstens 100 Zeichen lang sein",
+    "nameRequired": "Group name is required",
+    "nameMaxLength": "Group name can be at most 100 characters"
   }
 }

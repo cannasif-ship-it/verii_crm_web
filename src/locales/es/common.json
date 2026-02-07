@@ -31,7 +31,8 @@
     "start": "Inicio",
     "actions": "Acciones",
     "processing": "Procesando...",
-    "selectDate": "Seleccionar fecha"
+    "selectDate": "Seleccionar fecha",
+    "UnexpectedError": "An unexpected error occurred"
   },
   "auth": {
     "login": {
@@ -71,7 +72,7 @@
     "description": "Asigne informe + rol de usuario y defina roles RLS.",
     "new": "Nueva asignación",
     "report": "Informe",
-    "role": "Rol",
+    "role": "Role",
     "rlsRoles": "Roles RLS",
     "rlsRolesPlaceholder": "Sales, Finance, NorthRegion",
     "createdBy": "Creado por",
@@ -154,13 +155,22 @@
     "stockManagement": "Gestión de Inventario",
     "settings": "Configuración",
     "logout": "Cerrar Sesión",
+    "accessControl": "Control de Acceso",
+    "permissionDefinitions": "Definiciones de Permisos",
+    "permissionGroups": "Grupos de Permisos",
+    "userGroupAssignments": "Asignaciones de Grupos de Usuario",
     "productAndStock": "Productos y Stock",
     "salesManagement": "Gestión de Ventas",
     "proposals": "Propuestas",
     "quotationList": "Lista de Presupuestos",
     "waitingApprovals": "Aprobaciones Pendientes",
     "definitions": "Definiciones",
-    "users": "Usuarios"
+    "users": "Usuarios",
+    "reportBuilder": "Report Builder",
+    "pdfBuilder": "PDF Builder",
+    "powerbiConfiguration": "Power BI Configuration",
+    "powerbiReportsView": "Power BI Reports (View)",
+    "mailSettings": "Mail Settings"
   },
   "dashboard": {
     "title": "Tablero",
@@ -193,18 +203,18 @@
     "reportDownload": "Descargar Informe",
     "quickAction": "Acción Rápida",
     "monthsShort": {
-      "jan": "Ene",
+      "jan": "Jan",
       "feb": "Feb",
-      "mar": "mar",
-      "apr": "Abr",
-      "may": "may",
+      "mar": "Mar",
+      "apr": "Apr",
+      "may": "May",
       "jun": "Jun",
       "jul": "Jul",
-      "aug": "Ago",
+      "aug": "Aug",
       "sep": "Sep",
       "oct": "Oct",
       "nov": "Nov",
-      "dec": "Dic"
+      "dec": "Dec"
     },
     "quickStats": {
       "pendingTasks": "Tareas Pendientes",
@@ -287,12 +297,48 @@
     "notFound": "Cliente no encontrado",
     "error": "Error al cargar el resumen",
     "retry": "Reintentar",
+    "revenueQuality": {
+      "title": "Calidad de ingresos",
+      "churnRisk": "Riesgo de abandono",
+      "upsell": "Propensión a venta adicional",
+      "payment": "Comportamiento de pago",
+      "segment": "Segmento RFM",
+      "ltv": "LTV"
+    },
+    "cohort": {
+      "title": "Retención por cohorte",
+      "empty": "Sin datos de cohorte",
+      "cohortKey": "Cohorte"
+    },
+    "actions": {
+      "title": "Acciones recomendadas",
+      "empty": "Sin acciones recomendadas",
+      "execute": "Ejecutar",
+      "recommendedActions": {
+        "INCREASE_ACTIVITY_CADENCE": {
+          "title": "Aumentar el ritmo de actividad",
+          "reason": "Solo 2 actividades en los últimos 7 días."
+        }
+      }
+    },
     "status": {
       "HavenotStarted": "No iniciado",
       "Waiting": "Pendiente",
       "Approved": "Aprobado",
       "Rejected": "Rechazado",
       "Completed": "Completado"
+    },
+    "explain": {
+      "revenueQualityTitle": "Los scores de calidad de ingresos se calculan por reglas a partir de los últimos 12 meses de pedidos/cotizaciones/actividad.",
+      "churnRisk": "El riesgo de abandono se calcula entre 0 y 100 según última fecha de pedido, última actividad y frecuencia de pedidos. Un score más alto significa mayor riesgo de pérdida.",
+      "upsellPropensity": "La propensión a venta adicional se puntúa 0–100 según número de pedidos, conversión cotización–pedido y importe medio. Un score más alto indica mayor oportunidad.",
+      "paymentBehavior": "El comportamiento de pago es actualmente un score proxy (continuidad de pedidos, tasa de rechazo de cotizaciones, recencia) y no historial de cobro directo, escala 0–100.",
+      "rfmSegment": "El segmento RFM asigna Champions/Loyal/AtRisk/Potential según reglas de recencia, frecuencia y monetario.",
+      "cohortRetentionTitle": "La retención por cohorte toma el primer mes de pedido como cohorte; si hay pedido en meses siguientes, cuenta como retenido y calcula el porcentaje de retención.",
+      "recommendedActionsTitle": "Las acciones recomendadas son sugerencias de seguimiento prioritarias del motor de reglas (ej. larga inactividad, cotización abierta, churn alto).",
+      "executeAction": "Ejecutar convierte esta recomendación en actividad/tarea: el backend llama a `POST /api/customers/{id}/recommended-actions/execute` y crea un nuevo registro de actividad.",
+      "noCohortData": "Los datos de cohorte no están disponibles aún por historial de pedidos insuficiente.",
+      "modelNote": "Nota: estos scores son deterministas v1 y podrán mejorarse con datos de cobro ERP y modelos ML."
     }
   },
   "salesman360": {
@@ -346,6 +392,41 @@
       "last12MonthsOrderAmount": "Importe pedidos últimos 12 meses",
       "openQuotationAmount": "Importe cotizaciones abiertas",
       "openOrderAmount": "Importe pedidos abiertos"
+    },
+    "revenueQuality": {
+      "title": "Calidad de ingresos",
+      "churnRisk": "Riesgo de abandono",
+      "upsell": "Propensión a venta adicional",
+      "payment": "Comportamiento de pago",
+      "segment": "Segmento RFM"
+    },
+    "cohort": {
+      "title": "Retención por cohorte",
+      "empty": "Sin datos de cohorte",
+      "cohortKey": "Cohorte"
+    },
+    "actions": {
+      "title": "Acciones recomendadas",
+      "empty": "Sin acciones recomendadas",
+      "execute": "Ejecutar",
+      "recommendedActions": {
+        "INCREASE_ACTIVITY_CADENCE": {
+          "title": "Aumentar el ritmo de actividad",
+          "reason": "Solo 2 actividades en los últimos 7 días."
+        }
+      }
+    },
+    "explain": {
+      "revenueQualityTitle": "Los scores se calculan por reglas a partir del rendimiento cartera/pedidos/actividad del representante en los últimos 12 meses.",
+      "churnRisk": "El riesgo de abandono de cartera se puntúa 0–100 según clientes activos frente a clientes inactivos en los últimos 90 días.",
+      "upsellPropensity": "La propensión a venta adicional se puntúa 0–100 según intensidad de pedidos, cotizaciones ganadas y ritmo de actividad.",
+      "paymentBehavior": "El comportamiento de pago usa actualmente métricas proxy; será más preciso cuando se integre el historial de cobro directo.",
+      "rfmSegment": "El segmento RFM clasifica la cartera por comportamiento recencia/frecuencia/monetario.",
+      "cohortRetentionTitle": "La retención por cohorte agrupa clientes por primer mes de pedido en la cartera del representante y muestra tasas de retención mensuales.",
+      "recommendedActionsTitle": "Las acciones recomendadas sugieren acciones prioritarias: limpieza de pipeline, aumento de actividad, intervención en churn.",
+      "executeAction": "Ejecutar convierte la recomendación en actividad/tarea: el backend llama a `POST /api/salesmen/{userId}/recommended-actions/execute`.",
+      "noCohortData": "Los datos de cohorte no están disponibles aún por historial de pedidos insuficiente.",
+      "modelNote": "Nota: los scores actuales son deterministas v1 y pueden reforzarse con quota/forecast/ML."
     }
   },
   "goodsReceipt": {
@@ -959,7 +1040,12 @@
       "description": "Editar información de embalaje",
       "success": "Embalaje actualizado con éxito",
       "error": "Ocurrió un error al actualizar el embalaje",
-      "notFound": "Embalaje no encontrado"
+      "notFound": "Embalaje no encontrado",
+      "match": "Match",
+      "unmatch": "Unmatch",
+      "matchSuccess": "Matching completed successfully",
+      "unmatchSuccess": "Unmatching completed successfully",
+      "matchError": "An error occurred during matching"
     },
     "detail": {
       "title": "Detalle de Embalaje",
@@ -1000,7 +1086,12 @@
       "packageAddSuccess": "Paquete añadido con éxito",
       "packageAddError": "Ocurrió un error al añadir el paquete",
       "lineAddSuccess": "Línea añadida con éxito",
-      "lineAddError": "Ocurrió un error al añadir la línea"
+      "lineAddError": "Ocurrió un error al añadir la línea",
+      "match": "Match",
+      "unmatch": "Unmatch",
+      "matchSuccess": "Matching completed successfully",
+      "unmatchSuccess": "Unmatching completed successfully",
+      "matchError": "An error occurred during matching"
     },
     "packageDetail": {
       "title": "Detalle de Paquete",
@@ -1109,7 +1200,100 @@
       "srt": "Recepción de Subcontratación",
       "wi": "Entrada de Almacén",
       "wo": "Salida de Almacén",
-      "sh": "Envío"
+      "sh": "Envío",
+      "GR": "Goods Receipt",
+      "WT": "Warehouse Transfer",
+      "SH": "Shipment",
+      "PR": "Production",
+      "PT": "Production Transfer",
+      "SIT": "Subcontracting Issue",
+      "SRT": "Subcontracting Receipt",
+      "WI": "Warehouse Inbound",
+      "WO": "Warehouse Outbound"
+    },
+    "wizard": {
+      "step1": {
+        "title": "1. Package Header",
+        "description": "Enter package header information"
+      },
+      "step2": {
+        "title": "2. Add Package",
+        "description": "Add packages for packaging",
+        "addPackage": "Add New Package",
+        "editPackage": "Edit Package",
+        "editPackageDescription": "Edit package information",
+        "addPackageDescription": "Add a new package",
+        "noPackages": "No packages added yet"
+      },
+      "step3": {
+        "title": "3. Package Lines",
+        "description": "Add lines to packages (Optional)",
+        "addLine": "Add New Line",
+        "addLineDescription": "Add a new line",
+        "noPackages": "You must add packages first",
+        "noPackagesMessage": "You must add packages first",
+        "noLines": "No lines added yet"
+      },
+      "step4": {
+        "title": "4. Summary & Complete",
+        "headerInfo": "Header Information",
+        "summaryTotals": "Summary Totals",
+        "packages": "Packages",
+        "lines": "Lines",
+        "editHeader": "Edit Header",
+        "editPackages": "Edit Packages",
+        "editLines": "Edit Lines",
+        "noPackages": "No packages found",
+        "noLines": "No lines found",
+        "complete": "Complete & Save"
+      },
+      "stepProgress": "Step {{current}}/{{total}}",
+      "editHeader": "Edit Header",
+      "previousStep": "Previous Step",
+      "nextStep": "Next Step",
+      "saveAndContinue": "Save and Continue",
+      "saveAndExit": "Save and Exit",
+      "headerCreated": "Package header created",
+      "headerError": "An error occurred while creating package header",
+      "packageAdded": "Package added",
+      "packageUpdated": "Package updated",
+      "packageDeleted": "Package deleted",
+      "packageError": "An error occurred while adding package",
+      "packageDeleteError": "An error occurred while deleting package",
+      "atLeastOnePackage": "You must add at least 1 package",
+      "lineAdded": "Line added",
+      "lineDeleted": "Line deleted",
+      "lineError": "An error occurred while adding line",
+      "lineDeleteError": "An error occurred while deleting line",
+      "saved": "Package saved",
+      "completed": "Package completed successfully",
+      "completeError": "An error occurred while completing package",
+      "headerRequired": "You must create package header first",
+      "unknownStep": "Unknown step",
+      "cancelTitle": "Cancel Operation",
+      "cancelMessage": "Are you sure you want to cancel?",
+      "cancelMessageWithData": "All data will be deleted. Are you sure you want to cancel?"
+    },
+    "cargoCompany": {
+      "None": "None",
+      "YurtiçiKargo": "Yurtiçi Kargo",
+      "ArasKargo": "Aras Kargo",
+      "MNGKargo": "MNG Kargo",
+      "PTTKargo": "PTT Kargo",
+      "SüratKargo": "Sürat Kargo",
+      "UPS": "UPS",
+      "DHL": "DHL",
+      "FedEx": "FedEx",
+      "TNT": "TNT",
+      "HorozLojistik": "Horoz Logistics",
+      "CEVA": "CEVA",
+      "KargoTurk": "Kargo Türk",
+      "HepsiJET": "HepsiJET",
+      "TrendyolExpress": "Trendyol Express",
+      "AmazonLogistics": "Amazon Logistics",
+      "Scotty": "Scotty",
+      "KolayGelsin": "Kolay Gelsin",
+      "BirGundeKargo": "Bir Günde Kargo"
     }
   },
   "notification": {
@@ -1468,7 +1652,7 @@
       "username": "Nombre de usuario",
       "email": "Correo electrónico",
       "fullName": "Nombre completo",
-      "role": "Rol",
+      "role": "Role",
       "status": "Estado",
       "createdDate": "Fecha de creación",
       "active": "Activo",
@@ -1494,8 +1678,15 @@
       "lastNamePlaceholder": "Ingrese el apellido",
       "phoneNumber": "Teléfono",
       "phoneNumberPlaceholder": "Ingrese el teléfono",
-      "role": "Rol",
-      "rolePlaceholder": "Ingrese rol",
+      "role": "Role",
+      "rolePlaceholder": "Seleccionar rol",
+      "roleRequired": "Selección de rol requerida",
+      "permissionGroups": "Grupos de permisos",
+      "permissionGroupsPlaceholder": "Seleccionar grupos de permisos",
+      "permissionGroupsHelp": "Grupos de permisos a asignar",
+      "permissionGroupsNoData": "No se encontraron grupos de permisos",
+      "generatedPasswordInfo": "Dejar en blanco para contraseña temporal",
+      "selectAll": "Seleccionar todo",
       "isActive": "Activo",
       "isActiveDescription": "Estado activo del usuario",
       "username.required": "El nombre de usuario es obligatorio",

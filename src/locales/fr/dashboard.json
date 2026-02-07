@@ -16,7 +16,8 @@
   "activityType": {
     "meeting": "Réunion",
     "call": "Appel",
-    "email": "E-mail"
+    "email": "E-mail",
+    "general": "General"
   },
   "monthsShort": {
     "jan": "Jan",
@@ -39,5 +40,7 @@
     "openQuotationsDescription": "5 devis en attente d'approbation",
     "criticalStock": "Stock critique",
     "criticalStockDescription": "3 produits sous le niveau critique"
-  }
+  },
+  "noDate": "No date",
+  "unnamedActivity": "Unnamed Activity"
 }

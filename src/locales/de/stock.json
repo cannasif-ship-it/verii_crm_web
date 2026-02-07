@@ -13,7 +13,7 @@
     "showing": "Anzeige",
     "page": "Seite",
     "noData": "Keine Datensätze gefunden",
-    "previous": "Zurück",
+    "previous": "Previous",
     "next": "Weiter"
   },
   "detail": {
@@ -29,7 +29,7 @@
     "copied": "Kopiert",
     "copy": "Kopieren",
     "notFound": "Produkt nicht gefunden",
-    "backToStockList": "Zurück zur Liste",
+    "backToStockList": "Back to List",
     "gallery": "Galerie",
     "mainInfo": "Hauptinformationen",
     "groupInfo": "Gruppeninformationen",
@@ -63,15 +63,15 @@
     "altText": "Alternativtext",
     "primary": "Primär",
     "setPrimary": "Als primär festlegen",
-    "delete": "Löschen",
+    "delete": "Delete",
     "noImages": "Keine Bilder",
-    "deleteConfirm": "Bild löschen",
-    "deleteConfirmMessage": "Möchten Sie dieses Bild wirklich löschen?"
+    "deleteConfirm": "Delete Image",
+    "deleteConfirmMessage": "Are you sure you want to delete this image?"
   },
   "relations": {
-    "add": "Beziehung hinzufügen",
-    "relatedStock": "Zugehöriges Produkt",
-    "relatedStock.required": "Zugehöriges Produkt ist erforderlich",
+    "add": "Add Related Stock",
+    "relatedStock": "Related Stock",
+    "relatedStock.required": "Related stock selection is required",
     "quantity": "Menge",
     "quantity.positive": "Die Menge muss eine positive Zahl sein",
     "description": "Beschreibung",
@@ -79,16 +79,16 @@
     "isMandatory": "Pflicht",
     "mandatory": "Pflicht",
     "optional": "Optional",
-    "delete": "Löschen",
+    "delete": "Delete",
     "cancel": "Abbrechen",
     "deleting": "Löschen...",
     "actions": "Aktionen",
-    "noRelations": "Noch keine verwandten Bestände hinzugefügt",
+    "noRelations": "No related stocks added yet",
     "noRelationsDesc": "Sie können neue Beziehungen über das Formular auf der linken Seite definieren.",
     "selectStock": "Bestand auswählen",
     "search": "Suchen...",
-    "deleteConfirm": "Verwandten Bestand löschen",
-    "deleteConfirmMessage": "Sind Sie sicher, dass Sie den verwandten Bestand {{name}} löschen möchten?",
+    "deleteConfirm": "Delete Related Stock",
+    "deleteConfirmMessage": "Are you sure you want to delete {{name}} related stock?",
     "confirmDelete": "Ja, löschen",
     "stockCode": "Bestandscode",
     "stockName": "Bestandsname",
@@ -98,10 +98,10 @@
   "messages": {
     "detailCreateSuccess": "Bestandsdetails erfolgreich erstellt",
     "detailUpdateSuccess": "Bestandsdetails erfolgreich aktualisiert",
-    "deleteSuccess": "Erfolgreich gelöscht",
+    "deleteSuccess": "Deleted successfully",
     "uploadSuccess": "Bilder erfolgreich hochgeladen",
     "setPrimarySuccess": "Primärbild erfolgreich festgelegt",
-    "relationCreateSuccess": "Verwandter Bestand erfolgreich hinzugefügt",
+    "relationCreateSuccess": "Related stock added successfully",
     "error": "Ein Fehler ist aufgetreten"
   }
 }

@@ -1,7 +1,7 @@
 {
   "menu": "Kundenverwaltung",
   "description": "Kunden verwalten und bearbeiten",
-  "addButton": "Neuen Kunden hinzufügen",
+  "addButton": "Add New Customer",
   "stats": {
     "totalCustomers": "Gesamtkunden",
     "approvedCustomers": "Genehmigte Kunden",
@@ -16,7 +16,7 @@
     "country": "Land",
     "city": "Stadt",
     "district": "Bezirk",
-    "phone": "Telefon",
+    "phone": "Phone",
     "phone2": "Telefon 2",
     "email": "E-Mail",
     "salesRepCode": "Vertriebsmitarbeiter",
@@ -28,7 +28,7 @@
     "page": "Seite {{current}} / {{total}}"
   },
   "form": {
-    "addCustomer": "Neuen Kunden hinzufügen",
+    "addCustomer": "Add New Customer",
     "editCustomer": "Kunden bearbeiten",
     "addDescription": "Geben Sie neue Kundeninformationen ein",
     "editDescription": "Kundeninformationen bearbeiten",
@@ -51,14 +51,14 @@
     "address": "Adresse",
     "addressPlaceholder": "Adresse eingeben (optional)",
     "addressMaxLength": "Adresse darf maximal 500 Zeichen lang sein",
-    "phone": "Telefon",
+    "phone": "Phone",
     "phonePlaceholder": "Telefonnummer eingeben (optional)",
     "phoneMaxLength": "Telefonnummer darf maximal 20 Zeichen lang sein",
     "phone2": "Telefon 2",
     "phone2Placeholder": "Zweite Telefonnummer eingeben (optional)",
     "email": "E-Mail",
     "emailPlaceholder": "E-Mail-Adresse eingeben (optional)",
-    "emailInvalid": "Bitte geben Sie eine gültige E-Mail-Adresse ein",
+    "emailInvalid": "Please enter a valid email address",
     "emailMaxLength": "E-Mail-Adresse darf maximal 100 Zeichen lang sein",
     "website": "Webseite",
     "websitePlaceholder": "Webseiten-URL eingeben (optional)",
@@ -84,12 +84,16 @@
     "isCompleted": "Abgeschlossen",
     "isCompletedDescription": "Sind alle Informationen für diesen Kunden vollständig ausgefüllt?",
     "isERPIntegrated": "ERP-Integriert",
-    "none": "Keine"
+    "none": "Keine",
+    "phone2MaxLength": "İkinci telefon numarası en fazla 100 karakter olabilir",
+    "notesMaxLength": "Notes must be at most 250 characters",
+    "salesRepCodeMaxLength": "Satış temsilcisi kodu en fazla 50 karakter olabilir",
+    "groupCodeMaxLength": "Grup kodu en fazla 50 karakter olabilir"
   },
   "delete": {
-    "action": "Löschen",
-    "confirmTitle": "Kunde löschen",
-    "confirmMessage": "Sind Sie sicher, dass Sie den Kunden {{name}} löschen möchten?"
+    "action": "Delete",
+    "confirmTitle": "Delete Customer",
+    "confirmMessage": "Are you sure you want to delete {{name}} customer?"
   },
   "loading": "Laden...",
   "noData": "Keine Daten",
@@ -105,7 +109,7 @@
     "createError": "Kunde konnte nicht erstellt werden",
     "updateSuccess": "Kunde erfolgreich aktualisiert",
     "updateError": "Kunde konnte nicht aktualisiert werden",
-    "deleteSuccess": "Kunde erfolgreich gelöscht",
-    "deleteError": "Kunde konnte nicht gelöscht werden"
+    "deleteSuccess": "Customer deleted successfully",
+    "deleteError": "Customer could not be deleted"
   }
 }

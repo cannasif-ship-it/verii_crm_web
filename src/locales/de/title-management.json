@@ -3,13 +3,17 @@
   "noData": "Keine Daten gefunden",
   "search": "Suchen...",
   "refresh": "Aktualisieren",
-  "previous": "Zurück",
+  "previous": "Previous",
   "next": "Weiter",
   "cancel": "Abbrechen",
   "save": "Speichern",
   "saving": "Speichern...",
-  "delete": "Löschen",
-  "deleting": "Löschen...",
+  "delete": {
+    "confirmTitle": "Delete Title",
+    "confirmMessage": "Are you sure you want to delete the title {{name}}?",
+    "button": "Delete"
+  },
+  "deleting": "Deleting...",
   "actions": "Aktionen",
   "edit": "Bearbeiten",
   "header": {
@@ -26,7 +30,7 @@
     "page": "Seite {{current}} / {{total}}"
   },
   "form": {
-    "addTitle": "Neuen Titel hinzufügen",
+    "addTitle": "Add New Title",
     "editTitle": "Titel bearbeiten",
     "addDescription": "Geben Sie die neuen Titeldetails ein",
     "editDescription": "Bearbeiten Sie die Titeldetails",
@@ -37,10 +41,5 @@
     "cancel": "Abbrechen",
     "save": "Speichern",
     "saving": "Speichern..."
-  },
-  "delete": {
-    "confirmTitle": "Titel löschen",
-    "confirmMessage": "Sind Sie sicher, dass Sie den Titel {{name}} löschen möchten?",
-    "button": "Löschen"
   }
 }

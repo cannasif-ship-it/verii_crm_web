@@ -17,8 +17,10 @@
     "type": "Typ",
     "customerCode": "Kundencode",
     "customerName": "Kundenname",
-    "phone": "Telefon",
+    "phone": "Phone",
     "city": "Stadt",
     "email": "E-Mail"
-  }
+  },
+  "potentialCustomers": "Potential",
+  "noPotentialCustomers": "No potential customers found"
 }

@@ -16,8 +16,8 @@
     "showing": "Affichage de {{from}} à {{to}} sur {{total}} enregistrements"
   },
   "delete": {
-      "confirmTitle": "Confirmation de Suppression",
-      "confirmMessage": "Cette action est irréversible. Voulez-vous continuer ?"
+    "confirmTitle": "Confirmation de Suppression",
+    "confirmMessage": "Cette action est irréversible. Voulez-vous continuer ?"
   },
   "cancel": "Annuler",
   "save": "Enregistrer",
@@ -31,6 +31,8 @@
     "name": "Nom du Groupe",
     "namePlaceholder": "Entrer le nom du groupe",
     "name.required": "Le nom du groupe est requis",
-    "name.maxLength": "Le nom du groupe peut contenir au maximum 100 caractères"
+    "name.maxLength": "Le nom du groupe peut contenir au maximum 100 caractères",
+    "nameRequired": "Group name is required",
+    "nameMaxLength": "Group name can be at most 100 characters"
   }
 }

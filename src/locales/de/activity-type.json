@@ -1,19 +1,19 @@
 {
   "menu": "Aktivitätsartverwaltung",
   "description": "Aktivitätsarten verwalten und bearbeiten",
-  "addButton": "Neue Aktivitätsart hinzufügen",
+  "addButton": "Add New Activity Type",
   "loading": "Laden...",
   "noData": "Keine Daten gefunden",
   "actions": "Aktionen",
   "edit": "Bearbeiten",
-  "deleteButton": "Löschen",
+  "deleteButton": "Delete",
   "cancel": "Abbrechen",
   "save": "Speichern",
   "saving": "Speichern...",
-  "previous": "Zurück",
+  "previous": "Previous",
   "next": "Weiter",
   "form": {
-    "addTitle": "Neue Aktivitätsart hinzufügen",
+    "addTitle": "Add New Activity Type",
     "editTitle": "Aktivitätsart bearbeiten",
     "addDescription": "Geben Sie die neuen Aktivitätsartinformationen ein",
     "editDescription": "Bearbeiten Sie die Aktivitätsartinformationen",
@@ -44,11 +44,11 @@
     "createError": "Fehler beim Erstellen der Aktivitätsart",
     "updateSuccess": "Aktivitätsart erfolgreich aktualisiert",
     "updateError": "Fehler beim Aktualisieren der Aktivitätsart",
-    "deleteSuccess": "Aktivitätsart erfolgreich gelöscht",
-    "deleteError": "Fehler beim Löschen der Aktivitätsart"
+    "deleteSuccess": "Activity type deleted successfully",
+    "deleteError": "Failed to delete activity type"
   },
   "deleteConfirm": {
-    "confirmTitle": "Aktivitätsart löschen",
-    "confirmMessage": "Sind Sie sicher, dass Sie die Aktivitätsart {{name}} löschen möchten?"
+    "confirmTitle": "Delete Activity Type",
+    "confirmMessage": "Are you sure you want to delete {{name}} activity type?"
   }
 }

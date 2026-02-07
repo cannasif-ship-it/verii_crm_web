@@ -31,7 +31,8 @@
     "start": "بدء",
     "actions": "إجراءات",
     "processing": "جاري المعالجة...",
-    "selectDate": "اختر التاريخ"
+    "selectDate": "اختر التاريخ",
+    "UnexpectedError": "An unexpected error occurred"
   },
   "auth": {
     "login": {
@@ -154,13 +155,22 @@
     "stockManagement": "إدارة المخزون",
     "settings": "الإعدادات",
     "logout": "تسجيل الخروج",
+    "accessControl": "التحكم في الوصول",
+    "permissionDefinitions": "تعريفات الأذونات",
+    "permissionGroups": "مجموعات الأذونات",
+    "userGroupAssignments": "تعيينات مجموعات المستخدمين",
     "productAndStock": "المنتجات والمخزون",
     "salesManagement": "إدارة المبيعات",
     "proposals": "العروض",
     "quotationList": "قائمة عروض الأسعار",
     "waitingApprovals": "في انتظار الموافقة",
     "definitions": "التعريفات",
-    "users": "المستخدمين"
+    "users": "المستخدمين",
+    "reportBuilder": "Report Builder",
+    "pdfBuilder": "PDF Builder",
+    "powerbiConfiguration": "Power BI Configuration",
+    "powerbiReportsView": "Power BI Reports (View)",
+    "mailSettings": "Mail Settings"
   },
   "dashboard": {
     "title": "لوحة التحكم",
@@ -193,18 +203,18 @@
     "reportDownload": "تحميل التقرير",
     "quickAction": "إجراء سريع",
     "monthsShort": {
-      "jan": "يناير",
-      "feb": "فبراير",
-      "mar": "مارس",
-      "apr": "أبريل",
-      "may": "مايو",
-      "jun": "يونيو",
-      "jul": "يوليو",
-      "aug": "أغسطس",
-      "sep": "سبتمبر",
-      "oct": "أكتوبر",
-      "nov": "نوفمبر",
-      "dec": "ديسمبر"
+      "jan": "Jan",
+      "feb": "Feb",
+      "mar": "Mar",
+      "apr": "Apr",
+      "may": "May",
+      "jun": "Jun",
+      "jul": "Jul",
+      "aug": "Aug",
+      "sep": "Sep",
+      "oct": "Oct",
+      "nov": "Nov",
+      "dec": "Dec"
     },
     "quickStats": {
       "pendingTasks": "مهام معلقة",
@@ -287,12 +297,48 @@
     "notFound": "العميل غير موجود",
     "error": "حدث خطأ أثناء تحميل النظرة العامة",
     "retry": "إعادة المحاولة",
+    "revenueQuality": {
+      "title": "جودة الإيرادات",
+      "churnRisk": "مخاطر الفقدان",
+      "upsell": "ميل البيع الإضافي",
+      "payment": "سلوك الدفع",
+      "segment": "شريحة RFM",
+      "ltv": "LTV"
+    },
+    "cohort": {
+      "title": "الاحتفاظ بالأفواج",
+      "empty": "لا توجد بيانات أفواج",
+      "cohortKey": "الفوج"
+    },
+    "actions": {
+      "title": "الإجراءات الموصى بها",
+      "empty": "لا توجد إجراءات موصى بها",
+      "execute": "تنفيذ",
+      "recommendedActions": {
+        "INCREASE_ACTIVITY_CADENCE": {
+          "title": "زيادة وتيرة النشاط",
+          "reason": "نشاطان فقط في آخر 7 أيام."
+        }
+      }
+    },
     "status": {
       "HavenotStarted": "لم يبدأ",
       "Waiting": "قيد الانتظار",
       "Approved": "موافق عليه",
       "Rejected": "مرفوض",
       "Completed": "مكتمل"
+    },
+    "explain": {
+      "revenueQualityTitle": "يتم حساب درجات جودة الإيرادات قائمًا على القواعد من بيانات الطلبات/عروض الأسعار/النشاط لآخر 12 شهرًا.",
+      "churnRisk": "يُحسب مخاطر الفقدان بين 0 و100 حسب آخر تاريخ طلب، آخر نشاط، وتكرار الطلبات. الدرجة الأعلى تعني مخاطر فقدان أعلى.",
+      "upsellPropensity": "يُقيّم ميل البيع الإضافي 0–100 من عدد الطلبات، تحويل العرض إلى طلب، ومتوسط مبلغ الطلب. الدرجة الأعلى تدل على فرصة بيع إضافي أقوى.",
+      "paymentBehavior": "سلوك الدفع حاليًا درجة بديلة (استمرارية الطلبات، معدل رفض العروض، حداثة آخر طلب) وليس سجل التحصيل المباشر، مقياس 0–100.",
+      "rfmSegment": "شريحة RFM تُعيّن Champions/Loyal/AtRisk/Potential حسب قواعد الحداثة والتكرار والنقدية.",
+      "cohortRetentionTitle": "الاحتفاظ بالأفواج يأخذ أول شهر طلب كفوج؛ إن وُجد طلب في الأشهر التالية يُحسب محتفظًا به ويُحسب نسبة الاحتفاظ.",
+      "recommendedActionsTitle": "الإجراءات الموصى بها اقتراحات متابعة ذات أولوية من محرك القواعد (مثل عدم نشاط طويل، عرض مفتوح، فقدان مرتفع).",
+      "executeAction": "تنفيذ يحوّل هذه التوصية إلى نشاط/مهمة: الخلفية تستدعي `POST /api/customers/{id}/recommended-actions/execute` وتُنشئ سجل نشاط جديدًا.",
+      "noCohortData": "بيانات الأفواج غير متوفرة بعد بسبب عدم كفاية سجل الطلبات.",
+      "modelNote": "ملاحظة: هذه الدرجات حتمية v1 ويمكن تحسينها لاحقًا ببيانات تحصيل ERP ونماذج ML."
     }
   },
   "salesman360": {
@@ -346,6 +392,41 @@
       "last12MonthsOrderAmount": "قيمة الطلبات آخر 12 شهرًا",
       "openQuotationAmount": "قيمة عروض الأسعار المفتوحة",
       "openOrderAmount": "قيمة الطلبات المفتوحة"
+    },
+    "revenueQuality": {
+      "title": "جودة الإيرادات",
+      "churnRisk": "مخاطر الفقدان",
+      "upsell": "ميل البيع الإضافي",
+      "payment": "سلوك الدفع",
+      "segment": "شريحة RFM"
+    },
+    "cohort": {
+      "title": "الاحتفاظ بالأفواج",
+      "empty": "لا توجد بيانات أفواج",
+      "cohortKey": "الفوج"
+    },
+    "actions": {
+      "title": "الإجراءات الموصى بها",
+      "empty": "لا توجد إجراءات موصى بها",
+      "execute": "تنفيذ",
+      "recommendedActions": {
+        "INCREASE_ACTIVITY_CADENCE": {
+          "title": "زيادة وتيرة النشاط",
+          "reason": "نشاطان فقط في آخر 7 أيام."
+        }
+      }
+    },
+    "explain": {
+      "revenueQualityTitle": "تُحسب الدرجات قائمًا على القواعد من أداء محفظة/طلبات/نشاط الممثل في آخر 12 شهرًا.",
+      "churnRisk": "مخاطر فقدان المحفظة تُقيّم 0–100 حسب العملاء النشطين مقابل من أصبحوا غير نشطين في آخر 90 يومًا.",
+      "upsellPropensity": "ميل البيع الإضافي يُقيّم 0–100 من كثافة الطلبات والعروض المكتسبة وإيقاع النشاط.",
+      "paymentBehavior": "سلوك الدفع يستخدم حاليًا مقاييس بديلة؛ يصبح أدق عند ربط سجل التحصيل المباشر.",
+      "rfmSegment": "شريحة RFM تصنف المحفظة حسب سلوك الحداثة/التكرار/النقدية.",
+      "cohortRetentionTitle": "الاحتفاظ بالأفواج يجمع العملاء حسب أول شهر طلب في محفظة الممثل ويعرض معدلات الاحتفاظ الشهرية.",
+      "recommendedActionsTitle": "الإجراءات الموصى بها تقترح إجراءات ذات أولوية: تنظيف pipeline، زيادة النشاط، التدخل في الفقدان.",
+      "executeAction": "تنفيذ يحوّل التوصية إلى نشاط/مهمة: الخلفية تستدعي `POST /api/salesmen/{userId}/recommended-actions/execute`.",
+      "noCohortData": "بيانات الأفواج غير متوفرة بعد بسبب عدم كفاية سجل الطلبات.",
+      "modelNote": "ملاحظة: الدرجات الحالية حتمية v1 ويمكن تعزيزها بـ quota/forecast/ML."
     }
   },
   "goodsReceipt": {
@@ -1301,7 +1382,16 @@
       "srt": "استلام من المقاول من الباطن",
       "wi": "مستودع وارد",
       "wo": "مستودع صادر",
-      "sh": "شحن"
+      "sh": "شحن",
+      "GR": "Goods Receipt",
+      "WT": "Warehouse Transfer",
+      "SH": "Shipment",
+      "PR": "Production",
+      "PT": "Production Transfer",
+      "SIT": "Subcontracting Issue",
+      "SRT": "Subcontracting Receipt",
+      "WI": "Warehouse Inbound",
+      "WO": "Warehouse Outbound"
     },
     "cargoCompany": {
       "None": "لا يوجد",
@@ -1589,7 +1679,14 @@
       "phoneNumber": "رقم الهاتف",
       "phoneNumberPlaceholder": "أدخل رقم الهاتف",
       "role": "الدور",
-      "rolePlaceholder": "أدخل الدور",
+      "rolePlaceholder": "Select role",
+      "roleRequired": "Role selection is required",
+      "permissionGroups": "Permission Groups",
+      "permissionGroupsPlaceholder": "Select permission groups",
+      "permissionGroupsHelp": "Permission groups to assign to the user",
+      "permissionGroupsNoData": "No permission groups found",
+      "generatedPasswordInfo": "Leave blank to generate temporary password",
+      "selectAll": "Select all",
       "isActive": "نشط",
       "isActiveDescription": "حالة نشاط المستخدم",
       "username.required": "اسم المستخدم مطلوب",

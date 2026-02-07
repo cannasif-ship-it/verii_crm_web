@@ -15,7 +15,15 @@
     "searchPlaceholder": "Cerca limiti...",
     "showing": "Visualizzazione {{from}}-{{to}} / {{total}}",
     "page": "Pagina {{current}} / {{total}}",
-    "rowsPerPage": "Righe per pagina"
+    "rowsPerPage": "Righe per pagina",
+    "id": "ID",
+    "salespersonName": "Salesperson Name",
+    "erpProductGroupCode": "ERP Product Group Code",
+    "maxDiscount1": "Max Discount 1",
+    "maxDiscount2": "Max Discount 2",
+    "maxDiscount3": "Max Discount 3",
+    "createdDate": "Created Date",
+    "updatedDate": "Updated Date"
   },
   "form": {
     "addTitle": "Aggiungi Nuovo Limite di Sconto",

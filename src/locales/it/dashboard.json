@@ -16,7 +16,8 @@
   "activityType": {
     "meeting": "Riunione",
     "call": "Chiamata",
-    "email": "Email"
+    "email": "Email",
+    "general": "General"
   },
   "monthsShort": {
     "jan": "Gen",
@@ -39,5 +40,7 @@
     "openQuotationsDescription": "5 preventivi in attesa di approvazione",
     "criticalStock": "Scorte Critiche",
     "criticalStockDescription": "3 prodotti sotto il livello critico"
-  }
+  },
+  "noDate": "No date",
+  "unnamedActivity": "Unnamed Activity"
 }

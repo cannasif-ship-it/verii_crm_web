@@ -15,7 +15,10 @@
     "searchPlaceholder": "البحث في الألقاب...",
     "showing": "عرض {{from}}-{{to}} من {{total}}",
     "page": "صفحة {{current}} من {{total}}",
-    "rowsPerPage": "الصفوف لكل صفحة"
+    "rowsPerPage": "الصفوف لكل صفحة",
+    "id": "ID",
+    "createdDate": "Created Date",
+    "createdBy": "Created By"
   },
   "form": {
     "addTitle": "إضافة لقب جديد",
@@ -30,7 +33,14 @@
     "save": "حفظ",
     "required": "مطلوب",
     "successAdd": "تم إضافة اللقب بنجاح",
-    "successUpdate": "تم تحديث اللقب بنجاح"
+    "successUpdate": "تم تحديث اللقب بنجاح",
+    "addDescription": "Enter new title details",
+    "editDescription": "Edit title details",
+    "titleName": "Title Name",
+    "titleNamePlaceholder": "Enter title name",
+    "titleCode": "Title Code",
+    "codePlaceholder": "Enter code (optional)",
+    "saving": "Saving..."
   },
   "loading": "جارٍ التحميل...",
   "noData": "لا توجد بيانات",

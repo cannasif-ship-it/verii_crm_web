@@ -2,7 +2,7 @@
   "approvalUserRole": {
     "menu": "Genehmigungsbenutzerrollen-Verwaltung",
     "description": "Verwalten und bearbeiten Sie Genehmigungsbenutzerrollen",
-    "addButton": "Neue Rolle hinzufügen",
+    "addButton": "Add New Role",
     "searchPlaceholder": "Suchen...",
     "refresh": "Aktualisieren",
     "loading": "Laden...",
@@ -20,14 +20,14 @@
       "next": "Nächste"
     },
     "delete": {
-      "title": "Rolle löschen",
-      "confirmMessage": "Sind Sie sicher, dass Sie diese Benutzerrolle löschen möchten?",
-      "confirmButton": "Löschen",
+      "title": "Delete Role",
+      "confirmMessage": "Are you sure you want to delete this user role?",
+      "confirmButton": "Delete",
       "cancelButton": "Abbrechen"
     },
     "form": {
       "editTitle": "Genehmigungsbenutzerrolle bearbeiten",
-      "addTitle": "Neue Genehmigungsbenutzerrolle hinzufügen",
+      "addTitle": "Add New Approval User Role",
       "editDescription": "Genehmigungsbenutzerrollen-Informationen bearbeiten",
       "addDescription": "Neue Genehmigungsbenutzerrollen-Informationen eingeben",
       "userId": "Benutzer",
@@ -38,7 +38,9 @@
       "noApprovalRoleSelected": "Keine Genehmigungsrolle ausgewählt",
       "save": "Speichern",
       "saving": "Speichert...",
-      "cancel": "Abbrechen"
+      "cancel": "Abbrechen",
+      "userIdRequired": "User selection is required",
+      "approvalRoleIdRequired": "Approval role selection is required"
     }
   }
 }

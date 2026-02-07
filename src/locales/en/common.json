@@ -166,7 +166,11 @@
     "quotationList": "Quotation List",
     "waitingApprovals": "Pending Approvals",
     "definitions": "Definitions",
-    "users": "Users"
+    "users": "Users",
+    "accessControl": "Access Control",
+    "permissionDefinitions": "Permission Definitions",
+    "permissionGroups": "Permission Groups",
+    "userGroupAssignments": "User Group Assignments"
   },
   "dashboard": {
     "title": "Dashboard",
@@ -200,7 +204,17 @@
     "quickAction": "Quick Action",
     "monthsShort": {
       "mar": "Mar",
-      "may": "May"
+      "may": "May",
+      "jan": "Jan",
+      "feb": "Feb",
+      "apr": "Apr",
+      "jun": "Jun",
+      "jul": "Jul",
+      "aug": "Aug",
+      "sep": "Sep",
+      "oct": "Oct",
+      "nov": "Nov",
+      "dec": "Dec"
     },
     "quickStats": {
       "pendingTasks": "Pending Tasks",
@@ -283,12 +297,48 @@
     "notFound": "Customer not found",
     "error": "An error occurred while loading the overview",
     "retry": "Retry",
+    "revenueQuality": {
+      "title": "Revenue Quality",
+      "churnRisk": "Churn Risk",
+      "upsell": "Upsell Propensity",
+      "payment": "Payment Behavior",
+      "segment": "RFM Segment",
+      "ltv": "LTV"
+    },
+    "cohort": {
+      "title": "Cohort Retention",
+      "empty": "No cohort data",
+      "cohortKey": "Cohort"
+    },
+    "actions": {
+      "title": "Recommended Actions",
+      "empty": "No recommended actions",
+      "execute": "Execute",
+      "recommendedActions": {
+        "INCREASE_ACTIVITY_CADENCE": {
+          "title": "Increase activity cadence",
+          "reason": "Only 2 activities in the last 7 days."
+        }
+      }
+    },
     "status": {
       "HavenotStarted": "Not Started",
       "Waiting": "Waiting",
       "Approved": "Approved",
       "Rejected": "Rejected",
       "Completed": "Completed"
+    },
+    "explain": {
+      "revenueQualityTitle": "Revenue quality scores are rule-based and calculated from last 12 months of order/quotation/activity data.",
+      "churnRisk": "Churn Risk is calculated between 0-100 using last order date, last activity date, and order frequency. Higher score means higher risk of loss.",
+      "upsellPropensity": "Upsell Propensity is scored 0-100 from order count, quotation-to-order conversion, and average order amount signals. Higher score indicates stronger upsell opportunity.",
+      "paymentBehavior": "Payment Behavior is currently a proxy score (order continuity, quotation rejection rate, last-order recency) rather than direct collection history, calculated 0-100.",
+      "rfmSegment": "RFM Segment assigns Champions/Loyal/AtRisk/Potential based on recency, frequency, and monetary rules.",
+      "cohortRetentionTitle": "Cohort Retention takes first order month as cohort; if there is an order in following months, it counts as retained and calculates retention percentage.",
+      "recommendedActionsTitle": "Recommended Actions are prioritized follow-up suggestions from a rule engine (e.g., long inactivity, open quotation, high churn).",
+      "executeAction": "Execute converts this recommendation into an activity/task: backend calls `POST /api/customers/{id}/recommended-actions/execute` and creates a new Activity record.",
+      "noCohortData": "Cohort data is not available yet due to insufficient order history.",
+      "modelNote": "Note: These scores are deterministic v1 and can be improved later with ERP collection data and ML models."
     }
   },
   "salesman360": {
@@ -342,6 +392,41 @@
       "last12MonthsOrderAmount": "Last 12 Months Order Amount",
       "openQuotationAmount": "Open Quotation Amount",
       "openOrderAmount": "Open Order Amount"
+    },
+    "revenueQuality": {
+      "title": "Revenue Quality",
+      "churnRisk": "Churn Risk",
+      "upsell": "Upsell Propensity",
+      "payment": "Payment Behavior",
+      "segment": "RFM Segment"
+    },
+    "cohort": {
+      "title": "Cohort Retention",
+      "empty": "No cohort data",
+      "cohortKey": "Cohort"
+    },
+    "actions": {
+      "title": "Recommended Actions",
+      "empty": "No recommended actions",
+      "execute": "Execute",
+      "recommendedActions": {
+        "INCREASE_ACTIVITY_CADENCE": {
+          "title": "Increase activity cadence",
+          "reason": "Only 2 activities in the last 7 days."
+        }
+      }
+    },
+    "explain": {
+      "revenueQualityTitle": "Scores are rule-based, calculated from the sales rep's last 12 months portfolio/order/activity performance.",
+      "churnRisk": "Portfolio Churn Risk is scored 0-100 based on active customers versus customers becoming inactive in the last 90 days.",
+      "upsellPropensity": "Upsell Propensity is scored 0-100 using order intensity, won quotations, and activity cadence signals.",
+      "paymentBehavior": "Payment Behavior currently uses proxy metrics; it becomes more accurate once direct collection history is integrated.",
+      "rfmSegment": "RFM Segment classifies the portfolio by recency/frequency/monetary behavior.",
+      "cohortRetentionTitle": "Cohort Retention cohorts customers by first order month within the rep portfolio and shows monthly retention rates.",
+      "recommendedActionsTitle": "Recommended Actions suggest prioritized actions such as pipeline cleanup, activity increase, and churn intervention.",
+      "executeAction": "Execute converts the recommendation into an activity/task: backend calls `POST /api/salesmen/{userId}/recommended-actions/execute`.",
+      "noCohortData": "Cohort data is not available yet due to insufficient order history.",
+      "modelNote": "Note: Current scores are deterministic v1 and can be strengthened with quota/forecast/ML."
     }
   },
   "goodsReceipt": {
@@ -1252,7 +1337,16 @@
       "srt": "Subcontracting Receipt",
       "wi": "Warehouse Inbound",
       "wo": "Warehouse Outbound",
-      "sh": "Shipment"
+      "sh": "Shipment",
+      "GR": "Goods Receipt",
+      "WT": "Warehouse Transfer",
+      "SH": "Shipment",
+      "PR": "Production",
+      "PT": "Production Transfer",
+      "SIT": "Subcontracting Issue",
+      "SRT": "Subcontracting Receipt",
+      "WI": "Warehouse Inbound",
+      "WO": "Warehouse Outbound"
     },
     "cargoCompany": {
       "None": "None",
@@ -1532,7 +1626,7 @@
       "email": "Email",
       "emailPlaceholder": "Enter email address",
       "password": "Password",
-      "passwordPlaceholder": "Enter password (min 8 characters)",
+      "passwordPlaceholder": "Leave blank to generate temporary password",
       "firstName": "First Name",
       "firstNamePlaceholder": "Enter first name",
       "lastName": "Last Name",
@@ -1540,7 +1634,14 @@
       "phoneNumber": "Phone Number",
       "phoneNumberPlaceholder": "Enter phone number",
       "role": "Role",
-      "rolePlaceholder": "Enter role",
+      "rolePlaceholder": "Select role",
+      "roleRequired": "Role selection is required",
+      "permissionGroups": "Permission Groups",
+      "permissionGroupsPlaceholder": "Select permission groups",
+      "permissionGroupsHelp": "Permission groups to assign to the user",
+      "permissionGroupsNoData": "No permission groups found",
+      "generatedPasswordInfo": "Leave blank to generate temporary password",
+      "selectAll": "Select all",
       "isActive": "Active",
       "isActiveDescription": "User active status",
       "username.required": "Username is required",

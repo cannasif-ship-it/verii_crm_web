@@ -31,7 +31,8 @@
     "start": "Inizia",
     "actions": "Azioni",
     "processing": "Elaborazione...",
-    "selectDate": "Seleziona data"
+    "selectDate": "Seleziona data",
+    "UnexpectedError": "An unexpected error occurred"
   },
   "auth": {
     "login": {
@@ -154,18 +155,27 @@
     "stockManagement": "Gestione Magazzino",
     "settings": "Impostazioni",
     "logout": "Esci",
+    "accessControl": "Controllo Accessi",
+    "permissionDefinitions": "Definizioni Permessi",
+    "permissionGroups": "Gruppi di Permessi",
+    "userGroupAssignments": "Assegnazioni Gruppi Utente",
     "productAndStock": "Prodotti e Magazzino",
     "salesManagement": "Gestione Vendite",
     "proposals": "Proposte",
     "quotationList": "Lista Preventivi",
     "waitingApprovals": "In Attesa di Approvazione",
     "definitions": "Definizioni",
-    "users": "Utenti"
+    "users": "Utenti",
+    "reportBuilder": "Report Builder",
+    "pdfBuilder": "PDF Builder",
+    "powerbiConfiguration": "Power BI Configuration",
+    "powerbiReportsView": "Power BI Reports (View)",
+    "mailSettings": "Mail Settings"
   },
   "dashboard": {
     "title": "Dashboard",
     "subtitle": "Benvenuto nel sistema CRM",
-    "monthlyRevenue": "Entrate Mensili",
+    "monthlyRevenue": "Monthly Revenue",
     "conversionRate": "Tasso di Conversione",
     "totalCustomers": "Totale Clienti",
     "activeAgreements": "Contratti Attivi",
@@ -193,8 +203,18 @@
     "reportDownload": "Scarica Report",
     "quickAction": "Azione Rapida",
     "monthsShort": {
-      "mar": "mar",
-      "may": "mag"
+      "mar": "Mar",
+      "may": "May",
+      "jan": "Jan",
+      "feb": "Feb",
+      "apr": "Apr",
+      "jun": "Jun",
+      "jul": "Jul",
+      "aug": "Aug",
+      "sep": "Sep",
+      "oct": "Oct",
+      "nov": "Nov",
+      "dec": "Dec"
     },
     "quickStats": {
       "pendingTasks": "Compiti in Sospeso",
@@ -246,7 +266,7 @@
     },
     "analyticsCharts": {
       "distributionTitle": "Distribuzione transazioni",
-      "monthlyTrendTitle": "Andamento mensile",
+      "monthlyTrendTitle": "Monthly Trend",
       "amountComparisonTitle": "Confronto importi",
       "demand": "Richiesta",
       "quotation": "Preventivo",
@@ -277,12 +297,48 @@
     "notFound": "Cliente non trovato",
     "error": "Errore durante il caricamento del riepilogo",
     "retry": "Riprova",
+    "revenueQuality": {
+      "title": "Qualità del fatturato",
+      "churnRisk": "Rischio di abbandono",
+      "upsell": "Propensione alla vendita aggiuntiva",
+      "payment": "Comportamento di pagamento",
+      "segment": "Segmento RFM",
+      "ltv": "LTV"
+    },
+    "cohort": {
+      "title": "Ritenzione per coorte",
+      "empty": "Nessun dato di coorte",
+      "cohortKey": "Coorte"
+    },
+    "actions": {
+      "title": "Azioni raccomandate",
+      "empty": "Nessuna azione raccomandata",
+      "execute": "Esegui",
+      "recommendedActions": {
+        "INCREASE_ACTIVITY_CADENCE": {
+          "title": "Aumenta il ritmo di attività",
+          "reason": "Solo 2 attività negli ultimi 7 giorni."
+        }
+      }
+    },
     "status": {
       "HavenotStarted": "Non iniziato",
       "Waiting": "In attesa",
       "Approved": "Approvato",
       "Rejected": "Rifiutato",
       "Completed": "Completato"
+    },
+    "explain": {
+      "revenueQualityTitle": "I punteggi di qualità del fatturato sono calcolati a regole dagli ultimi 12 mesi di ordini/preventivi/attività.",
+      "churnRisk": "Il rischio di abbandono è calcolato tra 0 e 100 in base a ultima data ordine, ultima attività e frequenza ordini. Punteggio più alto significa maggior rischio di perdita.",
+      "upsellPropensity": "La propensione alla vendita aggiuntiva è puntata 0–100 da numero ordini, conversione preventivo–ordine e importo medio. Punteggio più alto indica maggiore opportunità.",
+      "paymentBehavior": "Il comportamento di pagamento è attualmente un punteggio proxy (continuità ordini, tasso rifiuto preventivi, recenza) e non storico incassi diretto, scala 0–100.",
+      "rfmSegment": "Il segmento RFM assegna Champions/Loyal/AtRisk/Potential in base a regole di recency, frequency e monetary.",
+      "cohortRetentionTitle": "La ritenzione per coorte prende il primo mese d'ordine come coorte; se c'è ordine nei mesi successivi conta come trattenuto e calcola la percentuale di ritenzione.",
+      "recommendedActionsTitle": "Le azioni raccomandate sono suggerimenti di follow-up prioritari del motore di regole (es. lunga inattività, preventivo aperto, churn alto).",
+      "executeAction": "Esegui converte questa raccomandazione in attività/attività: il backend chiama `POST /api/customers/{id}/recommended-actions/execute` e crea un nuovo record attività.",
+      "noCohortData": "I dati di coorte non sono ancora disponibili per storico ordini insufficiente.",
+      "modelNote": "Nota: questi punteggi sono deterministici v1 e potranno essere migliorati con dati incassi ERP e modelli ML."
     }
   },
   "salesman360": {
@@ -328,7 +384,7 @@
     },
     "analyticsCharts": {
       "distributionTitle": "Distribuzione transazioni",
-      "monthlyTrendTitle": "Andamento mensile",
+      "monthlyTrendTitle": "Monthly Trend",
       "amountComparisonTitle": "Confronto importi",
       "demand": "Richiesta",
       "quotation": "Preventivo",
@@ -336,6 +392,41 @@
       "last12MonthsOrderAmount": "Importo ordini ultimi 12 mesi",
       "openQuotationAmount": "Importo preventivi aperti",
       "openOrderAmount": "Importo ordini aperti"
+    },
+    "revenueQuality": {
+      "title": "Qualità del fatturato",
+      "churnRisk": "Rischio di abbandono",
+      "upsell": "Propensione alla vendita aggiuntiva",
+      "payment": "Comportamento di pagamento",
+      "segment": "Segmento RFM"
+    },
+    "cohort": {
+      "title": "Ritenzione per coorte",
+      "empty": "Nessun dato di coorte",
+      "cohortKey": "Coorte"
+    },
+    "actions": {
+      "title": "Azioni raccomandate",
+      "empty": "Nessuna azione raccomandata",
+      "execute": "Esegui",
+      "recommendedActions": {
+        "INCREASE_ACTIVITY_CADENCE": {
+          "title": "Aumenta il ritmo di attività",
+          "reason": "Solo 2 attività negli ultimi 7 giorni."
+        }
+      }
+    },
+    "explain": {
+      "revenueQualityTitle": "I punteggi sono calcolati a regole dalle performance portafoglio/ordini/attività del rappresentante negli ultimi 12 mesi.",
+      "churnRisk": "Il rischio di abbandono del portafoglio è puntato 0–100 in base a clienti attivi vs clienti diventati inattivi negli ultimi 90 giorni.",
+      "upsellPropensity": "La propensione alla vendita aggiuntiva è puntata 0–100 con intensità ordini, preventivi vinti e ritmo attività.",
+      "paymentBehavior": "Il comportamento di pagamento usa attualmente metriche proxy; diventa più accurato con l'integrazione dello storico incassi diretto.",
+      "rfmSegment": "Il segmento RFM classifica il portafoglio per comportamento recency/frequency/monetary.",
+      "cohortRetentionTitle": "Cohort Retention cohorts customers by first order month within the rep portfolio and shows monthly retention rates.",
+      "recommendedActionsTitle": "Le azioni raccomandate suggeriscono azioni prioritarie: pulizia pipeline, aumento attività, intervento su churn.",
+      "executeAction": "Esegui converte la raccomandazione in attività/attività: il backend chiama `POST /api/salesmen/{userId}/recommended-actions/execute`.",
+      "noCohortData": "I dati di coorte non sono ancora disponibili per storico ordini insufficiente.",
+      "modelNote": "Nota: i punteggi attuali sono deterministici v1 e possono essere rafforzati con quota/forecast/ML."
     }
   },
   "goodsReceipt": {
@@ -727,7 +818,8 @@
       "documentNoRequired": "Il numero del documento è obbligatorio",
       "sourceWarehouseRequired": "Il magazzino di origine è obbligatorio",
       "targetWarehouseRequired": "Il magazzino di destinazione è obbligatorio",
-      "sameWarehouse": "I magazzini di origine e destinazione non possono essere uguali"
+      "sameWarehouse": "I magazzini di origine e destinazione non possono essere uguali",
+      "customerRequired": "Customer selection is required"
     },
     "details": {
       "serialNo": "N. Serie",
@@ -737,11 +829,68 @@
       "batchNo": "N. Partita",
       "batchNoPlaceholder": "Inserisci numero di partita",
       "configCode": "Codice Config",
-      "configCodePlaceholder": "Inserisci codice configurazione"
+      "configCodePlaceholder": "Inserisci codice configurazione",
+      "transferQuantity": "Transfer Quantity",
+      "sourceWarehouse": "Source Warehouse",
+      "selectSourceWarehouse": "Source Warehouse",
+      "serialNo2": "Serial No 2",
+      "serialNo2Placeholder": "Enter serial number 2",
+      "sourceCellCode": "Source Bin Code",
+      "sourceCellCodePlaceholder": "Enter source bin code",
+      "targetCellCode": "Target Bin Code",
+      "targetCellCodePlaceholder": "Enter target bin code"
     },
     "report": {
       "title": "Report Trasferimento",
       "searchPlaceholder": "N. Documento, Codice Cliente, Magazzino..."
+    },
+    "assignedList": {
+      "title": "Assigned Transfer Orders",
+      "searchPlaceholder": "Document No, Customer Code, Warehouse...",
+      "noData": "No assigned transfer orders found",
+      "error": "An error occurred while loading data"
+    },
+    "collection": {
+      "title": "Transfer Collection",
+      "stockNotFound": "Stock not found",
+      "enterBarcode": "Please enter barcode",
+      "noStockSelected": "Please get stock information first",
+      "invalidQuantity": "Invalid quantity",
+      "stockNotInOrder": "This stock is not in the transfer order",
+      "collected": "Product collected",
+      "collectError": "Collection error",
+      "invalidHeaderId": "Invalid transfer order",
+      "completed": "Transfer order completed successfully",
+      "completeError": "Completion error",
+      "barcodeScanned": "Barcode scanned",
+      "cameraError": "Camera could not be opened",
+      "viewCollected": "Collected",
+      "barcodePlaceholder": "Scan or enter barcode",
+      "quantity": "Quantity",
+      "collect": "Collect",
+      "total": "Total",
+      "remaining": "Remaining",
+      "noOrderLines": "Transfer order lines not found",
+      "complete": "Complete",
+      "scanBarcode": "Scan Barcode",
+      "scanBarcodeDescription": "Align barcode to camera",
+      "yapKod": "Structure Code",
+      "yapAcik": "Structure Description",
+      "serialNo": "Serial No",
+      "barcode": "Barcode",
+      "stockCode": "Stock Code",
+      "stockName": "Stock Name",
+      "packageNo": "Package No",
+      "packageHeaderId": "Package Record No",
+      "viewPackage": "View package details",
+      "totalCollected": "Total",
+      "itemsCollected": "items collected",
+      "noCollectedBarcodes": "No collected barcodes yet",
+      "deleteSuccess": "Barcode deleted successfully",
+      "deleteError": "Barcode could not be deleted",
+      "deleteConfirmTitle": "Delete Product",
+      "deleteConfirmWithPackage": "The selected product will be removed from both the package and the process. Are you sure you want to proceed?",
+      "deleteConfirmWithoutPackage": "The product will be removed from the collection. Are you sure you want to proceed?"
     }
   },
   "package": {
@@ -777,7 +926,27 @@
       "unmatch": "Disabbina",
       "matchSuccess": "Abbinamento completato con successo",
       "unmatchSuccess": "Disabbinamento completato con successo",
-      "matchError": "Si è verificato un errore durante l'abbinamento"
+      "matchError": "Si è verificato un errore durante l'abbinamento",
+      "createNew": "New Packaging",
+      "filterStatus": "Filter Status",
+      "allStatuses": "All Statuses",
+      "detail": "Detail",
+      "detailTitle": "Package Detail",
+      "detailDescription": "Package detailed information",
+      "filterWarehouse": "Warehouse Code",
+      "packingNo": "Packing No",
+      "packingDate": "Packing Date",
+      "warehouseCode": "Warehouse Code",
+      "sourceType": "Source Type",
+      "matchedSource": "Matched Source",
+      "customerCode": "Customer Code",
+      "totalPackageCount": "Total Packages",
+      "totalQuantity": "Total Quantity",
+      "totalGrossWeight": "Total Gross Weight",
+      "trackingNo": "Tracking No",
+      "noData": "No data found",
+      "error": "An error occurred while loading data",
+      "pageInfo": "Page {{current}} / {{total}}"
     },
     "packageDetail": {
       "title": "Dettaglio Pacco",
@@ -887,7 +1056,16 @@
       "srt": "Entrata Conto Lavoro",
       "wi": "Entrata Magazzino",
       "wo": "Uscita Magazzino",
-      "sh": "Spedizione"
+      "sh": "Spedizione",
+      "GR": "Goods Receipt",
+      "WT": "Warehouse Transfer",
+      "SH": "Shipment",
+      "PR": "Production",
+      "PT": "Production Transfer",
+      "SIT": "Subcontracting Issue",
+      "SRT": "Subcontracting Receipt",
+      "WI": "Warehouse Inbound",
+      "WO": "Warehouse Outbound"
     },
     "cargoCompany": {
       "None": "Nessuno",
@@ -909,6 +1087,133 @@
       "Scotty": "Scotty",
       "KolayGelsin": "Kolay Gelsin",
       "BirGundeKargo": "Bir Günde Kargo"
+    },
+    "wizard": {
+      "step1": {
+        "title": "1. Package Header",
+        "description": "Enter package header information"
+      },
+      "step2": {
+        "title": "2. Add Package",
+        "description": "Add packages for packaging",
+        "addPackage": "Add New Package",
+        "editPackage": "Edit Package",
+        "editPackageDescription": "Edit package information",
+        "addPackageDescription": "Add a new package",
+        "noPackages": "No packages added yet"
+      },
+      "step3": {
+        "title": "3. Package Lines",
+        "description": "Add lines to packages (Optional)",
+        "addLine": "Add New Line",
+        "addLineDescription": "Add a new line",
+        "noPackages": "You must add packages first",
+        "noPackagesMessage": "You must add packages first",
+        "noLines": "No lines added yet"
+      },
+      "step4": {
+        "title": "4. Summary & Complete",
+        "headerInfo": "Header Information",
+        "summaryTotals": "Summary Totals",
+        "packages": "Packages",
+        "lines": "Lines",
+        "editHeader": "Edit Header",
+        "editPackages": "Edit Packages",
+        "editLines": "Edit Lines",
+        "noPackages": "No packages found",
+        "noLines": "No lines found",
+        "complete": "Complete & Save"
+      },
+      "stepProgress": "Step {{current}}/{{total}}",
+      "editHeader": "Edit Header",
+      "previousStep": "Previous Step",
+      "nextStep": "Next Step",
+      "saveAndContinue": "Save and Continue",
+      "saveAndExit": "Save and Exit",
+      "headerCreated": "Package header created",
+      "headerError": "An error occurred while creating package header",
+      "packageAdded": "Package added",
+      "packageUpdated": "Package updated",
+      "packageDeleted": "Package deleted",
+      "packageError": "An error occurred while adding package",
+      "packageDeleteError": "An error occurred while deleting package",
+      "atLeastOnePackage": "You must add at least 1 package",
+      "lineAdded": "Line added",
+      "lineDeleted": "Line deleted",
+      "lineError": "An error occurred while adding line",
+      "lineDeleteError": "An error occurred while deleting line",
+      "saved": "Package saved",
+      "completed": "Package completed successfully",
+      "completeError": "An error occurred while completing package",
+      "headerRequired": "You must create package header first",
+      "unknownStep": "Unknown step",
+      "cancelTitle": "Cancel Operation",
+      "cancelMessage": "Are you sure you want to cancel?",
+      "cancelMessageWithData": "All data will be deleted. Are you sure you want to cancel?"
+    },
+    "create": {
+      "title": "Create New Packaging",
+      "description": "Create a new packaging header",
+      "success": "Packaging created successfully",
+      "error": "An error occurred while creating packaging"
+    },
+    "edit": {
+      "title": "Edit Packaging",
+      "description": "Edit packaging information",
+      "success": "Packaging updated successfully",
+      "error": "An error occurred while updating packaging",
+      "notFound": "Packaging not found",
+      "match": "Match",
+      "unmatch": "Unmatch",
+      "matchSuccess": "Matching completed successfully",
+      "unmatchSuccess": "Unmatching completed successfully",
+      "matchError": "An error occurred during matching"
+    },
+    "detail": {
+      "title": "Packaging Detail",
+      "status": "Status",
+      "packingDate": "Packing Date",
+      "warehouseCode": "Warehouse Code",
+      "customerCode": "Customer Code",
+      "totalPackageCount": "Total Packages",
+      "totalQuantity": "Total Quantity",
+      "totalGrossWeight": "Total Gross Weight",
+      "trackingNo": "Tracking No",
+      "packages": "Packages",
+      "lines": "Lines",
+      "addPackage": "Add New Package",
+      "addLine": "Add New Line",
+      "packageNo": "Package No",
+      "packageType": "Package Type",
+      "netWeight": "Net Weight",
+      "grossWeight": "Gross Weight",
+      "volume": "Volume",
+      "isMixed": "Mixed",
+      "stockCode": "Stock Code",
+      "yapKod": "Yap Code",
+      "quantity": "Quantity",
+      "serialNo": "Serial No",
+      "barcode": "Barcode",
+      "noPackages": "No packages found",
+      "noLines": "No lines found",
+      "notFound": "Packaging not found",
+      "deleteConfirm": "Delete Packaging",
+      "deleteConfirmMessage": "Are you sure you want to delete this packaging?",
+      "deleteSuccess": "Packaging deleted successfully",
+      "deleteError": "An error occurred while deleting packaging",
+      "addPackageDescription": "Add a new package",
+      "addLineDescription": "Add a new line",
+      "packageFormComingSoon": "Package form will be added soon",
+      "lineFormComingSoon": "Line form will be added soon",
+      "packageAddSuccess": "Package added successfully",
+      "packageAddError": "An error occurred while adding package",
+      "lineAddSuccess": "Line added successfully",
+      "lineAddError": "An error occurred while adding line",
+      "match": "Match",
+      "unmatch": "Unmatch",
+      "matchSuccess": "Matching completed successfully",
+      "unmatchSuccess": "Unmatching completed successfully",
+      "matchError": "An error occurred during matching"
     }
   },
   "notification": {
@@ -1175,7 +1480,14 @@
       "phoneNumber": "Numero Telefono",
       "phoneNumberPlaceholder": "Inserisci numero telefono",
       "role": "Ruolo",
-      "rolePlaceholder": "Inserisci ruolo",
+      "rolePlaceholder": "Seleziona ruolo",
+      "roleRequired": "Selezione ruolo richiesta",
+      "permissionGroups": "Gruppi di permessi",
+      "permissionGroupsPlaceholder": "Seleziona gruppi di permessi",
+      "permissionGroupsHelp": "Gruppi di permessi da assegnare",
+      "permissionGroupsNoData": "Nessun gruppo di permessi trovato",
+      "generatedPasswordInfo": "Lasciare vuoto per password temporanea",
+      "selectAll": "Seleziona tutto",
       "isActive": "Attivo",
       "isActiveDescription": "Stato attivo utente",
       "username.required": "Il nome utente è obbligatorio",

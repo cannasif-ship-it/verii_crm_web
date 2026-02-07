@@ -1,13 +1,13 @@
 {
   "menu": "Bezirksverwaltung",
   "description": "Bezirke verwalten und bearbeiten",
-  "addButton": "Neuen Bezirk hinzufügen",
+  "addButton": "Add New District",
   "listTitle": "Bezirksliste",
-  "listDescription": "Hier können Sie alle im System registrierten Bezirke verwalten.",
+  "listDescription": "You can manage all registered districts in the system here.",
   "loading": "Laden...",
   "noData": "Keine Daten",
   "actions": "Aktionen",
-  "previous": "Zurück",
+  "previous": "Previous",
   "next": "Weiter",
   "cancel": "Abbrechen",
   "delete": {
@@ -28,7 +28,7 @@
   },
   "form": {
     "editDistrict": "Bezirk bearbeiten",
-    "addDistrict": "Neuen Bezirk hinzufügen",
+    "addDistrict": "Add New District",
     "editDescription": "Bezirksinformationen bearbeiten",
     "addDescription": "Neue Bezirksinformationen eingeben",
     "name": "Bezirksname",
@@ -40,11 +40,15 @@
     "name.required": "Bezirksname ist erforderlich",
     "name.maxLength": "Bezirksname darf maximal 100 Zeichen lang sein",
     "erpCode.maxLength": "ERP-Code darf maximal 10 Zeichen lang sein",
-    "city.required": "Stadtauswahl ist erforderlich"
+    "city.required": "Stadtauswahl ist erforderlich",
+    "nameRequired": "District name is required",
+    "nameMaxLength": "District name cannot exceed 100 characters",
+    "erpCodeMaxLength": "ERP code cannot exceed 10 characters",
+    "cityRequired": "City selection is required"
   },
   "deleteConfirm": {
-    "confirmTitle": "Bezirk löschen",
-    "confirmMessage": "Möchten Sie den Bezirk {{name}} wirklich löschen?"
+    "confirmTitle": "Delete District",
+    "confirmMessage": "Are you sure you want to delete district {{name}}?"
   },
   "stats": {
     "totalDistricts": "GESAMTBEZIRKE",

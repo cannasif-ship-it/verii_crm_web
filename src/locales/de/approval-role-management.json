@@ -2,7 +2,7 @@
   "approvalRole": {
     "menu": "Genehmigungsrollen-Verwaltung",
     "description": "Verwalten und bearbeiten Sie Genehmigungsrollen",
-    "addButton": "Neue Genehmigungsrolle hinzufügen",
+    "addButton": "Add New Approval Role",
     "searchPlaceholder": "Suchen...",
     "refresh": "Aktualisieren",
     "loading": "Laden...",
@@ -21,15 +21,15 @@
       "next": "Nächste"
     },
     "delete": {
-      "confirmTitle": "Löschbestätigung",
-      "confirmMessage": "Sind Sie sicher, dass Sie diesen Eintrag löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
+      "confirmTitle": "Delete Confirmation",
+      "confirmMessage": "Are you sure you want to delete this record? This action cannot be undone.",
       "cancelButton": "Abbrechen",
-      "confirmButton": "Löschen",
-      "deleting": "Löschen..."
+      "confirmButton": "Delete",
+      "deleting": "Deleting..."
     },
     "form": {
       "editTitle": "Genehmigungsrolle bearbeiten",
-      "addTitle": "Neue Genehmigungsrolle hinzufügen",
+      "addTitle": "Add New Approval Role",
       "editDescription": "Bearbeiten Sie die Details der Genehmigungsrolle",
       "addDescription": "Geben Sie die Details der neuen Genehmigungsrolle ein",
       "approvalRoleGroupId": "Genehmigungsrollengruppe",
@@ -41,7 +41,11 @@
       "maxAmountPlaceholder": "Geben Sie den maximalen Betrag ein",
       "cancel": "Abbrechen",
       "save": "Speichern",
-      "saving": "Speichern..."
+      "saving": "Speichern...",
+      "approvalRoleGroupIdRequired": "Approval role group selection is required",
+      "nameRequired": "Role name is required",
+      "nameMaxLength": "Role name can be at most 100 characters",
+      "maxAmountMin": "Max amount cannot be less than 0"
     }
   }
 }

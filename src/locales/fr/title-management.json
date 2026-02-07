@@ -8,7 +8,11 @@
   "cancel": "Annuler",
   "save": "Enregistrer",
   "saving": "Enregistrement...",
-  "delete": "Supprimer",
+  "delete": {
+    "confirmTitle": "Supprimer le Titre",
+    "confirmMessage": "Êtes-vous sûr de vouloir supprimer le titre {{name}} ?",
+    "button": "Supprimer"
+  },
   "deleting": "Suppression...",
   "actions": "Actions",
   "edit": "Modifier",
@@ -37,10 +41,5 @@
     "cancel": "Annuler",
     "save": "Enregistrer",
     "saving": "Enregistrement..."
-  },
-  "delete": {
-    "confirmTitle": "Supprimer le Titre",
-    "confirmMessage": "Êtes-vous sûr de vouloir supprimer le titre {{name}} ?",
-    "button": "Supprimer"
   }
 }

@@ -20,5 +20,7 @@
     "phone": "Telefono",
     "city": "Città",
     "email": "Email"
-  }
+  },
+  "potentialCustomers": "Potential",
+  "noPotentialCustomers": "No potential customers found"
 }

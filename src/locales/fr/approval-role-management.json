@@ -41,7 +41,11 @@
       "maxAmountPlaceholder": "Entrez le montant maximum",
       "cancel": "Annuler",
       "save": "Enregistrer",
-      "saving": "Enregistrement..."
+      "saving": "Enregistrement...",
+      "approvalRoleGroupIdRequired": "Approval role group selection is required",
+      "nameRequired": "Role name is required",
+      "nameMaxLength": "Role name can be at most 100 characters",
+      "maxAmountMin": "Max amount cannot be less than 0"
     }
   }
 }

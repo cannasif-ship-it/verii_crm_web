@@ -1,7 +1,7 @@
 {
   "list": {
     "title": "Ausstehende Genehmigungen",
-    "description": "Sie können Ihnen zugewiesene Angebote einsehen und genehmigen oder ablehnen",
+    "description": "View and approve or reject quotations assigned to you",
     "empty": "Keine ausstehenden Genehmigungen",
     "error": "Fehler beim Laden der Genehmigungen"
   },
@@ -10,7 +10,7 @@
   "processing": "Verarbeitung...",
   "detail": {
     "title": "Angebotsdetails",
-    "description": "Angebotsdetails anzeigen und Aktionen durchführen",
+    "description": "Beschreibung",
     "tabs": {
       "detail": "Detail",
       "history": "Verlauf",
@@ -26,7 +26,6 @@
     "deliveryDate": "Lieferdatum",
     "total": "Gesamt",
     "grandTotal": "Gesamtsumme",
-    "description": "Beschreibung",
     "lines": "Angebotszeilen",
     "productCode": "Produktcode",
     "productName": "Produktname",
@@ -37,7 +36,8 @@
     "exchangeRates": "Wechselkurse",
     "exchangeRate": "Kurs",
     "exchangeRateDate": "Kursdatum",
-    "isOfficial": "Offizieller Kurs"
+    "isOfficial": "Offizieller Kurs",
+    "subtitle": "View quotation details and perform actions"
   },
   "actions": {
     "view": "Anzeigen",
@@ -57,12 +57,12 @@
     "salesManager": "Verkaufsleiter",
     "regionalManager": "Regionalleiter",
     "finance": "Finanzen",
-    "generalManager": "Geschäftsführer",
+    "generalManager": "General Manager",
     "unknown": "Unbekannt"
   },
   "note": {
     "label": "Notiz",
-    "placeholder": "Sie können eine Genehmigungs-/Ablehnungsnotiz hinzufügen (optional)",
+    "placeholder": "You can add an approval/rejection note (optional)",
     "maxLength": "Notiz darf maximal 500 Zeichen lang sein"
   },
   "approve": {

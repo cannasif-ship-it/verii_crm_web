@@ -20,5 +20,7 @@
     "phone": "الهاتف",
     "city": "المدينة",
     "email": "البريد الإلكتروني"
-  }
+  },
+  "potentialCustomers": "Potential",
+  "noPotentialCustomers": "No potential customers found"
 }

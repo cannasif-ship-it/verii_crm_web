@@ -47,7 +47,10 @@
       "currencyCodeRequiredMessage": "Le type de devise doit être sélectionné dans toutes les lignes",
       "minQuantityInvalid": "Quantité Min Invalide",
       "minQuantityInvalidMessage": "La quantité minimale ne peut pas être inférieure à 0"
-    }
+    },
+    "cancel": "Cancel",
+    "save": "Save",
+    "saving": "Saving..."
   },
   "delete": {
     "button": "Supprimer",

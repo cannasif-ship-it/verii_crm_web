@@ -1,7 +1,7 @@
 {
   "menu": "Kundentyp-Verwaltung",
   "description": "Kundentypen verwalten und bearbeiten",
-  "addButton": "Neuen Kundentyp hinzufügen",
+  "addButton": "Add New Customer Type",
   "loading": "Laden...",
   "noData": "Keine Daten gefunden",
   "actions": "Aktionen",
@@ -24,7 +24,7 @@
     "page": "Seite {{current}} / {{total}}"
   },
   "form": {
-    "addCustomerType": "Neuen Kundentyp hinzufügen",
+    "addCustomerType": "Add New Customer Type",
     "editCustomerType": "Kundentyp bearbeiten",
     "addDescription": "Geben Sie neue Kundentyp-Informationen ein",
     "editDescription": "Kundentyp-Informationen bearbeiten",
@@ -40,17 +40,17 @@
     "saving": "Speichert..."
   },
   "delete": {
-    "confirmTitle": "Kundentyp löschen",
-    "confirmMessage": "Möchten Sie den Kundentyp {{name}} wirklich löschen?",
-    "confirmButton": "Löschen",
-    "deleting": "Löscht..."
+    "confirmTitle": "Delete Customer Type",
+    "confirmMessage": "Are you sure you want to delete {{name}} customer type?",
+    "confirmButton": "Delete",
+    "deleting": "Deleting..."
   },
   "messages": {
     "createSuccess": "Kundentyp erfolgreich erstellt",
     "createError": "Kundentyp konnte nicht erstellt werden",
     "updateSuccess": "Kundentyp erfolgreich aktualisiert",
     "updateError": "Kundentyp konnte nicht aktualisiert werden",
-    "deleteSuccess": "Kundentyp erfolgreich gelöscht",
-    "deleteError": "Kundentyp konnte nicht gelöscht werden"
+    "deleteSuccess": "Customer type deleted successfully",
+    "deleteError": "Customer type could not be deleted"
   }
 }

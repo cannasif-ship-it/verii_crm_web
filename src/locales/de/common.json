@@ -5,16 +5,16 @@
     "saving": "Wird gespeichert...",
     "cancel": "Abbrechen",
     "close": "Schließen",
-    "previous": "Zurück",
+    "previous": "Previous",
     "next": "Weiter",
-    "delete": "Löschen",
+    "delete": "Delete",
     "edit": "Bearbeiten",
     "search": "Suchen",
     "filter": "Filtern",
-    "reset": "Zurücksetzen",
+    "reset": "Reset",
     "submit": "Absenden",
     "confirm": "Bestätigen",
-    "back": "Zurück",
+    "back": "Back",
     "optional": "Optional",
     "required": "Erforderlich",
     "notFound": "Nicht gefunden",
@@ -23,12 +23,16 @@
     "error": "Fehler",
     "success": "Erfolg",
     "complete": "Abgeschlossen",
-    "over": "Überschuss",
+    "over": "Over",
     "yes": "Ja",
     "no": "Nein",
-    "add": "Hinzufügen",
+    "add": "Add",
     "start": "Starten",
-    "actions": "Aktionen"
+    "actions": "Aktionen",
+    "loadingDescription": "Data is loading, please wait",
+    "processing": "Processing...",
+    "selectDate": "Select date",
+    "UnexpectedError": "An unexpected error occurred"
   },
   "auth": {
     "login": {
@@ -75,13 +79,13 @@
     "updatedBy": "Aktualisiert von",
     "actions": "Aktionen",
     "edit": "Bearbeiten",
-    "delete": "Löschen",
-    "confirmDelete": "Möchten Sie diese Zuordnung wirklich löschen?",
+    "delete": "Delete",
+    "confirmDelete": "Are you sure you want to delete this mapping?",
     "save": "Speichern",
     "cancel": "Abbrechen",
     "successCreate": "Zuordnung erstellt",
     "successUpdate": "Zuordnung aktualisiert",
-    "successDelete": "Zuordnung gelöscht",
+    "successDelete": "Mapping deleted",
     "error": "Vorgang fehlgeschlagen"
   },
   "powerbiSync": {
@@ -96,7 +100,7 @@
     "created": "Erstellt",
     "updated": "Aktualisiert",
     "reactivated": "Reaktiviert",
-    "deleted": "Gelöscht"
+    "deleted": "Deleted"
   },
   "sidebar": {
     "dashboard": "Dashboard",
@@ -144,7 +148,22 @@
     "pricingRuleManagement": "Preisregelverwaltung",
     "stockManagement": "Lagerverwaltung",
     "settings": "Einstellungen",
-    "logout": "Abmelden"
+    "logout": "Abmelden",
+    "accessControl": "Zugriffskontrolle",
+    "permissionDefinitions": "Berechtigungsdefinitionen",
+    "permissionGroups": "Berechtigungsgruppen",
+    "userGroupAssignments": "Benutzer-Gruppenzuweisungen",
+    "approvalDefinitions": "Approval Definitions",
+    "approvalRoleGroupManagement": "Approval Role Group Management",
+    "approvalUserRoleManagement": "Approval User Role Management",
+    "approvalRoleManagement": "Approval Role Management",
+    "approvalFlowManagement": "Approval Flow Management",
+    "reportBuilder": "Report Builder",
+    "pdfBuilder": "PDF Builder",
+    "powerbiConfiguration": "Power BI Configuration",
+    "powerbiReportsView": "Power BI Reports (View)",
+    "mailSettings": "Mail Settings",
+    "documentSerialTypeManagement": "Document Serial Type Management"
   },
   "dashboard": {
     "title": "Dashboard",
@@ -179,16 +198,16 @@
     "monthsShort": {
       "jan": "Jan",
       "feb": "Feb",
-      "mar": "Mär",
+      "mar": "Mar",
       "apr": "Apr",
-      "may": "Mai",
+      "may": "May",
       "jun": "Jun",
       "jul": "Jul",
       "aug": "Aug",
       "sep": "Sep",
-      "oct": "Okt",
+      "oct": "Oct",
       "nov": "Nov",
-      "dec": "Dez"
+      "dec": "Dec"
     },
     "quickStats": {
       "pendingTasks": "Ausstehende Aufgaben",
@@ -217,10 +236,10 @@
   },
   "customer360": {
     "title": "Customer 360",
-    "subtitle": "Kundenübersicht und Aktivitäten",
+    "subtitle": "Customer overview and activity",
     "button": "Customer 360",
     "tabs": {
-      "overview": "Übersicht",
+      "overview": "Overview",
       "analytics": "Analytik"
     },
     "kpi": {
@@ -269,21 +288,57 @@
       "timeline": "Zeitachse"
     },
     "notFound": "Kunde nicht gefunden",
-    "error": "Beim Laden der Übersicht ist ein Fehler aufgetreten",
+    "error": "An error occurred while loading the overview",
     "retry": "Erneut versuchen",
+    "revenueQuality": {
+      "title": "Umsatzqualität",
+      "churnRisk": "Churn-Risiko",
+      "upsell": "Upsell-Potenzial",
+      "payment": "Zahlungsverhalten",
+      "segment": "RFM-Segment",
+      "ltv": "LTV"
+    },
+    "cohort": {
+      "title": "Kohortenbindung",
+      "empty": "Keine Kohortendaten",
+      "cohortKey": "Kohorte"
+    },
+    "actions": {
+      "title": "Empfohlene Aktionen",
+      "empty": "Keine empfohlenen Aktionen",
+      "execute": "Execute",
+      "recommendedActions": {
+        "INCREASE_ACTIVITY_CADENCE": {
+          "title": "Increase activity cadence",
+          "reason": "Nur 2 Aktivitäten in den letzten 7 Tagen."
+        }
+      }
+    },
     "status": {
       "HavenotStarted": "Nicht begonnen",
       "Waiting": "Wartend",
       "Approved": "Genehmigt",
       "Rejected": "Abgelehnt",
       "Completed": "Abgeschlossen"
+    },
+    "explain": {
+      "revenueQualityTitle": "Umsatzqualitäts-Scores werden regelbasiert aus den letzten 12 Monaten Bestell-/Angebots-/Aktivitätsdaten berechnet.",
+      "churnRisk": "Churn Risk is calculated between 0-100 using last order date, last activity date, and order frequency. Higher score means higher risk of loss.",
+      "upsellPropensity": "Upsell Propensity is scored 0-100 from order count, quotation-to-order conversion, and average order amount signals. Higher score indicates stronger upsell opportunity.",
+      "paymentBehavior": "Zahlungsverhalten ist derzeit ein Proxy-Score (Bestellkontinuität, Angebotsablehnung, letzte Bestellung) statt direkter Forderungshistorie, Skala 0–100.",
+      "rfmSegment": "RFM-Segment ordnet Champions/Loyal/AtRisk/Potential nach Recency-, Frequency- und Monetary-Regeln zu.",
+      "cohortRetentionTitle": "Kohortenbindung: Erster Bestellmonat = Kohorte; bei Bestellung in Folgemonaten gilt als gehalten, es wird die Retentionsrate berechnet.",
+      "recommendedActionsTitle": "Empfohlene Aktionen sind priorisierte Follow-up-Vorschläge einer Regel-Engine (z. B. lange Inaktivität, offenes Angebot, hohes Churn).",
+      "executeAction": "Execute converts this recommendation into an activity/task: backend calls `POST /api/customers/{id}/recommended-actions/execute` and creates a new Activity record.",
+      "noCohortData": "Cohort data is not available yet due to insufficient order history.",
+      "modelNote": "Note: These scores are deterministic v1 and can be improved later with ERP collection data and ML models."
     }
   },
   "salesman360": {
     "title": "Salesman 360",
-    "subtitle": "Vertreterübersicht",
+    "subtitle": "Sales representative overview",
     "notFound": "Benutzer nicht gefunden",
-    "error": "Beim Laden der Übersicht ist ein Fehler aufgetreten",
+    "error": "An error occurred while loading the overview",
     "retry": "Erneut versuchen",
     "button": "Salesman 360",
     "currencyFilter": {
@@ -298,7 +353,7 @@
       "orderAmount": "Bestellbetrag"
     },
     "tabs": {
-      "overview": "Übersicht",
+      "overview": "Overview",
       "analytics": "Analytik"
     },
     "kpi": {
@@ -330,6 +385,41 @@
       "last12MonthsOrderAmount": "Bestellbetrag der letzten 12 Monate",
       "openQuotationAmount": "Offener Angebotsbetrag",
       "openOrderAmount": "Offener Bestellbetrag"
+    },
+    "revenueQuality": {
+      "title": "Umsatzqualität",
+      "churnRisk": "Churn-Risiko",
+      "upsell": "Upsell-Potenzial",
+      "payment": "Zahlungsverhalten",
+      "segment": "RFM-Segment"
+    },
+    "cohort": {
+      "title": "Kohortenbindung",
+      "empty": "Keine Kohortendaten",
+      "cohortKey": "Kohorte"
+    },
+    "actions": {
+      "title": "Empfohlene Aktionen",
+      "empty": "Keine empfohlenen Aktionen",
+      "execute": "Execute",
+      "recommendedActions": {
+        "INCREASE_ACTIVITY_CADENCE": {
+          "title": "Increase activity cadence",
+          "reason": "Nur 2 Aktivitäten in den letzten 7 Tagen."
+        }
+      }
+    },
+    "explain": {
+      "revenueQualityTitle": "Scores werden regelbasiert aus der Portfolior-/Bestell-/Aktivitätsperformance des Vertreters der letzten 12 Monate berechnet.",
+      "churnRisk": "Portfolio-Churn-Risiko wird 0–100 anhand aktiver Kunden vs. in den letzten 90 Tagen inaktiver Kunden berechnet.",
+      "upsellPropensity": "Upsell-Potenzial wird 0–100 aus Bestellintensität, gewonnenen Angeboten und Aktivitätstakt berechnet.",
+      "paymentBehavior": "Zahlungsverhalten nutzt derzeit Proxy-Metriken; wird genauer, sobald direkte Forderungshistorie angebunden ist.",
+      "rfmSegment": "RFM-Segment klassifiziert das Portfolio nach Recency-/Frequency-/Monetary-Verhalten.",
+      "cohortRetentionTitle": "Kohortenbindung gruppiert Kunden nach erstem Bestellmonat im Vertreter-Portfolio und zeigt monatliche Bindungsraten.",
+      "recommendedActionsTitle": "Empfohlene Aktionen schlagen priorisierte Schritte vor (z. B. Pipeline bereinigen, Aktivität steigern, Churn eingreifen).",
+      "executeAction": "Execute converts the recommendation into an activity/task: backend calls `POST /api/salesmen/{userId}/recommended-actions/execute`.",
+      "noCohortData": "Cohort data is not available yet due to insufficient order history.",
+      "modelNote": "Note: Current scores are deterministic v1 and can be strengthened with quota/forecast/ML."
     }
   },
   "goodsReceipt": {
@@ -377,14 +467,14 @@
       "pending": "Ausstehend",
       "completed": "Abgeschlossen",
       "remaining": "Verbleibend",
-      "noOrders": "Keine Bestellungen für diesen Kunden gefunden",
+      "noOrders": "No orders found for this customer",
       "selectedItems": "Ausgewählte Positionen",
       "selectedItemsCount": "{{count}} Positionen",
       "noItemsSelected": "Noch keine Positionen ausgewählt"
     },
     "orderDetails": {
       "title": "Bestelldetails",
-      "description": "Sie können Bestellpositionen auswählen, um sie zur Wareneingangsliste hinzuzufügen",
+      "description": "You can select order items to add to the goods receipt list",
       "ordered": "Bestellt",
       "orderQuantity": "Bestellmenge",
       "unitPrice": "Einzelpreis",
@@ -458,13 +548,13 @@
       "erpIntegrationStatus": "ERP-Integrationsstatus",
       "erpErrorMessage": "ERP-Fehlermeldung",
       "additionalInfo": "Zusätzliche Informationen",
-      "returnCode": "Rückgabecode",
+      "returnCode": "Return Code",
       "ocrSource": "OCR-Quelle",
       "description3": "Beschreibung 3",
       "description4": "Beschreibung 4",
       "description5": "Beschreibung 5",
-      "auditInfo": "Prüfinformationen",
-      "audit": "Prüfung",
+      "auditInfo": "Audit Information",
+      "audit": "Audit",
       "createdBy": "Erstellt von",
       "updatedBy": "Aktualisiert von",
       "updatedDate": "Aktualisierungsdatum"
@@ -480,15 +570,15 @@
       "stockNotFound": "Lagerbestand nicht gefunden",
       "enterBarcode": "Bitte Barcode eingeben",
       "noStockSelected": "Bitte zuerst Lagerbestandsinformationen abrufen",
-      "invalidQuantity": "Ungültige Menge",
+      "invalidQuantity": "Invalid quantity",
       "stockNotInOrder": "Dieser Lagerbestand ist nicht im Wareneingangsauftrag",
       "collected": "Produkt gesammelt",
       "collectError": "Sammelfehler",
-      "invalidHeaderId": "Ungültiger Wareneingangsauftrag",
+      "invalidHeaderId": "Invalid goods receipt order",
       "completed": "Wareneingangsauftrag erfolgreich abgeschlossen",
       "completeError": "Abschlussfehler",
       "barcodeScanned": "Barcode gescannt",
-      "cameraError": "Kamera konnte nicht geöffnet werden",
+      "cameraError": "Camera could not be opened",
       "viewCollected": "Gesammelt",
       "barcodePlaceholder": "Barcode scannen oder eingeben",
       "quantity": "Menge",
@@ -602,15 +692,15 @@
       "stockNotFound": "Lagerbestand nicht gefunden",
       "enterBarcode": "Bitte Barcode eingeben",
       "noStockSelected": "Bitte zuerst Lagerbestandsinformationen abrufen",
-      "invalidQuantity": "Ungültige Menge",
+      "invalidQuantity": "Invalid quantity",
       "stockNotInOrder": "Dieser Lagerbestand ist nicht im Versandauftrag",
       "collected": "Produkt gesammelt",
       "collectError": "Sammelfehler",
-      "invalidHeaderId": "Ungültiger Versandauftrag",
+      "invalidHeaderId": "Invalid shipment order",
       "completed": "Versandauftrag erfolgreich abgeschlossen",
       "completeError": "Abschlussfehler",
       "barcodeScanned": "Barcode gescannt",
-      "cameraError": "Kamera konnte nicht geöffnet werden",
+      "cameraError": "Camera could not be opened",
       "viewCollected": "Gesammelt",
       "barcodePlaceholder": "Barcode scannen oder eingeben",
       "quantity": "Menge",
@@ -708,7 +798,7 @@
       "selectOrderPrompt": "Wählen Sie eine Bestellung aus der Registerkarte Bestellungen aus, um fortzufahren.",
       "orderContent": "Bestellinhalt",
       "searchItems": "Nach Lagerbestandscode oder Name suchen...",
-      "noOrders": "Keine Bestellungen für diesen Kunden gefunden",
+      "noOrders": "No orders found for this customer",
       "noItemsFound": "Keine Artikel in dieser Bestellung gefunden.",
       "ordered": "Bestellt",
       "remaining": "Verbleibend",
@@ -753,15 +843,15 @@
       "stockNotFound": "Lagerbestand nicht gefunden",
       "enterBarcode": "Bitte Barcode eingeben",
       "noStockSelected": "Bitte zuerst Lagerbestandsinformationen abrufen",
-      "invalidQuantity": "Ungültige Menge",
+      "invalidQuantity": "Invalid quantity",
       "stockNotInOrder": "Dieser Lagerbestand ist nicht im Transferauftrag",
       "collected": "Produkt gesammelt",
       "collectError": "Sammlungsfehler",
-      "invalidHeaderId": "Ungültiger Transferauftrag",
+      "invalidHeaderId": "Invalid transfer order",
       "completed": "Transferauftrag erfolgreich abgeschlossen",
       "completeError": "Abschlussfehler",
       "barcodeScanned": "Barcode gescannt",
-      "cameraError": "Kamera konnte nicht geöffnet werden",
+      "cameraError": "Camera could not be opened",
       "viewCollected": "Gesammelt",
       "barcodePlaceholder": "Barcode scannen oder eingeben",
       "quantity": "Menge",
@@ -784,11 +874,11 @@
       "totalCollected": "Gesamt",
       "itemsCollected": "Artikel gesammelt",
       "noCollectedBarcodes": "Noch keine gesammelten Barcodes",
-      "deleteSuccess": "Barcode erfolgreich gelöscht",
-      "deleteError": "Barcode konnte nicht gelöscht werden",
-      "deleteConfirmTitle": "Produkt löschen",
-      "deleteConfirmWithPackage": "Das ausgewählte Produkt wird sowohl aus dem Paket als auch aus dem Prozess entfernt. Sind Sie sicher, dass Sie fortfahren möchten?",
-      "deleteConfirmWithoutPackage": "Das Produkt wird aus der Sammlung entfernt. Sind Sie sicher, dass Sie fortfahren möchten?"
+      "deleteSuccess": "Barcode deleted successfully",
+      "deleteError": "Barcode could not be deleted",
+      "deleteConfirmTitle": "Delete Product",
+      "deleteConfirmWithPackage": "The selected product will be removed from both the package and the process. Are you sure you want to proceed?",
+      "deleteConfirmWithoutPackage": "The product will be removed from the collection. Are you sure you want to proceed?"
     }
   },
   "inventory": {
@@ -805,12 +895,12 @@
       "mediumStock": "Normaler Bestand",
       "highStock": "Hoher Bestand",
       "emptyCell": "Diese Zelle ist leer",
-      "desktopOnly": "Die 3D-Lagermodellierungsfunktion ist nur auf Desktop-Geräten verfügbar.",
+      "desktopOnly": "3D warehouse modeling feature is only available on desktop devices.",
       "pleaseSelectWarehouse": "Bitte wählen Sie ein Lager aus",
       "controls": "Steuerung",
       "rotate": "Drehen",
       "pan": "Verschieben",
-      "zoom": "Vergrößern/Verkleinern",
+      "zoom": "Zoom In/Out",
       "selectShelf": "Regal auswählen",
       "leftClickDrag": "🖱️ Linksklick + Ziehen",
       "rightClickDrag": "🖱️ Rechtsklick + Ziehen",
@@ -842,15 +932,15 @@
         "stockNotFound": "Lagerbestand nicht gefunden",
         "enterBarcode": "Bitte Barcode eingeben",
         "noStockSelected": "Bitte zuerst Lagerbestandsinformationen abrufen",
-        "invalidQuantity": "Ungültige Menge",
+        "invalidQuantity": "Invalid quantity",
         "stockNotInOrder": "Dieser Lagerbestand ist nicht im SIT-Auftrag",
         "collected": "Produkt gesammelt",
         "collectError": "Sammelfehler",
-        "invalidHeaderId": "Ungültiger SIT-Auftrag",
+        "invalidHeaderId": "Invalid SIT order",
         "completed": "SIT-Auftrag erfolgreich abgeschlossen",
         "completeError": "Abschlussfehler",
         "barcodeScanned": "Barcode gescannt",
-        "cameraError": "Kamera konnte nicht geöffnet werden",
+        "cameraError": "Camera could not be opened",
         "viewCollected": "Gesammelt",
         "barcodePlaceholder": "Barcode scannen oder eingeben",
         "quantity": "Menge",
@@ -887,15 +977,15 @@
         "stockNotFound": "Lagerbestand nicht gefunden",
         "enterBarcode": "Bitte Barcode eingeben",
         "noStockSelected": "Bitte zuerst Lagerbestandsinformationen abrufen",
-        "invalidQuantity": "Ungültige Menge",
+        "invalidQuantity": "Invalid quantity",
         "stockNotInOrder": "Dieser Lagerbestand ist nicht im SRT-Auftrag",
         "collected": "Produkt gesammelt",
         "collectError": "Sammelfehler",
-        "invalidHeaderId": "Ungültiger SRT-Auftrag",
+        "invalidHeaderId": "Invalid SRT order",
         "completed": "SRT-Auftrag erfolgreich abgeschlossen",
         "completeError": "Abschlussfehler",
         "barcodeScanned": "Barcode gescannt",
-        "cameraError": "Kamera konnte nicht geöffnet werden",
+        "cameraError": "Camera could not be opened",
         "viewCollected": "Gesammelt",
         "barcodePlaceholder": "Barcode scannen oder eingeben",
         "quantity": "Menge",
@@ -927,23 +1017,27 @@
       "allowLessQuantity": "Weniger Menge basierend auf Bestellung erlauben",
       "allowMoreQuantity": "Mehr Menge basierend auf Bestellung erlauben",
       "requireApproval": "Genehmigung vor ERP erforderlich",
-      "requireAllOrderItemsCollected": "Alle Bestellpositionen müssen gesammelt werden",
+      "requireAllOrderItemsCollected": "Require All Order Items Collected",
       "createdDate": "Erstellungsdatum",
       "updatedDate": "Aktualisierungsdatum",
       "actions": "Aktionen",
       "noData": "Keine Daten gefunden",
       "error": "Fehler beim Laden der Daten",
-      "addNew": "Neu hinzufügen"
+      "addNew": "Add New"
     },
     "form": {
       "allowLessQuantity": "Weniger Menge basierend auf Bestellung erlauben",
       "allowLessQuantityDescription": "Eingabe einer geringeren Menge als die Bestellung erlauben",
       "allowMoreQuantity": "Mehr Menge basierend auf Bestellung erlauben",
-      "allowMoreQuantityDescription": "Eingabe einer höheren Menge als die Bestellung erlauben",
+      "allowMoreQuantityDescription": "Allows entering more quantity than the order. When this option is active, quantities more than the order quantity can be entered.",
       "requireApproval": "Genehmigung vor ERP erforderlich",
       "requireApprovalDescription": "Genehmigung vor dem Senden an ERP erforderlich",
-      "requireAllOrderItemsCollected": "Alle Bestellpositionen müssen gesammelt werden",
-      "requireAllOrderItemsCollectedDescription": "Wenn dieser Parameter aktiv ist, müssen alle Positionen in der Bestellung gesammelt werden."
+      "requireAllOrderItemsCollected": "Require All Order Items Collected",
+      "requireAllOrderItemsCollectedDescription": "When this parameter is active, all items in the order must be collected.",
+      "editDescription": "You can edit existing parameter settings",
+      "createDescription": "You can create new parameter settings",
+      "updateButton": "Update",
+      "createButton": "Save"
     },
     "create": {
       "success": "Parameter erfolgreich erstellt",
@@ -954,64 +1048,64 @@
       "error": "Fehler beim Aktualisieren des Parameters"
     },
     "delete": {
-      "title": "Parameter löschen",
-      "description": "Möchten Sie diesen Parameter wirklich löschen?",
-      "success": "Parameter erfolgreich gelöscht",
-      "error": "Fehler beim Löschen des Parameters"
+      "title": "Delete Parameter",
+      "description": "Are you sure you want to delete this parameter?",
+      "success": "Parameter deleted successfully",
+      "error": "An error occurred while deleting parameter"
     },
     "gr": {
       "title": "Wareneingangsparameter",
-      "createTitle": "Wareneingangsparameter - Neu hinzufügen",
+      "createTitle": "Goods Receipt Parameters - Add New",
       "editTitle": "Wareneingangsparameter - Bearbeiten"
     },
     "wt": {
-      "title": "Lagerübertragungsparameter",
-      "createTitle": "Lagerübertragungsparameter - Neu hinzufügen",
-      "editTitle": "Lagerübertragungsparameter - Bearbeiten"
+      "title": "Warehouse Transfer Parameters",
+      "createTitle": "Warehouse Transfer Parameters - Add New",
+      "editTitle": "Warehouse Transfer Parameters - Edit"
     },
     "wo": {
       "title": "Lagerausgangsparameter",
-      "createTitle": "Lagerausgangsparameter - Neu hinzufügen",
+      "createTitle": "Warehouse Outbound Parameters - Add New",
       "editTitle": "Lagerausgangsparameter - Bearbeiten"
     },
     "wi": {
       "title": "Lagereingangsparameter",
-      "createTitle": "Lagereingangsparameter - Neu hinzufügen",
+      "createTitle": "Warehouse Inbound Parameters - Add New",
       "editTitle": "Lagereingangsparameter - Bearbeiten"
     },
     "sh": {
       "title": "Versandparameter",
-      "createTitle": "Versandparameter - Neu hinzufügen",
+      "createTitle": "Shipment Parameters - Add New",
       "editTitle": "Versandparameter - Bearbeiten"
     },
     "srt": {
       "title": "Subunternehmer-Eingangsparameter",
-      "createTitle": "Subunternehmer-Eingangsparameter - Neu hinzufügen",
+      "createTitle": "Subcontracting Receipt Transfer Parameters - Add New",
       "editTitle": "Subunternehmer-Eingangsparameter - Bearbeiten"
     },
     "sit": {
       "title": "Subunternehmer-Ausgangsparameter",
-      "createTitle": "Subunternehmer-Ausgangsparameter - Neu hinzufügen",
+      "createTitle": "Subcontracting Issue Transfer Parameters - Add New",
       "editTitle": "Subunternehmer-Ausgangsparameter - Bearbeiten"
     },
     "pt": {
-      "title": "Produktionsübertragungsparameter",
-      "createTitle": "Produktionsübertragungsparameter - Neu hinzufügen",
-      "editTitle": "Produktionsübertragungsparameter - Bearbeiten"
+      "title": "Production Transfer Parameters",
+      "createTitle": "Production Transfer Parameters - Add New",
+      "editTitle": "Production Transfer Parameters - Edit"
     },
     "pr": {
       "title": "Produktionsparameter",
-      "createTitle": "Produktionsparameter - Neu hinzufügen",
+      "createTitle": "Production Parameters - Add New",
       "editTitle": "Produktionsparameter - Bearbeiten"
     },
     "ic": {
       "title": "Inventurparameter",
-      "createTitle": "Inventurparameter - Neu hinzufügen",
+      "createTitle": "Inventory Count Parameters - Add New",
       "editTitle": "Inventurparameter - Bearbeiten"
     },
     "p": {
       "title": "Paketparameter",
-      "createTitle": "Paketparameter - Neu hinzufügen",
+      "createTitle": "Package Parameters - Add New",
       "editTitle": "Paketparameter - Bearbeiten"
     }
   },
@@ -1039,10 +1133,13 @@
       "noData": "Keine Daten gefunden",
       "error": "Fehler beim Laden der Daten",
       "pageInfo": "Seite {{current}} / {{total}}",
-      "deleteConfirm": "Verpackung löschen",
-      "deleteConfirmMessage": "Sind Sie sicher, dass Sie diese Verpackung löschen möchten?",
-      "deleteSuccess": "Verpackung erfolgreich gelöscht",
-      "deleteError": "Fehler beim Löschen der Verpackung"
+      "deleteConfirm": "Delete Packaging",
+      "deleteConfirmMessage": "Are you sure you want to delete this packaging?",
+      "deleteSuccess": "Packaging deleted successfully",
+      "deleteError": "An error occurred while deleting packaging",
+      "id": "Record No",
+      "sourceType": "Source Type",
+      "matchedSource": "Matched Source"
     },
     "wizard": {
       "step1": {
@@ -1050,22 +1147,22 @@
         "description": "Verpackungskopf-Informationen eingeben"
       },
       "step2": {
-        "title": "2. Paket hinzufügen",
-        "description": "Pakete für Verpackung hinzufügen",
-        "addPackage": "Neues Paket hinzufügen",
+        "title": "2. Add Package",
+        "description": "Add packages for packaging",
+        "addPackage": "Add New Package",
         "editPackage": "Paket bearbeiten",
         "editPackageDescription": "Paketinformationen bearbeiten",
-        "addPackageDescription": "Neues Paket hinzufügen",
-        "noPackages": "Noch keine Pakete hinzugefügt"
+        "addPackageDescription": "Add a new package",
+        "noPackages": "No packages added yet"
       },
       "step3": {
         "title": "3. Paketzeilen",
-        "description": "Zeilen zu Paketen hinzufügen (Optional)",
-        "addLine": "Neue Zeile hinzufügen",
-        "addLineDescription": "Neue Zeile hinzufügen",
-        "noPackages": "Sie müssen zuerst Pakete hinzufügen",
-        "noPackagesMessage": "Sie müssen zuerst Pakete hinzufügen",
-        "noLines": "Noch keine Zeilen hinzugefügt"
+        "description": "Add lines to packages (Optional)",
+        "addLine": "Add New Line",
+        "addLineDescription": "Add a new line",
+        "noPackages": "You must add packages first",
+        "noPackagesMessage": "You must add packages first",
+        "noLines": "No lines added yet"
       },
       "step4": {
         "title": "4. Zusammenfassung & Abschluss",
@@ -1088,24 +1185,24 @@
       "saveAndExit": "Speichern und Beenden",
       "headerCreated": "Verpackungskopf erstellt",
       "headerError": "Fehler beim Erstellen des Verpackungskopfs",
-      "packageAdded": "Paket hinzugefügt",
+      "packageAdded": "Package added",
       "packageUpdated": "Paket aktualisiert",
-      "packageDeleted": "Paket gelöscht",
-      "packageError": "Fehler beim Hinzufügen des Pakets",
-      "packageDeleteError": "Fehler beim Löschen des Pakets",
-      "atLeastOnePackage": "Sie müssen mindestens 1 Paket hinzufügen",
-      "lineAdded": "Zeile hinzugefügt",
-      "lineDeleted": "Zeile gelöscht",
-      "lineError": "Fehler beim Hinzufügen der Zeile",
-      "lineDeleteError": "Fehler beim Löschen der Zeile",
+      "packageDeleted": "Package deleted",
+      "packageError": "An error occurred while adding package",
+      "packageDeleteError": "An error occurred while deleting package",
+      "atLeastOnePackage": "You must add at least 1 package",
+      "lineAdded": "Line added",
+      "lineDeleted": "Line deleted",
+      "lineError": "An error occurred while adding line",
+      "lineDeleteError": "An error occurred while deleting line",
       "saved": "Verpackung gespeichert",
       "completed": "Verpackung erfolgreich abgeschlossen",
       "completeError": "Fehler beim Abschließen der Verpackung",
-      "headerRequired": "Sie müssen zuerst einen Verpackungskopf erstellen",
+      "headerRequired": "You must create package header first",
       "unknownStep": "Unbekannter Schritt",
       "cancelTitle": "Vorgang abbrechen",
-      "cancelMessage": "Sind Sie sicher, dass Sie abbrechen möchten?",
-      "cancelMessageWithData": "Alle Daten werden gelöscht. Sind Sie sicher, dass Sie abbrechen möchten?"
+      "cancelMessage": "Are you sure you want to cancel?",
+      "cancelMessageWithData": "All data will be deleted. Are you sure you want to cancel?"
     },
     "create": {
       "title": "Neue Verpackung erstellen",
@@ -1121,7 +1218,7 @@
       "notFound": "Verpackung nicht gefunden",
       "match": "Abgleichen",
       "unmatch": "Verbindung trennen",
-      "matchSuccess": "Abgleich erfolgreich durchgeführt",
+      "matchSuccess": "Matching completed successfully",
       "unmatchSuccess": "Verbindung erfolgreich getrennt",
       "matchError": "Fehler beim Abgleichen"
     },
@@ -1137,8 +1234,8 @@
       "trackingNo": "Sendungsnummer",
       "packages": "Pakete",
       "lines": "Zeilen",
-      "addPackage": "Neues Paket hinzufügen",
-      "addLine": "Neue Zeile hinzufügen",
+      "addPackage": "Add New Package",
+      "addLine": "Add New Line",
       "packageNo": "Paketnummer",
       "packageType": "Pakettyp",
       "netWeight": "Nettogewicht",
@@ -1153,38 +1250,38 @@
       "noPackages": "Keine Pakete gefunden",
       "noLines": "Keine Zeilen gefunden",
       "notFound": "Verpackung nicht gefunden",
-      "deleteConfirm": "Verpackung löschen",
-      "deleteConfirmMessage": "Sind Sie sicher, dass Sie diese Verpackung löschen möchten?",
-      "deleteSuccess": "Verpackung erfolgreich gelöscht",
-      "deleteError": "Fehler beim Löschen der Verpackung",
-      "addPackageDescription": "Neues Paket hinzufügen",
-      "addLineDescription": "Neue Zeile hinzufügen",
-      "packageFormComingSoon": "Paketformular wird bald hinzugefügt",
-      "lineFormComingSoon": "Zeilenformular wird bald hinzugefügt",
-      "packageAddSuccess": "Paket erfolgreich hinzugefügt",
-      "packageAddError": "Fehler beim Hinzufügen des Pakets",
-      "lineAddSuccess": "Zeile erfolgreich hinzugefügt",
-      "lineAddError": "Fehler beim Hinzufügen der Zeile",
+      "deleteConfirm": "Delete Packaging",
+      "deleteConfirmMessage": "Are you sure you want to delete this packaging?",
+      "deleteSuccess": "Packaging deleted successfully",
+      "deleteError": "An error occurred while deleting packaging",
+      "addPackageDescription": "Add a new package",
+      "addLineDescription": "Add a new line",
+      "packageFormComingSoon": "Package form will be added soon",
+      "lineFormComingSoon": "Line form will be added soon",
+      "packageAddSuccess": "Package added successfully",
+      "packageAddError": "An error occurred while adding package",
+      "lineAddSuccess": "Line added successfully",
+      "lineAddError": "An error occurred while adding line",
       "match": "Abgleichen",
       "unmatch": "Verbindung trennen",
-      "matchSuccess": "Abgleich erfolgreich durchgeführt",
+      "matchSuccess": "Matching completed successfully",
       "unmatchSuccess": "Verbindung erfolgreich getrennt",
       "matchError": "Fehler beim Abgleichen"
     },
     "packageDetail": {
       "title": "Paketdetails",
-      "backToHeader": "Zurück zur Verpackung",
+      "backToHeader": "Back to Packaging",
       "status": "Status",
       "packageType": "Pakettyp",
       "barcode": "Barcode",
       "length": "Länge",
       "width": "Breite",
-      "height": "Höhe",
+      "height": "Height",
       "volume": "Volumen",
       "netWeight": "Nettogewicht",
       "grossWeight": "Bruttogewicht",
       "isMixed": "Gemischt",
-      "addLine": "Neue Zeile hinzufügen",
+      "addLine": "Add New Line",
       "stockCode": "Lagerkode",
       "yapKod": "Yap-Kode",
       "quantity": "Menge",
@@ -1192,14 +1289,14 @@
       "actions": "Aktionen",
       "noLines": "Keine Zeilen gefunden",
       "notFound": "Paket nicht gefunden",
-      "deleteConfirm": "Paket löschen",
-      "deleteConfirmMessage": "Sind Sie sicher, dass Sie dieses Paket löschen möchten?",
-      "deleteSuccess": "Paket erfolgreich gelöscht",
-      "deleteError": "Fehler beim Löschen des Pakets",
-      "addLineDescription": "Neue Zeile hinzufügen",
-      "lineFormComingSoon": "Zeilenformular wird bald hinzugefügt",
-      "lineAddSuccess": "Zeile erfolgreich hinzugefügt",
-      "lineAddError": "Fehler beim Hinzufügen der Zeile"
+      "deleteConfirm": "Delete Package",
+      "deleteConfirmMessage": "Are you sure you want to delete this package?",
+      "deleteSuccess": "Package deleted successfully",
+      "deleteError": "An error occurred while deleting package",
+      "addLineDescription": "Add a new line",
+      "lineFormComingSoon": "Line form will be added soon",
+      "lineAddSuccess": "Line added successfully",
+      "lineAddError": "An error occurred while adding line"
     },
     "form": {
       "selectWarehouse": "Lager auswählen",
@@ -1226,14 +1323,23 @@
     },
     "sourceType": {
       "gr": "Wareneingang",
-      "wt": "Lagerübertragung",
+      "wt": "Warehouse Transfer",
       "pr": "Produktion",
-      "pt": "Produktionsübertragung",
+      "pt": "Production Transfer",
       "sit": "Fremdarbeitsausgabe",
       "srt": "Fremdarbeitseingang",
       "wi": "Lagerzugang",
       "wo": "Lagerabgang",
-      "sh": "Versand"
+      "sh": "Versand",
+      "GR": "Goods Receipt",
+      "WT": "Warehouse Transfer",
+      "SH": "Shipment",
+      "PR": "Production",
+      "PT": "Production Transfer",
+      "SIT": "Subcontracting Issue",
+      "SRT": "Subcontracting Receipt",
+      "WI": "Warehouse Inbound",
+      "WO": "Warehouse Outbound"
     },
     "cargoCompany": {
       "None": "Keine",
@@ -1273,7 +1379,7 @@
   "titleManagement": {
     "menu": "Titelverwaltung",
     "description": "Titel verwalten und bearbeiten",
-    "addButton": "Neuen Titel hinzufügen",
+    "addButton": "Add New Title",
     "stats": {
       "totalTitles": "Gesamttitel",
       "activeTitles": "Aktive Titel",
@@ -1287,35 +1393,40 @@
       "createdDate": "Erstellungsdatum",
       "createdBy": "Erstellt von",
       "showing": "{{from}}-{{to}} von {{total}} angezeigt",
-      "page": "Seite {{current}} von {{total}}"
+      "page": "Seite {{current}} von {{total}}",
+      "name": "Title Name",
+      "code": "Code"
     },
     "form": {
-      "addTitle": "Neuen Titel hinzufügen",
+      "addTitle": "Add New Title",
       "editTitle": "Titel bearbeiten",
       "addDescription": "Neue Titelinformationen eingeben",
       "editDescription": "Titelinformationen bearbeiten",
       "titleName": "Titelname",
       "titleNamePlaceholder": "Titelname eingeben",
       "titleName.required": "Titelname ist erforderlich",
-      "titleName.maxLength": "Titelname darf maximal 50 Zeichen lang sein"
+      "titleName.maxLength": "Titelname darf maximal 50 Zeichen lang sein",
+      "code": "Code",
+      "codePlaceholder": "Enter code (optional)",
+      "code.maxLength": "Code must be at most 10 characters"
     },
     "delete": {
-      "confirmTitle": "Titel löschen",
-      "confirmMessage": "Möchten Sie den Titel {{titleName}} wirklich löschen?"
+      "confirmTitle": "Delete Title",
+      "confirmMessage": "Are you sure you want to delete the title {{titleName}}?"
     },
     "messages": {
       "createSuccess": "Titel erfolgreich erstellt",
       "createError": "Titel konnte nicht erstellt werden",
       "updateSuccess": "Titel erfolgreich aktualisiert",
       "updateError": "Titel konnte nicht aktualisiert werden",
-      "deleteSuccess": "Titel erfolgreich gelöscht",
-      "deleteError": "Titel konnte nicht gelöscht werden"
+      "deleteSuccess": "Title deleted successfully",
+      "deleteError": "Failed to delete title"
     }
   },
   "userManagement": {
     "menu": "Benutzerverwaltung",
     "description": "Benutzer verwalten und bearbeiten",
-    "addButton": "Neuen Benutzer hinzufügen",
+    "addButton": "Add New User",
     "stats": {
       "totalUsers": "Gesamtbenutzer",
       "activeUsers": "Aktive Benutzer",
@@ -1337,7 +1448,7 @@
       "page": "Seite {{current}} von {{total}}"
     },
     "form": {
-      "addUser": "Neuen Benutzer hinzufügen",
+      "addUser": "Add New User",
       "editUser": "Benutzer bearbeiten",
       "addDescription": "Neue Benutzerinformationen eingeben",
       "editDescription": "Benutzerinformationen bearbeiten",
@@ -1354,13 +1465,20 @@
       "phoneNumber": "Telefonnummer",
       "phoneNumberPlaceholder": "Telefonnummer eingeben",
       "role": "Rolle",
-      "rolePlaceholder": "Rolle eingeben",
+      "rolePlaceholder": "Rolle auswählen",
+      "roleRequired": "Rollenauswahl erforderlich",
+      "permissionGroups": "Berechtigungsgruppen",
+      "permissionGroupsPlaceholder": "Berechtigungsgruppen auswählen",
+      "permissionGroupsHelp": "Berechtigungsgruppen für den Benutzer",
+      "permissionGroupsNoData": "Keine Berechtigungsgruppen gefunden",
+      "generatedPasswordInfo": "Leer lassen für temporäres Passwort",
+      "selectAll": "Alle auswählen",
       "isActive": "Aktiv",
       "isActiveDescription": "Aktiver Status des Benutzers",
       "username.required": "Benutzername ist erforderlich",
       "username.maxLength": "Benutzername darf maximal 50 Zeichen lang sein",
       "email.required": "E-Mail ist erforderlich",
-      "email.invalid": "Geben Sie eine gültige E-Mail-Adresse ein",
+      "email.invalid": "Enter a valid email address",
       "password.minLength": "Passwort muss mindestens 8 Zeichen lang sein",
       "password.maxLength": "Passwort darf maximal 100 Zeichen lang sein",
       "firstName.maxLength": "Vorname darf maximal 50 Zeichen lang sein",
@@ -1368,16 +1486,16 @@
       "phoneNumber.maxLength": "Telefonnummer darf maximal 20 Zeichen lang sein"
     },
     "delete": {
-      "confirmTitle": "Benutzer löschen",
-      "confirmMessage": "Möchten Sie den Benutzer {{username}} wirklich löschen?"
+      "confirmTitle": "Delete User",
+      "confirmMessage": "Are you sure you want to delete the user {{username}}?"
     },
     "messages": {
       "createSuccess": "Benutzer erfolgreich erstellt",
       "createError": "Benutzer konnte nicht erstellt werden",
       "updateSuccess": "Benutzer erfolgreich aktualisiert",
       "updateError": "Benutzer konnte nicht aktualisiert werden",
-      "deleteSuccess": "Benutzer erfolgreich gelöscht",
-      "deleteError": "Benutzer konnte nicht gelöscht werden"
+      "deleteSuccess": "User deleted successfully",
+      "deleteError": "Failed to delete user"
     }
   },
   "userDetail": {
@@ -1388,7 +1506,7 @@
     "selectFile": "Datei auswählen",
     "upload": "Hochladen",
     "uploading": "Wird hochgeladen...",
-    "height": "Größe (cm)",
+    "height": "Height (cm)",
     "weight": "Gewicht (kg)",
     "gender": "Geschlecht",
     "selectGender": "Geschlecht auswählen",
@@ -1398,15 +1516,15 @@
     "gender.other": "Andere",
     "description": "Beschreibung",
     "descriptionPlaceholder": "Beschreibung eingeben...",
-    "deletePictureTitle": "Profilbild löschen",
-    "deletePictureMessage": "Sind Sie sicher, dass Sie das Profilbild löschen möchten?",
-    "invalidFileFormat": "Ungültiges Dateiformat. Nur JPG, PNG, GIF, WEBP Formate werden unterstützt.",
-    "fileSizeExceeded": "Dateigröße ist zu groß. Maximum 5 MB erlaubt.",
-    "invalidUrl": "Ungültiges URL-Format",
-    "heightMin": "Größe darf nicht kleiner als 0 sein",
-    "heightMax": "Größe darf nicht größer als 300 sein",
+    "deletePictureTitle": "Delete Profile Picture",
+    "deletePictureMessage": "Are you sure you want to delete the profile picture?",
+    "invalidFileFormat": "Invalid file format. Only JPG, PNG, GIF, WEBP formats are supported.",
+    "fileSizeExceeded": "File size is too large. Maximum 5 MB allowed.",
+    "invalidUrl": "Invalid URL format",
+    "heightMin": "Height cannot be less than 0",
+    "heightMax": "Height cannot be greater than 300",
     "weightMin": "Gewicht darf nicht kleiner als 0 sein",
-    "weightMax": "Gewicht darf nicht größer als 500 sein",
+    "weightMax": "Weight cannot be greater than 500",
     "descriptionMax": "Beschreibung darf nicht mehr als 2000 Zeichen enthalten",
     "createdSuccessfully": "Benutzerdetails erfolgreich erstellt",
     "createError": "Beim Erstellen der Benutzerdetails ist ein Fehler aufgetreten",
@@ -1414,14 +1532,14 @@
     "updateError": "Beim Aktualisieren der Benutzerdetails ist ein Fehler aufgetreten",
     "profilePictureUploadedSuccessfully": "Profilbild erfolgreich hochgeladen",
     "profilePictureUploadError": "Beim Hochladen des Profilbilds ist ein Fehler aufgetreten",
-    "profilePictureDeletedSuccessfully": "Profilbild erfolgreich gelöscht",
-    "profilePictureDeleteError": "Beim Löschen des Profilbilds ist ein Fehler aufgetreten",
+    "profilePictureDeletedSuccessfully": "Profile picture deleted successfully",
+    "profilePictureDeleteError": "An error occurred while deleting profile picture",
     "userNotFound": "Benutzer nicht gefunden"
   },
   "approvalRoleGroup": {
     "menu": "Genehmigungs‑Rollengruppen",
     "description": "Verwalten Sie Genehmigungs‑Rollengruppen",
-    "addButton": "Gruppe hinzufügen",
+    "addButton": "Add New Approval Role Group",
     "table": {
       "id": "ID",
       "name": "Name",
@@ -1431,32 +1549,32 @@
       "page": "Seite {{current}} / {{total}}"
     },
     "form": {
-      "addTitle": "Neue Rollengruppe hinzufügen",
+      "addTitle": "Add New Approval Role Group",
       "editTitle": "Rollengruppe bearbeiten",
       "addDescription": "Geben Sie die Informationen der neuen Rollengruppe ein",
       "editDescription": "Bearbeiten Sie die Informationen der Rollengruppe",
       "name": "Gruppenname",
       "namePlaceholder": "Gruppenname eingeben",
       "name.required": "Gruppenname ist erforderlich",
-      "name.maxLength": "Gruppenname darf höchstens 100 Zeichen lang sein"
+      "name.maxLength": "Group name must be at most 100 characters"
     },
     "delete": {
-      "confirmTitle": "Gruppe löschen",
-      "confirmMessage": "Möchten Sie diese Gruppe wirklich löschen?"
+      "confirmTitle": "Delete Approval Role Group",
+      "confirmMessage": "Are you sure you want to delete the approval role group {{name}}?"
     },
     "messages": {
       "createSuccess": "Gruppe erstellt",
       "createError": "Gruppe konnte nicht erstellt werden",
       "updateSuccess": "Gruppe aktualisiert",
       "updateError": "Gruppe konnte nicht aktualisiert werden",
-      "deleteSuccess": "Gruppe gelöscht",
-      "deleteError": "Gruppe konnte nicht gelöscht werden"
+      "deleteSuccess": "Approval role group deleted successfully",
+      "deleteError": "Failed to delete approval role group"
     }
   },
   "approvalUserRole": {
     "menu": "Genehmigungs‑Benutzerrollen",
     "description": "Verwalten Sie Benutzer‑Rollenzuweisungen",
-    "addButton": "Hinzufügen",
+    "addButton": "Add New Approval User Role",
     "table": {
       "id": "ID",
       "userFullName": "Vollständiger Name",
@@ -1467,7 +1585,7 @@
       "page": "Seite {{current}} / {{total}}"
     },
     "form": {
-      "addTitle": "Benutzerrolle hinzufügen",
+      "addTitle": "Add New Approval User Role",
       "editTitle": "Benutzerrolle bearbeiten",
       "addDescription": "Weisen Sie einem Benutzer eine Genehmigungsrolle zu",
       "editDescription": "Bearbeiten Sie die Rollenzuweisung",
@@ -1481,22 +1599,22 @@
       "approvalRoleId.required": "Genehmigungsrolle ist erforderlich"
     },
     "delete": {
-      "confirmTitle": "Zuweisung löschen",
-      "confirmMessage": "Möchten Sie diese Zuweisung wirklich löschen?"
+      "confirmTitle": "Delete Approval User Role",
+      "confirmMessage": "Are you sure you want to delete this approval user role?"
     },
     "messages": {
       "createSuccess": "Zuweisung erstellt",
       "createError": "Zuweisung konnte nicht erstellt werden",
       "updateSuccess": "Zuweisung aktualisiert",
       "updateError": "Zuweisung konnte nicht aktualisiert werden",
-      "deleteSuccess": "Zuweisung gelöscht",
-      "deleteError": "Zuweisung konnte nicht gelöscht werden"
+      "deleteSuccess": "Approval user role deleted successfully",
+      "deleteError": "Failed to delete approval user role"
     }
   },
   "approvalRole": {
     "menu": "Genehmigungsrollen",
     "description": "Verwalten Sie Genehmigungsrollen",
-    "addButton": "Rolle hinzufügen",
+    "addButton": "Add New Approval Role",
     "table": {
       "id": "ID",
       "approvalRoleGroupName": "Rollengruppe",
@@ -1507,7 +1625,7 @@
       "page": "Seite {{current}} / {{total}}"
     },
     "form": {
-      "addTitle": "Genehmigungsrolle hinzufügen",
+      "addTitle": "Add New Approval Role",
       "editTitle": "Genehmigungsrolle bearbeiten",
       "addDescription": "Geben Sie die Informationen der neuen Rolle ein",
       "editDescription": "Bearbeiten Sie die Rolleninformationen",
@@ -1518,25 +1636,25 @@
       "name": "Name",
       "namePlaceholder": "Name eingeben",
       "name.required": "Name ist erforderlich",
-      "name.maxLength": "Name darf höchstens 100 Zeichen lang sein"
+      "name.maxLength": "Role name must be at most 100 characters"
     },
     "delete": {
-      "confirmTitle": "Rolle löschen",
-      "confirmMessage": "Möchten Sie diese Rolle wirklich löschen?"
+      "confirmTitle": "Delete Approval Role",
+      "confirmMessage": "Are you sure you want to delete the approval role {{name}}?"
     },
     "messages": {
       "createSuccess": "Rolle erstellt",
       "createError": "Rolle konnte nicht erstellt werden",
       "updateSuccess": "Rolle aktualisiert",
       "updateError": "Rolle konnte nicht aktualisiert werden",
-      "deleteSuccess": "Rolle gelöscht",
-      "deleteError": "Rolle konnte nicht gelöscht werden"
+      "deleteSuccess": "Approval role deleted successfully",
+      "deleteError": "Failed to delete approval role"
     }
   },
   "approvalFlow": {
     "menu": "Genehmigungsfluss‑Verwaltung",
-    "description": "Verwalten und bearbeiten Sie Genehmigungsflüsse",
-    "addButton": "Neuen Genehmigungsfluss hinzufügen",
+    "description": "Manage and edit approval flows",
+    "addButton": "Add New Approval Flow",
     "documentType": {
       "offer": "Angebot",
       "request": "Anfrage",
@@ -1553,7 +1671,7 @@
       "page": "Seite {{current}} / {{total}}"
     },
     "form": {
-      "addTitle": "Neuen Genehmigungsfluss hinzufügen",
+      "addTitle": "Add New Approval Flow",
       "editTitle": "Genehmigungsfluss bearbeiten",
       "addDescription": "Geben Sie die Informationen des neuen Genehmigungsflusses ein",
       "editDescription": "Bearbeiten Sie die Informationen des Genehmigungsflusses",
@@ -1563,27 +1681,27 @@
       "documentType.required": "Dokumenttyp ist erforderlich",
       "description": "Beschreibung",
       "descriptionPlaceholder": "Beschreibung eingeben (optional)",
-      "description.maxLength": "Beschreibung darf höchstens 200 Zeichen lang sein",
+      "description.maxLength": "Description must be at most 200 characters",
       "isActive": "Aktiv",
       "isActiveDescription": "Aktiv‑Status des Genehmigungsflusses"
     },
     "delete": {
-      "confirmTitle": "Genehmigungsfluss löschen",
-      "confirmMessage": "Möchten Sie diesen Genehmigungsfluss wirklich löschen?"
+      "confirmTitle": "Delete Approval Flow",
+      "confirmMessage": "Are you sure you want to delete this approval flow?"
     },
     "messages": {
       "createSuccess": "Genehmigungsfluss erstellt",
       "createError": "Genehmigungsfluss konnte nicht erstellt werden",
       "updateSuccess": "Genehmigungsfluss aktualisiert",
       "updateError": "Genehmigungsfluss konnte nicht aktualisiert werden",
-      "deleteSuccess": "Genehmigungsfluss gelöscht",
-      "deleteError": "Genehmigungsfluss konnte nicht gelöscht werden"
+      "deleteSuccess": "Approval flow deleted successfully",
+      "deleteError": "Failed to delete approval flow"
     }
   },
   "countryManagement": {
     "menu": "Länderverwaltung",
     "description": "Länder verwalten und bearbeiten",
-    "addButton": "Neues Land hinzufügen",
+    "addButton": "Add New Country",
     "stats": {
       "totalCountries": "Länder gesamt",
       "activeCountries": "Aktive Länder",
@@ -1600,7 +1718,7 @@
       "page": "Seite {{current}} / {{total}}"
     },
     "form": {
-      "addCountry": "Neues Land hinzufügen",
+      "addCountry": "Add New Country",
       "editCountry": "Land bearbeiten",
       "addDescription": "Neue Landesdaten eingeben",
       "editDescription": "Landesdaten bearbeiten",
@@ -1620,29 +1738,29 @@
       },
       "erpCodePlaceholder": "ERP-Code eingeben (optional)",
       "name.required": "Ländername ist erforderlich",
-      "name.maxLength": "Ländername darf höchstens 100 Zeichen lang sein",
+      "name.maxLength": "Country name must be at most 100 characters",
       "code.required": "Ländercode ist erforderlich",
       "code.minLength": "Ländercode muss mindestens 2 Zeichen haben",
-      "code.maxLength": "Ländercode darf höchstens 5 Zeichen lang sein",
-      "erpCode.maxLength": "ERP‑Code darf höchstens 10 Zeichen lang sein"
+      "code.maxLength": "Country code must be at most 5 characters",
+      "erpCode.maxLength": "ERP code must be at most 10 characters"
     },
     "delete": {
-      "confirmTitle": "Land löschen",
-      "confirmMessage": "Möchten Sie das Land {{name}} wirklich löschen?"
+      "confirmTitle": "Delete Country",
+      "confirmMessage": "Are you sure you want to delete country {{name}}?"
     },
     "messages": {
       "createSuccess": "Land erfolgreich erstellt",
       "createError": "Land konnte nicht erstellt werden",
       "updateSuccess": "Land erfolgreich aktualisiert",
       "updateError": "Land konnte nicht aktualisiert werden",
-      "deleteSuccess": "Land erfolgreich gelöscht",
-      "deleteError": "Land konnte nicht gelöscht werden"
+      "deleteSuccess": "Country deleted successfully",
+      "deleteError": "Failed to delete country"
     }
   },
   "cityManagement": {
     "menu": "Stadtverwaltung",
     "description": "Städte verwalten und bearbeiten",
-    "addButton": "Neue Stadt hinzufügen",
+    "addButton": "Add New City",
     "stats": {
       "totalCities": "Städte gesamt",
       "activeCities": "Aktive Städte",
@@ -1659,7 +1777,7 @@
       "page": "Seite {{current}} / {{total}}"
     },
     "form": {
-      "addCity": "Neue Stadt hinzufügen",
+      "addCity": "Add New City",
       "editCity": "Stadt bearbeiten",
       "addDescription": "Neue Stadtdaten eingeben",
       "editDescription": "Stadtdaten bearbeiten",
@@ -1677,27 +1795,27 @@
       },
       "erpCodePlaceholder": "ERP-Code eingeben (optional)",
       "name.required": "Stadtname ist erforderlich",
-      "name.maxLength": "Stadtname darf höchstens 100 Zeichen lang sein",
+      "name.maxLength": "City name must be at most 100 characters",
       "country.required": "Land ist erforderlich",
-      "erpCode.maxLength": "ERP‑Code darf höchstens 10 Zeichen lang sein"
+      "erpCode.maxLength": "ERP code must be at most 10 characters"
     },
     "delete": {
-      "confirmTitle": "Stadt löschen",
-      "confirmMessage": "Möchten Sie die Stadt {{name}} wirklich löschen?"
+      "confirmTitle": "Delete City",
+      "confirmMessage": "Are you sure you want to delete city {{name}}?"
     },
     "messages": {
       "createSuccess": "Stadt erfolgreich erstellt",
       "createError": "Stadt konnte nicht erstellt werden",
       "updateSuccess": "Stadt erfolgreich aktualisiert",
       "updateError": "Stadt konnte nicht aktualisiert werden",
-      "deleteSuccess": "Stadt erfolgreich gelöscht",
-      "deleteError": "Stadt konnte nicht gelöscht werden"
+      "deleteSuccess": "City deleted successfully",
+      "deleteError": "Failed to delete city"
     }
   },
   "districtManagement": {
     "menu": "Bezirksverwaltung",
     "description": "Bezirke verwalten und bearbeiten",
-    "addButton": "Neuen Bezirk hinzufügen",
+    "addButton": "Add New District",
     "stats": {
       "totalDistricts": "Bezirke gesamt",
       "activeDistricts": "Aktive Bezirke",
@@ -1714,7 +1832,7 @@
       "page": "Seite {{current}} / {{total}}"
     },
     "form": {
-      "addDistrict": "Neuen Bezirk hinzufügen",
+      "addDistrict": "Add New District",
       "editDistrict": "Bezirk bearbeiten",
       "addDescription": "Neue Bezirksdaten eingeben",
       "editDescription": "Bezirksdaten bearbeiten",
@@ -1732,21 +1850,21 @@
       },
       "erpCodePlaceholder": "ERP-Code eingeben (optional)",
       "name.required": "Bezirksname ist erforderlich",
-      "name.maxLength": "Bezirksname darf höchstens 100 Zeichen lang sein",
+      "name.maxLength": "District name must be at most 100 characters",
       "city.required": "Stadt ist erforderlich",
-      "erpCode.maxLength": "ERP‑Code darf höchstens 10 Zeichen lang sein"
+      "erpCode.maxLength": "ERP code must be at most 10 characters"
     },
     "delete": {
-      "confirmTitle": "Bezirk löschen",
-      "confirmMessage": "Möchten Sie den Bezirk {{name}} wirklich löschen?"
+      "confirmTitle": "Delete District",
+      "confirmMessage": "Are you sure you want to delete district {{name}}?"
     },
     "messages": {
       "createSuccess": "Bezirk erfolgreich erstellt",
       "createError": "Bezirk konnte nicht erstellt werden",
       "updateSuccess": "Bezirk erfolgreich aktualisiert",
       "updateError": "Bezirk konnte nicht aktualisiert werden",
-      "deleteSuccess": "Bezirk erfolgreich gelöscht",
-      "deleteError": "Bezirk konnte nicht gelöscht werden"
+      "deleteSuccess": "District deleted successfully",
+      "deleteError": "Failed to delete district"
     }
   }
 }

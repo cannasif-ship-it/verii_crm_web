@@ -40,7 +40,11 @@
     "name.required": "Le nom du district est requis",
     "name.maxLength": "Le nom du district ne peut pas dépasser 100 caractères",
     "erpCode.maxLength": "Le code ERP ne peut pas dépasser 10 caractères",
-    "city.required": "La sélection de la ville est requise"
+    "city.required": "La sélection de la ville est requise",
+    "nameRequired": "District name is required",
+    "nameMaxLength": "District name cannot exceed 100 characters",
+    "erpCodeMaxLength": "ERP code cannot exceed 10 characters",
+    "cityRequired": "City selection is required"
   },
   "deleteConfirm": {
     "confirmTitle": "Supprimer le district",

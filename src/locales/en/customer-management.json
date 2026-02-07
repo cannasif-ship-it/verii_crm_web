@@ -22,7 +22,10 @@
     "createdDate": "Created Date",
     "createdBy": "Created By",
     "showing": "Showing {{from}}-{{to}} / {{total}}",
-    "page": "Page {{current}} / {{total}}"
+    "page": "Page {{current}} / {{total}}",
+    "phone2": "Telefon 2",
+    "salesRepCode": "Satış Temsilcisi",
+    "branchCode": "Şube Kodu"
   },
   "form": {
     "addCustomer": "Add New Customer",
@@ -78,7 +81,14 @@
     "erpCodeMaxLength": "ERP code must be at most 20 characters",
     "isApproved": "Approved",
     "isCompleted": "Completed",
-    "isERPIntegrated": "ERP Integrated"
+    "isERPIntegrated": "ERP Integrated",
+    "phone2": "Telefon 2",
+    "phone2Placeholder": "İkinci telefon numarasını girin (opsiyonel)",
+    "phone2MaxLength": "İkinci telefon numarası en fazla 100 karakter olabilir",
+    "salesRepCodeMaxLength": "Satış temsilcisi kodu en fazla 50 karakter olabilir",
+    "groupCodeMaxLength": "Grup kodu en fazla 50 karakter olabilir",
+    "isCompletedDescription": "Bu müşterinin tüm bilgileri eksiksiz dolduruldu mu?",
+    "none": "Yok"
   },
   "delete": {
     "action": "Delete",

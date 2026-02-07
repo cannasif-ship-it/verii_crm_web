@@ -1,7 +1,7 @@
 {
   "menu": "Benutzerverwaltung",
   "description": "Benutzer verwalten und bearbeiten",
-  "addButton": "Neuen Benutzer hinzufügen",
+  "addButton": "Add New User",
   "table": {
     "id": "ID",
     "username": "Benutzername",
@@ -21,11 +21,11 @@
     "previous": "Vorherige",
     "next": "Nächste",
     "edit": "Bearbeiten",
-    "delete": "Löschen"
+    "delete": "Delete"
   },
   "form": {
     "editUser": "Benutzer bearbeiten",
-    "addUser": "Neuen Benutzer hinzufügen",
+    "addUser": "Add New User",
     "editDescription": "Benutzerinformationen bearbeiten",
     "addDescription": "Neue Benutzerinformationen eingeben",
     "username": "Benutzername",
@@ -33,20 +33,27 @@
     "email": "E-Mail",
     "emailPlaceholder": "E-Mail-Adresse eingeben",
     "password": "Passwort",
-    "passwordPlaceholder": "Passwort eingeben (min. 8 Zeichen)",
+    "passwordPlaceholder": "Leer lassen für temporäres Passwort",
     "firstName": "Vorname",
     "firstNamePlaceholder": "Vorname eingeben",
     "lastName": "Nachname",
     "lastNamePlaceholder": "Nachname eingeben",
-    "phoneNumber": "Telefon",
+    "phoneNumber": "Phone Number",
     "phoneNumberPlaceholder": "Telefonnummer eingeben",
     "role": "Rolle",
-    "rolePlaceholder": "Rolle eingeben",
+    "rolePlaceholder": "Rolle auswählen",
     "isActive": "Aktiv",
     "isActiveDescription": "Aktiver Status des Benutzers",
     "save": "Speichern",
     "saving": "Speichern...",
-    "cancel": "Abbrechen"
+    "cancel": "Abbrechen",
+    "roleRequired": "Rollenauswahl erforderlich",
+    "permissionGroups": "Berechtigungsgruppen",
+    "permissionGroupsPlaceholder": "Berechtigungsgruppen auswählen",
+    "permissionGroupsHelp": "Berechtigungsgruppen für den Benutzer",
+    "permissionGroupsNoData": "Keine Berechtigungsgruppen gefunden",
+    "generatedPasswordInfo": "Leer lassen für temporäres Passwort",
+    "selectAll": "Alle auswählen"
   },
   "stats": {
     "totalUsers": "Gesamtbenutzer",
@@ -56,7 +63,7 @@
     "loading": "Wird geladen..."
   },
   "delete": {
-    "confirmTitle": "Benutzer löschen",
-    "confirmMessage": "Sind Sie sicher, dass Sie den Benutzer {{username}} löschen möchten?"
+    "confirmTitle": "Delete User",
+    "confirmMessage": "Are you sure you want to delete user {{username}}?"
   }
 }

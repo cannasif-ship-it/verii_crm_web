@@ -16,7 +16,8 @@
   "activityType": {
     "meeting": "اجتماع",
     "call": "مكالمة",
-    "email": "بريد إلكتروني"
+    "email": "بريد إلكتروني",
+    "general": "General"
   },
   "monthsShort": {
     "jan": "يناير",
@@ -39,5 +40,7 @@
     "openQuotationsDescription": "5 عروض أسعار بانتظار الموافقة",
     "criticalStock": "المخزون الحرج",
     "criticalStockDescription": "3 منتجات أقل من المستوى الحرج"
-  }
+  },
+  "noDate": "No date",
+  "unnamedActivity": "Unnamed Activity"
 }

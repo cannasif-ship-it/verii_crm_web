@@ -16,7 +16,8 @@
   "activityType": {
     "meeting": "Reunión",
     "call": "Llamada",
-    "email": "Correo"
+    "email": "Correo",
+    "general": "General"
   },
   "monthsShort": {
     "jan": "Ene",
@@ -39,5 +40,7 @@
     "openQuotationsDescription": "5 cotizaciones pendientes de aprobación",
     "criticalStock": "Stock Crítico",
     "criticalStockDescription": "3 productos por debajo del nivel crítico"
-  }
+  },
+  "noDate": "No date",
+  "unnamedActivity": "Unnamed Activity"
 }

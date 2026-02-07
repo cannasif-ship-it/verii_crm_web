@@ -10,7 +10,7 @@
   "processing": "Traitement...",
   "detail": {
     "title": "Détail du devis",
-    "description": "Voir les détails du devis et effectuer des actions",
+    "description": "Description",
     "tabs": {
       "detail": "Détail",
       "history": "Historique",
@@ -26,7 +26,6 @@
     "deliveryDate": "Date de livraison",
     "total": "Total",
     "grandTotal": "Total général",
-    "description": "Description",
     "lines": "Lignes du devis",
     "productCode": "Code produit",
     "productName": "Nom du produit",
@@ -37,7 +36,8 @@
     "exchangeRates": "Taux de change",
     "exchangeRate": "Taux",
     "exchangeRateDate": "Date du taux",
-    "isOfficial": "Taux officiel"
+    "isOfficial": "Taux officiel",
+    "subtitle": "View quotation details and perform actions"
   },
   "actions": {
     "view": "Voir",

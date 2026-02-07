@@ -1,7 +1,7 @@
 {
   "menu": "Kundenkontaktverwaltung",
   "description": "Kundenkontakte verwalten und bearbeiten",
-  "addButton": "Neuen Kontakt hinzufügen",
+  "addButton": "Add New Contact",
   "stats": {
     "totalContacts": "Gesamtkontakte",
     "activeContacts": "Aktive Kontakte",
@@ -11,7 +11,7 @@
     "id": "ID",
     "fullName": "Vollständiger Name",
     "email": "E-Mail",
-    "phone": "Telefon",
+    "phone": "Phone",
     "mobile": "Mobiltelefon",
     "notes": "Notizen",
     "customer": "Kunde",
@@ -24,7 +24,7 @@
     "page": "Seite {{current}} / {{total}}"
   },
   "form": {
-    "addContact": "Neuen Kontakt hinzufügen",
+    "addContact": "Add New Contact",
     "editContact": "Kontakt bearbeiten",
     "addDescription": "Geben Sie neue Kontaktinformationen ein",
     "editDescription": "Kontaktinformationen bearbeiten",
@@ -34,9 +34,9 @@
     "fullNameMaxLength": "Vollständiger Name darf maximal 100 Zeichen lang sein",
     "email": "E-Mail",
     "emailPlaceholder": "E-Mail-Adresse eingeben (optional)",
-    "emailInvalid": "Bitte geben Sie eine gültige E-Mail-Adresse ein",
+    "emailInvalid": "Please enter a valid email address",
     "emailMaxLength": "E-Mail darf maximal 100 Zeichen lang sein",
-    "phone": "Telefon",
+    "phone": "Phone",
     "phonePlaceholder": "Telefonnummer eingeben (optional)",
     "phoneMaxLength": "Telefon darf maximal 20 Zeichen lang sein",
     "mobile": "Mobiltelefon",
@@ -44,7 +44,7 @@
     "mobileMaxLength": "Mobil darf maximal 20 Zeichen lang sein",
     "notes": "Notizen",
     "notesPlaceholder": "Notizen eingeben (optional)",
-    "notesMaxLength": "Notizen dürfen maximal 250 Zeichen lang sein",
+    "notesMaxLength": "Notes must be at most 250 characters",
     "customer": "Kunde",
     "selectCustomer": "Kunde auswählen",
     "customerRequired": "Kundenauswahl ist erforderlich",
@@ -53,9 +53,9 @@
     "titleRequired": "Titelauswahl ist erforderlich"
   },
   "delete": {
-    "action": "Löschen",
-    "confirmTitle": "Kontakt löschen",
-    "confirmMessage": "Sind Sie sicher, dass Sie den Kontakt {{name}} löschen möchten?"
+    "action": "Delete",
+    "confirmTitle": "Delete Contact",
+    "confirmMessage": "Are you sure you want to delete {{name}} contact?"
   },
   "loading": "Laden...",
   "noData": "Keine Daten",
@@ -71,7 +71,7 @@
     "createError": "Kontakt konnte nicht erstellt werden",
     "updateSuccess": "Kontakt erfolgreich aktualisiert",
     "updateError": "Kontakt konnte nicht aktualisiert werden",
-    "deleteSuccess": "Kontakt erfolgreich gelöscht",
-    "deleteError": "Kontakt konnte nicht gelöscht werden"
+    "deleteSuccess": "Contact deleted successfully",
+    "deleteError": "Contact could not be deleted"
   }
 }

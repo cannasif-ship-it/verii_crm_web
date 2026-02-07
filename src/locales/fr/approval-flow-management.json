@@ -28,7 +28,9 @@
       "isActiveDescription": "Statut du flux d'approbation",
       "cancel": "Annuler",
       "save": "Enregistrer",
-      "saving": "Enregistrement..."
+      "saving": "Enregistrement...",
+      "documentTypeRequired": "Document type selection is required",
+      "descriptionMaxLength": "Description can be at most 200 characters"
     },
     "loading": "Chargement...",
     "noData": "Pas de données",
@@ -64,7 +66,11 @@
       "noRoleGroupSelected": "Aucun groupe de rôle sélectionné",
       "approvalRoleGroupId": {
         "required": "La sélection du groupe de rôle est requise"
-      }
+      },
+      "approvalRoleGroupIdRequired": "Role group selection is required",
+      "cancel": "Cancel",
+      "save": "Save",
+      "saving": "Saving..."
     },
     "messages": {
       "deleteConfirm": "Êtes-vous sûr de vouloir supprimer cette étape ?"

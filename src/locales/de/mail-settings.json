@@ -13,6 +13,6 @@
     "PasswordPlaceholder": "Neues Passwort zum Ändern eingeben",
     "FromEmail": "Absender-E-Mail",
     "FromName": "Absendername",
-    "Timeout": "Zeitüberschreitung (s)"
+    "Timeout": "Timeout (sec)"
   }
 }

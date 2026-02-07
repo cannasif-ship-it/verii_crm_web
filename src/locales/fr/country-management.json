@@ -54,7 +54,12 @@
       "erpCode": {
         "maxLength": "Le code ERP ne peut pas dépasser 10 caractères"
       }
-    }
+    },
+    "nameRequired": "Country name is required",
+    "nameMaxLength": "Country name cannot exceed 100 characters",
+    "codeMinLength": "Country code must be at least 2 characters",
+    "codeMaxLength": "Country code cannot exceed 5 characters",
+    "erpCodeMaxLength": "ERP code cannot exceed 10 characters"
   },
   "deleteConfirm": {
     "confirmMessage": "Êtes-vous sûr de vouloir supprimer le pays {{name}} ?"

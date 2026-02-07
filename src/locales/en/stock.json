@@ -82,7 +82,13 @@
     "deleteConfirm": "Delete Related Stock",
     "deleteConfirmMessage": "Are you sure you want to delete {{name}} related stock?",
     "noStockFound": "Stock not found",
-    "saving": "Processing..."
+    "saving": "Processing...",
+    "cancel": "Vazgeç",
+    "deleting": "Siliniyor...",
+    "noRelationsDesc": "Sol taraftaki formu kullanarak yeni ilişkiler tanımlayabilirsiniz.",
+    "confirmDelete": "Evet, Sil",
+    "stockCode": "Stok Kodu",
+    "stockName": "Stok Adı"
   },
   "messages": {
     "detailCreateSuccess": "Stock detail created successfully",

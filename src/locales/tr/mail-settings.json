@@ -14,5 +14,10 @@
     "FromEmail": "Gönderen E-posta",
     "FromName": "Gönderen Adı",
     "Timeout": "Zaman Aşımı (sn)"
+  },
+  "TestMail": {
+    "Send": "Test Maili Gönder",
+    "Sending": "Test gönderiliyor...",
+    "Success": "Test maili gönderildi"
   }
 }

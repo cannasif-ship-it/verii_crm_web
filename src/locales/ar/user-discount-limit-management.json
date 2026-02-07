@@ -15,7 +15,15 @@
     "searchPlaceholder": "البحث في الحدود...",
     "showing": "عرض {{from}}-{{to}} من {{total}}",
     "page": "صفحة {{current}} من {{total}}",
-    "rowsPerPage": "الصفوف لكل صفحة"
+    "rowsPerPage": "الصفوف لكل صفحة",
+    "id": "ID",
+    "salespersonName": "Salesperson Name",
+    "erpProductGroupCode": "ERP Product Group Code",
+    "maxDiscount1": "Max Discount 1",
+    "maxDiscount2": "Max Discount 2",
+    "maxDiscount3": "Max Discount 3",
+    "createdDate": "Created Date",
+    "updatedDate": "Updated Date"
   },
   "form": {
     "addTitle": "إضافة حد خصم جديد",

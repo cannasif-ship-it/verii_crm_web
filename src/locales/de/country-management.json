@@ -1,16 +1,16 @@
 {
   "menu": "Länderverwaltung",
   "description": "Länder verwalten und bearbeiten",
-  "addButton": "Neues Land hinzufügen",
+  "addButton": "Add New Country",
   "search": "Suchen...",
   "loading": "Laden...",
   "noData": "Keine Daten gefunden",
   "actions": "Aktionen",
-  "previous": "Zurück",
+  "previous": "Previous",
   "next": "Weiter",
-  "deleteConfirmTitle": "Löschbestätigung",
+  "deleteConfirmTitle": "Delete Confirmation",
   "cancel": "Abbrechen",
-  "deleting": "Löschen...",
+  "deleting": "Deleting...",
   "delete": {
     "confirmMessage": "Sind Sie sicher, dass Sie das Land {{name}} löschen möchten?"
   },
@@ -32,7 +32,7 @@
     "page": "Seite {{current}} / {{total}}"
   },
   "form": {
-    "addCountry": "Neues Land hinzufügen",
+    "addCountry": "Add New Country",
     "editCountry": "Land bearbeiten",
     "addDescription": "Geben Sie die neuen Länderinformationen ein",
     "editDescription": "Bearbeiten Sie die Länderinformationen",
@@ -54,9 +54,14 @@
       "erpCode": {
         "maxLength": "ERP-Code darf 10 Zeichen nicht überschreiten"
       }
-    }
+    },
+    "nameRequired": "Country name is required",
+    "nameMaxLength": "Country name cannot exceed 100 characters",
+    "codeMinLength": "Country code must be at least 2 characters",
+    "codeMaxLength": "Country code cannot exceed 5 characters",
+    "erpCodeMaxLength": "ERP code cannot exceed 10 characters"
   },
   "deleteConfirm": {
-    "confirmMessage": "Möchten Sie das Land {{name}} wirklich löschen?"
+    "confirmMessage": "Are you sure you want to delete {{name}}?"
   }
 }

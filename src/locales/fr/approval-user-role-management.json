@@ -38,7 +38,9 @@
       "noApprovalRoleSelected": "Aucun rôle d'approbation sélectionné",
       "save": "Enregistrer",
       "saving": "Enregistrement...",
-      "cancel": "Annuler"
+      "cancel": "Annuler",
+      "userIdRequired": "User selection is required",
+      "approvalRoleIdRequired": "Approval role selection is required"
     }
   }
 }

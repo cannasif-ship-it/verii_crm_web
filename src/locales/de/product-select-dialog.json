@@ -1,6 +1,6 @@
 {
   "title": "Produkt auswählen",
-  "description": "Wählen Sie ERP‑Produkte aus, die Sie Ihrer Bestellung hinzufügen möchten",
+  "description": "Select a product to add to the quotation line",
   "product": "Produkt",
   "noProducts": "Keine Produkte",
   "noResults": "Keine Ergebnisse gefunden",
