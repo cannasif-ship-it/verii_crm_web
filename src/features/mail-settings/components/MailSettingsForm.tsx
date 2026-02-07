@@ -19,6 +19,7 @@ import {
   type SmtpSettingsFormSchema,
   type SmtpSettingsDto,
 } from '../types/smtpSettings';
+import { useSendTestMailMutation } from '../hooks/useSendTestMailMutation';
 
 interface MailSettingsFormProps {
   data: SmtpSettingsDto | undefined;
@@ -34,6 +35,7 @@ export function MailSettingsForm({
   isSubmitting,
 }: MailSettingsFormProps): ReactElement {
   const { t } = useTranslation();
+  const testMailMutation = useSendTestMailMutation();
 
   const form = useForm<SmtpSettingsFormSchema>({
     resolver: zodResolver(smtpSettingsFormSchema) as Resolver<SmtpSettingsFormSchema>,
@@ -214,9 +216,21 @@ export function MailSettingsForm({
             />
           </CardContent>
         </Card>
-        <Button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? t('common.saving', 'Kaydediliyor...') : t('mailSettings.Save', 'Kaydet')}
-        </Button>
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-end">
+          <Button
+            type="button"
+            variant="secondary"
+            onClick={() => testMailMutation.mutate({})}
+            disabled={isSubmitting || testMailMutation.isPending}
+          >
+            {testMailMutation.isPending
+              ? t('mailSettings.TestMail.Sending', 'Test gönderiliyor...')
+              : t('mailSettings.TestMail.Send', 'Test Maili Gönder')}
+          </Button>
+          <Button type="submit" disabled={isSubmitting}>
+            {isSubmitting ? t('common.saving', 'Kaydediliyor...') : t('mailSettings.Save', 'Kaydet')}
+          </Button>
+        </div>
       </form>
     </Form>
   );

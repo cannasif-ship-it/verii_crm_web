@@ -26,4 +26,14 @@ export const smtpSettingsApi = {
     }
     throw new Error(getErrorMessage(response, 'common.UnexpectedError'));
   },
+
+  sendTest: async (to?: string): Promise<boolean> => {
+    const response = await api.post<ApiResponse<boolean>>('/api/Mail/send-test', {
+      ...(to ? { to } : {}),
+    });
+    if (response.success === true && response.data != null) {
+      return response.data;
+    }
+    throw new Error(getErrorMessage(response, 'common.UnexpectedError'));
+  },
 };
