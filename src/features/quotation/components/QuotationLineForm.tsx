@@ -632,56 +632,49 @@ export function QuotationLineForm({
   const hasApprovalWarning = discountValidation.exceedsLimit || formData.approvalStatus === 1;
 
   return (
-    <div className="space-y-8 animate-in fade-in zoom-in-95 duration-300">
-      {/* 1. SECTION: STOCK SELECTION */}
-      <div className="space-y-3">
-        <div className="flex items-center justify-between">
-          <label className="text-sm font-semibold text-zinc-700 dark:text-zinc-200 flex items-center gap-2">
-            <Package className="h-4 w-4 text-pink-600" />
-            {t('quotation.lines.stock', 'Stok Seçimi')} <span className="text-pink-600">*</span>
-          </label>
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => setProductDialogOpen(true)}
-            className="gap-2 h-9 rounded-lg border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-900 text-zinc-700 dark:text-zinc-300"
-            size="sm"
-          >
-            <Search className="h-3.5 w-3.5" />
-            {t('quotation.lines.selectStock', 'Stok Rehberi')}
-          </Button>
-        </div>
+    <div className="space-y-6 animate-in fade-in zoom-in-95 duration-300">
+      <div className="space-y-4">
+        <label className="text-sm font-semibold text-slate-500 dark:text-slate-400 flex items-center gap-2">
+          <Package className="h-4 w-4 text-pink-500" />
+          {t('quotation.lines.stock', 'Stok Seçimi')} <span className="text-pink-500">*</span>
+        </label>
         
-        <div className="grid grid-cols-12 gap-3">
-          <div className="col-span-3">
-             <div className="relative">
-                <Input
-                  value={formData.productCode || ''}
-                  placeholder={t('quotation.lines.productCode', 'Stok Kodu')}
-                  readOnly
-                  className="bg-zinc-50/50 dark:bg-zinc-900/50 border-zinc-200 dark:border-zinc-800 font-mono text-sm h-11 rounded-xl"
-                />
-             </div>
-          </div>
-          <div className="col-span-9">
-            <div className="relative">
+        <div className="flex flex-col gap-3">
+          <div className="flex flex-row gap-3">
+            <div className="relative flex-1">
               <Input
-                value={formData.productName || ''}
-                placeholder={t('quotation.lines.productName', 'Stok Adı')}
+                value={formData.productCode || ''}
+                placeholder={t('quotation.lines.productCode', 'Stok Kodu')}
                 readOnly
-                className="bg-zinc-50/50 dark:bg-zinc-900/50 border-zinc-200 dark:border-zinc-800 font-semibold text-sm h-11 rounded-xl"
+                className="bg-slate-50 dark:bg-[#0f0a18] border-slate-200 dark:border-white/10 text-slate-900 dark:text-white font-mono text-sm h-11 rounded-xl"
               />
             </div>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setProductDialogOpen(true)}
+              className="gap-2 h-11 px-4 rounded-xl border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-[#0f0a18] hover:bg-slate-100 dark:hover:bg-white/5 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-all flex-none"
+            >
+              <Search className="h-4 w-4" />
+              {t('quotation.lines.selectStock', 'Stok Rehberi')}
+            </Button>
+          </div>
+
+          <div className="w-full">
+            <Input
+              value={formData.productName || ''}
+              placeholder={t('quotation.lines.productName', 'Stok Adı')}
+              readOnly
+              className="bg-slate-50 dark:bg-[#0f0a18] border-slate-200 dark:border-white/10 text-slate-900 dark:text-white font-semibold text-sm h-11 rounded-xl w-full"
+            />
           </div>
         </div>
       </div>
 
-      {/* 2. SECTION: QUANTITY / PRICE / UNIT / VAT */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        {/* Quantity */}
+      <div className="grid grid-cols-4 gap-4">
         <div className="space-y-2">
-          <label className="text-sm font-semibold text-zinc-700 dark:text-zinc-200 flex items-center gap-2">
-            <Layers className="h-4 w-4 text-blue-600" />
+          <label className="text-sm font-semibold text-slate-500 dark:text-slate-400 flex items-center gap-2">
+            <Layers className="h-4 w-4 text-blue-500" />
             {t('quotation.lines.quantity', 'Miktar')}
           </label>
           <Input
@@ -712,46 +705,43 @@ export function QuotationLineForm({
                 }
               }
             }}
-            className="h-12 rounded-xl border-zinc-200 dark:border-zinc-800 font-bold text-lg text-center focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all"
+            className="h-11 rounded-xl border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-[#0f0a18] text-slate-900 dark:text-white font-bold text-center focus:ring-blue-500/20 focus:border-blue-500 transition-all"
           />
         </div>
 
-        {/* Unit Price */}
         <div className="space-y-2">
-          <label className="text-sm font-semibold text-zinc-700 dark:text-zinc-200 flex items-center gap-2">
-            <Coins className="h-4 w-4 text-emerald-600" />
+          <label className="text-sm font-semibold text-slate-500 dark:text-slate-400 flex items-center gap-2">
+            <Coins className="h-4 w-4 text-emerald-500" />
             {t('quotation.lines.unitPrice', 'Birim Fiyat')}
           </label>
           <div className="relative">
-             <Input
+            <Input
               type="number"
               step="0.01"
               min="0"
               value={formData.unitPrice}
               readOnly
-              className="bg-zinc-50/50 dark:bg-zinc-900/50 border-zinc-200 dark:border-zinc-800 font-mono font-bold text-zinc-900 dark:text-zinc-100 h-12 rounded-xl text-lg pl-4"
+              className="h-11 rounded-xl border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-[#0f0a18] text-slate-900 dark:text-white font-mono font-bold text-center pr-10"
             />
-            <div className="absolute right-4 top-3.5 text-xs font-bold text-zinc-400">{currencyCode}</div>
+            <div className="absolute right-3 top-3 text-xs font-bold text-slate-400 dark:text-slate-500">TL</div>
           </div>
         </div>
 
-        {/* Unit (Birim) - Static for now */}
         <div className="space-y-2">
-          <label className="text-sm font-semibold text-zinc-700 dark:text-zinc-200 flex items-center gap-2">
-            <Package className="h-4 w-4 text-purple-600" />
+          <label className="text-sm font-semibold text-slate-500 dark:text-slate-400 flex items-center gap-2">
+            <Package className="h-4 w-4 text-purple-500" />
             {t('quotation.lines.unit', 'Birim')}
           </label>
           <Input
             value="Adet"
             readOnly
-            className="bg-zinc-50/50 dark:bg-zinc-900/50 border-zinc-200 dark:border-zinc-800 font-medium text-zinc-900 dark:text-zinc-100 h-12 rounded-xl text-center"
+            className="h-11 rounded-xl border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-[#0f0a18] text-slate-900 dark:text-white font-medium text-center"
           />
         </div>
 
-        {/* VAT Rate */}
         <div className="space-y-2">
-          <label className="text-sm font-semibold text-zinc-700 dark:text-zinc-200 flex items-center gap-2">
-            <Percent className="h-4 w-4 text-orange-600" />
+          <label className="text-sm font-semibold text-slate-500 dark:text-slate-400 flex items-center gap-2">
+            <Percent className="h-4 w-4 text-orange-500" />
             {t('quotation.lines.vatRate', 'KDV Oranı')}
           </label>
           <div className="relative">
@@ -784,146 +774,141 @@ export function QuotationLineForm({
                   }
                 }
               }}
-              className="h-12 rounded-xl border-zinc-200 dark:border-zinc-800 font-bold text-lg text-center focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 transition-all pr-8"
+              className="h-11 rounded-xl border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-[#0f0a18] text-slate-900 dark:text-white font-bold text-center pr-8 focus:ring-orange-500/20 focus:border-orange-500 transition-all"
             />
-            <div className="absolute right-4 top-3.5 text-zinc-400 font-bold">%</div>
+            <div className="absolute right-3 top-3 text-slate-400 dark:text-slate-500 font-bold">%</div>
           </div>
         </div>
       </div>
 
-      {/* 3. SECTION: DISCOUNTS & SUMMARY */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 pt-4 mt-2 border-t border-dashed border-zinc-200 dark:border-zinc-800">
-        {/* Left: Discounts */}
-        <div className="space-y-4">
-            <h5 className="text-sm font-semibold text-zinc-700 dark:text-zinc-200 flex items-center gap-2">
-              <BadgePercent className="h-4 w-4 text-purple-600" />
-              {t('quotation.lines.discounts', 'Satır İndirimleri')}
-            </h5>
-            <div className="grid grid-cols-3 gap-3">
-               {[
-                 { val: discountRate1InputValue, setVal: setDiscountRate1InputValue, field: 'discountRate1', label: '1. İndirim' },
-                 { val: discountRate2InputValue, setVal: setDiscountRate2InputValue, field: 'discountRate2', label: '2. İndirim' },
-                 { val: discountRate3InputValue, setVal: setDiscountRate3InputValue, field: 'discountRate3', label: '3. İndirim' }
-               ].map((item, idx) => (
-                 <div key={idx} className="space-y-1.5">
-                   <label className="text-xs font-medium text-zinc-500 ml-1">{item.label}</label>
-                   <Input
-                      type="number"
-                      step="0.01"
-                      min="0"
-                      max="100"
-                      value={item.val}
-                      onChange={(e) => {
-                        const inputValue = e.target.value;
-                        item.setVal(inputValue);
-                        if (inputValue === '' || inputValue === '.') {
-                          handleFieldChange(item.field as any, 0);
-                        } else {
-                          const numValue = parseFloat(inputValue);
-                          if (!isNaN(numValue)) {
-                            handleFieldChange(item.field as any, numValue);
-                          }
-                        }
-                      }}
-                      onBlur={() => {
-                        if (item.val === '' || item.val === '.') {
-                          item.setVal('0');
-                          handleFieldChange(item.field as any, 0);
-                        } else {
-                          const numValue = parseFloat(item.val);
-                          if (!isNaN(numValue)) {
-                            item.setVal(String(numValue));
-                          }
-                        }
-                      }}
-                      placeholder="0"
-                      className="h-11 rounded-xl border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 focus:ring-4 focus:ring-purple-500/10 focus:border-purple-500 transition-all text-center"
-                    />
-                 </div>
-               ))}
-            </div>
-
-           {hasApprovalWarning && (
-              <div className="flex items-start gap-3 p-4 rounded-xl bg-red-50 dark:bg-red-950/20 border border-red-100 dark:border-red-900/30">
-                <div className="p-2 rounded-lg bg-white dark:bg-red-900/40 shadow-sm">
-                   <AlertTriangle className="h-5 w-5 text-red-600 dark:text-red-400" />
-                </div>
-                <div>
-                   <h4 className="text-sm font-bold text-red-900 dark:text-red-300">Onay Gerekiyor</h4>
-                   <p className="text-xs text-red-700 dark:text-red-400 mt-1">İndirim oranları yetki limitlerinizi aşıyor.</p>
-                </div>
+      <div className="grid grid-cols-12 gap-6 pt-4 border-t border-slate-200 dark:border-white/10">
+        <div className="col-span-7 space-y-4">
+          <h5 className="text-sm font-semibold text-slate-500 dark:text-slate-400 flex items-center gap-2">
+            <BadgePercent className="h-4 w-4 text-purple-500" />
+            {t('quotation.lines.discounts', 'Satır İndirimleri')}
+          </h5>
+          <div className="grid grid-cols-3 gap-3">
+            {[
+              { val: discountRate1InputValue, setVal: setDiscountRate1InputValue, field: 'discountRate1', label: '1. İndirim' },
+              { val: discountRate2InputValue, setVal: setDiscountRate2InputValue, field: 'discountRate2', label: '2. İndirim' },
+              { val: discountRate3InputValue, setVal: setDiscountRate3InputValue, field: 'discountRate3', label: '3. İndirim' }
+            ].map((item, idx) => (
+              <div key={idx} className="space-y-1.5">
+                <label className="text-xs font-medium text-slate-400 dark:text-slate-500 ml-1">{item.label}</label>
+                <Input
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  max="100"
+                  value={item.val}
+                  onChange={(e) => {
+                    const inputValue = e.target.value;
+                    item.setVal(inputValue);
+                    if (inputValue === '' || inputValue === '.') {
+                      handleFieldChange(item.field as any, 0);
+                    } else {
+                      const numValue = parseFloat(inputValue);
+                      if (!isNaN(numValue)) {
+                        handleFieldChange(item.field as any, numValue);
+                      }
+                    }
+                  }}
+                  onBlur={() => {
+                    if (item.val === '' || item.val === '.') {
+                      item.setVal('0');
+                      handleFieldChange(item.field as any, 0);
+                    } else {
+                      const numValue = parseFloat(item.val);
+                      if (!isNaN(numValue)) {
+                        item.setVal(String(numValue));
+                      }
+                    }
+                  }}
+                  placeholder="0"
+                  className="h-11 rounded-xl border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-[#0f0a18] text-slate-900 dark:text-white focus:ring-purple-500/20 focus:border-purple-500 transition-all text-center"
+                />
               </div>
-           )}
+            ))}
+          </div>
+
+          {hasApprovalWarning && (
+            <div className="flex items-start gap-3 p-4 rounded-xl bg-red-50 dark:bg-red-950/20 border border-red-100 dark:border-red-900/30">
+              <div className="p-2 rounded-lg bg-red-100 dark:bg-red-900/40 shadow-sm">
+                <AlertTriangle className="h-5 w-5 text-red-600 dark:text-red-400" />
+              </div>
+              <div>
+                <h4 className="text-sm font-bold text-red-800 dark:text-red-300">Onay Gerekiyor</h4>
+                <p className="text-xs text-red-600 dark:text-red-400 mt-1">İndirim oranları yetki limitlerinizi aşıyor.</p>
+              </div>
+            </div>
+          )}
         </div>
 
-        {/* Right: Summary Card & Buttons */}
-        <div className="flex flex-col gap-4">
-           {/* Summary Card */}
-           <div className="bg-zinc-100/80 dark:bg-zinc-900/80 rounded-2xl p-5 border border-zinc-200/50 dark:border-zinc-800 space-y-3 backdrop-blur-sm h-full">
-              <div className="flex justify-between items-center text-sm">
-                <span className="text-zinc-500 dark:text-zinc-400 font-medium">Ara Toplam</span>
-                <span className="font-semibold text-zinc-700 dark:text-zinc-300">{formatCurrency(formData.lineTotal || 0, currencyCode)}</span>
-              </div>
-              <div className="flex justify-between items-center text-sm">
-                 <span className="text-zinc-500 dark:text-zinc-400 font-medium">Toplam İndirim</span>
-                 <span className="font-semibold text-red-500">
-                    {hasDiscount ? '-' : ''}{formatCurrency(totalDiscount, currencyCode)}
-                 </span>
-              </div>
-              <div className="flex justify-between items-center text-sm">
-                 <span className="text-zinc-500 dark:text-zinc-400 font-medium">KDV Tutarı</span>
-                 <span className="font-semibold text-zinc-700 dark:text-zinc-300">{formatCurrency(formData.vatAmount || 0, currencyCode)}</span>
-              </div>
-              <div className="h-px bg-zinc-300 dark:bg-zinc-700/50 my-2 border-dashed" />
-              <div className="flex justify-between items-center">
-                 <span className="text-base font-bold text-zinc-900 dark:text-white">Genel Toplam</span>
-                 <span className="text-2xl font-black tracking-tight text-emerald-600 dark:text-emerald-400">
-                    {formatCurrency(formData.lineGrandTotal, currencyCode)}
-                 </span>
-              </div>
-           </div>
+        <div className="col-span-5 flex flex-col gap-4">
+          <div className="bg-slate-50 dark:bg-[#1a1025]/50 rounded-2xl p-5 border border-slate-200 dark:border-white/5 space-y-3 backdrop-blur-sm">
+            <div className="flex justify-between items-center text-sm">
+              <span className="text-slate-500 dark:text-slate-400 font-medium">Ara Toplam</span>
+              <span className="font-semibold text-slate-700 dark:text-slate-200">{formatCurrency(formData.lineTotal || 0, currencyCode)}</span>
+            </div>
+            <div className="flex justify-between items-center text-sm">
+              <span className="text-slate-500 dark:text-slate-400 font-medium">Toplam İndirim</span>
+              <span className="font-semibold text-red-500 dark:text-red-400">
+                {hasDiscount ? '-' : ''}{formatCurrency(totalDiscount, currencyCode)}
+              </span>
+            </div>
+            <div className="flex justify-between items-center text-sm">
+              <span className="text-slate-500 dark:text-slate-400 font-medium">KDV Tutarı</span>
+              <span className="font-semibold text-slate-700 dark:text-slate-200">{formatCurrency(formData.vatAmount || 0, currencyCode)}</span>
+            </div>
+            <div className="h-px bg-slate-200 dark:bg-white/10 my-2 border-dashed" />
+            <div className="flex justify-between items-center">
+              <span className="text-base font-bold text-slate-900 dark:text-white">Genel Toplam</span>
+              <span className="text-2xl font-black tracking-tight text-emerald-600 dark:text-emerald-500">
+                {formatCurrency(formData.lineGrandTotal, currencyCode)}
+              </span>
+            </div>
+          </div>
 
-           {/* Buttons */}
-           <div className="flex items-center justify-end gap-3">
-              <Button 
-                type="button" 
-                variant="ghost" 
-                onClick={onCancel} 
-                disabled={isSaving}
-                className="h-12 px-6 rounded-xl text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800 font-medium transition-all"
-              >
-                {t('quotation.cancel', 'Vazgeç')}
-              </Button>
-              <Button
-                type="button"
-                onClick={handleSave}
-                disabled={!formData.productCode || !formData.productName || isSaving}
-                className="h-12 px-8 rounded-xl bg-zinc-900 hover:bg-zinc-800 dark:bg-white dark:hover:bg-zinc-200 text-white dark:text-zinc-900 shadow-lg shadow-zinc-500/20 hover:shadow-xl font-bold transition-all active:scale-95"
-              >
-                {isSaving ? (
-                  <>
-                    <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                    {t('quotation.saving', 'Kaydediliyor...')}
-                  </>
-                ) : (
-                  <>
-                    <Check className="h-4 w-4 mr-2" />
-                    {t('quotation.save', 'Kaydet')}
-                  </>
-                )}
-              </Button>
-           </div>
+          <div className="flex items-center justify-end gap-3 mt-auto">
+            <Button 
+              type="button" 
+              variant="ghost" 
+              onClick={onCancel} 
+              disabled={isSaving}
+              className="h-12 px-6 rounded-xl text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10 font-medium transition-all"
+            >
+              {t('quotation.cancel', 'Vazgeç')}
+            </Button>
+            <Button
+              type="button"
+              onClick={handleSave}
+              disabled={!formData.productCode || !formData.productName || isSaving}
+              className="h-12 px-8 rounded-xl bg-gradient-to-r from-pink-600 to-orange-600 hover:from-pink-700 hover:to-orange-700 text-white shadow-lg shadow-pink-600/20 hover:shadow-xl font-bold transition-all active:scale-95"
+            >
+              {isSaving ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                  {t('quotation.saving', 'Kaydediliyor...')}
+                </>
+              ) : (
+                <>
+                  <Check className="h-4 w-4 mr-2" />
+                  {t('quotation.save', 'Kaydet')}
+                </>
+              )}
+            </Button>
+          </div>
         </div>
       </div>
 
       <CustomerSelectDialog
-              open={companyDialogOpen}
-              onOpenChange={setCompanyDialogOpen}
-              onSelect={handleCompanySelect}
-              className="z-[200]"
-            />
+        open={companyDialogOpen}
+        onOpenChange={setCompanyDialogOpen}
+        onSelect={handleCompanySelect}
+        className="z-[200]"
+      />
 
-            <ProductSelectDialog
+      <ProductSelectDialog
         open={productDialogOpen}
         onOpenChange={setProductDialogOpen}
         onSelect={handleProductSelect}

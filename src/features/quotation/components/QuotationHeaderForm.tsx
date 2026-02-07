@@ -93,6 +93,7 @@ export function QuotationHeaderForm({
   const watchedErpCustomerCode = form.watch('quotation.erpCustomerCode');
   const watchedCurrency = form.watch('quotation.currency');
   const watchedRepresentativeId = form.watch('quotation.representativeId');
+  const watchedDocumentSerialTypeId = form.watch('quotation.documentSerialTypeId');
 
   const { data: shippingAddresses } = useShippingAddresses(watchedCustomerId || undefined);
   const { data: relatedUsers = [] } = useQuotationRelatedUsers(user?.id);
@@ -109,6 +110,11 @@ export function QuotationHeaderForm({
     customerTypeId,
     watchedRepresentativeId ?? undefined,
     PricingRuleType.Quotation
+  );
+
+  const selectedSerialType = useMemo(() => 
+    availableDocumentSerialTypes.find(t => t.id === Number(watchedDocumentSerialTypeId)),
+    [availableDocumentSerialTypes, watchedDocumentSerialTypeId]
   );
 
   const customerDisplayValue = useMemo(() => {
@@ -134,17 +140,24 @@ export function QuotationHeaderForm({
       type: (c.customerCode?.trim() ? 'erp' : 'crm') as 'erp' | 'crm',
       id: c.id,
       code: c.customerCode ?? undefined,
+      customerTypeId: c.customerTypeId
     }));
   }, [customerOptions]);
 
   const filteredCustomerOptions = useMemo(() => {
-    if (!customerSearchQuery) return [];
+    let options = allCustomerOptions;
+
+    if (selectedSerialType?.customerTypeId && !watchedCustomerId && !watchedErpCustomerCode) {
+      options = options.filter(o => o.customerTypeId === selectedSerialType.customerTypeId);
+    }
+
+    if (!customerSearchQuery) return options.slice(0, 50);
     const lowerQuery = customerSearchQuery.toLowerCase();
-    return allCustomerOptions.filter((option) =>
+    return options.filter((option) =>
       option.label.toLowerCase().includes(lowerQuery) ||
       (option.code && option.code.toLowerCase().includes(lowerQuery))
     ).slice(0, 50);
-  }, [allCustomerOptions, customerSearchQuery]);
+  }, [allCustomerOptions, customerSearchQuery, selectedSerialType, watchedCustomerId, watchedErpCustomerCode]);
 
   const handleComboboxSelect = (option: (typeof allCustomerOptions)[0]) => {
     form.setValue('quotation.potentialCustomerId', option.id);
@@ -275,7 +288,7 @@ export function QuotationHeaderForm({
                               }))}
                             placeholder={t('quotation.select', 'Seç')}
                             searchPlaceholder={t('common.search', 'Ara...')}
-                            disabled={readOnly || customerTypeId === undefined || !watchedRepresentativeId}
+                            disabled={readOnly || !watchedRepresentativeId}
                           />
                         </div>
                         <FormMessage className="mt-1" />

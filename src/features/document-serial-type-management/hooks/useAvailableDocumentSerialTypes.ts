@@ -16,7 +16,7 @@ export const useAvailableDocumentSerialTypes = (
       ruleType
     ),
     queryFn: () => documentSerialTypeApi.getAvailable(customerTypeId ?? 0, salesRepId!, ruleType),
-    enabled: customerTypeId !== null && customerTypeId !== undefined && !!salesRepId && salesRepId > 0,
+    enabled: !!salesRepId && salesRepId > 0,
     staleTime: 30000,
   });
 };

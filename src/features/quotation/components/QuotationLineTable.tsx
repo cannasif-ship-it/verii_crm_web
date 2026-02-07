@@ -173,8 +173,6 @@ export function QuotationLineTable({
   const updateMutation = useUpdateQuotationLines(quotationId ?? 0);
   const deleteMutation = useDeleteQuotationLine(quotationId ?? 0);
   const isExistingQuotation = quotationId != null && quotationId > 0;
-  const isCreatePending = createMutation.isPending;
-  const isUpdating = updateMutation.isPending;
   const isDeleting = deleteMutation.isPending;
   const { handleProductSelect: handleProductSelectHook, handleProductSelectWithRelatedStocks } = useProductSelection({
     currency,
@@ -772,80 +770,61 @@ export function QuotationLineTable({
         onSelect={handleProductSelect}
       />
 
-      <Dialog
-        open={addLineDialogOpen}
-        onOpenChange={(open) => {
-          if (!open && isCreatePending) return;
-          setAddLineDialogOpen(open);
-        }}
-      >
-        <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto bg-white/95 dark:bg-[#0c0516]/95 backdrop-blur-xl border-slate-200 dark:border-white/10 p-0 shadow-2xl">
-          <DialogHeader className="px-6 py-5 border-b border-slate-200/50 dark:border-white/5 bg-slate-50/50 dark:bg-white/5">
-            <DialogTitle className="flex items-center gap-3 text-slate-900 dark:text-white text-lg">
-              <div className="bg-gradient-to-br from-pink-500 to-rose-600 p-2.5 rounded-xl shadow-lg shadow-pink-500/20 text-white">
-                <Plus className="h-5 w-5" />
+      <Dialog open={addLineDialogOpen} onOpenChange={setAddLineDialogOpen}>
+        <DialogContent className="sm:max-w-[800px] p-0 overflow-hidden bg-white dark:bg-[#130822] border border-slate-100 dark:border-white/10 text-slate-900 dark:text-white shadow-2xl">
+          <DialogHeader className="px-6 py-5 border-b border-slate-100 dark:border-white/5 bg-slate-50/50 dark:bg-[#1a1025]/50 flex flex-row items-center justify-between sticky top-0 z-10 backdrop-blur-sm">
+            <DialogTitle className="text-slate-900 dark:text-white flex items-center gap-3">
+              <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-pink-500 to-orange-500 p-0.5 shadow-lg shadow-pink-500/20">
+                <div className="h-full w-full bg-white dark:bg-[#130822] rounded-[10px] flex items-center justify-center">
+                  <Plus className="h-5 w-5 text-pink-600 dark:text-pink-500" />
+                </div>
               </div>
-              {t('quotation.lines.addLine', 'Yeni Satır Ekle')}
+              {t('quotation.lines.addTitle', 'Yeni Satır Ekle')}
             </DialogTitle>
-            <DialogDescription className="text-slate-500 dark:text-slate-400">
-              {t('quotation.lines.addLineDescription', 'Teklif satırı bilgilerini giriniz')}
-            </DialogDescription>
           </DialogHeader>
-          <div className="p-6">
-          {newLine && (
-            <QuotationLineForm
-              line={newLine}
-              onSave={(line) => void handleSaveNewLine(line)}
-              onSaveMultiple={(linesToSave) => void handleSaveMultipleLines(linesToSave)}
-              onCancel={handleCancelNewLine}
-              currency={currency}
-              exchangeRates={exchangeRates}
-              pricingRules={pricingRules}
-              userDiscountLimits={userDiscountLimits}
-              isSaving={isExistingQuotation && isCreatePending}
-            />
-          )}
+          <div className="p-6 sm:p-8">
+            {newLine && (
+              <QuotationLineForm
+                line={newLine}
+                onSave={handleSaveNewLine}
+                onCancel={handleCancelNewLine}
+                currency={currency}
+                exchangeRates={exchangeRates}
+                pricingRules={pricingRules}
+                userDiscountLimits={userDiscountLimits}
+                onSaveMultiple={handleSaveMultipleLines}
+                isSaving={createMutation.isPending}
+              />
+            )}
           </div>
         </DialogContent>
       </Dialog>
 
-      <Dialog
-        open={editLineDialogOpen}
-        onOpenChange={(open) => {
-          if (!open && isUpdating) return;
-          setEditLineDialogOpen(open);
-        }}
-      >
-        <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto bg-white/95 dark:bg-[#0c0516]/95 backdrop-blur-xl border-slate-200 dark:border-white/10 p-0 shadow-2xl">
-          <DialogHeader className="px-6 py-5 border-b border-slate-200/50 dark:border-white/5 bg-slate-50/50 dark:bg-white/5">
-            <DialogTitle className="flex items-center gap-3 text-slate-900 dark:text-white text-lg">
-              <div className="bg-gradient-to-br from-blue-500 to-indigo-600 p-2.5 rounded-xl shadow-lg shadow-blue-500/20 text-white">
-                <Edit className="h-5 w-5" />
+      <Dialog open={editLineDialogOpen} onOpenChange={setEditLineDialogOpen}>
+        <DialogContent className="sm:max-w-[800px] p-0 overflow-hidden bg-white dark:bg-[#130822] border border-slate-100 dark:border-white/10 text-slate-900 dark:text-white shadow-2xl">
+          <DialogHeader className="px-6 py-5 border-b border-slate-100 dark:border-white/5 bg-slate-50/50 dark:bg-[#1a1025]/50 flex flex-row items-center justify-between sticky top-0 z-10 backdrop-blur-sm">
+            <DialogTitle className="text-slate-900 dark:text-white flex items-center gap-3">
+              <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-500 p-0.5 shadow-lg shadow-blue-500/20">
+                <div className="h-full w-full bg-white dark:bg-[#130822] rounded-[10px] flex items-center justify-center">
+                  <Edit className="h-5 w-5 text-blue-600 dark:text-blue-500" />
+                </div>
               </div>
-              {t('quotation.lines.editLine', 'Satırı Düzenle')}
+              {t('quotation.lines.editTitle', 'Satır Düzenle')}
             </DialogTitle>
-            <DialogDescription className="text-slate-500 dark:text-slate-400">
-              {t('quotation.lines.editLineDescription', 'Teklif satırı bilgilerini düzenleyiniz')}
-            </DialogDescription>
           </DialogHeader>
-          <div className="p-6">
-          {lineToEdit && (
-            <QuotationLineForm
-              line={lineToEdit}
-              onSave={(line) => void handleSaveLine(line)}
-              onSaveMultiple={(linesToSave) => {
-                if (linesToSave.length > 0) {
-                  void handleSaveLine(linesToSave[0], linesToSave.slice(1));
-                }
-              }}
-              onCancel={handleCancelEditLine}
-              currency={currency}
-              exchangeRates={exchangeRates}
-              pricingRules={pricingRules}
-              userDiscountLimits={userDiscountLimits}
-              isSaving={isUpdating}
-            />
-          )}
+          <div className="p-6 sm:p-8">
+            {lineToEdit && (
+              <QuotationLineForm
+                line={lineToEdit}
+                onSave={(line) => handleSaveLine(line, lineToEdit.relatedLines)}
+                onCancel={handleCancelEditLine}
+                currency={currency}
+                exchangeRates={exchangeRates}
+                pricingRules={pricingRules}
+                userDiscountLimits={userDiscountLimits}
+                isSaving={updateMutation.isPending}
+              />
+            )}
           </div>
         </DialogContent>
       </Dialog>
