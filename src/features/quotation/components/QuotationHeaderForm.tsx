@@ -25,6 +25,7 @@ import { VoiceSearchCombobox } from '@/components/shared/VoiceSearchCombobox';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import {
   Dialog,
   DialogContent,
@@ -45,10 +46,12 @@ import { useAvailableDocumentSerialTypes } from '@/features/document-serial-type
 import { PricingRuleType } from '@/features/pricing-rule/types/pricing-rule-types';
 import type { KurDto } from '@/services/erp-types';
 import { ExchangeRateDialog } from './ExchangeRateDialog';
+import { QuotationNotesDialog, type NoteLine } from './QuotationNotesDialog';
 import { 
   User, Truck, Briefcase, Globe, 
   Calendar, CreditCard, Hash, FileText, ArrowRightLeft, 
-  Layers, SearchX, Coins, BookUser, Building2, Phone, Mail, Folder
+  Layers, SearchX, Coins, BookUser, Building2, Phone, Mail, Folder,
+  ListPlus, X
 } from 'lucide-react';
 import { useAuthStore } from '@/stores/auth-store';
 import type { CreateQuotationSchema } from '../schemas/quotation-schema';
@@ -88,7 +91,19 @@ export function QuotationHeaderForm({
   const [pendingCurrency, setPendingCurrency] = useState<string | null>(null);
   const [customerComboboxOpen, setCustomerComboboxOpen] = useState(false);
   const [customerSearchQuery, setCustomerSearchQuery] = useState("");
+  const [notesDialogOpen, setNotesDialogOpen] = useState(false);
+  const [noteLines, setNoteLines] = useState<NoteLine[]>(
+    Array.from({ length: 16 }, (_, i) => ({
+      id: i + 1,
+      text: "",
+      isSelected: false,
+    }))
+  );
   const isInitialLoadRef = useRef(true);
+
+  const handleRemoveNote = (id: number) => {
+    setNoteLines(prev => prev.map(n => n.id === id ? { ...n, isSelected: false } : n));
+  };
 
   const watchedCustomerId = form.watch('quotation.potentialCustomerId');
   const watchedErpCustomerCode = form.watch('quotation.erpCustomerCode');
@@ -308,17 +323,54 @@ export function QuotationHeaderForm({
                     name="quotation.description"
                     render={({ field }) => (
                       <FormItem className="space-y-0 relative group">
-                        <FormLabel className={styles.label}>
-                          Notlar
-                        </FormLabel>
+                        <div className="flex items-center justify-between mb-2">
+                          <FormLabel className={cn(styles.label, "mb-0")}>
+                            Notlar
+                          </FormLabel>
+                        </div>
+                        
+                        {/* Selected Notes Badges */}
+                        {noteLines.some(n => n.isSelected) && (
+                          <div className="flex flex-wrap gap-2 mb-2.5">
+                            {noteLines.filter(n => n.isSelected).map(note => (
+                              <Badge 
+                                key={note.id} 
+                                variant="secondary" 
+                                className="bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 hover:bg-purple-200 dark:hover:bg-purple-900/50 transition-colors pr-1 h-6 text-xs border border-purple-200 dark:border-purple-500/20"
+                              >
+                                <span className="mr-1.5">{note.text || `${t('quotation.notes.noteLabel', 'Not')} ${note.id}`}</span>
+                                <button 
+                                  type="button"
+                                  onClick={() => handleRemoveNote(note.id)}
+                                  className="p-0.5 rounded-full hover:bg-purple-200 dark:hover:bg-purple-800 transition-colors"
+                                >
+                                  <X className="h-3 w-3" />
+                                </button>
+                              </Badge>
+                            ))}
+                          </div>
+                        )}
+
                         <FormControl>
-                          <Textarea
-                            {...field}
-                            value={field.value || ''}
-                            placeholder={t('quotation.header.descriptionPlaceholder', 'Özel koşullar...')}
-                            className="min-h-[46px] rounded-xl border-zinc-200 dark:border-zinc-800 bg-white/50 dark:bg-zinc-950/30 resize-none focus-visible:border-pink-500 focus-visible:ring-4 focus-visible:ring-pink-500/20 transition-all text-sm py-2.5"
-                            disabled={readOnly}
-                          />
+                          <div className="relative">
+                            <Textarea
+                              {...field}
+                              value={field.value || ''}
+                              placeholder={t('quotation.header.descriptionPlaceholder', 'Özel koşullar...')}
+                              className="min-h-[46px] rounded-xl border-zinc-200 dark:border-zinc-800 bg-white/50 dark:bg-zinc-950/30 resize-none focus-visible:border-pink-500 focus-visible:ring-4 focus-visible:ring-pink-500/20 transition-all text-sm py-2.5 pr-10"
+                              disabled={readOnly}
+                            />
+                            <Button 
+                              type="button"
+                              size="icon"
+                              variant="ghost"
+                              className="absolute right-1 top-1 h-7 w-7 text-zinc-400 hover:text-purple-600 dark:hover:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/20 rounded-lg transition-colors"
+                              onClick={() => setNotesDialogOpen(true)}
+                              disabled={readOnly}
+                            >
+                              <ListPlus className="h-4 w-4" />
+                            </Button>
+                          </div>
                         </FormControl>
                         <FormMessage className="mt-1" />
                       </FormItem>
@@ -786,6 +838,13 @@ export function QuotationHeaderForm({
           readOnly={readOnly}
         />
       )}
+
+      <QuotationNotesDialog
+        open={notesDialogOpen}
+        onOpenChange={setNotesDialogOpen}
+        initialNotes={noteLines}
+        onSave={setNoteLines}
+      />
 
       <Dialog open={currencyChangeDialogOpen} onOpenChange={setCurrencyChangeDialogOpen}>
         <DialogContent className="sm:max-w-[425px] bg-white/80 dark:bg-[#0c0516]/80 backdrop-blur-xl border-slate-200 dark:border-white/10 p-0 overflow-hidden shadow-2xl">
