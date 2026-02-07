@@ -32,7 +32,12 @@
     "actions": "Actions",
     "processing": "Processing...",
     "selectDate": "Select date",
-    "UnexpectedError": "An unexpected error occurred"
+    "UnexpectedError": "An unexpected error occurred",
+    "forbiddenTitle": "Access denied",
+    "forbiddenDescription": "You do not have permission to view this page.",
+    "forbiddenFrom": "Requested path",
+    "goBack": "Go back",
+    "goHome": "Go home"
   },
   "auth": {
     "login": {

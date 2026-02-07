@@ -1,4 +1,4 @@
-import { type ReactElement, useState, useEffect } from 'react';
+import { type ReactElement, useMemo, useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useUIStore } from '@/stores/ui-store';
 import { Button } from '@/components/ui/button';
@@ -26,13 +26,16 @@ export function UserGroupAssignmentsPage(): ReactElement {
     return () => setPageTitle(null);
   }, [t, setPageTitle]);
 
-  const serverGroupIds = userGroups?.permissionGroupIds ?? [];
-  const serverGroupIdsKey = serverGroupIds.join(',');
+  const serverGroupIdsKey = (userGroups?.permissionGroupIds ?? []).join(',');
+  const parsedServerGroupIds = useMemo<number[]>(
+    () => (serverGroupIdsKey ? serverGroupIdsKey.split(',').map((x) => parseInt(x, 10)) : []),
+    [serverGroupIdsKey]
+  );
 
   useEffect(() => {
-    setSelectedGroupIds(serverGroupIds.length > 0 ? [...serverGroupIds] : []);
+    setSelectedGroupIds(parsedServerGroupIds.length > 0 ? [...parsedServerGroupIds] : []);
     setHasChanges(false);
-  }, [serverGroupIdsKey]);
+  }, [parsedServerGroupIds]);
 
   const handleGroupIdsChange = (ids: number[]): void => {
     setSelectedGroupIds(ids);

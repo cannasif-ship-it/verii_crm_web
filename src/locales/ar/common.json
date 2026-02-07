@@ -32,7 +32,12 @@
     "actions": "إجراءات",
     "processing": "جاري المعالجة...",
     "selectDate": "اختر التاريخ",
-    "UnexpectedError": "An unexpected error occurred"
+    "UnexpectedError": "An unexpected error occurred",
+    "forbiddenTitle": "تم رفض الوصول",
+    "forbiddenDescription": "ليست لديك صلاحية لعرض هذه الصفحة.",
+    "forbiddenFrom": "المسار المطلوب",
+    "goBack": "رجوع",
+    "goHome": "الصفحة الرئيسية"
   },
   "auth": {
     "login": {

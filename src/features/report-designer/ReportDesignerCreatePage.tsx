@@ -146,7 +146,7 @@ export function ReportDesignerCreatePage(): ReactElement {
       navigate(location.pathname, { replace: true, state: {} });
       return;
     }
-  }, [copyFrom]);
+  }, [copyFrom, form, setElements, navigate, location.pathname]);
 
   useEffect(() => {
     if (!isEdit && !copyFrom) {
@@ -156,14 +156,14 @@ export function ReportDesignerCreatePage(): ReactElement {
       }
       setElements([]);
     }
-  }, [isEdit, copyFrom]);
+  }, [isEdit, copyFrom, setElements]);
 
   useEffect(() => {
     if (!isEdit || !templateById || editId == null) return;
     if (appliedEditIdRef.current === editId) return;
     appliedEditIdRef.current = editId;
     applyTemplateToFormAndStore(templateById, form, setElements);
-  }, [isEdit, editId, templateById]);
+  }, [isEdit, editId, templateById, form, setElements]);
 
   useEffect(() => {
     if (!isEdit) appliedEditIdRef.current = null;

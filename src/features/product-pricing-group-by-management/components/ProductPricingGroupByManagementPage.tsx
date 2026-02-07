@@ -14,6 +14,8 @@ import type { ProductPricingGroupByFormSchema } from '../types/product-pricing-g
 import { useQueryClient } from '@tanstack/react-query';
 import { queryKeys } from '../utils/query-keys';
 
+const EMPTY_ITEMS: ProductPricingGroupByDto[] = [];
+
 export function ProductPricingGroupByManagementPage(): ReactElement {
   const { t } = useTranslation();
   const { setPageTitle } = useUIStore();
@@ -34,7 +36,10 @@ export function ProductPricingGroupByManagementPage(): ReactElement {
     sortDirection: 'desc',
   });
 
-  const items = apiResponse?.data || [];
+  const items = useMemo<ProductPricingGroupByDto[]>(
+    () => apiResponse?.data ?? EMPTY_ITEMS,
+    [apiResponse?.data]
+  );
 
   const usedErpGroupCodes = useMemo((): string[] => {
     return [...new Set(items.map((x) => x.erpGroupCode))];
@@ -53,7 +58,7 @@ export function ProductPricingGroupByManagementPage(): ReactElement {
   }, [t, setPageTitle]);
 
   const filteredItems = useMemo(() => {
-    let result = [...items];
+    let result: ProductPricingGroupByDto[] = [...items];
 
     if (searchTerm) {
       const lowerTerm = searchTerm.toLowerCase();
@@ -63,7 +68,7 @@ export function ProductPricingGroupByManagementPage(): ReactElement {
     }
 
     if (activeFilter === 'inactive') {
-      result = []; // Assuming API only returns active items
+      result = [];
     }
 
     return result;

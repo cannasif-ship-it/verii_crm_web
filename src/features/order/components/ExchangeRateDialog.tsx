@@ -123,6 +123,7 @@ export function ExchangeRateDialog({
         onSave(localRates);
         onOpenChange(false);
       } catch {
+        void 0;
       }
       return;
     }

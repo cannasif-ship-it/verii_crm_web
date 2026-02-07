@@ -1,4 +1,4 @@
-import { type ReactElement, useState, useEffect } from 'react';
+import { type ReactElement, useMemo, useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -21,6 +21,8 @@ interface GroupPermissionsPanelProps {
   onOpenChange: (open: boolean) => void;
 }
 
+const EMPTY_IDS: number[] = [];
+
 export function GroupPermissionsPanel({
   groupId,
   open,
@@ -31,12 +33,11 @@ export function GroupPermissionsPanel({
   const setPermissions = useSetPermissionGroupPermissionsMutation();
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
 
-  const serverIds = group?.permissionDefinitionIds ?? [];
-  const serverIdsKey = serverIds.join(',');
+  const serverIds = useMemo(() => group?.permissionDefinitionIds ?? EMPTY_IDS, [group?.permissionDefinitionIds]);
 
   useEffect(() => {
     setSelectedIds(serverIds.length > 0 ? [...serverIds] : []);
-  }, [open, serverIdsKey]);
+  }, [open, serverIds]);
 
   const handleSave = async (): Promise<void> => {
     if (groupId == null) return;

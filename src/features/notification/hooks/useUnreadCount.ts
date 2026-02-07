@@ -7,7 +7,7 @@ export function useUnreadCount(): UseQueryResult<number, Error> {
     queryFn: async (): Promise<number> => {
       try {
         return await notificationApi.getUnreadCount();
-      } catch (error) {
+      } catch {
         return 0;
       }
     },

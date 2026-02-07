@@ -35,10 +35,8 @@ import { useDeleteQuotationLine } from '../hooks/useDeleteQuotationLine';
 import { quotationApi } from '../api/quotation-api';
 import { formatCurrency } from '../utils/format-currency';
 import { Trash2, Edit, Plus, ShoppingCart, Box, AlertTriangle, Layers, Loader2, Menu, FileSpreadsheet, FileText, Presentation } from 'lucide-react';
-import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
-import PptxGenJS from 'pptxgenjs';
 import type { QuotationLineFormState, QuotationExchangeRateFormState, PricingRuleLineGetDto, UserDiscountLimitDto, CreateQuotationLineDto, QuotationLineGetDto } from '../types/quotation-types';
 import { cn } from '@/lib/utils';
 
@@ -195,7 +193,7 @@ export function QuotationLineTable({
 
   const isCurrencySelected = currency !== undefined && currency !== null && !Number.isNaN(currency);
 
-  const handleExportExcel = () => {
+  const handleExportExcel = async () => {
     const dataToExport = lines.map(line => ({
       [t('quotation.lines.productCode', 'Ürün Kodu')]: line.productCode,
       [t('quotation.lines.productName', 'Ürün Adı')]: line.productName,
@@ -206,6 +204,7 @@ export function QuotationLineTable({
       [t('quotation.lines.description', 'Açıklama')]: line.description || '',
     }));
 
+    const XLSX = await import('xlsx');
     const ws = XLSX.utils.json_to_sheet(dataToExport);
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Teklif Kalemleri");
@@ -243,7 +242,8 @@ export function QuotationLineTable({
     doc.save("teklif-kalemleri.pdf");
   };
 
-  const handleExportPowerPoint = () => {
+  const handleExportPowerPoint = async () => {
+    const { default: PptxGenJS } = await import('pptxgenjs');
     const pptx = new PptxGenJS();
     const slide = pptx.addSlide();
     
@@ -323,6 +323,7 @@ export function QuotationLineTable({
           setAddLineDialogOpen(false);
           setNewLine(null);
         } catch {
+          void 0;
         }
         return;
       }
@@ -346,6 +347,7 @@ export function QuotationLineTable({
           setAddLineDialogOpen(false);
           setNewLine(null);
         } catch {
+          void 0;
         }
         return;
       }
@@ -462,6 +464,7 @@ export function QuotationLineTable({
         setEditLineDialogOpen(false);
         setLineToEdit(null);
       } catch {
+        void 0;
       }
       return;
     }

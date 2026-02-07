@@ -32,6 +32,8 @@ import { GroupPermissionsPanel } from './GroupPermissionsPanel';
 import type { PermissionGroupDto } from '../types/access-control.types';
 import type { CreatePermissionGroupSchema } from '../schemas/permission-group-schema';
 
+const EMPTY_ITEMS: PermissionGroupDto[] = [];
+
 export function PermissionGroupsPage(): ReactElement {
   const { t } = useTranslation(['access-control', 'common']);
   const { setPageTitle } = useUIStore();
@@ -57,7 +59,7 @@ export function PermissionGroupsPage(): ReactElement {
   const updateMutation = useUpdatePermissionGroupMutation();
   const deleteMutation = useDeletePermissionGroupMutation();
 
-  const items = data?.data ?? [];
+  const items = data?.data ?? EMPTY_ITEMS;
   const totalCount = data?.totalCount ?? 0;
   const totalPages = data?.totalPages ?? 1;
 

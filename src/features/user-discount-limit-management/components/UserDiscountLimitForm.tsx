@@ -97,7 +97,8 @@ export function UserDiscountLimitForm({
           toast.error(t('userDiscountLimitManagement.alreadyExists', 'Bu satış temsilcisi ve ürün grubu kombinasyonu için zaten bir iskonto limiti mevcut'));
           return;
         }
-      } catch (error) {
+      } catch {
+        void 0;
       }
     }
     await onSubmit(data);

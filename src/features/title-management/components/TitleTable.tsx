@@ -85,14 +85,14 @@ export function TitleTable({
   );
 
   const processedTitles = useMemo(() => {
-    let result = [...titles];
+    const result = [...titles];
 
     if (sortConfig) {
       result.sort((a, b) => {
-        // @ts-ignore
-        const aValue = a[sortConfig.key] ? String(a[sortConfig.key]).toLowerCase() : '';
-        // @ts-ignore
-        const bValue = b[sortConfig.key] ? String(b[sortConfig.key]).toLowerCase() : '';
+        const aRaw = a[sortConfig.key];
+        const bRaw = b[sortConfig.key];
+        const aValue = aRaw != null ? String(aRaw).toLowerCase() : '';
+        const bValue = bRaw != null ? String(bRaw).toLowerCase() : '';
 
         if (aValue < bValue) return sortConfig.direction === 'asc' ? -1 : 1;
         if (aValue > bValue) return sortConfig.direction === 'asc' ? 1 : -1;
@@ -133,7 +133,7 @@ export function TitleTable({
   };
 
   const renderCellContent = (item: TitleDto, column: ColumnDef<TitleDto>) => {
-    // @ts-ignore
+    if (column.key === 'actions') return '-';
     const value = item[column.key];
 
     if (!value && value !== 0) return '-';

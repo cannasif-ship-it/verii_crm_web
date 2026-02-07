@@ -16,6 +16,8 @@ import { PricingRuleForm } from './PricingRuleForm';
 import type { PricingRuleHeaderGetDto } from '../types/pricing-rule-types';
 import { usePricingRuleHeaders } from '../hooks/usePricingRuleHeaders';
 
+const EMPTY_HEADERS: PricingRuleHeaderGetDto[] = [];
+
 export function PricingRuleManagementPage(): ReactElement {
   const { t } = useTranslation();
   const { setPageTitle } = useUIStore();
@@ -36,7 +38,10 @@ export function PricingRuleManagementPage(): ReactElement {
     pageSize: 10000
   });
 
-  const headers = apiResponse?.data || [];
+  const headers = useMemo<PricingRuleHeaderGetDto[]>(
+    () => apiResponse?.data ?? EMPTY_HEADERS,
+    [apiResponse?.data]
+  );
 
   useEffect(() => {
     setPageTitle(t('pricingRule.list.title', 'Fiyat Kuralları'));

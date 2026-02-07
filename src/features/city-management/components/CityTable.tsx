@@ -87,14 +87,14 @@ export function CityTable({
   );
 
   const processedCities = useMemo(() => {
-    let result = [...cities];
+    const result = [...cities];
 
     if (sortConfig) {
       result.sort((a, b) => {
-        // @ts-ignore
-        const aValue = a[sortConfig.key] ? String(a[sortConfig.key]).toLowerCase() : '';
-        // @ts-ignore
-        const bValue = b[sortConfig.key] ? String(b[sortConfig.key]).toLowerCase() : '';
+        const aRaw = a[sortConfig.key];
+        const bRaw = b[sortConfig.key];
+        const aValue = aRaw != null ? String(aRaw).toLowerCase() : '';
+        const bValue = bRaw != null ? String(bRaw).toLowerCase() : '';
 
         if (aValue < bValue) return sortConfig.direction === 'asc' ? -1 : 1;
         if (aValue > bValue) return sortConfig.direction === 'asc' ? 1 : -1;
@@ -119,7 +119,7 @@ export function CityTable({
         toast.success(t('cityManagement.delete.success', 'Şehir başarıyla silindi'));
         setDeleteDialogOpen(false);
         setSelectedCity(null);
-      } catch (error) {
+      } catch {
         toast.error(t('cityManagement.delete.error', 'Şehir silinirken bir hata oluştu'));
       }
     }
@@ -140,7 +140,7 @@ export function CityTable({
   };
 
   const renderCellContent = (item: CityDto, column: ColumnDef<CityDto>) => {
-    // @ts-ignore
+    if (column.key === 'actions') return '-';
     const value = item[column.key];
 
     if (!value && value !== 0) return '-';

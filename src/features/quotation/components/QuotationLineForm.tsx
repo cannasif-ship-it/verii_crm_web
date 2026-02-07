@@ -28,6 +28,28 @@ interface TemporaryStockData {
   currencyCode: string;
 }
 
+const areTemporaryStockDataEqual = (
+  a: TemporaryStockData[],
+  b: TemporaryStockData[]
+): boolean => {
+  if (a === b) return true;
+  if (a.length !== b.length) return false;
+  for (let i = 0; i < a.length; i++) {
+    const left = a[i];
+    const right = b[i];
+    if (!left || !right) return false;
+    if (left.productCode !== right.productCode) return false;
+    if ((left.groupCode ?? '') !== (right.groupCode ?? '')) return false;
+    if (left.quantity !== right.quantity) return false;
+    if (left.unitPrice !== right.unitPrice) return false;
+    if (left.discountRate1 !== right.discountRate1) return false;
+    if (left.discountRate2 !== right.discountRate2) return false;
+    if (left.discountRate3 !== right.discountRate3) return false;
+    if (left.currencyCode !== right.currencyCode) return false;
+  }
+  return true;
+};
+
 interface QuotationLineFormProps {
   line: QuotationLineFormState;
   onSave: (line: QuotationLineFormState) => void;
@@ -85,6 +107,18 @@ export function QuotationLineForm({
   const [discountRate2InputValue, setDiscountRate2InputValue] = useState<string>(String(line.discountRate2 || ''));
   const [discountRate3InputValue, setDiscountRate3InputValue] = useState<string>(String(line.discountRate3 || ''));
   const prevDiscountRatesRef = useRef({ discountRate1: line.discountRate1, discountRate2: line.discountRate2, discountRate3: line.discountRate3 });
+
+  type DiscountField = 'discountRate1' | 'discountRate2' | 'discountRate3';
+  const discountInputs: Array<{
+    val: string;
+    setVal: (value: string) => void;
+    field: DiscountField;
+    label: string;
+  }> = [
+    { val: discountRate1InputValue, setVal: setDiscountRate1InputValue, field: 'discountRate1', label: '1. İndirim' },
+    { val: discountRate2InputValue, setVal: setDiscountRate2InputValue, field: 'discountRate2', label: '2. İndirim' },
+    { val: discountRate3InputValue, setVal: setDiscountRate3InputValue, field: 'discountRate3', label: '3. İndirim' },
+  ];
 
   const mainStockData = useMemo(() => {
     return temporaryStockData.find((data) => data.productCode === formData.productCode);
@@ -283,9 +317,12 @@ export function QuotationLineForm({
               })
             );
             
-            setTemporaryStockData([mainStockData, ...relatedStocksData]);
-            setLastLoadedProductCode(line.productCode);
-          } catch (error) {
+            setTemporaryStockData((prev) => {
+              const next = [mainStockData, ...relatedStocksData];
+              return areTemporaryStockDataEqual(prev, next) ? prev : next;
+            });
+            setLastLoadedProductCode((prev) => (prev === line.productCode ? prev : line.productCode));
+          } catch {
             const mainStockData: TemporaryStockData = {
               productCode: line.productCode,
               groupCode: line.groupCode || undefined,
@@ -311,8 +348,11 @@ export function QuotationLineForm({
               };
             });
 
-            setTemporaryStockData([mainStockData, ...relatedStocksData]);
-            setLastLoadedProductCode(line.productCode);
+            setTemporaryStockData((prev) => {
+              const next = [mainStockData, ...relatedStocksData];
+              return areTemporaryStockDataEqual(prev, next) ? prev : next;
+            });
+            setLastLoadedProductCode((prev) => (prev === line.productCode ? prev : line.productCode));
           }
         } else {
           const existingMainStockData = temporaryStockData.find((data) => data.productCode === line.productCode);
@@ -349,15 +389,18 @@ export function QuotationLineForm({
             };
           });
 
-          setTemporaryStockData([mainStockData, ...relatedStocksData]);
+          setTemporaryStockData((prev) => {
+            const next = [mainStockData, ...relatedStocksData];
+            return areTemporaryStockDataEqual(prev, next) ? prev : next;
+          });
         }
       } else {
-        setTemporaryStockData([]);
+        setTemporaryStockData((prev) => (prev.length === 0 ? prev : []));
       }
     };
 
     void loadTemporaryStockData();
-  }, [line, currency, currencyOptions, exchangeRates, erpRates]);
+  }, [line, currency, currencyOptions, exchangeRates, erpRates, lastLoadedProductCode, temporaryStockData]);
 
   useEffect(() => {
     if (
@@ -459,7 +502,10 @@ export function QuotationLineForm({
           currencyCode: targetCurrencyCode,
         }));
 
-        setTemporaryStockData([mainStockData, ...relatedStocksData]);
+        setTemporaryStockData((prev) => {
+          const next = [mainStockData, ...relatedStocksData];
+          return areTemporaryStockDataEqual(prev, next) ? prev : next;
+        });
       }
     } else {
       const newLine = await handleProductSelectHook(product);
@@ -485,7 +531,10 @@ export function QuotationLineForm({
         currencyCode: targetCurrencyCode,
       };
 
-      setTemporaryStockData([mainStockData]);
+      setTemporaryStockData((prev) => {
+        const next = [mainStockData];
+        return areTemporaryStockDataEqual(prev, next) ? prev : next;
+      });
     }
   };
 
@@ -788,38 +837,34 @@ export function QuotationLineForm({
             {t('quotation.lines.discounts', 'Satır İndirimleri')}
           </h5>
           <div className="grid grid-cols-3 gap-3">
-            {[
-              { val: discountRate1InputValue, setVal: setDiscountRate1InputValue, field: 'discountRate1', label: '1. İndirim' },
-              { val: discountRate2InputValue, setVal: setDiscountRate2InputValue, field: 'discountRate2', label: '2. İndirim' },
-              { val: discountRate3InputValue, setVal: setDiscountRate3InputValue, field: 'discountRate3', label: '3. İndirim' }
-            ].map((item, idx) => (
-              <div key={idx} className="space-y-1.5">
-                <label className="text-xs font-medium text-slate-400 dark:text-slate-500 ml-1">{item.label}</label>
-                <Input
+	            {discountInputs.map((item, idx) => (
+	              <div key={idx} className="space-y-1.5">
+	                <label className="text-xs font-medium text-slate-400 dark:text-slate-500 ml-1">{item.label}</label>
+	                <Input
                   type="number"
                   step="0.01"
                   min="0"
                   max="100"
-                  value={item.val}
-                  onChange={(e) => {
-                    const inputValue = e.target.value;
-                    item.setVal(inputValue);
-                    if (inputValue === '' || inputValue === '.') {
-                      handleFieldChange(item.field as any, 0);
-                    } else {
-                      const numValue = parseFloat(inputValue);
-                      if (!isNaN(numValue)) {
-                        handleFieldChange(item.field as any, numValue);
-                      }
-                    }
-                  }}
-                  onBlur={() => {
-                    if (item.val === '' || item.val === '.') {
-                      item.setVal('0');
-                      handleFieldChange(item.field as any, 0);
-                    } else {
-                      const numValue = parseFloat(item.val);
-                      if (!isNaN(numValue)) {
+	                  value={item.val}
+	                  onChange={(e) => {
+	                    const inputValue = e.target.value;
+	                    item.setVal(inputValue);
+	                    if (inputValue === '' || inputValue === '.') {
+	                      handleFieldChange(item.field, 0);
+	                    } else {
+	                      const numValue = parseFloat(inputValue);
+	                      if (!isNaN(numValue)) {
+	                        handleFieldChange(item.field, numValue);
+	                      }
+	                    }
+	                  }}
+	                  onBlur={() => {
+	                    if (item.val === '' || item.val === '.') {
+	                      item.setVal('0');
+	                      handleFieldChange(item.field, 0);
+	                    } else {
+	                      const numValue = parseFloat(item.val);
+	                      if (!isNaN(numValue)) {
                         item.setVal(String(numValue));
                       }
                     }

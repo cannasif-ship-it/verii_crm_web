@@ -185,7 +185,7 @@ export function ContactTable({
   };
   
   const processedContacts = useMemo(() => {
-    let result = [...contacts];
+    const result = [...contacts];
 
     if (sortConfig) {
       result.sort((a, b) => {

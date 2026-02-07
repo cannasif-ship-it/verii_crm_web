@@ -23,10 +23,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
-import PptxGenJS from 'pptxgenjs';
 import { 
   Mail01Icon, 
   Call02Icon, 
@@ -35,6 +33,8 @@ import {
   Briefcase01Icon,
   UserCircleIcon, 
 } from 'hugeicons-react';
+
+const EMPTY_CONTACTS: ContactDto[] = [];
 
 interface ContactFilterState {
   fullName: string;
@@ -83,7 +83,10 @@ export function ContactManagementPage(): ReactElement {
     pageSize: 10000 
   });
 
-  const contacts = apiResponse?.data ?? [];
+  const contacts = useMemo<ContactDto[]>(
+    () => apiResponse?.data ?? EMPTY_CONTACTS,
+    [apiResponse?.data]
+  );
 
   useEffect(() => {
     setPageTitle(t('contactManagement.menu', 'İletişim Yönetimi'));
@@ -190,7 +193,7 @@ export function ContactManagementPage(): ReactElement {
     );
   };
 
-  const handleExportExcel = () => {
+  const handleExportExcel = async () => {
     const dataToExport = filteredContacts.map(contact => {
         const row: Record<string, string | number | boolean | null | undefined> = {};
         visibleColumns.forEach(key => {
@@ -205,6 +208,7 @@ export function ContactManagementPage(): ReactElement {
         return row;
     });
 
+    const XLSX = await import('xlsx');
     const ws = XLSX.utils.json_to_sheet(dataToExport);
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Contacts");
@@ -234,7 +238,8 @@ export function ContactManagementPage(): ReactElement {
 
   type PptxTableRow = Array<{ text: string }>;
 
-  const handleExportPowerPoint = () => {
+  const handleExportPowerPoint = async () => {
+    const { default: PptxGenJS } = await import('pptxgenjs');
     const pptx = new PptxGenJS();
     const slide = pptx.addSlide();
     

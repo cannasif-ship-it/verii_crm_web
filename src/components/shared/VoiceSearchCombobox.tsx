@@ -80,6 +80,7 @@ export function VoiceSearchCombobox({
           if (event.error === 'not-allowed') {
             toast.error(t('common.voiceSearchPermissionDenied', 'Mikrofon izni reddedildi.'));
           } else if (event.error === 'no-speech') {
+            void 0;
           } else {
             toast.error(t('common.voiceSearchError', 'Sesli arama sırasında bir hata oluştu.'));
           }
@@ -92,7 +93,7 @@ export function VoiceSearchCombobox({
         recognitionRef.current = recognition;
       }
     }
-  }, [i18n.language]);
+  }, [i18n.language, t]);
 
   const handleVoiceSearch = (e: React.MouseEvent): void => {
     e.preventDefault();

@@ -48,7 +48,6 @@ interface UserFormProps {
   isLoading?: boolean;
 }
 
-const EMPTY_NUMBER_ARRAY: number[] = [];
 const EMPTY_ROLE_OPTIONS: RoleOption[] = [];
 
 export function UserForm({
@@ -59,13 +58,21 @@ export function UserForm({
   isLoading = false,
 }: UserFormProps): ReactElement {
   const { t } = useTranslation('user-management');
-  const isEditMode = !!user;
+  const userId = user?.id ?? null;
+  const userUsername = user?.username ?? '';
+  const userEmail = user?.email ?? '';
+  const userFirstName = user?.firstName ?? '';
+  const userLastName = user?.lastName ?? '';
+  const userPhoneNumber = user?.phoneNumber ?? '';
+  const userRoleLabel = user?.role ?? '';
+  const userRoleId = user?.roleId ?? 0;
+  const userIsActive = user?.isActive ?? true;
+  const isEditMode = userId != null;
   const roleOptionsQuery = useUserAuthorityOptionsQuery();
   const roleOptions = roleOptionsQuery.data ?? EMPTY_ROLE_OPTIONS;
   const userPermissionGroupsQuery = useUserPermissionGroupsForForm(
-    user?.id ?? null
+    userId
   );
-  const userGroupIds = userPermissionGroupsQuery.data ?? EMPTY_NUMBER_ARRAY;
 
   const form = useForm<UserFormSchema | UserUpdateFormSchema>({
     resolver: zodResolver(isEditMode ? userUpdateFormSchema : userFormSchema),
@@ -87,17 +94,16 @@ export function UserForm({
       return;
     }
 
-    if (user) {
-      const matchedRole = roleOptions.find((r) => r.label === user.role);
+    if (userId != null) {
       form.reset({
-        username: user.username,
-        email: user.email,
-        firstName: user.firstName || '',
-        lastName: user.lastName || '',
-        phoneNumber: user.phoneNumber || '',
-        roleId: user.roleId ?? matchedRole?.value ?? 0,
-        isActive: user.isActive,
-        permissionGroupIds: userGroupIds,
+        username: userUsername,
+        email: userEmail,
+        firstName: userFirstName,
+        lastName: userLastName,
+        phoneNumber: userPhoneNumber,
+        roleId: userRoleId,
+        isActive: userIsActive,
+        permissionGroupIds: [],
       });
       return;
     }
@@ -115,22 +121,19 @@ export function UserForm({
     });
   }, [
     open,
-    user?.id,
-    user?.username,
-    user?.email,
-    user?.firstName,
-    user?.lastName,
-    user?.phoneNumber,
-    user?.isActive,
-    user?.role,
-    user?.roleId,
-    roleOptions,
-    userGroupIds,
+    userId,
+    userUsername,
+    userEmail,
+    userFirstName,
+    userLastName,
+    userPhoneNumber,
+    userIsActive,
+    userRoleId,
     form,
   ]);
 
   useEffect(() => {
-    if (!open || !user) {
+    if (!open || userId == null) {
       return;
     }
 
@@ -147,10 +150,10 @@ export function UserForm({
     if (!same) {
       form.setValue('permissionGroupIds', next, { shouldDirty: false, shouldTouch: false });
     }
-  }, [open, user?.id, userPermissionGroupsQuery.isLoading, userPermissionGroupsQuery.data, form]);
+  }, [open, userId, userPermissionGroupsQuery.isLoading, userPermissionGroupsQuery.data, form]);
 
   useEffect(() => {
-    if (!open || !user || roleOptions.length === 0) {
+    if (!open || userId == null || roleOptions.length === 0) {
       return;
     }
 
@@ -159,11 +162,11 @@ export function UserForm({
       return;
     }
 
-    const matchedRole = roleOptions.find((r) => r.label === user.role);
+    const matchedRole = roleOptions.find((r) => r.label === userRoleLabel);
     if (matchedRole) {
       form.setValue('roleId', matchedRole.value, { shouldDirty: false, shouldTouch: false });
     }
-  }, [open, user?.id, user?.role, roleOptions, form]);
+  }, [open, userId, userRoleLabel, roleOptions, form]);
 
   const handleSubmit = async (data: UserFormSchema | UserUpdateFormSchema): Promise<void> => {
     await onSubmit(data);

@@ -66,4 +66,4 @@ export interface ReportTemplateCreateDto {
   default?: boolean;
 }
 
-export interface ReportTemplateUpdateDto extends ReportTemplateCreateDto {}
+export type ReportTemplateUpdateDto = ReportTemplateCreateDto;

@@ -16,6 +16,8 @@ import { CountryForm } from './CountryForm';
 import type { CountryDto } from '../types/country-types';
 import { useCountryList } from '../hooks/useCountryList';
 
+const EMPTY_COUNTRIES: CountryDto[] = [];
+
 export function CountryManagementPage(): ReactElement {
   const { t } = useTranslation();
   const { setPageTitle } = useUIStore();
@@ -35,7 +37,10 @@ export function CountryManagementPage(): ReactElement {
     pageSize: 10000
   });
 
-  const countries = apiResponse?.data ?? [];
+  const countries = useMemo<CountryDto[]>(
+    () => apiResponse?.data ?? EMPTY_COUNTRIES,
+    [apiResponse?.data]
+  );
 
   useEffect(() => {
     setPageTitle(t('countryManagement.menu', 'Ülke Yönetimi'));

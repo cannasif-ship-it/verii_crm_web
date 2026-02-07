@@ -32,7 +32,12 @@
     "loadingDescription": "Data is loading, please wait",
     "processing": "Processing...",
     "selectDate": "Select date",
-    "UnexpectedError": "An unexpected error occurred"
+    "UnexpectedError": "An unexpected error occurred",
+    "forbiddenTitle": "Zugriff verweigert",
+    "forbiddenDescription": "Sie haben keine Berechtigung, diese Seite zu sehen.",
+    "forbiddenFrom": "Angeforderter Pfad",
+    "goBack": "Zuruck",
+    "goHome": "Startseite"
   },
   "auth": {
     "login": {

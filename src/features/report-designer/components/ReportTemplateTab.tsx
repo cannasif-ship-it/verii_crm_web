@@ -85,7 +85,7 @@ export function ReportTemplateTab({ entityId, ruleType }: ReportTemplateTabProps
     return () => {
       cancelled = true;
     };
-  }, [selectedTemplateId, entityId]);
+  }, [selectedTemplateId, entityId, generatePdfMutation]);
 
   useEffect(() => {
     return () => {

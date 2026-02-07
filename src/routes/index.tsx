@@ -3,6 +3,7 @@ import { createBrowserRouter } from 'react-router-dom';
 import { ProtectedRoute } from '@/components/shared/ProtectedRoute';
 import { MainLayout } from '@/components/shared/MainLayout';
 import { RouteErrorFallback } from '@/components/shared/RouteErrorFallback';
+import { ForbiddenPage } from '@/components/shared/ForbiddenPage';
 import AuthLayout from '@/layouts/AuthLayout';
 
 const lazyImport = <T extends Record<string, unknown>, K extends keyof T>(
@@ -87,6 +88,7 @@ export const router = createBrowserRouter([
     errorElement: <RouteErrorFallback />,
     children: [
       { index: true, element: <DashboardPage /> },
+      { path: 'forbidden', element: <ForbiddenPage /> },
       { path: 'report-designer', element: <ReportDesignerListPage /> },
       { path: 'report-designer/create', element: <ReportDesignerCreatePage /> },
       { path: 'report-designer/edit/:id', element: <ReportDesignerCreatePage /> },

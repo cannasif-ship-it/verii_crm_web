@@ -14,6 +14,8 @@ import type { ApprovalFlowFormSchema } from '../types/approval-flow-types';
 import { useQueryClient } from '@tanstack/react-query';
 import { queryKeys } from '../utils/query-keys';
 
+const EMPTY_APPROVAL_FLOWS: ApprovalFlowDto[] = [];
+
 export function ApprovalFlowManagementPage(): ReactElement {
   const { t } = useTranslation();
   const { setPageTitle } = useUIStore();
@@ -35,10 +37,13 @@ export function ApprovalFlowManagementPage(): ReactElement {
     pageSize: 10000
   });
 
-  const approvalFlows = apiResponse?.data || [];
+  const approvalFlows = useMemo<ApprovalFlowDto[]>(
+    () => apiResponse?.data ?? EMPTY_APPROVAL_FLOWS,
+    [apiResponse?.data]
+  );
 
   const filteredApprovalFlows = useMemo(() => {
-    let result = [...approvalFlows];
+    let result: ApprovalFlowDto[] = [...approvalFlows];
 
     // Filter by search term
     if (searchTerm) {

@@ -27,10 +27,8 @@ import {
 } from 'hugeicons-react';
 import { useQueryClient } from '@tanstack/react-query';
 import type { CariDto } from '@/services/erp-types';
-import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
-import PptxGenJS from 'pptxgenjs';
 
 
 interface FilterState {
@@ -142,22 +140,25 @@ export function ErpCustomerManagementPage(): ReactElement {
     setTimeout(() => setIsRefreshing(false), 500);
   };
 
-  const handleExportExcel = () => {
+  const handleExportExcel = async () => {
     const dataToExport = filteredCustomers.map(customer => {
         const row: Record<string, string | number | boolean | null | undefined> = {};
         visibleColumns.forEach(key => {
             const col = allColumns.find(c => c.key === key);
             if (col) {
-                // @ts-ignore - Accessing dynamic property
-                const value = customer[key];
-                row[col.label] = (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean')
-                  ? value
-                  : value ?? '';
+                const value = (customer as unknown as Record<string, unknown>)[String(key)];
+                row[col.label] =
+                  (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean')
+                    ? value
+                    : value == null
+                      ? ''
+                      : String(value);
             }
         });
         return row;
     });
 
+    const XLSX = await import('xlsx');
     const ws = XLSX.utils.json_to_sheet(dataToExport);
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Customers");
@@ -174,8 +175,13 @@ export function ErpCustomerManagementPage(): ReactElement {
     const tableRows = filteredCustomers.map(customer => {
         return allColumns
             .filter(col => visibleColumns.includes(col.key))
-            // @ts-ignore - Accessing dynamic property
-            .map(col => customer[col.key] || '');
+            .map(col => {
+              const value = (customer as unknown as Record<string, unknown>)[String(col.key)];
+              if (value == null) return '';
+              if (typeof value === 'string') return value;
+              if (typeof value === 'number' || typeof value === 'boolean') return String(value);
+              return String(value);
+            });
     });
 
     autoTable(doc, {
@@ -188,7 +194,8 @@ export function ErpCustomerManagementPage(): ReactElement {
 
   type PptxTableRow = Array<{ text: string }>;
 
-  const handleExportPowerPoint = () => {
+  const handleExportPowerPoint = async () => {
+    const { default: PptxGenJS } = await import('pptxgenjs');
     const pptx = new PptxGenJS();
     const slide = pptx.addSlide();
     
@@ -200,12 +207,14 @@ export function ErpCustomerManagementPage(): ReactElement {
         .filter(col => visibleColumns.includes(col.key))
         .map(col => col.label);
 
-    const rows = filteredCustomers.map(customer => {
-        return allColumns
-            .filter(col => visibleColumns.includes(col.key))
-            // @ts-ignore - Accessing dynamic property
-            .map(col => String(customer[col.key] || ''));
-    });
+	    const rows = filteredCustomers.map(customer => {
+	        return allColumns
+	            .filter(col => visibleColumns.includes(col.key))
+	            .map(col => {
+	              const value = (customer as unknown as Record<string, unknown>)[String(col.key)];
+	              return value == null ? '' : String(value);
+	            });
+	    });
 
     const tableData: PptxTableRow[] = [
       headers.map(text => ({ text })),

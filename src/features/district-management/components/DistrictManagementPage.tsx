@@ -38,7 +38,7 @@ export function DistrictManagementPage(): ReactElement {
   }, [data]);
 
   const filteredDistricts = useMemo(() => {
-    let result = [...allDistricts];
+    let result: DistrictDto[] = [...allDistricts];
 
     // Status Filter
     if (activeFilter === 'active') {

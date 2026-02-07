@@ -87,14 +87,15 @@ export function DistrictTable({
   );
 
   const processedDistricts = useMemo(() => {
-    let result = [...districts];
+    const result = [...districts];
 
-    if (sortConfig) {
-      result.sort((a, b) => {
-        // @ts-ignore
-        const aValue = a[sortConfig.key] ? String(a[sortConfig.key]).toLowerCase() : '';
-        // @ts-ignore
-        const bValue = b[sortConfig.key] ? String(b[sortConfig.key]).toLowerCase() : '';
+	    if (sortConfig) {
+	      result.sort((a, b) => {
+	        const key = String(sortConfig.key);
+	        const aRaw = (a as unknown as Record<string, unknown>)[key];
+	        const bRaw = (b as unknown as Record<string, unknown>)[key];
+	        const aValue = aRaw != null ? String(aRaw).toLowerCase() : '';
+	        const bValue = bRaw != null ? String(bRaw).toLowerCase() : '';
 
         if (aValue < bValue) return sortConfig.direction === 'asc' ? -1 : 1;
         if (aValue > bValue) return sortConfig.direction === 'asc' ? 1 : -1;
@@ -119,7 +120,7 @@ export function DistrictTable({
         toast.success(t('districtManagement.delete.success', 'İlçe başarıyla silindi'));
         setDeleteDialogOpen(false);
         setSelectedDistrict(null);
-      } catch (error) {
+      } catch {
         toast.error(t('districtManagement.delete.error', 'İlçe silinirken bir hata oluştu'));
       }
     }
@@ -139,9 +140,8 @@ export function DistrictTable({
     );
   };
 
-  const renderCellContent = (item: DistrictDto, column: ColumnDef<DistrictDto>) => {
-    // @ts-ignore
-    const value = item[column.key];
+	const renderCellContent = (item: DistrictDto, column: ColumnDef<DistrictDto>) => {
+	    const value = (item as unknown as Record<string, unknown>)[String(column.key)];
     
     if (column.key === 'isDeleted') {
         const isActive = !item.isDeleted;

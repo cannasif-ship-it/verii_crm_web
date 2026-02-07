@@ -59,7 +59,8 @@ export function DemandTable({
       if (result.success && result.data?.id) {
         navigate(`/demands/${result.data.id}`);
       }
-    } catch (error) {
+    } catch {
+      void 0;
     }
   };
 

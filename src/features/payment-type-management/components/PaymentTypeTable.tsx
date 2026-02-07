@@ -89,14 +89,15 @@ export function PaymentTypeTable({
   );
 
   const processedPaymentTypes = useMemo(() => {
-    let result = [...paymentTypes];
+    const result = [...paymentTypes];
 
-    if (sortConfig) {
-      result.sort((a, b) => {
-        // @ts-ignore
-        const aValue = a[sortConfig.key] ? String(a[sortConfig.key]).toLowerCase() : '';
-        // @ts-ignore
-        const bValue = b[sortConfig.key] ? String(b[sortConfig.key]).toLowerCase() : '';
+	    if (sortConfig) {
+	      result.sort((a, b) => {
+	        const key = String(sortConfig.key);
+	        const aRaw = (a as unknown as Record<string, unknown>)[key];
+	        const bRaw = (b as unknown as Record<string, unknown>)[key];
+	        const aValue = aRaw != null ? String(aRaw).toLowerCase() : '';
+	        const bValue = bRaw != null ? String(bRaw).toLowerCase() : '';
 
         if (aValue < bValue) return sortConfig.direction === 'asc' ? -1 : 1;
         if (aValue > bValue) return sortConfig.direction === 'asc' ? 1 : -1;
@@ -121,7 +122,7 @@ export function PaymentTypeTable({
         toast.success(t('paymentTypeManagement.delete.success', 'Ödeme tipi başarıyla silindi'));
         setDeleteDialogOpen(false);
         setSelectedPaymentType(null);
-      } catch (error) {
+      } catch {
         toast.error(t('paymentTypeManagement.delete.error', 'Ödeme tipi silinirken bir hata oluştu'));
       }
     }
@@ -141,9 +142,8 @@ export function PaymentTypeTable({
     );
   };
 
-  const renderCellContent = (item: PaymentTypeDto, column: ColumnDef<PaymentTypeDto>) => {
-    // @ts-ignore
-    const value = item[column.key];
+	const renderCellContent = (item: PaymentTypeDto, column: ColumnDef<PaymentTypeDto>) => {
+	    const value = (item as unknown as Record<string, unknown>)[String(column.key)];
     
     if (column.key === 'isDeleted') {
         const isActive = !item.isDeleted;

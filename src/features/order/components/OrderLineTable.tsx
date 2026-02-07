@@ -223,40 +223,42 @@ export function OrderLineTable({
     async (line: OrderLineFormState): Promise<void> => {
       const lineToAdd = { ...line, isEditing: false };
       if (isExistingOrder && orderId) {
-        try {
-          const dtos: CreateOrderLineDto[] = [toCreateDto(lineToAdd, orderId)];
-          const created = await createMutation.mutateAsync(dtos);
-          const mapped = created.map((dto, i) => dtoToFormState(dto, lines.length + i));
-          setLines([...lines, ...mapped]);
-          setAddLineDialogOpen(false);
-          setNewLine(null);
-        } catch {
-        }
-        return;
-      }
+	        try {
+	          const dtos: CreateOrderLineDto[] = [toCreateDto(lineToAdd, orderId)];
+	          const created = await createMutation.mutateAsync(dtos);
+	          const mapped = created.map((dto, i) => dtoToFormState(dto, lines.length + i));
+	          setLines([...lines, ...mapped]);
+	          setAddLineDialogOpen(false);
+	          setNewLine(null);
+	        } catch {
+	          void 0;
+	        }
+	        return;
+	      }
       setLines([...lines, lineToAdd]);
       setAddLineDialogOpen(false);
       setNewLine(null);
     },
-    [isExistingOrder, orderId, createMutation, lines, setLines, linesEditable]
-  );
+	    [isExistingOrder, orderId, createMutation, lines, setLines]
+	  );
 
   const handleSaveMultipleLines = useCallback(
     async (newLines: OrderLineFormState[]): Promise<void> => {
       if (!linesEditable) return;
       const linesToAdd = newLines.map((l) => ({ ...l, isEditing: false }));
       if (isExistingOrder && orderId) {
-        try {
-          const dtos: CreateOrderLineDto[] = linesToAdd.map((l) => toCreateDto(l, orderId));
-          const created = await createMutation.mutateAsync(dtos);
-          const mapped = created.map((dto, i) => dtoToFormState(dto, lines.length + i));
-          setLines([...lines, ...mapped]);
-          setAddLineDialogOpen(false);
-          setNewLine(null);
-        } catch {
-        }
-        return;
-      }
+	        try {
+	          const dtos: CreateOrderLineDto[] = linesToAdd.map((l) => toCreateDto(l, orderId));
+	          const created = await createMutation.mutateAsync(dtos);
+	          const mapped = created.map((dto, i) => dtoToFormState(dto, lines.length + i));
+	          setLines([...lines, ...mapped]);
+	          setAddLineDialogOpen(false);
+	          setNewLine(null);
+	        } catch {
+	          void 0;
+	        }
+	        return;
+	      }
       setLines([...lines, ...linesToAdd]);
       setAddLineDialogOpen(false);
       setNewLine(null);
@@ -361,18 +363,19 @@ export function OrderLineTable({
     const linesWithBackendId = allUpdatedLines.filter((l) => parseLineId(l.id) != null);
 
     if (isExistingOrder && orderId && linesWithBackendId.length > 0) {
-      try {
-        const dtos: OrderLineGetDto[] = linesWithBackendId.map((l) => toUpdateDto(l, orderId));
-        await updateMutation.mutateAsync(dtos);
-        const fresh = await orderApi.getOrderLinesByOrderId(orderId);
-        const mapped = fresh.map((dto, index) => dtoToFormState(dto, index));
-        setLines(mapped);
-        setEditLineDialogOpen(false);
-        setLineToEdit(null);
-      } catch {
-      }
-      return;
-    }
+	      try {
+	        const dtos: OrderLineGetDto[] = linesWithBackendId.map((l) => toUpdateDto(l, orderId));
+	        await updateMutation.mutateAsync(dtos);
+	        const fresh = await orderApi.getOrderLinesByOrderId(orderId);
+	        const mapped = fresh.map((dto, index) => dtoToFormState(dto, index));
+	        setLines(mapped);
+	        setEditLineDialogOpen(false);
+	        setLineToEdit(null);
+	      } catch {
+	        void 0;
+	      }
+	      return;
+	    }
 
     applyLineUpdatesToLocalState(updatedLine, relatedLinesToUpdate, originalLine);
     setEditLineDialogOpen(false);

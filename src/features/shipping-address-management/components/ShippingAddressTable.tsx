@@ -1,4 +1,4 @@
-import { type ReactElement, useState, useMemo } from 'react';
+import { type ReactElement, useCallback, useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Table,
@@ -71,18 +71,21 @@ export function ShippingAddressTable({
 
   const deleteShippingAddress = useDeleteShippingAddress();
 
-  const getColumnsConfig = (): ColumnConfig[] => [
-    { key: 'customerName', label: t('shippingAddressManagement.customerName', 'Müşteri'), visible: true },
-    { key: 'address', label: t('shippingAddressManagement.address', 'Adres'), visible: true },
-    { key: 'postalCode', label: t('shippingAddressManagement.postalCode', 'Posta Kodu'), visible: false },
-    { key: 'contactPerson', label: t('shippingAddressManagement.contactPerson', 'Yetkili Kişi'), visible: true },
-    { key: 'phone', label: t('shippingAddressManagement.phone', 'Telefon'), visible: true },
-    { key: 'location', label: t('shippingAddressManagement.location', 'Konum'), visible: false }, // Composite column
-    { key: 'isActive', label: t('common.status', 'Durum'), visible: true },
-    { key: 'createdDate', label: t('shippingAddressManagement.createdDate', 'Oluşturulma Tarihi'), visible: true },
-  ];
+  const getColumnsConfig = useCallback(
+    (): ColumnConfig[] => [
+      { key: 'customerName', label: t('shippingAddressManagement.customerName', 'Müşteri'), visible: true },
+      { key: 'address', label: t('shippingAddressManagement.address', 'Adres'), visible: true },
+      { key: 'postalCode', label: t('shippingAddressManagement.postalCode', 'Posta Kodu'), visible: false },
+      { key: 'contactPerson', label: t('shippingAddressManagement.contactPerson', 'Yetkili Kişi'), visible: true },
+      { key: 'phone', label: t('shippingAddressManagement.phone', 'Telefon'), visible: true },
+      { key: 'location', label: t('shippingAddressManagement.location', 'Konum'), visible: false }, // Composite column
+      { key: 'isActive', label: t('common.status', 'Durum'), visible: true },
+      { key: 'createdDate', label: t('shippingAddressManagement.createdDate', 'Oluşturulma Tarihi'), visible: true },
+    ],
+    [t]
+  );
 
-  const tableColumns = useMemo(() => getColumnsConfig(), [t]);
+  const tableColumns = useMemo(() => getColumnsConfig(), [getColumnsConfig]);
 
   const handleDeleteClick = (shippingAddress: ShippingAddressDto): void => {
     setSelectedShippingAddress(shippingAddress);
@@ -96,7 +99,7 @@ export function ShippingAddressTable({
         toast.success(t('common.deleteSuccess', 'Silme işlemi başarılı'));
         setDeleteDialogOpen(false);
         setSelectedShippingAddress(null);
-      } catch (error) {
+      } catch {
         toast.error(t('common.deleteError', 'Silme işlemi sırasında hata oluştu'));
       }
     }

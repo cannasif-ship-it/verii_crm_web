@@ -42,6 +42,8 @@ import {
   Target,
   } from 'lucide-react';
 
+const EMPTY_ACTIVITIES: ActivityDto[] = [];
+
 export function DailyTasksPage(): ReactElement {
   const { t, i18n } = useTranslation();
   const { user } = useAuthStore();
@@ -122,7 +124,10 @@ export function DailyTasksPage(): ReactElement {
   const deleteActivity = useDeleteActivity();
   const createActivity = useCreateActivity();
 
-  const activities = data?.data || [];
+  const activities = useMemo<ActivityDto[]>(
+    () => data?.data ?? EMPTY_ACTIVITIES,
+    [data?.data]
+  );
 
   const filteredActivities = useMemo(() => {
     let filtered = activities;

@@ -98,57 +98,44 @@ export const orderApi = {
       return [];
     }
 
-    try {
-      const queryParams = new URLSearchParams();
-      requests.forEach((req, index) => {
-        queryParams.append(`request[${index}].productCode`, req.productCode);
-        queryParams.append(`request[${index}].groupCode`, req.groupCode);
-      });
+    const queryParams = new URLSearchParams();
+    requests.forEach((req, index) => {
+      queryParams.append(`request[${index}].productCode`, req.productCode);
+      queryParams.append(`request[${index}].groupCode`, req.groupCode);
+    });
 
-      const url = `/api/order/price-of-product?${queryParams.toString()}`;
-      const response = await api.get<ApiResponse<PriceOfProductDto[]>>(url);
+    const url = `/api/order/price-of-product?${queryParams.toString()}`;
+    const response = await api.get<ApiResponse<PriceOfProductDto[]>>(url);
 
-      if (!response) {
-        throw new Error('API response bulunamadı');
-      }
-
-      if (response.statusCode && response.statusCode !== 200) {
-        throw new Error(response.message || `HTTP ${response.statusCode}: Ürün fiyatı yüklenemedi`);
-      }
-
-      if (!response.success) {
-        if (response.data && Array.isArray(response.data) && response.data.length > 0) {
-        } else {
-          return [];
-        }
-      }
-
-      if (!response.data) {
-        return [];
-      }
-
-      if (!Array.isArray(response.data)) {
-        throw new Error('API\'den beklenmeyen veri formatı döndü');
-      }
-
-      const mappedData = response.data.map((item: unknown) => {
-        const priceItem = item as Record<string, unknown>;
-        return {
-          productCode: (priceItem.productCode as string) || (priceItem.ProductCode as string) || '',
-          groupCode: (priceItem.groupCode as string) || (priceItem.GroupCode as string) || '',
-          currency: (priceItem.currency as string) || (priceItem.Currency as string) || '',
-          listPrice: (priceItem.listPrice as number) ?? (priceItem.ListPrice as number) ?? 0,
-          costPrice: (priceItem.costPrice as number) ?? (priceItem.CostPrice as number) ?? 0,
-          discount1: (priceItem.discount1 as number | null) ?? (priceItem.Discount1 as number | null) ?? null,
-          discount2: (priceItem.discount2 as number | null) ?? (priceItem.Discount2 as number | null) ?? null,
-          discount3: (priceItem.discount3 as number | null) ?? (priceItem.Discount3 as number | null) ?? null,
-        };
-      });
-
-      return mappedData;
-    } catch (error) {
-      throw error;
+    if (!response) {
+      throw new Error('API response bulunamadı');
     }
+
+    if (response.statusCode && response.statusCode !== 200) {
+      throw new Error(response.message || `HTTP ${response.statusCode}: Ürün fiyatı yüklenemedi`);
+    }
+
+    if (!response.success || !response.data) {
+      return [];
+    }
+
+    if (!Array.isArray(response.data)) {
+      throw new Error('API\'den beklenmeyen veri formatı döndü');
+    }
+
+    return response.data.map((item: unknown) => {
+      const priceItem = item as Record<string, unknown>;
+      return {
+        productCode: (priceItem.productCode as string) || (priceItem.ProductCode as string) || '',
+        groupCode: (priceItem.groupCode as string) || (priceItem.GroupCode as string) || '',
+        currency: (priceItem.currency as string) || (priceItem.Currency as string) || '',
+        listPrice: (priceItem.listPrice as number) ?? (priceItem.ListPrice as number) ?? 0,
+        costPrice: (priceItem.costPrice as number) ?? (priceItem.CostPrice as number) ?? 0,
+        discount1: (priceItem.discount1 as number | null) ?? (priceItem.Discount1 as number | null) ?? null,
+        discount2: (priceItem.discount2 as number | null) ?? (priceItem.Discount2 as number | null) ?? null,
+        discount3: (priceItem.discount3 as number | null) ?? (priceItem.Discount3 as number | null) ?? null,
+      };
+    });
   },
 
   getPriceRuleOfOrder: async (
@@ -156,60 +143,48 @@ export const orderApi = {
     salesmenId: number,
     orderDate: string
   ): Promise<PricingRuleLineGetDto[]> => {
-    try {
-      const queryParams = new URLSearchParams({
-        customerCode,
-        salesmenId: salesmenId.toString(),
-        orderDate,
-      });
+    const queryParams = new URLSearchParams({
+      customerCode,
+      salesmenId: salesmenId.toString(),
+      orderDate,
+    });
 
-      const url = `/api/order/price-rule-of-order?${queryParams.toString()}`;
-      const response = await api.get<ApiResponse<PricingRuleLineGetDto[]>>(url);
+    const url = `/api/order/price-rule-of-order?${queryParams.toString()}`;
+    const response = await api.get<ApiResponse<PricingRuleLineGetDto[]>>(url);
 
-      if (!response) {
-        throw new Error('API response bulunamadı');
-      }
-
-      if (response.statusCode && response.statusCode !== 200) {
-        throw new Error(response.message || `HTTP ${response.statusCode}: Fiyat kuralları yüklenemedi`);
-      }
-
-      if (!response.success) {
-        return [];
-      }
-
-      if (!response.data) {
-        return [];
-      }
-
-      if (!Array.isArray(response.data)) {
-        throw new Error('API\'den beklenmeyen veri formatı döndü');
-      }
-
-      return response.data;
-    } catch (error) {
-      throw error;
+    if (!response) {
+      throw new Error('API response bulunamadı');
     }
+
+    if (response.statusCode && response.statusCode !== 200) {
+      throw new Error(response.message || `HTTP ${response.statusCode}: Fiyat kuralları yüklenemedi`);
+    }
+
+    if (!response.success || !response.data) {
+      return [];
+    }
+
+    if (!Array.isArray(response.data)) {
+      throw new Error('API\'den beklenmeyen veri formatı döndü');
+    }
+
+    return response.data;
   },
 
   getUserDiscountLimitsBySalespersonId: async (salespersonId: number): Promise<UserDiscountLimitDto[]> => {
-    try {
-      const response = await api.get<ApiResponse<UserDiscountLimitDto[]>>(
-        `/api/UserDiscountLimit/salesperson/${salespersonId}`
-      );
-      
-      if (!response.success || !response.data) {
-        return [];
-      }
-
-      if (!Array.isArray(response.data)) {
-        throw new Error('API\'den beklenmeyen veri formatı döndü');
-      }
-
-      return response.data;
-    } catch (error) {
-      throw error;
+    const response = await api.get<ApiResponse<UserDiscountLimitDto[]>>(
+      `/api/UserDiscountLimit/salesperson/${salespersonId}`
+    );
+    
+    if (!response.success || !response.data) {
+      return [];
     }
+
+    if (!Array.isArray(response.data)) {
+      throw new Error('API\'den beklenmeyen veri formatı döndü');
+    }
+
+    return response.data;
   },
 
   startApprovalFlow: async (data: { entityId: number; documentType: number; totalAmount: number }): Promise<ApiResponse<boolean>> => {

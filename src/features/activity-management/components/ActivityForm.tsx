@@ -142,7 +142,6 @@ export function ActivityForm({
 
   useEffect(() => {
     if (activity) {
-      // @ts-ignore
       form.reset({
         subject: activity.subject,
         description: activity.description || '',
@@ -161,10 +160,9 @@ export function ActivityForm({
         contactId: activity.contactId || undefined,
         assignedUserId: activity.assignedUserId || undefined,
         activityDate: activity.activityDate ? new Date(activity.activityDate).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
-      });
+      } as ActivityFormSchema);
       setSelectedCustomerDisplayName(null);
     } else {
-      // @ts-ignore
       form.reset({
         subject: '',
         description: '',
@@ -179,7 +177,7 @@ export function ActivityForm({
         contactId: undefined,
         assignedUserId: undefined,
         activityDate: initialDate || new Date().toISOString().split('T')[0],
-      });
+      } as ActivityFormSchema);
       setSelectedCustomerDisplayName(null);
     }
   }, [activity, form, initialDate]);

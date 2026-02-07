@@ -100,7 +100,7 @@ export function ActivityTypeTable({
         return [];
     }
 
-    let result = [...activityTypes];
+    const result = [...activityTypes];
 
     if (sortConfig) {
       result.sort((a, b) => {

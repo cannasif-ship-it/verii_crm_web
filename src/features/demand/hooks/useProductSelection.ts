@@ -71,86 +71,6 @@ export function useProductSelection({ currency, exchangeRates }: UseProductSelec
     []
   );
 
-  const handleProductSelect = useCallback(
-    async (product: ProductSelectionResult): Promise<DemandLineFormState> => {
-      const baseLine = createEmptyLine(product);
-      const hasRelatedStocks = product.relatedStockIds && product.relatedStockIds.length > 0;
-
-      if (hasRelatedStocks && product.relatedStockIds) {
-        const allLines = await handleProductSelectWithRelatedStocks(product, product.relatedStockIds);
-        return allLines[0] || baseLine;
-      }
-
-      try {
-        const prices = await demandApi.getPriceOfProduct([
-          {
-            productCode: product.code,
-            groupCode: product.groupCode || '',
-          },
-        ]);
-
-        if (!prices || prices.length === 0) {
-          return calculateLineTotals(baseLine);
-        }
-
-        const selectedPrice = prices.find((p) => p.productCode === product.code) || prices[0];
-        if (!selectedPrice) {
-          return calculateLineTotals(baseLine);
-        }
-
-        const sourceCurrencyFromApi = selectedPrice.currency || '';
-
-        let sourceDovizTipi: number | null = null;
-        if (sourceCurrencyFromApi) {
-          const numericCurrency = parseInt(sourceCurrencyFromApi, 10);
-          if (!isNaN(numericCurrency)) {
-            sourceDovizTipi = numericCurrency;
-          } else {
-            const sourceCurrencyOption = currencyOptions.find((opt) => opt.code === sourceCurrencyFromApi || opt.dovizIsmi === sourceCurrencyFromApi);
-            sourceDovizTipi = sourceCurrencyOption?.dovizTipi || null;
-          }
-        }
-
-        if (!sourceDovizTipi) {
-          const updatedLine: DemandLineFormState = {
-            ...baseLine,
-            groupCode: selectedPrice.groupCode || product.groupCode || null,
-            unitPrice: selectedPrice.listPrice ?? 0,
-            discountRate1: selectedPrice.discount1 ?? 0,
-            discountRate2: selectedPrice.discount2 ?? 0,
-            discountRate3: selectedPrice.discount3 ?? 0,
-          };
-          return calculateLineTotals(updatedLine);
-        }
-
-        const sourceRate = findExchangeRateByDovizTipi(sourceDovizTipi, exchangeRates, erpRates);
-        const targetRate = findExchangeRateByDovizTipi(currency, exchangeRates, erpRates);
-
-        let convertedPrice = selectedPrice.listPrice ?? 0;
-        if (sourceRate && sourceRate > 0 && targetRate && targetRate > 0) {
-          if (sourceDovizTipi !== currency) {
-            convertedPrice = (selectedPrice.listPrice ?? 0) * sourceRate / targetRate;
-          }
-        }
-
-        const updatedLine: DemandLineFormState = {
-          ...baseLine,
-          groupCode: selectedPrice.groupCode || product.groupCode || null,
-          unitPrice: convertedPrice,
-          discountRate1: selectedPrice.discount1 ?? 0,
-          discountRate2: selectedPrice.discount2 ?? 0,
-          discountRate3: selectedPrice.discount3 ?? 0,
-        };
-
-        const calculatedLine = calculateLineTotals(updatedLine);
-        return calculatedLine;
-      } catch (error) {
-        return calculateLineTotals(baseLine);
-      }
-    },
-    [currency, exchangeRates, currencyOptions, erpRates, createEmptyLine, calculateLineTotals]
-  );
-
   const handleProductSelectWithRelatedStocks = useCallback(
     async (product: ProductSelectionResult, relatedStockIds: number[]): Promise<DemandLineFormState[]> => {
       const requests: Array<{ productCode: string; groupCode: string }> = [
@@ -169,7 +89,8 @@ export function useProductSelection({ currency, exchangeRates }: UseProductSelec
               groupCode: relatedStock.grupKodu || '',
             });
           }
-        } catch (error) {
+        } catch {
+          void 0;
         }
       }
 
@@ -186,7 +107,7 @@ export function useProductSelection({ currency, exchangeRates }: UseProductSelec
           const isMainProduct = i === 0;
           
           let productName = isMainProduct ? product.name : '';
-          let vatRate = product.vatRate || 18;
+          const vatRate = product.vatRate || 18;
           const relatedStockId: number | null = mainStockId;
 
           if (!isMainProduct) {
@@ -197,7 +118,8 @@ export function useProductSelection({ currency, exchangeRates }: UseProductSelec
               if (relatedStock) {
                 productName = relatedStock.stockName;
               }
-            } catch (error) {
+            } catch {
+              void 0;
             }
           }
 
@@ -285,12 +207,100 @@ export function useProductSelection({ currency, exchangeRates }: UseProductSelec
         }
 
         return lines;
-      } catch (error) {
+      } catch {
         const baseLine = createEmptyLine(product);
         return [calculateLineTotals(baseLine)];
       }
     },
     [currency, exchangeRates, currencyOptions, erpRates, createEmptyLine, calculateLineTotals]
+  );
+
+  const handleProductSelect = useCallback(
+    async (product: ProductSelectionResult): Promise<DemandLineFormState> => {
+      const baseLine = createEmptyLine(product);
+      const hasRelatedStocks = product.relatedStockIds && product.relatedStockIds.length > 0;
+
+      if (hasRelatedStocks && product.relatedStockIds) {
+        const allLines = await handleProductSelectWithRelatedStocks(product, product.relatedStockIds);
+        return allLines[0] || baseLine;
+      }
+
+      try {
+        const prices = await demandApi.getPriceOfProduct([
+          {
+            productCode: product.code,
+            groupCode: product.groupCode || '',
+          },
+        ]);
+
+        if (!prices || prices.length === 0) {
+          return calculateLineTotals(baseLine);
+        }
+
+        const selectedPrice = prices.find((p) => p.productCode === product.code) || prices[0];
+        if (!selectedPrice) {
+          return calculateLineTotals(baseLine);
+        }
+
+        const sourceCurrencyFromApi = selectedPrice.currency || '';
+
+        let sourceDovizTipi: number | null = null;
+        if (sourceCurrencyFromApi) {
+          const numericCurrency = parseInt(sourceCurrencyFromApi, 10);
+          if (!isNaN(numericCurrency)) {
+            sourceDovizTipi = numericCurrency;
+          } else {
+            const sourceCurrencyOption = currencyOptions.find((opt) => opt.code === sourceCurrencyFromApi || opt.dovizIsmi === sourceCurrencyFromApi);
+            sourceDovizTipi = sourceCurrencyOption?.dovizTipi || null;
+          }
+        }
+
+        if (!sourceDovizTipi) {
+          const updatedLine: DemandLineFormState = {
+            ...baseLine,
+            groupCode: selectedPrice.groupCode || product.groupCode || null,
+            unitPrice: selectedPrice.listPrice ?? 0,
+            discountRate1: selectedPrice.discount1 ?? 0,
+            discountRate2: selectedPrice.discount2 ?? 0,
+            discountRate3: selectedPrice.discount3 ?? 0,
+          };
+          return calculateLineTotals(updatedLine);
+        }
+
+        const sourceRate = findExchangeRateByDovizTipi(sourceDovizTipi, exchangeRates, erpRates);
+        const targetRate = findExchangeRateByDovizTipi(currency, exchangeRates, erpRates);
+
+        let convertedPrice = selectedPrice.listPrice ?? 0;
+        if (sourceRate && sourceRate > 0 && targetRate && targetRate > 0) {
+          if (sourceDovizTipi !== currency) {
+            convertedPrice = (selectedPrice.listPrice ?? 0) * sourceRate / targetRate;
+          }
+        }
+
+        const updatedLine: DemandLineFormState = {
+          ...baseLine,
+          groupCode: selectedPrice.groupCode || product.groupCode || null,
+          unitPrice: convertedPrice,
+          discountRate1: selectedPrice.discount1 ?? 0,
+          discountRate2: selectedPrice.discount2 ?? 0,
+          discountRate3: selectedPrice.discount3 ?? 0,
+        };
+
+        const calculatedLine = calculateLineTotals(updatedLine);
+        return calculatedLine;
+      } catch {
+        return calculateLineTotals(baseLine);
+      }
+    },
+    [
+      currency,
+      exchangeRates,
+      currencyOptions,
+      erpRates,
+      createEmptyLine,
+      calculateLineTotals,
+      handleProductSelectWithRelatedStocks,
+    ]
   );
 
   return {

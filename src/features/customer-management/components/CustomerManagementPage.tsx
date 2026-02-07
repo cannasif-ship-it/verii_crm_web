@@ -25,15 +25,15 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
-import PptxGenJS from 'pptxgenjs';
 import { 
   Mail01Icon, 
   Call02Icon, 
   UserCircleIcon, 
 } from 'hugeicons-react';
+
+const EMPTY_CUSTOMERS: CustomerDto[] = [];
 
 export function CustomerManagementPage(): ReactElement {
   const { t } = useTranslation();
@@ -73,7 +73,10 @@ export function CustomerManagementPage(): ReactElement {
     pageSize: 10000,
   });
 
-  const customers = apiResponse?.data ?? [];
+  const customers = useMemo<CustomerDto[]>(
+    () => apiResponse?.data ?? EMPTY_CUSTOMERS,
+    [apiResponse?.data]
+  );
 
   useEffect(() => {
     setPageTitle(t('customerManagement.menu', 'Müşteri Yönetimi'));
@@ -91,7 +94,7 @@ export function CustomerManagementPage(): ReactElement {
   const filteredCustomers = useMemo(() => {
     if (!customers) return [];
 
-    let result = [...customers];
+    let result: CustomerDto[] = [...customers];
 
     if (debouncedSearch) {
         const lowerSearch = debouncedSearch.toLowerCase();
@@ -146,7 +149,7 @@ export function CustomerManagementPage(): ReactElement {
     );
   };
 
-  const handleExportExcel = () => {
+  const handleExportExcel = async () => {
     const dataToExport = filteredCustomers.map(item => {
         const row: Record<string, string | number | boolean | null | undefined> = {};
         tableColumns.filter(col => visibleColumns.includes(col.key)).forEach(col => {
@@ -158,6 +161,7 @@ export function CustomerManagementPage(): ReactElement {
         return row;
     });
 
+    const XLSX = await import('xlsx');
     const ws = XLSX.utils.json_to_sheet(dataToExport);
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Müşteriler");
@@ -187,7 +191,8 @@ export function CustomerManagementPage(): ReactElement {
 
   type PptxTableRow = Array<{ text: string }>;
 
-  const handleExportPowerPoint = () => {
+  const handleExportPowerPoint = async () => {
+    const { default: PptxGenJS } = await import('pptxgenjs');
     const pptx = new PptxGenJS();
     const slide = pptx.addSlide();
     

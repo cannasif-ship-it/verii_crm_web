@@ -10,18 +10,20 @@ export function PowerbiReportViewerPage(): ReactElement {
   const { t } = useTranslation();
   const reportId = id != null ? parseInt(id, 10) : null;
   const { data: embedConfig, isLoading, isError, error, refetch } = usePowerbiEmbedConfig(reportId ?? null);
+  const embedUrl = embedConfig?.embedUrl ?? null;
+  const accessToken = embedConfig?.accessToken ?? null;
+  const embedReportId = embedConfig?.reportId ?? null;
   const containerRef = useRef<HTMLDivElement>(null);
   const reportRef = useRef<{ setAccessToken: (token: string) => Promise<void> } | null>(null);
 
   useEffect(() => {
-    if (!embedConfig || !containerRef.current) return;
+    if (!embedUrl || !accessToken || !embedReportId || !containerRef.current) return;
     const container = containerRef.current;
     let report: { setAccessToken: (token: string) => Promise<void>; off?: (event: string) => void } | null = null;
     let powerbiInstance: { reset: (el: HTMLElement) => void } | null = null;
 
     const initEmbed = async (): Promise<void> => {
-      // @ts-ignore
-      const raw = await import('powerbi-client');
+      const raw = (await import('powerbi-client')) as unknown;
       const mod = (raw as unknown as { default?: unknown }).default && typeof (raw as unknown as { default: unknown }).default === 'object'
         ? ((raw as unknown as { default: typeof raw }).default)
         : raw;
@@ -41,9 +43,9 @@ export function PowerbiReportViewerPage(): ReactElement {
       powerbiInstance = powerbi;
       const config = {
         type: 'report',
-        embedUrl: embedConfig.embedUrl,
-        accessToken: embedConfig.accessToken,
-        id: embedConfig.reportId,
+        embedUrl,
+        accessToken,
+        id: embedReportId,
       };
       const reportInstance = powerbi.embed(container, config) as {
         setAccessToken: (token: string) => Promise<void>;
@@ -75,7 +77,7 @@ export function PowerbiReportViewerPage(): ReactElement {
         if (container?.firstChild) container.innerHTML = '';
       }
     };
-  }, [embedConfig?.embedUrl, embedConfig?.accessToken, embedConfig?.reportId, refetch]);
+  }, [embedUrl, accessToken, embedReportId, refetch]);
 
   if (reportId == null || Number.isNaN(reportId)) {
     return (

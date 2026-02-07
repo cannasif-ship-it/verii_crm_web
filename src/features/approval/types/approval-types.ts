@@ -40,7 +40,7 @@ export interface ApprovalNoteDto {
   note?: string | null;
 }
 
-export interface ApprovalActionDto extends ApprovalNoteDto {}
+export type ApprovalActionDto = ApprovalNoteDto;
 
 export interface QuotationDetailDto {
   id: number;

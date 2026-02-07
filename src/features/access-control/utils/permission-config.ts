@@ -217,6 +217,27 @@ export const PERMISSION_CODE_DISPLAY: Record<string, { key: string; fallback: st
 export function getPermissionDisplayMeta(code: string): { key: string; fallback: string } | null {
   return PERMISSION_CODE_DISPLAY[code] ?? null;
 }
+
+export const PERMISSION_MODULE_DISPLAY: Record<string, { key: string; fallback: string }> = {
+  dashboard: { key: 'sidebar.home', fallback: 'Home' },
+  sales: { key: 'sidebar.salesManagement', fallback: 'Sales' },
+  customers: { key: 'sidebar.customers', fallback: 'Customers' },
+  customer360: { key: 'customer360.title', fallback: 'Customer 360' },
+  salesmen360: { key: 'sidebar.salesKpi', fallback: 'Sales KPI' },
+  activity: { key: 'sidebar.activities', fallback: 'Activities' },
+  stock: { key: 'sidebar.productAndStock', fallback: 'Stock' },
+  pricing: { key: 'sidebar.productAndStock', fallback: 'Pricing' },
+  reports: { key: 'sidebar.reports', fallback: 'Reports' },
+  powerbi: { key: 'sidebar.powerbi', fallback: 'PowerBI' },
+  approval: { key: 'sidebar.approvalDefinitions', fallback: 'Approvals' },
+  definitions: { key: 'sidebar.definitions', fallback: 'Definitions' },
+  users: { key: 'sidebar.users', fallback: 'Users' },
+  'access-control': { key: 'sidebar.accessControl', fallback: 'Access Control' },
+};
+
+export function getPermissionModuleDisplayMeta(prefix: string): { key: string; fallback: string } | null {
+  return PERMISSION_MODULE_DISPLAY[prefix] ?? null;
+}
 export const PERMISSION_CODE_CATALOG: string[] = Array.from(
   new Set(
     Object.values(ROUTE_PERMISSION_MAP)

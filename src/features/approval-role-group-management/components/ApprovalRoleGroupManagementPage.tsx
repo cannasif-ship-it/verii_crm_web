@@ -44,7 +44,7 @@ export function ApprovalRoleGroupManagementPage(): ReactElement {
   const filteredRoleGroups = useMemo(() => {
     if (!data?.data) return [];
     
-    let result = [...data.data];
+    let result: ApprovalRoleGroupDto[] = [...data.data];
 
     if (searchTerm) {
       const lowerTerm = searchTerm.toLowerCase();

@@ -95,14 +95,15 @@ export function PricingRuleTable({
   );
 
   const processedHeaders = useMemo(() => {
-    let result = [...headers];
+    const result = [...headers];
 
-    if (sortConfig) {
-      result.sort((a, b) => {
-        // @ts-ignore
-        const aValue = a[sortConfig.key] ? String(a[sortConfig.key]).toLowerCase() : '';
-        // @ts-ignore
-        const bValue = b[sortConfig.key] ? String(b[sortConfig.key]).toLowerCase() : '';
+	    if (sortConfig) {
+	      result.sort((a, b) => {
+	        const key = String(sortConfig.key);
+	        const aRaw = (a as unknown as Record<string, unknown>)[key];
+	        const bRaw = (b as unknown as Record<string, unknown>)[key];
+	        const aValue = aRaw != null ? String(aRaw).toLowerCase() : '';
+	        const bValue = bRaw != null ? String(bRaw).toLowerCase() : '';
 
         if (aValue < bValue) return sortConfig.direction === 'asc' ? -1 : 1;
         if (aValue > bValue) return sortConfig.direction === 'asc' ? 1 : -1;
@@ -127,7 +128,7 @@ export function PricingRuleTable({
         toast.success(t('pricingRule.delete.success', 'Kural başarıyla silindi'));
         setDeleteDialogOpen(false);
         setSelectedHeader(null);
-      } catch (error) {
+      } catch {
         toast.error(t('pricingRule.delete.error', 'Kural silinirken bir hata oluştu'));
       }
     }
@@ -176,9 +177,8 @@ export function PricingRuleTable({
     }
   };
 
-  const renderCellContent = (item: PricingRuleHeaderGetDto, column: ColumnDef<PricingRuleHeaderGetDto>) => {
-    // @ts-ignore
-    const value = item[column.key];
+	  const renderCellContent = (item: PricingRuleHeaderGetDto, column: ColumnDef<PricingRuleHeaderGetDto>) => {
+	    const value = (item as unknown as Record<string, unknown>)[String(column.key)];
     
     if (column.key === 'isActive') {
         const now = new Date();
@@ -206,7 +206,7 @@ export function PricingRuleTable({
     switch (column.type) {
         case 'code':
             return <span className="font-mono text-xs bg-slate-100 dark:bg-white/10 px-2 py-1 rounded text-slate-700 dark:text-slate-300">{String(value)}</span>;
-        case 'ruleType':
+        case 'ruleType': {
             const ruleTypeConfig = getRuleTypeConfig(value as PricingRuleType);
             const RuleIcon = ruleTypeConfig.icon;
             return (
@@ -215,6 +215,7 @@ export function PricingRuleTable({
                     {ruleTypeConfig.label}
                 </Badge>
             );
+        }
         case 'customer':
             return (
                 <div className="flex items-center gap-1.5">

@@ -13,6 +13,8 @@ import { useUpdateCustomerType } from '../hooks/useUpdateCustomerType';
 import { useCustomerTypeList } from '../hooks/useCustomerTypeList'; // <-- Hook burada!
 import type { CustomerTypeDto, CustomerTypeFormSchema } from '../types/customer-type-types';
 
+const EMPTY_CUSTOMER_TYPES: CustomerTypeDto[] = [];
+
 export function CustomerTypeManagementPage(): ReactElement {
   const { t } = useTranslation();
   const { setPageTitle } = useUIStore();
@@ -35,7 +37,10 @@ export function CustomerTypeManagementPage(): ReactElement {
     pageSize: 10000, // Tüm veriyi çekiyoruz
   });
 
-  const customerTypes = apiResponse?.data ?? [];
+  const customerTypes = useMemo<CustomerTypeDto[]>(
+    () => apiResponse?.data ?? EMPTY_CUSTOMER_TYPES,
+    [apiResponse?.data]
+  );
 
   // Sayfa Başlığı
   useEffect(() => {
@@ -47,7 +52,7 @@ export function CustomerTypeManagementPage(): ReactElement {
   const filteredCustomerTypes = useMemo(() => {
     if (!customerTypes) return [];
 
-    let result = [...customerTypes];
+    let result: CustomerTypeDto[] = [...customerTypes];
 
     // 1. Arama Filtresi
     if (searchTerm) {

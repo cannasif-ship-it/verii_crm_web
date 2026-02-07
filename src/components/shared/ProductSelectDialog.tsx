@@ -21,6 +21,9 @@ import { RelatedStocksSelectionDialog } from './RelatedStocksSelectionDialog';
 import { cn } from '@/lib/utils';
 import type { StockGetDto, StockGetWithMainImageDto, StockRelationDto } from '@/features/stock/types';
 
+const EMPTY_STOCKS: StockGetDto[] = [];
+const EMPTY_STOCKS_WITH_IMAGES: StockGetWithMainImageDto[] = [];
+
 export interface ProductSelectionResult {
   id?: number;
   code: string;
@@ -723,7 +726,7 @@ export function ProductSelectDialog({
         recognitionRef.current = recognition;
       }
     }
-  }, []);
+  }, [i18n.language]);
 
   const handleVoiceSearch = (): void => {
     if (!recognitionRef.current) {
@@ -781,8 +784,14 @@ export function ProductSelectDialog({
     ...stockFilters,
   });
 
-  const stocks = stocksData?.data || [];
-  const stocksWithImages = stocksWithImagesData?.data || [];
+  const stocks = useMemo<StockGetDto[]>(
+    () => stocksData?.data ?? EMPTY_STOCKS,
+    [stocksData?.data]
+  );
+  const stocksWithImages = useMemo<StockGetWithMainImageDto[]>(
+    () => stocksWithImagesData?.data ?? EMPTY_STOCKS_WITH_IMAGES,
+    [stocksWithImagesData?.data]
+  );
 
   const filteredStocks = useMemo(() => {
     if (!searchQuery.trim()) {

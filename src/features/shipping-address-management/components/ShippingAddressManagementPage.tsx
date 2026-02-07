@@ -36,7 +36,7 @@ export function ShippingAddressManagementPage(): ReactElement {
   }, [apiResponse]);
 
   const filteredShippingAddresses = useMemo(() => {
-    let result = [...allShippingAddresses];
+    let result: ShippingAddressDto[] = [...allShippingAddresses];
 
     // Status Filter
     if (activeFilter === 'active') {

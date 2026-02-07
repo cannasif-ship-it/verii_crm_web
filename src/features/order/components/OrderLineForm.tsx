@@ -29,6 +29,28 @@ interface TemporaryStockData {
   currencyCode: string;
 }
 
+const areTemporaryStockDataEqual = (
+  a: TemporaryStockData[],
+  b: TemporaryStockData[]
+): boolean => {
+  if (a === b) return true;
+  if (a.length !== b.length) return false;
+  for (let i = 0; i < a.length; i++) {
+    const left = a[i];
+    const right = b[i];
+    if (!left || !right) return false;
+    if (left.productCode !== right.productCode) return false;
+    if ((left.groupCode ?? '') !== (right.groupCode ?? '')) return false;
+    if (left.quantity !== right.quantity) return false;
+    if (left.unitPrice !== right.unitPrice) return false;
+    if (left.discountRate1 !== right.discountRate1) return false;
+    if (left.discountRate2 !== right.discountRate2) return false;
+    if (left.discountRate3 !== right.discountRate3) return false;
+    if (left.currencyCode !== right.currencyCode) return false;
+  }
+  return true;
+};
+
 interface OrderLineFormProps {
   line: OrderLineFormState;
   onSave: (line: OrderLineFormState) => void;
@@ -273,9 +295,12 @@ export function OrderLineForm({
               })
             );
             
-            setTemporaryStockData([mainStockData, ...relatedStocksData]);
-            setLastLoadedProductCode(line.productCode);
-          } catch (error) {
+            setTemporaryStockData((prev) => {
+              const next = [mainStockData, ...relatedStocksData];
+              return areTemporaryStockDataEqual(prev, next) ? prev : next;
+            });
+            setLastLoadedProductCode((prev) => (prev === line.productCode ? prev : line.productCode));
+          } catch {
             const mainStockData: TemporaryStockData = {
               productCode: line.productCode,
               groupCode: line.groupCode || undefined,
@@ -301,8 +326,11 @@ export function OrderLineForm({
               };
             });
 
-            setTemporaryStockData([mainStockData, ...relatedStocksData]);
-            setLastLoadedProductCode(line.productCode);
+            setTemporaryStockData((prev) => {
+              const next = [mainStockData, ...relatedStocksData];
+              return areTemporaryStockDataEqual(prev, next) ? prev : next;
+            });
+            setLastLoadedProductCode((prev) => (prev === line.productCode ? prev : line.productCode));
           }
         } else {
           const existingMainStockData = temporaryStockData.find((data) => data.productCode === line.productCode);
@@ -339,15 +367,18 @@ export function OrderLineForm({
             };
           });
 
-          setTemporaryStockData([mainStockData, ...relatedStocksData]);
+          setTemporaryStockData((prev) => {
+            const next = [mainStockData, ...relatedStocksData];
+            return areTemporaryStockDataEqual(prev, next) ? prev : next;
+          });
         }
       } else {
-        setTemporaryStockData([]);
+        setTemporaryStockData((prev) => (prev.length === 0 ? prev : []));
       }
     };
 
     void loadTemporaryStockData();
-  }, [line, currency, currencyOptions, exchangeRates, erpRates]);
+  }, [line, currency, currencyOptions, exchangeRates, erpRates, lastLoadedProductCode, temporaryStockData]);
 
   useEffect(() => {
     if (
@@ -449,7 +480,10 @@ export function OrderLineForm({
           currencyCode: targetCurrencyCode,
         }));
 
-        setTemporaryStockData([mainStockData, ...relatedStocksData]);
+        setTemporaryStockData((prev) => {
+          const next = [mainStockData, ...relatedStocksData];
+          return areTemporaryStockDataEqual(prev, next) ? prev : next;
+        });
       }
     } else {
       const newLine = await handleProductSelectHook(product);
@@ -475,7 +509,10 @@ export function OrderLineForm({
         currencyCode: targetCurrencyCode,
       };
 
-      setTemporaryStockData([mainStockData]);
+      setTemporaryStockData((prev) => {
+        const next = [mainStockData];
+        return areTemporaryStockDataEqual(prev, next) ? prev : next;
+      });
     }
   };
 

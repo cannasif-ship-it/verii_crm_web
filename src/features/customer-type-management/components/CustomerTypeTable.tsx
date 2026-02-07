@@ -87,7 +87,7 @@ export function CustomerTypeTable({
 
   // Sıralama Mantığı
   const processedData = useMemo(() => {
-    let result = [...customerTypes];
+    const result = [...customerTypes];
     if (sortConfig) {
       result.sort((a, b) => {
         const aValue = a[sortConfig.key] ? String(a[sortConfig.key]).toLowerCase() : '';

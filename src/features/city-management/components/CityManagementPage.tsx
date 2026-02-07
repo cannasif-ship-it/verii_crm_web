@@ -16,6 +16,8 @@ import { CityForm } from './CityForm';
 import type { CityDto } from '../types/city-types';
 import { useCityList } from '../hooks/useCityList';
 
+const EMPTY_CITIES: CityDto[] = [];
+
 export function CityManagementPage(): ReactElement {
   const { t } = useTranslation();
   const { setPageTitle } = useUIStore();
@@ -35,7 +37,10 @@ export function CityManagementPage(): ReactElement {
     pageSize: 10000
   });
 
-  const cities = apiResponse?.data ?? [];
+  const cities = useMemo<CityDto[]>(
+    () => apiResponse?.data ?? EMPTY_CITIES,
+    [apiResponse?.data]
+  );
 
   useEffect(() => {
     setPageTitle(t('cityManagement.menu', 'Şehir Yönetimi'));

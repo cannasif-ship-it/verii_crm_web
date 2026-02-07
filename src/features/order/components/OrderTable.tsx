@@ -59,7 +59,8 @@ export function OrderTable({
       if (result.success && result.data?.id) {
         navigate(`/orders/${result.data.id}`);
       }
-    } catch (error) {
+    } catch {
+      void 0;
     }
   };
 

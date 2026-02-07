@@ -21,6 +21,8 @@ import type { TitleFormSchema } from '../types/title-types';
 import { useQueryClient } from '@tanstack/react-query';
 import { queryKeys } from '../utils/query-keys';
 
+const EMPTY_TITLES: TitleDto[] = [];
+
 export function TitleManagementPage(): ReactElement {
   const { t } = useTranslation();
   const { setPageTitle } = useUIStore();
@@ -42,7 +44,10 @@ export function TitleManagementPage(): ReactElement {
     pageSize: 10000
   });
 
-  const titles = apiResponse?.data || [];
+  const titles = useMemo<TitleDto[]>(
+    () => apiResponse?.data ?? EMPTY_TITLES,
+    [apiResponse?.data]
+  );
 
   const filteredTitles = useMemo(() => {
     if (!titles) return [];

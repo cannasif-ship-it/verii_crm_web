@@ -35,7 +35,7 @@ interface MainLayoutProps {
 }
 
 export function MainLayout({ navItems }: MainLayoutProps): ReactElement {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const { data: permissions, isLoading, isError } = useMyPermissionsQuery();
 
   const defaultNavItems: NavItem[] = useMemo(() => {
@@ -190,7 +190,7 @@ export function MainLayout({ navItems }: MainLayoutProps): ReactElement {
     ];
 
     return logicalMenuStructure;
-  }, [t, i18n.language]);
+  }, [t]);
 
   const items = useMemo(() => {
     const raw = navItems ?? defaultNavItems;

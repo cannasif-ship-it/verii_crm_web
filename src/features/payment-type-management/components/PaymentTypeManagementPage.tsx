@@ -37,7 +37,7 @@ export function PaymentTypeManagementPage(): ReactElement {
   }, [data]);
 
   const filteredPaymentTypes = useMemo(() => {
-    let result = [...allPaymentTypes];
+    let result: PaymentTypeDto[] = [...allPaymentTypes];
 
     // Status Filter
     if (activeFilter === 'active') {

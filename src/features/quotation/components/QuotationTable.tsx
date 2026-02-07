@@ -59,7 +59,8 @@ export function QuotationTable({
       if (result.success && result.data?.id) {
         navigate(`/quotations/${result.data.id}`);
       }
-    } catch (error) {
+    } catch {
+      void 0;
     }
   };
 

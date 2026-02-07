@@ -223,40 +223,42 @@ export function DemandLineTable({
     async (line: DemandLineFormState): Promise<void> => {
       const lineToAdd = { ...line, isEditing: false };
       if (isExistingDemand && demandId) {
-        try {
-          const dtos: CreateDemandLineDto[] = [toCreateDto(lineToAdd, demandId)];
-          const created = await createMutation.mutateAsync(dtos);
-          const mapped = created.map((dto: DemandLineGetDto, i: number) => dtoToFormState(dto, lines.length + i));
-          setLines([...lines, ...mapped]);
-          setAddLineDialogOpen(false);
-          setNewLine(null);
-        } catch {
-        }
-        return;
-      }
+	        try {
+	          const dtos: CreateDemandLineDto[] = [toCreateDto(lineToAdd, demandId)];
+	          const created = await createMutation.mutateAsync(dtos);
+	          const mapped = created.map((dto: DemandLineGetDto, i: number) => dtoToFormState(dto, lines.length + i));
+	          setLines([...lines, ...mapped]);
+	          setAddLineDialogOpen(false);
+	          setNewLine(null);
+	        } catch {
+	          void 0;
+	        }
+	        return;
+	      }
       setLines([...lines, lineToAdd]);
       setAddLineDialogOpen(false);
       setNewLine(null);
     },
-    [isExistingDemand, demandId, createMutation, lines, setLines, linesEditable]
-  );
+	    [isExistingDemand, demandId, createMutation, lines, setLines]
+	  );
 
   const handleSaveMultipleLines = useCallback(
     async (newLines: DemandLineFormState[]): Promise<void> => {
       if (!linesEditable) return;
       const linesToAdd = newLines.map((l) => ({ ...l, isEditing: false }));
       if (isExistingDemand && demandId) {
-        try {
-          const dtos: CreateDemandLineDto[] = linesToAdd.map((l) => toCreateDto(l, demandId));
-          const created = await createMutation.mutateAsync(dtos);
-          const mapped = created.map((dto: DemandLineGetDto, i: number) => dtoToFormState(dto, lines.length + i));
-          setLines([...lines, ...mapped]);
-          setAddLineDialogOpen(false);
-          setNewLine(null);
-        } catch {
-        }
-        return;
-      }
+	        try {
+	          const dtos: CreateDemandLineDto[] = linesToAdd.map((l) => toCreateDto(l, demandId));
+	          const created = await createMutation.mutateAsync(dtos);
+	          const mapped = created.map((dto: DemandLineGetDto, i: number) => dtoToFormState(dto, lines.length + i));
+	          setLines([...lines, ...mapped]);
+	          setAddLineDialogOpen(false);
+	          setNewLine(null);
+	        } catch {
+	          void 0;
+	        }
+	        return;
+	      }
       setLines([...lines, ...linesToAdd]);
       setAddLineDialogOpen(false);
       setNewLine(null);
@@ -361,18 +363,19 @@ export function DemandLineTable({
     const linesWithBackendId = allUpdatedLines.filter((l) => parseLineId(l.id) != null);
 
     if (isExistingDemand && demandId && linesWithBackendId.length > 0) {
-      try {
-        const dtos: DemandLineGetDto[] = linesWithBackendId.map((l) => toUpdateDto(l, demandId));
-        await updateMutation.mutateAsync(dtos);
-        const fresh = await demandApi.getDemandLinesByDemandId(demandId);
-        const mapped = fresh.map((dto, index) => dtoToFormState(dto, index));
-        setLines(mapped);
-        setEditLineDialogOpen(false);
-        setLineToEdit(null);
-      } catch {
-      }
-      return;
-    }
+	      try {
+	        const dtos: DemandLineGetDto[] = linesWithBackendId.map((l) => toUpdateDto(l, demandId));
+	        await updateMutation.mutateAsync(dtos);
+	        const fresh = await demandApi.getDemandLinesByDemandId(demandId);
+	        const mapped = fresh.map((dto, index) => dtoToFormState(dto, index));
+	        setLines(mapped);
+	        setEditLineDialogOpen(false);
+	        setLineToEdit(null);
+	      } catch {
+	        void 0;
+	      }
+	      return;
+	    }
 
     applyLineUpdatesToLocalState(updatedLine, relatedLinesToUpdate, originalLine);
     setEditLineDialogOpen(false);

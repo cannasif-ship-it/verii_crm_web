@@ -130,7 +130,7 @@ export function CustomerTable({
 
   const processedData = useMemo(() => {
     const safeData = customers || [];
-    let result = [...safeData];
+    const result = [...safeData];
     
     if (sortConfig) {
       result.sort((a, b) => {
