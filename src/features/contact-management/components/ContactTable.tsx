@@ -1,6 +1,23 @@
-import { type ReactElement, useState, useMemo } from 'react';
+import { type ReactElement, useState, useMemo, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { TFunction } from 'i18next';
+import {
+  DndContext, 
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  horizontalListSortingStrategy,
+  useSortable
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 import {
   Table,
   TableBody,
@@ -33,7 +50,8 @@ import {
   Calendar,
   User,
   Building2,
-  Briefcase
+  Briefcase,
+  GripVertical
 } from 'lucide-react';
 import { Alert02Icon } from 'hugeicons-react';
 
@@ -64,6 +82,51 @@ export const getColumnsConfig = (t: TFunction): ColumnDef<ContactDto>[] => [
     { key: 'status', label: t('contactManagement.table.status', 'Durum'), type: 'status', className: 'w-[100px]' },
 ];
 
+interface DraggableTableHeadProps extends React.ComponentProps<typeof TableHead> {
+  id: string;
+}
+
+const DraggableTableHead = ({ id, children, className, ...props }: DraggableTableHeadProps) => {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id });
+
+  const style: React.CSSProperties = {
+    transform: CSS.Translate.toString(transform),
+    transition,
+    opacity: isDragging ? 0.8 : 1,
+    zIndex: isDragging ? 1 : 'auto',
+    backgroundColor: isDragging ? 'var(--accent)' : undefined,
+  };
+
+  return (
+    <TableHead
+      ref={setNodeRef}
+      style={style}
+      className={`${className} ${isDragging ? 'bg-accent/20' : ''}`}
+      {...props}
+    >
+      <div className="flex items-center gap-1">
+        <button 
+          {...attributes} 
+          {...listeners} 
+          className="cursor-grab active:cursor-grabbing hover:bg-slate-100 dark:hover:bg-white/10 p-1 rounded transition-colors touch-none"
+        >
+          <GripVertical size={14} className="text-slate-400/50 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300" />
+        </button>
+        <div className="flex-1">
+          {children}
+        </div>
+      </div>
+    </TableHead>
+  );
+};
+
 export function ContactTable({
   contacts,
   isLoading,
@@ -80,6 +143,46 @@ export function ContactTable({
   const [sortConfig, setSortConfig] = useState<{ key: keyof ContactDto; direction: 'asc' | 'desc' } | null>(null);
 
   const tableColumns = useMemo(() => getColumnsConfig(t), [t]);
+
+  // Column Order State
+  const [columnOrder, setColumnOrder] = useState<string[]>(tableColumns.map(c => c.key));
+
+  // Sync columnOrder with tableColumns when language changes or columns definition updates
+  useEffect(() => {
+    setColumnOrder((prevOrder) => {
+      // Keep existing order for known keys, append new keys
+      const newKeys = tableColumns.map(c => c.key);
+      const existingKeys = prevOrder.filter(key => newKeys.includes(key as keyof ContactDto));
+      const addedKeys = newKeys.filter(key => !prevOrder.includes(key));
+      return [...existingKeys, ...addedKeys];
+    });
+  }, [tableColumns]);
+
+  const orderedColumns = useMemo(() => {
+    return columnOrder
+      .filter(key => visibleColumns.includes(key as keyof ContactDto))
+      .map(key => tableColumns.find(col => col.key === key))
+      .filter((col): col is ColumnDef<ContactDto> => !!col);
+  }, [columnOrder, visibleColumns, tableColumns]);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (over && active.id !== over.id) {
+      setColumnOrder((items) => {
+        const oldIndex = items.indexOf(active.id as string);
+        const newIndex = items.indexOf(over.id as string);
+        return arrayMove(items, oldIndex, newIndex);
+      });
+    }
+  };
   
   const processedContacts = useMemo(() => {
     let result = [...contacts];
@@ -195,21 +298,32 @@ export function ContactTable({
     <div className="flex flex-col gap-4">
       
       <div className="rounded-xl border border-slate-200 dark:border-white/10 overflow-hidden bg-white/50 dark:bg-transparent">
+        <DndContext 
+          sensors={sensors} 
+          collisionDetection={closestCenter} 
+          onDragEnd={handleDragEnd}
+        >
         <Table>
             <TableHeader className="bg-slate-50/50 dark:bg-white/5">
               <TableRow className="border-b border-slate-200 dark:border-white/10 hover:bg-transparent">
-                {tableColumns.filter(col => visibleColumns.includes(col.key)).map((col) => (
-                    <TableHead 
-                        key={col.key} 
-                        onClick={() => handleSort(col.key)} 
-                        className={headStyle}
-                    >
-                        <div className="flex items-center gap-2">
-                            {col.label}
-                            <SortIcon column={col.key} />
-                        </div>
-                    </TableHead>
-                ))}
+                <SortableContext 
+                  items={orderedColumns.map(col => col.key)} 
+                  strategy={horizontalListSortingStrategy}
+                >
+                  {orderedColumns.map((col) => (
+                      <DraggableTableHead 
+                          key={col.key} 
+                          id={col.key as string}
+                          onClick={() => handleSort(col.key)} 
+                          className={headStyle}
+                      >
+                          <div className="flex items-center gap-2">
+                              {col.label}
+                              <SortIcon column={col.key} />
+                          </div>
+                      </DraggableTableHead>
+                  ))}
+                </SortableContext>
                 <TableHead className={`${headStyle} text-right w-[100px]`}>
                   {t('contactManagement.actions', 'İşlemler')}
                 </TableHead>
@@ -222,7 +336,7 @@ export function ContactTable({
                   className="border-b border-slate-100 dark:border-white/5 transition-colors duration-200 hover:bg-pink-50/40 dark:hover:bg-pink-500/5 group last:border-0 cursor-pointer"
                   onDoubleClick={() => onEdit(contact)}
                 >
-                  {tableColumns.filter(col => visibleColumns.includes(col.key)).map((col) => (
+                  {orderedColumns.map((col) => (
                       <TableCell key={`${contact.id}-${col.key}`} className={`${cellStyle} ${col.className || ''}`}>
                           {renderCellContent(contact, col)}
                       </TableCell>
@@ -238,6 +352,7 @@ export function ContactTable({
               ))}
             </TableBody>
           </Table>
+        </DndContext>
       </div>
 
       <div className="flex flex-col sm:flex-row items-center justify-between py-4 gap-4">
