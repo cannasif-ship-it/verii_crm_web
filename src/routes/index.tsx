@@ -72,6 +72,9 @@ const PowerbiReportsListPage = lazyImport(() => import('@/features/powerbi-viewe
 const PowerbiReportViewerPage = lazyImport(() => import('@/features/powerbi-viewer'), 'PowerbiReportViewerPage');
 const PowerbiReportSyncPage = lazyImport(() => import('@/features/powerbi-sync'), 'PowerbiReportSyncPage');
 const PowerbiRlsPage = lazyImport(() => import('@/features/powerbi-rls'), 'PowerbiRlsPage');
+const PermissionDefinitionsPage = lazyImport(() => import('@/features/access-control'), 'PermissionDefinitionsPage');
+const PermissionGroupsPage = lazyImport(() => import('@/features/access-control'), 'PermissionGroupsPage');
+const UserGroupAssignmentsPage = lazyImport(() => import('@/features/access-control'), 'UserGroupAssignmentsPage');
 
 export const router = createBrowserRouter([
   {
@@ -140,6 +143,9 @@ export const router = createBrowserRouter([
       { path: 'stocks', element: <StockListPage /> },
       { path: 'stocks/:id', element: <StockDetailPage /> },
       { path: 'document-serial-type-management', element: <DocumentSerialTypeManagementPage /> },
+      { path: 'access-control/permission-definitions', element: <PermissionDefinitionsPage /> },
+      { path: 'access-control/permission-groups', element: <PermissionGroupsPage /> },
+      { path: 'access-control/user-group-assignments', element: <UserGroupAssignmentsPage /> },
     ],
   },
   {

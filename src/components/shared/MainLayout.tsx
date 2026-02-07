@@ -1,10 +1,14 @@
 import { type ReactElement, Suspense, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Outlet } from 'react-router-dom';
+import { Shield01Icon } from 'hugeicons-react';
 import { PageLoader } from './PageLoader';
 import { Navbar } from './Navbar';
 import { Sidebar } from './Sidebar';
 import { Footer } from './Footer';
+import { TooltipProvider } from '@/components/ui/tooltip';
+import { RoutePermissionGuard } from '@/features/access-control/components/RoutePermissionGuard';
+import { useMyPermissionsQuery } from '@/features/access-control/hooks/useMyPermissionsQuery';
+import { filterNavItemsByPermission } from '@/features/access-control/utils/filterNavItems';
 import { 
   DashboardSquare02Icon, 
   UserGroupIcon, 
@@ -32,10 +36,9 @@ interface MainLayoutProps {
 
 export function MainLayout({ navItems }: MainLayoutProps): ReactElement {
   const { t, i18n } = useTranslation();
+  const { data: permissions, isLoading, isError } = useMyPermissionsQuery();
 
   const defaultNavItems: NavItem[] = useMemo(() => {
-    
-
     const iconSize = 22;
 
     const logicalMenuStructure: NavItem[] = [
@@ -165,9 +168,18 @@ export function MainLayout({ navItems }: MainLayoutProps): ReactElement {
         title: t('sidebar.users', 'Kullanıcılar'),
         icon: <UserCircleIcon size={iconSize} className="text-indigo-500" stroke="currentColor" />,
         children: [
-          { title: t('sidebar.userManagement', 'Kullanıcı Yönetimi'), href: '/user-management' },
           { title: t('sidebar.userDiscountLimitManagement', 'Kullanıcı İskonto Limit Yönetimi'), href: '/user-discount-limit-management' },
+        ],
+      },
+      {
+        title: t('sidebar.accessControl', 'Erişim Kontrolü'),
+        icon: <Shield01Icon size={iconSize} className="text-violet-500" />,
+        children: [
+          { title: t('sidebar.userManagement', 'Kullanıcı Yönetimi'), href: '/user-management' },
           { title: t('sidebar.mailSettings', 'Mail Ayarları'), href: '/users/mail-settings' },
+          { title: t('sidebar.permissionDefinitions', 'İzin Tanımları'), href: '/access-control/permission-definitions' },
+          { title: t('sidebar.permissionGroups', 'İzin Grupları'), href: '/access-control/permission-groups' },
+          { title: t('sidebar.userGroupAssignments', 'Kullanıcı Grup Atamaları'), href: '/access-control/user-group-assignments' },
         ],
       },
       {
@@ -180,7 +192,13 @@ export function MainLayout({ navItems }: MainLayoutProps): ReactElement {
     return logicalMenuStructure;
   }, [t, i18n.language]);
 
-  const items = navItems || defaultNavItems;
+  const items = useMemo(() => {
+    const raw = navItems ?? defaultNavItems;
+    if (isLoading) return raw;
+    if (permissions) return filterNavItemsByPermission(raw, permissions);
+    if (isError) return raw;
+    return raw;
+  }, [navItems, defaultNavItems, permissions, isLoading, isError]);
 
   return (
     <div className="relative flex h-screen w-full overflow-hidden bg-[#f8f9fc] dark:bg-[#0c0516] font-['Outfit'] transition-colors duration-300">
@@ -195,11 +213,15 @@ export function MainLayout({ navItems }: MainLayoutProps): ReactElement {
 
       <div className="flex flex-1 flex-col h-full overflow-hidden relative z-10">
         <Navbar />
-        <main className="flex-1 overflow-y-auto p-4 text-foreground scrollbar-thin scrollbar-thumb-zinc-200 dark:scrollbar-thumb-zinc-800 scrollbar-track-transparent">
-          <div className="w-full min-h-full">
-            <Suspense fallback={<PageLoader />}><Outlet /></Suspense>
-          </div>
-        </main>
+        <TooltipProvider delayDuration={200}>
+          <main className="flex-1 overflow-y-auto p-4 text-foreground scrollbar-thin scrollbar-thumb-zinc-200 dark:scrollbar-thumb-zinc-800 scrollbar-track-transparent">
+            <div className="w-full min-h-full">
+              <Suspense fallback={<PageLoader />}>
+                <RoutePermissionGuard />
+              </Suspense>
+            </div>
+          </main>
+        </TooltipProvider>
         <Footer />
       </div>
       
