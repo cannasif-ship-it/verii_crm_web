@@ -8,9 +8,13 @@ export const useSetPermissionGroupPermissionsMutation = () => {
   return useMutation({
     mutationFn: ({ id, dto }: { id: number; dto: SetPermissionGroupPermissionsDto }) =>
       permissionGroupApi.setPermissions(id, dto),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['permissions', 'groups'] });
-      queryClient.invalidateQueries({ queryKey: ACCESS_CONTROL_QUERY_KEYS.ME_PERMISSIONS_BASE });
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['permissions', 'groups'] });
+      await queryClient.invalidateQueries({ queryKey: ACCESS_CONTROL_QUERY_KEYS.ME_PERMISSIONS_BASE });
+      await queryClient.refetchQueries({
+        queryKey: ACCESS_CONTROL_QUERY_KEYS.ME_PERMISSIONS_BASE,
+        type: 'active',
+      });
     },
   });
 };

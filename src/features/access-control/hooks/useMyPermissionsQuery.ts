@@ -12,7 +12,10 @@ export const useMyPermissionsQuery = () => {
   return useQuery({
     queryKey: ACCESS_CONTROL_QUERY_KEYS.ME_PERMISSIONS(userId),
     queryFn: () => authAccessApi.getMyPermissions(),
-    enabled: !!token,
+    enabled: !!token && !!userId,
     staleTime: STALE_TIME_MS,
+    refetchOnMount: 'always',
+    refetchOnWindowFocus: true,
+    retry: false,
   });
 };

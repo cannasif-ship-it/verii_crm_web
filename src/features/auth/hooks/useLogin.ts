@@ -1,4 +1,4 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -6,41 +6,38 @@ import { authApi } from '../api/auth-api';
 import { useAuthStore } from '@/stores/auth-store';
 import { getUserFromToken } from '@/utils/jwt';
 import type { LoginRequest, Branch } from '../types/auth';
+import { ACCESS_CONTROL_QUERY_KEYS } from '@/features/access-control/utils/query-keys';
 
 export const useLogin = (branches?: Branch[]) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const setAuth = useAuthStore((state) => state.setAuth);
 
   return useMutation({
     mutationFn: (data: LoginRequest) => authApi.login(data),
-    onSuccess: (response, variables) => {
-      console.log('Login response:', response);
-      
+    onSuccess: async (response, variables) => {
       if (response.success && response.data) {
         const user = getUserFromToken(response.data.token);
-        console.log('Parsed user:', user);
 
         if (user) {
           const selectedBranch = branches?.find((b) => b.id === variables.branchId) || null;
-          
-          // --- BURASI EKLENDİ: MANUEL HAFIZA YÖNETİMİ ---
           const token = response.data.token;
-          const rememberMe = variables.rememberMe; // Formdan gelen "Beni Hatırla" verisi
+          const rememberMe = variables.rememberMe;
 
           if (rememberMe) {
-            // Beni Hatırla SEÇİLİ: Kalıcı hafızaya yaz, geçiciyi temizle
             localStorage.setItem('access_token', token);
             sessionStorage.removeItem('access_token');
           } else {
-            // Beni Hatırla SEÇİLİ DEĞİL: Geçici hafızaya yaz, kalıcıyı temizle
             sessionStorage.setItem('access_token', token);
             localStorage.removeItem('access_token');
           }
-          // ----------------------------------------------
-
-          // Store'u güncelle (State yönetimi için)
           setAuth(user, token, selectedBranch, rememberMe);
+          await queryClient.invalidateQueries({ queryKey: ACCESS_CONTROL_QUERY_KEYS.ME_PERMISSIONS_BASE });
+          await queryClient.refetchQueries({
+            queryKey: ACCESS_CONTROL_QUERY_KEYS.ME_PERMISSIONS(user.id),
+            type: 'active',
+          });
 
           setTimeout(() => {
             navigate('/', { replace: true });
@@ -54,7 +51,6 @@ export const useLogin = (branches?: Branch[]) => {
       }
     },
     onError: (error: Error) => {
-      console.error('Login error:', error);
       const errorMessage = error.message || t('auth.login.loginError');
       toast.error(errorMessage);
     },
