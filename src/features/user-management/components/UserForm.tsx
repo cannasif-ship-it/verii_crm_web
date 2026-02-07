@@ -20,6 +20,14 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
+import { Switch } from '@/components/ui/switch';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import {
   userFormSchema,
   userUpdateFormSchema,
@@ -27,6 +35,10 @@ import {
   type UserUpdateFormSchema,
 } from '../types/user-types';
 import type { UserDto } from '../types/user-types';
+import { useUserAuthorityOptionsQuery } from '../hooks/useUserAuthorityOptionsQuery';
+import type { RoleOption } from '../hooks/useUserAuthorityOptionsQuery';
+import { useUserPermissionGroupsForForm } from '../hooks/useUserPermissionGroupsForForm';
+import { UserFormPermissionGroupSelect } from './UserFormPermissionGroupSelect';
 
 interface UserFormProps {
   open: boolean;
@@ -36,6 +48,9 @@ interface UserFormProps {
   isLoading?: boolean;
 }
 
+const EMPTY_NUMBER_ARRAY: number[] = [];
+const EMPTY_ROLE_OPTIONS: RoleOption[] = [];
+
 export function UserForm({
   open,
   onOpenChange,
@@ -43,9 +58,15 @@ export function UserForm({
   user,
   isLoading = false,
 }: UserFormProps): ReactElement {
-  const { t } = useTranslation();
-
+  const { t } = useTranslation('user-management');
   const isEditMode = !!user;
+  const roleOptionsQuery = useUserAuthorityOptionsQuery();
+  const roleOptions = roleOptionsQuery.data ?? EMPTY_ROLE_OPTIONS;
+  const userPermissionGroupsQuery = useUserPermissionGroupsForForm(
+    user?.id ?? null
+  );
+  const userGroupIds = userPermissionGroupsQuery.data ?? EMPTY_NUMBER_ARRAY;
+
   const form = useForm<UserFormSchema | UserUpdateFormSchema>({
     resolver: zodResolver(isEditMode ? userUpdateFormSchema : userFormSchema),
     defaultValues: {
@@ -55,23 +76,98 @@ export function UserForm({
       firstName: '',
       lastName: '',
       phoneNumber: '',
-      role: '',
+      roleId: 0,
       isActive: true,
+      permissionGroupIds: [],
     },
   });
 
   useEffect(() => {
+    if (!open) {
+      return;
+    }
+
     if (user) {
+      const matchedRole = roleOptions.find((r) => r.label === user.role);
       form.reset({
         username: user.username,
         email: user.email,
         firstName: user.firstName || '',
         lastName: user.lastName || '',
         phoneNumber: user.phoneNumber || '',
-        role: user.role || '',
+        roleId: user.roleId ?? matchedRole?.value ?? 0,
         isActive: user.isActive,
+        permissionGroupIds: userGroupIds,
       });
-    } else {
+      return;
+    }
+
+    form.reset({
+      username: '',
+      email: '',
+      password: '',
+      firstName: '',
+      lastName: '',
+      phoneNumber: '',
+      roleId: 0,
+      isActive: true,
+      permissionGroupIds: [],
+    });
+  }, [
+    open,
+    user?.id,
+    user?.username,
+    user?.email,
+    user?.firstName,
+    user?.lastName,
+    user?.phoneNumber,
+    user?.isActive,
+    user?.role,
+    user?.roleId,
+    roleOptions,
+    userGroupIds,
+    form,
+  ]);
+
+  useEffect(() => {
+    if (!open || !user) {
+      return;
+    }
+
+    if (userPermissionGroupsQuery.isLoading || userPermissionGroupsQuery.data == null) {
+      return;
+    }
+
+    const current = form.getValues('permissionGroupIds') ?? [];
+    const next = userPermissionGroupsQuery.data;
+    const same =
+      current.length === next.length &&
+      current.every((value, index) => value === next[index]);
+
+    if (!same) {
+      form.setValue('permissionGroupIds', next, { shouldDirty: false, shouldTouch: false });
+    }
+  }, [open, user?.id, userPermissionGroupsQuery.isLoading, userPermissionGroupsQuery.data, form]);
+
+  useEffect(() => {
+    if (!open || !user || roleOptions.length === 0) {
+      return;
+    }
+
+    const currentRole = form.getValues('roleId');
+    if (currentRole && currentRole > 0) {
+      return;
+    }
+
+    const matchedRole = roleOptions.find((r) => r.label === user.role);
+    if (matchedRole) {
+      form.setValue('roleId', matchedRole.value, { shouldDirty: false, shouldTouch: false });
+    }
+  }, [open, user?.id, user?.role, roleOptions, form]);
+
+  const handleSubmit = async (data: UserFormSchema | UserUpdateFormSchema): Promise<void> => {
+    await onSubmit(data);
+    if (!isLoading) {
       form.reset({
         username: '',
         email: '',
@@ -79,16 +175,10 @@ export function UserForm({
         firstName: '',
         lastName: '',
         phoneNumber: '',
-        role: '',
+        roleId: 0,
         isActive: true,
+        permissionGroupIds: [],
       });
-    }
-  }, [user, form]);
-
-  const handleSubmit = async (data: UserFormSchema | UserUpdateFormSchema): Promise<void> => {
-    await onSubmit(data);
-    if (!isLoading) {
-      form.reset();
       onOpenChange(false);
     }
   };
@@ -125,6 +215,7 @@ export function UserForm({
                         {...field}
                         placeholder={t('userManagement.form.usernamePlaceholder', 'Kullanıcı adını girin')}
                         maxLength={50}
+                        disabled={isEditMode}
                       />
                     </FormControl>
                     <FormMessage />
@@ -152,6 +243,28 @@ export function UserForm({
                 )}
               />
             </div>
+
+            {!isEditMode && (
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      {t('userManagement.form.password', 'Şifre')}
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        type="password"
+                        placeholder={t('userManagement.form.passwordPlaceholder', 'Boş bırakılırsa geçici şifre oluşturulur')}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
 
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <FormField
@@ -218,23 +331,77 @@ export function UserForm({
 
               <FormField
                 control={form.control}
-                name="role"
+                name="roleId"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>
                       {t('userManagement.form.role', 'Rol')}
+                      {!isEditMode && <span className="text-destructive ml-1">*</span>}
                     </FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        placeholder={t('userManagement.form.rolePlaceholder', 'Rol girin')}
-                      />
-                    </FormControl>
+                    <Select
+                      value={field.value ? String(field.value) : ''}
+                      onValueChange={(v) => field.onChange(v ? parseInt(v, 10) : 0)}
+                      disabled={isLoading}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue
+                            placeholder={t('userManagement.form.rolePlaceholder', 'Rol seçin')}
+                          />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {roleOptions.map((opt) => (
+                          <SelectItem key={opt.value} value={String(opt.value)}>
+                            {opt.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                     <FormMessage />
                   </FormItem>
                 )}
               />
             </div>
+
+            <FormField
+              control={form.control}
+              name="permissionGroupIds"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    {t('userManagement.form.permissionGroups', 'İzin Grupları')}
+                  </FormLabel>
+                  <FormControl>
+                    <UserFormPermissionGroupSelect
+                      value={field.value ?? []}
+                      onChange={field.onChange}
+                      disabled={isLoading}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="isActive"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                  <FormLabel>
+                    {t('userManagement.form.isActive', 'Aktif')}
+                  </FormLabel>
+                  <FormControl>
+                    <Switch
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
             <DialogFooter>
               <Button

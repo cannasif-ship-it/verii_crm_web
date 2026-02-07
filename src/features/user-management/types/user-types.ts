@@ -8,12 +8,14 @@ export interface UserDto {
   lastName: string | null;
   phoneNumber: string | null;
   role: string;
+  roleId?: number;
   isEmailConfirmed: boolean;
   isActive: boolean;
   lastLoginDate: string | null;
   fullName: string;
   creationTime: string | null;
   lastModificationTime: string | null;
+  createdDate?: string;
 }
 
 export interface CreateUserDto {
@@ -23,18 +25,19 @@ export interface CreateUserDto {
   firstName?: string;
   lastName?: string;
   phoneNumber?: string;
-  role?: string;
+  roleId: number;
   isActive?: boolean;
+  permissionGroupIds?: number[];
 }
 
 export interface UpdateUserDto {
-  username?: string;
   email?: string;
   firstName?: string;
   lastName?: string;
   phoneNumber?: string;
-  role?: string;
+  roleId?: number;
   isActive?: boolean;
+  permissionGroupIds?: number[];
 }
 
 export interface UserListFilters {
@@ -51,8 +54,9 @@ export interface UserFormData {
   firstName?: string;
   lastName?: string;
   phoneNumber?: string;
-  role?: string;
+  roleId: number;
   isActive?: boolean;
+  permissionGroupIds?: number[];
 }
 
 export const userFormSchema = z.object({
@@ -73,11 +77,26 @@ export const userFormSchema = z.object({
   firstName: z.string().max(50, 'userManagement.form.firstName.maxLength').optional(),
   lastName: z.string().max(50, 'userManagement.form.lastName.maxLength').optional(),
   phoneNumber: z.string().max(20, 'userManagement.form.phoneNumber.maxLength').optional(),
-  role: z.string().optional(),
+  roleId: z.number().min(1, 'userManagement.form.roleRequired'),
   isActive: z.boolean().optional(),
+  permissionGroupIds: z.array(z.number()).optional(),
 });
 
-export const userUpdateFormSchema = userFormSchema.omit({ password: true });
+export const userUpdateFormSchema = z.object({
+  username: z.string().optional(),
+  email: z.string().email('userManagement.form.email.invalid').optional(),
+  firstName: z.string().max(50).optional(),
+  lastName: z.string().max(50).optional(),
+  phoneNumber: z.string().max(20).optional(),
+  roleId: z.number().min(1, 'userManagement.form.roleRequired').optional().nullable(),
+  isActive: z.boolean().optional(),
+  permissionGroupIds: z.array(z.number()).optional(),
+});
 
 export type UserFormSchema = z.infer<typeof userFormSchema>;
 export type UserUpdateFormSchema = z.infer<typeof userUpdateFormSchema>;
+
+export interface UserAuthorityDto {
+  id: number;
+  title: string;
+}

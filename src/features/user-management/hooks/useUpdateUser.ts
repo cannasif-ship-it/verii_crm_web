@@ -16,6 +16,7 @@ export const useUpdateUser = (): UseMutationResult<UserDto, Error, { id: number;
       queryClient.invalidateQueries({ queryKey: queryKeys.all() });
       queryClient.invalidateQueries({ queryKey: queryKeys.detail(updatedUser.id) });
       queryClient.invalidateQueries({ queryKey: queryKeys.stats() });
+      queryClient.invalidateQueries({ queryKey: ['users', updatedUser.id, 'permission-groups'] });
       toast.success(t('userManagement.messages.updateSuccess', 'Kullanıcı başarıyla güncellendi'));
     },
     onError: (error: Error) => {

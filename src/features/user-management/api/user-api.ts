@@ -42,7 +42,11 @@ export const userApi = {
   },
 
   create: async (data: CreateUserDto): Promise<UserDto> => {
-    const response = await api.post<ApiResponse<UserDto>>('/api/User', data);
+    const payload = {
+      ...data,
+      permissionGroupIds: data.permissionGroupIds ?? [],
+    };
+    const response = await api.post<ApiResponse<UserDto>>('/api/User', payload);
     if (response.success && response.data) {
       return response.data;
     }

@@ -1,3 +1,4 @@
+/* [USER_MGMT_STAGE_6_DONE] */
 import { type ReactElement, useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useUIStore } from '@/stores/ui-store';
@@ -7,7 +8,7 @@ import { UserTable } from './UserTable';
 import { UserForm } from './UserForm';
 import { useCreateUser } from '../hooks/useCreateUser';
 import { useUpdateUser } from '../hooks/useUpdateUser';
-import type { UserDto } from '../types/user-types';
+import type { UserDto, CreateUserDto, UpdateUserDto } from '../types/user-types';
 import type { UserFormSchema, UserUpdateFormSchema } from '../types/user-types';
 
 export function UserManagementPage(): ReactElement {
@@ -38,12 +39,33 @@ export function UserManagementPage(): ReactElement {
 
   const handleFormSubmit = async (data: UserFormSchema | UserUpdateFormSchema): Promise<void> => {
     if (editingUser) {
+      const updateData: UpdateUserDto = {
+        email: data.email,
+        firstName: data.firstName || undefined,
+        lastName: data.lastName || undefined,
+        phoneNumber: data.phoneNumber || undefined,
+        roleId: data.roleId && data.roleId > 0 ? data.roleId : undefined,
+        isActive: data.isActive,
+        permissionGroupIds: data.permissionGroupIds,
+      };
       await updateUser.mutateAsync({
         id: editingUser.id,
-        data: data as UserUpdateFormSchema,
+        data: updateData,
       });
     } else {
-      await createUser.mutateAsync(data as UserFormSchema);
+      const createFormData = data as UserFormSchema;
+      const createData: CreateUserDto = {
+        username: createFormData.username!,
+        email: createFormData.email!,
+        password: createFormData.password || undefined,
+        firstName: createFormData.firstName || undefined,
+        lastName: createFormData.lastName || undefined,
+        phoneNumber: createFormData.phoneNumber || undefined,
+        roleId: createFormData.roleId!,
+        isActive: createFormData.isActive,
+        permissionGroupIds: createFormData.permissionGroupIds,
+      };
+      await createUser.mutateAsync(createData);
     }
     setFormOpen(false);
     setEditingUser(null);
@@ -82,6 +104,10 @@ export function UserManagementPage(): ReactElement {
           filters={filters}
           onPageChange={setPageNumber}
           onSortChange={handleSortChange}
+          onEdit={(u) => {
+            setEditingUser(u);
+            setFormOpen(true);
+          }}
         />
       </div>
 

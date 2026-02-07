@@ -24,6 +24,7 @@ interface UserTableProps {
   filters?: PagedFilter[] | Record<string, unknown>;
   onPageChange: (page: number) => void;
   onSortChange: (sortBy: string, sortDirection: 'asc' | 'desc') => void;
+  onEdit?: (user: UserDto) => void;
 }
 
 export function UserTable({
@@ -34,6 +35,7 @@ export function UserTable({
   filters = {},
   onPageChange,
   onSortChange,
+  onEdit,
 }: UserTableProps): ReactElement {
   const { t, i18n } = useTranslation();
 
@@ -182,6 +184,11 @@ export function UserTable({
               <TableHead>
                 {t('userManagement.table.createdDate', 'Oluşturulma Tarihi')}
               </TableHead>
+              {onEdit && (
+                <TableHead className="w-[80px]">
+                  {t('common.actions', 'İşlemler')}
+                </TableHead>
+              )}
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -218,6 +225,17 @@ export function UserTable({
                     ? new Date(user.creationTime).toLocaleDateString(i18n.language)
                     : '-'}
                 </TableCell>
+                {onEdit && (
+                  <TableCell>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => onEdit(user)}
+                    >
+                      {t('common.edit', 'Düzenle')}
+                    </Button>
+                  </TableCell>
+                )}
               </TableRow>
             ))}
           </TableBody>
