@@ -1,13 +1,18 @@
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
 import {
+  executeCustomer360RecommendedAction,
+  getCustomer360Cohort,
   getCustomer360Overview,
   getCustomer360AnalyticsSummary,
   getCustomer360AnalyticsCharts,
 } from '../api/customer360.api';
+import type { ExecuteRecommendedActionDto } from '../types/customer360.types';
 
 const OVERVIEW_STALE_MS = 30_000;
 const SUMMARY_STALE_MS = 30_000;
 const CHARTS_STALE_MS = 45_000;
+const COHORT_STALE_MS = 300_000;
 
 export function useCustomer360OverviewQuery(id: number, currency?: string) {
   return useQuery({
@@ -34,5 +39,31 @@ export function useCustomer360AnalyticsChartsQuery(id: number, months?: number, 
       getCustomer360AnalyticsCharts({ id, months: months ?? 12, currency, signal }),
     staleTime: CHARTS_STALE_MS,
     enabled: id > 0,
+  });
+}
+
+export function useCustomer360CohortQuery(id: number, months = 12) {
+  return useQuery({
+    queryKey: ['customer360', 'cohort', id, months],
+    queryFn: ({ signal }) => getCustomer360Cohort({ id, months, signal }),
+    staleTime: COHORT_STALE_MS,
+    enabled: id > 0,
+  });
+}
+
+export function useExecuteCustomer360ActionMutation(id: number) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (payload: ExecuteRecommendedActionDto) =>
+      executeCustomer360RecommendedAction({ id, payload }),
+    onSuccess: () => {
+      toast.success('Action executed');
+      queryClient.invalidateQueries({ queryKey: ['customer360', 'overview', id] });
+      queryClient.invalidateQueries({ queryKey: ['customer360', 'cohort', id] });
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || 'Action execution failed');
+    },
   });
 }

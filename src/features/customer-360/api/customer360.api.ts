@@ -1,8 +1,11 @@
 import type { ApiResponse } from '@/types/api';
 import type {
+  ActivityDto,
+  CohortRetentionDto,
   Customer360AnalyticsChartsDto,
   Customer360AnalyticsSummaryDto,
   Customer360OverviewDto,
+  ExecuteRecommendedActionDto,
 } from '../types/customer360.types';
 import { api } from '@/lib/axios';
 
@@ -79,4 +82,26 @@ export async function getCustomer360AnalyticsCharts(params: {
     headers: Object.keys(headers).length > 0 ? headers : undefined,
   });
   return ensureData(response, 'Analytics charts could not be loaded');
+}
+
+export async function getCustomer360Cohort(params: {
+  id: number;
+  months?: number;
+  signal?: AbortSignal;
+}): Promise<CohortRetentionDto[]> {
+  const { id, months = 12, signal } = params;
+  const url = `/api/customers/${id}/analytics/cohort?months=${encodeURIComponent(String(months))}`;
+  const response = await api.get<ApiResponse<CohortRetentionDto[] | null>>(url, { signal });
+  return ensureData(response, 'Cohort analytics could not be loaded');
+}
+
+export async function executeCustomer360RecommendedAction(params: {
+  id: number;
+  payload: ExecuteRecommendedActionDto;
+  signal?: AbortSignal;
+}): Promise<ActivityDto> {
+  const { id, payload, signal } = params;
+  const url = `/api/customers/${id}/recommended-actions/execute`;
+  const response = await api.post<ApiResponse<ActivityDto | null>>(url, payload, { signal });
+  return ensureData(response, 'Recommended action could not be executed');
 }
