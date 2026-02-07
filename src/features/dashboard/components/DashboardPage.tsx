@@ -196,9 +196,10 @@ export function DashboardPage(): ReactElement {
   const chartData = Array(12).fill(0);
 
   return (
-    <div className="w-full space-y-6 pb-20 sm:pb-10 bg-transparent">
+    <div className="flex flex-col h-full gap-4 overflow-hidden">
       
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+      {/* Header - Fixed */}
+      <div className="flex-none flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white mb-1 transition-colors flex flex-col items-start sm:flex-row sm:items-center sm:gap-x-2">
             <span>{greeting},</span>
@@ -233,12 +234,13 @@ export function DashboardPage(): ReactElement {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      {/* KPI Cards - Fixed Height */}
+      <div className="flex-none grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 h-[140px] shrink-0">
         {stats.map((s, i) => (
           <CardWrapper 
             key={i} 
             interactive={false} 
-            className="flex flex-col justify-between h-[150px]"
+            className="flex flex-col justify-between h-full"
           >
             <div className="flex justify-between items-start mb-3">
               <div className={`p-3 rounded-xl ${s.bg} ${s.color} shadow-sm`}>
@@ -264,9 +266,11 @@ export function DashboardPage(): ReactElement {
         ))}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      {/* Middle Section - Flex 1 to Fill Remaining Space */}
+      <div className="flex-1 min-h-0 grid grid-cols-12 gap-4">
         
-        <CardWrapper className="lg:col-span-2 flex flex-col h-[400px] p-0 overflow-hidden">
+        {/* Left: Sales Analysis (8 cols) */}
+        <CardWrapper className="col-span-12 lg:col-span-8 flex flex-col h-full p-0 overflow-hidden">
             <div className="p-6 pb-0 flex justify-between items-center z-30 relative shrink-0">
                 <div>
                     <h3 className="text-lg font-bold flex items-center gap-2 text-slate-800 dark:text-white">
@@ -302,15 +306,15 @@ export function DashboardPage(): ReactElement {
                 
                 {!hasChartData && (
                     <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-white/60 dark:bg-[#0c0516]/60 backdrop-blur-sm pt-12 gap-6">
-                         <div className="bg-slate-50 dark:bg-white/5 p-4 rounded-full shadow-sm border border-slate-100 dark:border-white/5">
+                            <div className="bg-slate-50 dark:bg-white/5 p-4 rounded-full shadow-sm border border-slate-100 dark:border-white/5">
                             <BarChart3 size={32} className="text-slate-300 dark:text-slate-600" />
-                         </div>
-                         <p className="text-sm font-medium text-slate-500 dark:text-slate-400">Henüz satış verisi oluşmadı</p>
+                            </div>
+                            <p className="text-sm font-medium text-slate-500 dark:text-slate-400">Henüz satış verisi oluşmadı</p>
                     </div>
                 )}
 
-                <div className="w-full h-full overflow-x-auto custom-scrollbar px-6 pb-4 pt-4">
-                    <div className="flex items-end justify-between gap-3 w-full min-w-[500px] h-full">
+                <div className="w-full h-full overflow-hidden px-6 pb-4 pt-4">
+                    <div className="flex items-end justify-between gap-3 w-full h-full">
                         {monthKeys.map((key, i) => {
                             const height = hasChartData ? chartData[i] : 0; 
                             
@@ -334,7 +338,8 @@ export function DashboardPage(): ReactElement {
             </div>
         </CardWrapper>
 
-        <CardWrapper className="h-[400px] flex flex-col p-0 overflow-hidden">
+        {/* Right: Latest Activities (4 cols) */}
+        <CardWrapper className="col-span-12 lg:col-span-4 h-full flex flex-col p-0 overflow-hidden">
             <div className="p-5 border-b border-slate-100 dark:border-white/5 flex justify-between items-center bg-slate-50/30 dark:bg-white/5 shrink-0">
                 <h3 className="text-md font-bold text-slate-800 dark:text-white flex items-center gap-2">
                     <Activity size={16} className="text-orange-500" />
@@ -350,7 +355,7 @@ export function DashboardPage(): ReactElement {
                 </Button>
             </div>
             
-            <div className="flex-1 flex flex-col overflow-y-auto custom-scrollbar">
+            <div className="flex-1 flex flex-col overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
                 {deals.length > 0 ? (
                     <div className="p-4 space-y-3">
                         {deals.map((d, i) => (
@@ -387,7 +392,8 @@ export function DashboardPage(): ReactElement {
         </CardWrapper>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      {/* Bottom Section - Fixed Height */}
+      <div className="flex-none grid grid-cols-1 md:grid-cols-3 gap-4 h-[140px] shrink-0">
         {[
             { 
               t: t('dashboard.quickStats.pendingTasks', 'Bekleyen Görevler'), 
@@ -418,16 +424,14 @@ export function DashboardPage(): ReactElement {
                 key={k} 
                 onClick={() => navigate(x.link)}
                 interactive={true}
-                className="p-5 flex items-center gap-8 group"
+                className="p-5 flex items-center gap-8 group h-full"
             >
                 <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${x.bg} ${x.c} transition-transform group-hover:scale-110 shrink-0`}>
                     <x.i size={24} />
                 </div>
                 <div>
-                    <h4 className="font-bold text-sm text-slate-800 dark:text-white group-hover:text-pink-600 dark:group-hover:text-pink-400 transition-colors">
-                        {x.t}
-                    </h4>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-1">{x.d}</p>
+                  <h4 className="text-slate-900 dark:text-white font-semibold text-lg">{x.t}</h4>
+                  <p className="text-slate-500 dark:text-slate-400 text-xs mt-1">{x.d}</p>
                 </div>
             </CardWrapper>
         ))}
