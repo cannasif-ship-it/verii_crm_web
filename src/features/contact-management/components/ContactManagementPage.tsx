@@ -325,47 +325,7 @@ export function ContactManagementPage(): ReactElement {
                 </div>
             </div>
 
-            <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" className="h-10 w-10 p-0 border-slate-200 dark:border-white/10 bg-white/50 dark:bg-white/5 hover:bg-pink-50 dark:hover:bg-white/10 hover:border-pink-500/30">
-                    <Menu size={18} className="text-slate-500 dark:text-slate-400" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-64 bg-[#151025] border border-white/10 shadow-2xl shadow-black/50 overflow-visible p-0">
-                  <div className="p-2">
-                    <div className="px-3 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">
-                      {t('common.actions', 'İşlemler')}
-                    </div>
-                  </div>
-
-                  <div className="h-px bg-white/5 my-1"></div>
-
-                  <div className="p-2">
-                    <div className="px-3 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">
-                      {t('common.export', 'Dışa Aktar')}
-                    </div>
-                    <button onClick={handleExportExcel} className="flex items-center gap-2 w-full px-3 py-2.5 rounded-lg text-sm text-gray-200 hover:bg-white/5 transition-colors text-left">
-                      <FileSpreadsheet size={16} className="text-emerald-500" />
-                      <span>{t('common.exportExcel', 'Excel İndir')}</span>
-                    </button>
-                    <button onClick={handleExportPDF} className="flex items-center gap-2 w-full px-3 py-2.5 rounded-lg text-sm text-gray-200 hover:bg-white/5 transition-colors text-left">
-                      <FileText size={16} className="text-red-400" />
-                      <span>{t('common.exportPDF', 'PDF İndir')}</span>
-                    </button>
-                    <button onClick={handleExportPowerPoint} className="flex items-center gap-2 w-full px-3 py-2.5 rounded-lg text-sm text-gray-200 hover:bg-white/5 transition-colors text-left">
-                      <Presentation size={16} className="text-orange-400" />
-                      <span>{t('common.exportPPT', 'PowerPoint İndir')}</span>
-                    </button>
-                  </div>
-                </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-
-{/* Old filters removed */}
-      </div>
-
-      <div className="flex-1 flex flex-col min-h-0 overflow-hidden relative">
-        <div className="flex justify-end px-4 py-2 gap-2">
+            <div className="flex items-center gap-2">
             <Popover open={showFilters} onOpenChange={setShowFilters}>
                 <PopoverTrigger asChild>
                     <button 
@@ -495,6 +455,49 @@ export function ContactManagementPage(): ReactElement {
                     </div>
                 </PopoverContent>
             </Popover>
+            <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" className="h-10 w-10 p-0 border-slate-200 dark:border-white/10 bg-white/50 dark:bg-white/5 hover:bg-pink-50 dark:hover:bg-white/10 hover:border-pink-500/30">
+                    <Menu size={18} className="text-slate-500 dark:text-slate-400" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-64 bg-[#151025] border border-white/10 shadow-2xl shadow-black/50 overflow-visible p-0">
+                  <div className="p-2">
+                    <div className="px-3 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                      {t('common.actions', 'İşlemler')}
+                    </div>
+                  </div>
+
+                  <div className="h-px bg-white/5 my-1"></div>
+
+                  <div className="p-2">
+                    <div className="px-3 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                      {t('common.export', 'Dışa Aktar')}
+                    </div>
+                    <button onClick={handleExportExcel} className="flex items-center gap-2 w-full px-3 py-2.5 rounded-lg text-sm text-gray-200 hover:bg-white/5 transition-colors text-left">
+                      <FileSpreadsheet size={16} className="text-emerald-500" />
+                      <span>{t('common.exportExcel', 'Excel İndir')}</span>
+                    </button>
+                    <button onClick={handleExportPDF} className="flex items-center gap-2 w-full px-3 py-2.5 rounded-lg text-sm text-gray-200 hover:bg-white/5 transition-colors text-left">
+                      <FileText size={16} className="text-red-400" />
+                      <span>{t('common.exportPDF', 'PDF İndir')}</span>
+                    </button>
+                    <button onClick={handleExportPowerPoint} className="flex items-center gap-2 w-full px-3 py-2.5 rounded-lg text-sm text-gray-200 hover:bg-white/5 transition-colors text-left">
+                      <Presentation size={16} className="text-orange-400" />
+                      <span>{t('common.exportPPT', 'PowerPoint İndir')}</span>
+                    </button>
+                  </div>
+                </DropdownMenuContent>
+            </DropdownMenu>
+            </div>
+          </div>
+
+{/* Old filters removed */}
+      </div>
+
+      <div className="flex-1 flex flex-col min-h-0 overflow-hidden relative">
+        <div className="flex justify-end px-4 py-2 gap-2">
+
 
             <Popover open={showColumns} onOpenChange={setShowColumns}>
                 <PopoverTrigger asChild>
