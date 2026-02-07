@@ -15,6 +15,7 @@ export const createQuotationSchema = z.object({
     offerType: z.string({
       message: 'Teklif tipi seçilmelidir',
     }),
+    deliveryMethod: z.string().nullable().optional(),
     offerDate: z.string().nullable().optional(),
     offerNo: z.string().max(50, 'Teklif no en fazla 50 karakter olabilir').nullable().optional(),
     revisionNo: z.string().max(50, 'Revizyon no en fazla 50 karakter olabilir').nullable().optional(),

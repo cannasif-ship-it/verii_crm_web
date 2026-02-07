@@ -27,6 +27,13 @@ import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -110,6 +117,7 @@ export function QuotationHeaderForm({
   const watchedCurrency = form.watch('quotation.currency');
   const watchedRepresentativeId = form.watch('quotation.representativeId');
   const watchedDocumentSerialTypeId = form.watch('quotation.documentSerialTypeId');
+  const watchedOfferType = form.watch('quotation.offerType');
 
   const { data: shippingAddresses } = useShippingAddresses(watchedCustomerId || undefined);
   const { data: relatedUsers = [] } = useQuotationRelatedUsers(user?.id);
@@ -651,33 +659,83 @@ export function QuotationHeaderForm({
               </div>
 
               <div className="space-y-4 flex-1">
-                <FormField
-                  control={form.control}
-                  name="quotation.offerType"
-                  render={({ field }) => (
-                    <FormItem className="space-y-0 relative group">
-                      <FormLabel className={styles.label}>
-                        Teklif Tipi <span className="text-pink-500 ml-0.5">*</span>
-                      </FormLabel>
-                      <div className="relative">
-                         <div className={styles.iconWrapper}><Layers className="h-4 w-4" /></div>
-                         <VoiceSearchCombobox
-                           className={styles.inputBase}
-                           value={field.value || ''}
-                           onSelect={(value) => field.onChange(value)}
-                           options={[
-                             { value: 'Domestic', label: t('quotation.offerType.domestic', 'Yurtiçi') },
-                             { value: 'Export', label: t('quotation.offerType.export', 'Yurtdışı') }
-                           ]}
-                           placeholder={t('quotation.select', 'Seçiniz')}
-                           searchPlaceholder={t('common.search', 'Ara...')}
-                           disabled={readOnly}
-                         />
-                      </div>
-                      <FormMessage className="mt-1" />
-                    </FormItem>
+                <div className={cn("grid gap-4", watchedOfferType === 'Export' ? "grid-cols-2" : "grid-cols-1")}>
+                  <FormField
+                    control={form.control}
+                    name="quotation.offerType"
+                    render={({ field }) => (
+                      <FormItem className="space-y-0 relative group">
+                        <FormLabel className={styles.label}>
+                          Teklif Tipi <span className="text-pink-500 ml-0.5">*</span>
+                        </FormLabel>
+                        <div className="relative">
+                           <div className={styles.iconWrapper}><Layers className="h-4 w-4" /></div>
+                           <VoiceSearchCombobox
+                             className={styles.inputBase}
+                             value={field.value || ''}
+                             onSelect={(value) => field.onChange(value)}
+                             options={[
+                               { value: 'Domestic', label: t('quotation.offerType.domestic', 'Yurtiçi') },
+                               { value: 'Export', label: t('quotation.offerType.export', 'Yurtdışı') }
+                             ]}
+                             placeholder={t('quotation.select', 'Seçiniz')}
+                             searchPlaceholder={t('common.search', 'Ara...')}
+                             disabled={readOnly}
+                           />
+                        </div>
+                        <FormMessage className="mt-1" />
+                      </FormItem>
+                    )}
+                  />
+
+                  {watchedOfferType === 'Export' && (
+                    <FormField
+                      control={form.control}
+                      name="quotation.deliveryMethod"
+                      render={({ field }) => (
+                        <FormItem className="space-y-0 relative group">
+                          <FormLabel className={styles.label}>
+                            Gönderim/Teslim Şekli
+                          </FormLabel>
+                          <div className="relative">
+                            <div className={styles.iconWrapper}><Truck className="h-4 w-4" /></div>
+                            <Select 
+                              disabled={readOnly} 
+                              onValueChange={field.onChange} 
+                              value={field.value || ''}
+                            >
+                              <FormControl>
+                                <SelectTrigger className={cn(styles.inputBase, "pl-10")}>
+                                  <SelectValue placeholder={t('quotation.select', 'Seçiniz')} />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                <SelectItem value="EXW">EXW - Ex Works</SelectItem>
+                                <SelectItem value="FCA">FCA - Free Carrier</SelectItem>
+                                <SelectItem value="CPT">CPT - Carriage Paid To</SelectItem>
+                                <SelectItem value="CIP">CIP - Carriage and Insurance Paid To</SelectItem>
+                                <SelectItem value="DAT">DAT - Delivered At Terminal</SelectItem>
+                                <SelectItem value="DAP">DAP - Delivered At Place</SelectItem>
+                                <SelectItem value="DDP">DDP - Delivered Duty Paid</SelectItem>
+                                <SelectItem value="FAS">FAS - Free Alongside Ship</SelectItem>
+                                <SelectItem value="FOB">FOB - Free On Board</SelectItem>
+                                <SelectItem value="CFR">CFR - Cost and Freight</SelectItem>
+                                <SelectItem value="CIF">CIF - Cost, Insurance and Freight</SelectItem>
+                                <SelectItem value="GEM">GEM - Gemi Yolu</SelectItem>
+                                <SelectItem value="UCA">UCA - Hava Yolu</SelectItem>
+                                <SelectItem value="KAR">KAR - Kara Yolu</SelectItem>
+                                <SelectItem value="DEM">DEM - Demir Yolu</SelectItem>
+                                <SelectItem value="ZZZ">ZZZ - Diğer</SelectItem>
+                                <SelectItem value="OZL">OZL - Özel Teslimat</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <FormMessage className="mt-1" />
+                        </FormItem>
+                      )}
+                    />
                   )}
-                />
+                </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <FormField

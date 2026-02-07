@@ -42,6 +42,7 @@ export interface CreateQuotationDto {
   paymentTypeId?: number | null;
   documentSerialTypeId?: number | null;
   offerType: string;
+  deliveryMethod?: string | null;
   offerDate?: string | null;
   offerNo?: string | null;
   revisionNo?: string | null;
