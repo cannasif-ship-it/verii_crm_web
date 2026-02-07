@@ -1,13 +1,18 @@
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
 import {
+  executeSalesmenRecommendedAction,
+  getSalesmenCohort,
   getSalesmenOverview,
   getSalesmenAnalyticsSummary,
   getSalesmenAnalyticsCharts,
 } from '../api/salesmen360Api';
+import type { ExecuteRecommendedActionDto } from '../types/salesmen360.types';
 
 const OVERVIEW_STALE_MS = 30_000;
 const SUMMARY_STALE_MS = 30_000;
 const CHARTS_STALE_MS = 45_000;
+const COHORT_STALE_MS = 300_000;
 
 export function useSalesmenOverviewQuery(userId: number, currency?: string) {
   return useQuery({
@@ -49,5 +54,31 @@ export function useSalesmenAnalyticsChartsQuery(
       }),
     staleTime: CHARTS_STALE_MS,
     enabled: userId > 0,
+  });
+}
+
+export function useSalesmenCohortQuery(userId: number, months = 12) {
+  return useQuery({
+    queryKey: ['salesmen360', 'cohort', userId, months],
+    queryFn: ({ signal }) => getSalesmenCohort({ userId, months, signal }),
+    staleTime: COHORT_STALE_MS,
+    enabled: userId > 0,
+  });
+}
+
+export function useExecuteSalesmenActionMutation(userId: number) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (payload: ExecuteRecommendedActionDto) =>
+      executeSalesmenRecommendedAction({ userId, payload }),
+    onSuccess: () => {
+      toast.success('Action executed');
+      queryClient.invalidateQueries({ queryKey: ['salesmen360', 'overview', userId] });
+      queryClient.invalidateQueries({ queryKey: ['salesmen360', 'cohort', userId] });
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || 'Action execution failed');
+    },
   });
 }
