@@ -220,7 +220,7 @@ export function ErpCustomerManagementPage(): ReactElement {
 // styles removed
 
   return (
-    <div className="w-full h-[calc(100vh-6rem)] flex flex-col gap-2 overflow-hidden">
+    <div className="w-full min-h-[calc(100vh-6rem)] flex flex-col gap-2">
       <div className="flex flex-col gap-1 pt-1 shrink-0 px-0 sm:px-1">
         <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-white transition-colors">
           {t('menu')}

@@ -45,9 +45,9 @@ import { PricingRuleType } from '@/features/pricing-rule/types/pricing-rule-type
 import type { KurDto } from '@/services/erp-types';
 import { ExchangeRateDialog } from './ExchangeRateDialog';
 import { 
-  Search, User, Truck, Briefcase, Globe, 
+  User, Truck, Briefcase, Globe, 
   Calendar, CreditCard, Hash, FileText, ArrowRightLeft, 
-  Layers, SearchX, Coins
+  Layers, SearchX, Coins, BookUser
 } from 'lucide-react';
 import { useAuthStore } from '@/stores/auth-store';
 import type { CreateQuotationSchema } from '../schemas/quotation-schema';
@@ -438,10 +438,10 @@ export function QuotationHeaderForm({
                             type="button"
                             onClick={() => setCustomerSelectDialogOpen(true)}
                             disabled={readOnly}
-                            className="h-11 px-6 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-white shadow-md hover:shadow-lg transition-all border border-zinc-800 active:scale-95"
+                            className="h-11 w-11 p-0 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-white shadow-md hover:shadow-lg transition-all border border-zinc-800 active:scale-95 flex items-center justify-center"
+                            title={t('quotation.guide', 'Rehber')}
                           >
-                            <Search className="h-4 w-4 mr-2" />
-                            {t('quotation.guide', 'Rehber')}
+                            <BookUser className="h-5 w-5" />
                           </Button>
                         </div>
                         <FormMessage className="mt-1.5" />

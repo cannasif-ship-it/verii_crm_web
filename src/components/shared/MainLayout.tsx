@@ -195,8 +195,8 @@ export function MainLayout({ navItems }: MainLayoutProps): ReactElement {
 
       <div className="flex flex-1 flex-col h-full overflow-hidden relative z-10">
         <Navbar />
-        <main className="flex-1 overflow-hidden p-4 text-foreground">
-          <div className="w-full h-full">
+        <main className="flex-1 overflow-y-auto p-4 text-foreground scrollbar-thin scrollbar-thumb-zinc-200 dark:scrollbar-thumb-zinc-800 scrollbar-track-transparent">
+          <div className="w-full min-h-full">
             <Suspense fallback={<PageLoader />}><Outlet /></Suspense>
           </div>
         </main>
