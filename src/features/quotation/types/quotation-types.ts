@@ -36,6 +36,7 @@ export interface CreateQuotationDto {
   deliveryDate?: string | null;
   shippingAddressId?: number | null;
   representativeId?: number | null;
+  projectCode?: string | null;
   status?: number | null;
   description?: string | null;
   paymentTypeId?: number | null;

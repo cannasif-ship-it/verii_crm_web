@@ -3,18 +3,17 @@ import { useTranslation } from 'react-i18next';
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
 } from '@/components/ui/dialog';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useCustomerList } from '@/features/customer-management/hooks/useCustomerList';
 import type { CustomerDto } from '@/features/customer-management/types/customer-types';
 import { cn } from '@/lib/utils';
-import { LayoutList, LayoutGrid, Phone, Mail, ChevronRight } from 'lucide-react';
+import { Phone, Mail, ChevronRight, Search, Mic, Building2, User, X, Users } from 'lucide-react';
 
 export interface CustomerSelectionResult {
   customerId?: number;
@@ -38,8 +37,23 @@ interface CustomerCardProps {
   city?: string;
   district?: string;
   onClick: () => void;
-  viewMode: 'list' | 'card';
 }
+
+const INPUT_STYLE = `
+  h-12 rounded-xl
+  bg-slate-50 dark:bg-[#0f0a18] 
+  border border-slate-200 dark:border-white/10 
+  text-slate-900 dark:text-white text-sm
+  placeholder:text-slate-400 dark:placeholder:text-slate-600 
+  
+  focus-visible:bg-white dark:focus-visible:bg-[#1a1025]
+  focus-visible:border-pink-500 dark:focus-visible:border-pink-500/70
+  focus-visible:ring-2 focus-visible:ring-pink-500/10 focus-visible:ring-offset-0
+  
+  focus:ring-2 focus:ring-pink-500/10 focus:ring-offset-0 focus:border-pink-500
+  
+  transition-all duration-200
+`;
 
 function CustomerCard({
   type,
@@ -47,190 +61,46 @@ function CustomerCard({
   customerCode,
   phone,
   email,
-  city,
-  district,
   onClick,
-  viewMode,
 }: CustomerCardProps): ReactElement {
-  const { t } = useTranslation();
-
-  if (viewMode === 'list') {
-    return (
-      <div
-        onClick={onClick}
-        className={cn(
-          'group flex items-center gap-4 p-3 rounded-xl border cursor-pointer transition-all duration-200',
-          'bg-white/50 dark:bg-white/5 border-slate-200 dark:border-white/5',
-          'hover:bg-indigo-50/50 dark:hover:bg-indigo-500/10 hover:border-indigo-200 dark:hover:border-indigo-500/20 hover:shadow-sm'
-        )}
-      >
-        <div className={cn(
-          'shrink-0 w-12 h-12 rounded-lg flex items-center justify-center border',
-          type === 'erp' 
-            ? 'bg-purple-50 border-purple-100 text-purple-600 dark:bg-purple-900/20 dark:border-purple-500/20 dark:text-purple-300'
-            : 'bg-pink-50 border-pink-100 text-pink-600 dark:bg-pink-900/20 dark:border-pink-500/20 dark:text-pink-300'
-        )}>
-          <span className="text-xs font-bold">{type === 'erp' ? 'ERP' : 'CRM'}</span>
-        </div>
-
-        <div className="flex-1 min-w-0 grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
-          <div className="col-span-5 min-w-0">
-            <div className="font-semibold truncate text-sm text-slate-900 dark:text-white mb-0.5">{name}</div>
-            <div className="flex items-center gap-2">
-              {customerCode && (
-                <span className="text-xs text-slate-500 font-mono bg-slate-100 dark:bg-white/10 px-1.5 py-0.5 rounded">
-                  {customerCode}
-                </span>
-              )}
-              {(city || district) && (
-                <span className="text-xs text-slate-400 truncate">
-                  • {[city, district].filter(Boolean).join(', ')}
-                </span>
-              )}
-            </div>
-          </div>
-
-          <div className="col-span-7 hidden items-center gap-6 text-sm text-slate-500 md:flex">
-            {phone && (
-              <div className="flex items-center gap-2 min-w-0 truncate" title={phone}>
-                <div className="p-1.5 rounded-full bg-slate-100 dark:bg-white/5">
-                  <Phone className="w-3.5 h-3.5 shrink-0" />
-                </div>
-                <span className="truncate">{phone}</span>
-              </div>
-            )}
-            {email && (
-              <div className="flex items-center gap-2 min-w-0 truncate" title={email}>
-                <div className="p-1.5 rounded-full bg-slate-100 dark:bg-white/5">
-                  <Mail className="w-3.5 h-3.5 shrink-0" />
-                </div>
-                <span className="truncate">{email}</span>
-              </div>
-            )}
-          </div>
-        </div>
-
-        <ChevronRight className="w-5 h-5 text-slate-300 group-hover:text-indigo-500 transition-colors" />
-      </div>
-    );
-  }
-
   return (
-    <Card
-      className={cn(
-        'cursor-pointer transition-all duration-200 border-slate-200 dark:border-white/5',
-        'bg-white/50 dark:bg-white/5 backdrop-blur-sm',
-        'hover:-translate-y-1 hover:shadow-lg hover:border-pink-500/50 hover:bg-white dark:hover:bg-white/10',
-        'active:scale-[0.98] touch-manipulation'
-      )}
+    <div
       onClick={onClick}
+      className={cn(
+        "group flex items-center gap-4 p-3 rounded-xl border transition-all duration-200 cursor-pointer",
+        "bg-slate-50 dark:bg-white/5 border-slate-200 dark:border-white/5 hover:bg-slate-100 dark:hover:bg-white/10"
+      )}
     >
-      <CardContent className="p-4">
-        <div className="flex items-start justify-between gap-3">
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 mb-2">
-              <span
-                className={cn(
-                  'px-2 py-0.5 rounded text-xs font-semibold whitespace-nowrap',
-                  type === 'erp'
-                    ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300'
-                    : 'bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-300'
-                )}
-              >
-                {type === 'erp'
-                  ? t('customerSelectDialog.erp', 'ERP')
-                  : t('customerSelectDialog.crm', 'CRM')}
-              </span>
-              {customerCode && (
-                <span className="text-xs text-muted-foreground font-mono">
-                  {customerCode}
-                </span>
-              )}
-            </div>
-            <h3 className="font-semibold text-base mb-2 truncate">{name}</h3>
-            <div className="space-y-1.5 text-sm text-muted-foreground">
-              {phone && (
-                <div className="flex items-center gap-2">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="shrink-0"
-                  >
-                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
-                  </svg>
-                  <span className="truncate">{phone}</span>
-                </div>
-              )}
-              {email && (
-                <div className="flex items-center gap-2">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="shrink-0"
-                  >
-                    <rect width="20" height="16" x="2" y="4" rx="2" />
-                    <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
-                  </svg>
-                  <span className="truncate">{email}</span>
-                </div>
-              )}
-              {(city || district) && (
-                <div className="flex items-center gap-2">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="shrink-0"
-                  >
-                    <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
-                    <circle cx="12" cy="10" r="3" />
-                  </svg>
-                  <span className="truncate">
-                    {[city, district].filter(Boolean).join(', ') || '-'}
-                  </span>
-                </div>
-              )}
-            </div>
-          </div>
-          <div className="shrink-0">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="text-muted-foreground"
-            >
-              <path d="m9 18 6-6-6-6" />
-            </svg>
-          </div>
+      <div className="flex items-center gap-3 min-w-[30%] max-w-[40%]">
+        <div className={cn(
+          "w-10 h-10 rounded-full flex items-center justify-center shrink-0",
+          type === 'erp' 
+            ? "bg-purple-100 dark:bg-purple-500/10 text-purple-600 dark:text-purple-400" 
+            : "bg-pink-100 dark:bg-pink-500/10 text-pink-600 dark:text-pink-400"
+        )}>
+          {type === 'erp' ? <Building2 size={18} /> : <User size={18} />}
         </div>
-      </CardContent>
-    </Card>
+        <div className="flex flex-col min-w-0">
+          <span className="font-medium text-sm text-slate-900 dark:text-zinc-200 truncate">{name}</span>
+          {customerCode && (
+            <span className="text-xs text-slate-500 dark:text-zinc-500 font-mono truncate">{customerCode}</span>
+          )}
+        </div>
+      </div>
+
+      <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4">
+        <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-zinc-400 min-w-0">
+          <Phone size={14} className="shrink-0 opacity-50" />
+          <span className="truncate">{phone || '-'}</span>
+        </div>
+        <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-zinc-400 min-w-0">
+          <Mail size={14} className="shrink-0 opacity-50" />
+          <span className="truncate">{email || '-'}</span>
+        </div>
+      </div>
+
+      <ChevronRight className="w-5 h-5 text-slate-400 dark:text-zinc-600 group-hover:text-slate-600 dark:group-hover:text-zinc-400 transition-colors shrink-0" />
+    </div>
   );
 }
 
@@ -242,11 +112,9 @@ export function CustomerSelectDialog({
 }: CustomerSelectDialogProps): ReactElement {
   const { t, i18n } = useTranslation();
   const [activeTab, setActiveTab] = useState<'erp' | 'potential' | 'all'>('erp');
-  const [viewMode, setViewMode] = useState<'list' | 'card'>('list');
   const [searchQuery, setSearchQuery] = useState('');
   const [isListening, setIsListening] = useState(false);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -258,7 +126,6 @@ export function CustomerSelectDialog({
         recognition.continuous = false;
         recognition.interimResults = false;
         
-        // Dil ayarını i18n'den al
         const langMap: Record<string, string> = {
           'tr': 'tr-TR',
           'en': 'en-US',
@@ -367,7 +234,7 @@ export function CustomerSelectDialog({
     if (crmLoading) {
       return (
         <div className="flex items-center justify-center py-12">
-          <div className="text-muted-foreground">
+          <div className="text-zinc-500">
             {t('customerSelectDialog.loading', 'Yükleniyor...')}
           </div>
         </div>
@@ -377,7 +244,7 @@ export function CustomerSelectDialog({
     if (list.length === 0) {
       return (
         <div className="flex items-center justify-center py-12">
-          <div className="text-muted-foreground">
+          <div className="text-zinc-500">
             {searchQuery.trim()
               ? t('customerSelectDialog.noResults', 'Arama sonucu bulunamadı')
               : t(emptyKey, { ns: 'customer-select-dialog', defaultValue: 'Müşteri bulunamadı' })}
@@ -387,7 +254,7 @@ export function CustomerSelectDialog({
     }
 
     return (
-      <div className={cn("grid gap-3", viewMode === 'card' ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1')}>
+      <div className="grid grid-cols-1 gap-2">
         {list.map((customer) => (
           <CustomerCard
             key={`customer-${customer.id}`}
@@ -399,7 +266,6 @@ export function CustomerSelectDialog({
             city={customer.cityName}
             district={customer.districtName}
             onClick={() => handleCustomerSelect(customer)}
-            viewMode={viewMode}
           />
         ))}
       </div>
@@ -408,185 +274,88 @@ export function CustomerSelectDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className={cn("max-w-6xl max-h-[90vh] flex flex-col p-0 overflow-hidden bg-white/95 dark:bg-[#0c0516]/95 backdrop-blur-xl rounded-2xl border-white/60 dark:border-white/10 shadow-2xl", className)}>
-        <DialogHeader className="px-6 py-5 border-b border-slate-200/50 dark:border-white/5 shrink-0">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="h-12 w-12 rounded-2xl bg-linear-to-br from-pink-100 to-orange-100 dark:from-pink-900/20 dark:to-orange-900/20 flex items-center justify-center text-pink-600 dark:text-pink-400">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
-                <circle cx="12" cy="7" r="4" />
-              </svg>
+      <DialogContent className={cn("bg-white dark:bg-[#130822] border border-slate-100 dark:border-white/10 text-slate-900 dark:text-white sm:max-w-[800px] w-[95%] sm:w-full shadow-2xl sm:rounded-2xl p-0 overflow-hidden flex flex-col max-h-[90vh]", className)}>
+        <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as 'erp' | 'potential' | 'all')} className="flex flex-col h-full">
+          <DialogHeader className="px-6 py-5 border-b border-slate-100 dark:border-white/5 bg-slate-50/50 dark:bg-[#1a1025]/50 flex flex-row items-center justify-between sticky top-0 z-10 backdrop-blur-sm shrink-0">
+            <div className="flex items-center gap-4">
+               <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-pink-500 to-orange-500 p-0.5 shadow-lg shadow-pink-500/20">
+                 <div className="h-full w-full bg-white dark:bg-[#130822] rounded-[14px] flex items-center justify-center">
+                   <Users size={24} className="text-pink-600 dark:text-pink-500" />
+                 </div>
+               </div>
+               <div className="space-y-1 text-left">
+                  <DialogTitle className="text-xl font-bold tracking-tight text-slate-900 dark:text-white">
+                    {t('customerSelectDialog.title', 'Müşteri Seç')}
+                  </DialogTitle>
+                  <DialogDescription className="text-slate-500 dark:text-slate-400 text-sm">
+                    {t('customerSelectDialog.description', 'İşlem yapmak istediğiniz müşteriyi seçin')}
+                  </DialogDescription>
+               </div>
             </div>
-            <div>
-              <DialogTitle className="text-2xl font-bold bg-clip-text text-transparent bg-linear-to-r from-pink-600 to-orange-600">
-                {t('customerSelectDialog.title', 'Müşteri Seç')}
-              </DialogTitle>
-              <DialogDescription className="text-slate-500 dark:text-slate-400 text-sm mt-1">
-                {t('customerSelectDialog.description', 'Müşteri seçmek için bir sekme seçin ve listeden müşteriyi seçin.')}
-              </DialogDescription>
-            </div>
-          </div>
-        </DialogHeader>
+            <Button variant="ghost" size="icon" onClick={() => onOpenChange(false)} className="text-slate-400 hover:text-slate-600 dark:hover:text-white rounded-full">
+              <X size={20} />
+            </Button>
+          </DialogHeader>
 
-        <div className="px-6 py-4 shrink-0 bg-white/50 dark:bg-white/5 border-b border-slate-200/50 dark:border-white/5">
-          <div className="relative flex gap-3">
-            <div className="relative flex-1 group">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-500 transition-colors"
-              >
-                <circle cx="11" cy="11" r="8" />
-                <path d="m21 21-4.3-4.3" />
-              </svg>
+          <div className="p-6 pb-0 space-y-4 bg-white dark:bg-[#130822] shrink-0">
+            <div className="relative w-full group">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500 group-focus-within:text-pink-500 transition-colors" />
               <Input
-                type="text"
-                placeholder={t('customerSelectDialog.searchPlaceholder', 'İsim veya kod ile ara...')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 h-11 rounded-xl bg-white dark:bg-black/20 border-slate-200 dark:border-white/10 focus-visible:ring-indigo-500/20 focus-visible:border-indigo-500 transition-all"
+                placeholder={t('customerSelectDialog.searchPlaceholder', 'İsim, kod veya telefon ile ara...')}
+                className={cn(INPUT_STYLE, "pl-9")}
               />
+              {recognitionRef.current && (
+                <Button
+                  type="button"
+                  size="icon"
+                  variant="ghost"
+                  onClick={handleVoiceSearch}
+                  className={cn(
+                    "absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 hover:bg-slate-100 dark:hover:bg-white/5 rounded-lg",
+                    isListening ? "text-pink-500" : "text-zinc-500"
+                  )}
+                >
+                  <Mic size={16} />
+                </Button>
+              )}
             </div>
-            {recognitionRef.current && (
-              <Button
-                type="button"
-                variant={isListening ? 'default' : 'outline'}
-                size="icon"
-                onClick={handleVoiceSearch}
-                className={cn(
-                  'shrink-0 h-11 w-11 rounded-xl transition-all',
-                  isListening 
-                    ? 'animate-pulse bg-red-500 hover:bg-red-600 border-red-500 text-white shadow-lg shadow-red-500/30' 
-                    : 'border-slate-200 dark:border-white/10 hover:bg-slate-100 dark:hover:bg-white/5'
-                )}
-                title={t('customerSelectDialog.voiceSearch', 'Sesli arama')}
+
+            <TabsList className="bg-slate-100 dark:bg-[#1a1025] p-1 h-auto w-full grid grid-cols-3 rounded-xl border border-slate-200 dark:border-white/5">
+              <TabsTrigger 
+                value="erp" 
+                className="rounded-lg data-[state=active]:bg-white dark:data-[state=active]:bg-pink-500 data-[state=active]:text-slate-900 dark:data-[state=active]:text-white data-[state=active]:shadow-sm transition-all py-2"
               >
-                {isListening ? (
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="18"
-                    height="18"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <rect width="18" height="18" x="3" y="3" rx="2" />
-                    <path d="M12 8v8" />
-                    <path d="M8 12h8" />
-                  </svg>
-                ) : (
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="18"
-                    height="18"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
-                    <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
-                    <line x1="12" x2="12" y1="19" y2="23" />
-                    <line x1="8" x2="16" y1="23" y2="23" />
-                  </svg>
-                )}
-              </Button>
-            )}
+                {t('customerSelectDialog.erpCustomers', 'ERP')}
+              </TabsTrigger>
+              <TabsTrigger 
+                value="potential"
+                className="rounded-lg data-[state=active]:bg-white dark:data-[state=active]:bg-pink-500 data-[state=active]:text-slate-900 dark:data-[state=active]:text-white data-[state=active]:shadow-sm transition-all py-2"
+              >
+                {t('customerSelectDialog.potentialCustomers', 'Potansiyel')}
+              </TabsTrigger>
+              <TabsTrigger 
+                value="all"
+                className="rounded-lg data-[state=active]:bg-white dark:data-[state=active]:bg-pink-500 data-[state=active]:text-slate-900 dark:data-[state=active]:text-white data-[state=active]:shadow-sm transition-all py-2"
+              >
+                {t('customerSelectDialog.allCustomers', 'Tümü')}
+              </TabsTrigger>
+            </TabsList>
           </div>
-        </div>
 
-        <div className="flex-1 min-h-0 flex flex-col px-6 pb-6 pt-4">
-          <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as 'erp' | 'potential' | 'all')} className="w-full flex-1 flex flex-col min-h-0">
-            <div className="flex items-end justify-between border-b border-slate-200/50 dark:border-white/5 mb-4 px-1">
-              <TabsList className="bg-transparent p-0 h-auto rounded-none border-none gap-2">
-                <TabsTrigger
-                  value="erp"
-                  className="px-6 py-2.5 rounded-t-xl rounded-b-none border-b-2 border-transparent data-[state=active]:border-pink-500 data-[state=active]:bg-pink-500/5 dark:data-[state=active]:bg-pink-500/10 data-[state=active]:text-pink-600 dark:data-[state=active]:text-pink-400 font-semibold transition-all -mb-px"
-                >
-                  {t('customerSelectDialog.erpCustomers', 'ERP')}
-                </TabsTrigger>
-                <TabsTrigger
-                  value="potential"
-                  className="px-6 py-2.5 rounded-t-xl rounded-b-none border-b-2 border-transparent data-[state=active]:border-pink-500 data-[state=active]:bg-pink-500/5 dark:data-[state=active]:bg-pink-500/10 data-[state=active]:text-pink-600 dark:data-[state=active]:text-pink-400 font-semibold transition-all -mb-px"
-                >
-                  {t('customerSelectDialog.potentialCustomers', 'Potansiyel')}
-                </TabsTrigger>
-                <TabsTrigger
-                  value="all"
-                  className="px-6 py-2.5 rounded-t-xl rounded-b-none border-b-2 border-transparent data-[state=active]:border-pink-500 data-[state=active]:bg-pink-500/5 dark:data-[state=active]:bg-pink-500/10 data-[state=active]:text-pink-600 dark:data-[state=active]:text-pink-400 font-semibold transition-all -mb-px"
-                >
-                  {t('customerSelectDialog.allCustomers', 'Tümü')}
-                </TabsTrigger>
-              </TabsList>
-
-              <div className="flex items-center p-1 rounded-xl bg-slate-100/50 dark:bg-white/5 border border-slate-200/50 dark:border-white/5 mb-2">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setViewMode('list')}
-                  className={cn(
-                    "h-8 w-8 p-0 rounded-lg transition-all",
-                    viewMode === 'list'
-                      ? "bg-white dark:bg-white/10 text-pink-600 dark:text-white shadow-sm"
-                      : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
-                  )}
-                >
-                  <LayoutList className="w-4 h-4" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setViewMode('card')}
-                  className={cn(
-                    "h-8 w-8 p-0 rounded-lg transition-all",
-                    viewMode === 'card'
-                      ? "bg-white dark:bg-white/10 text-pink-600 dark:text-white shadow-sm"
-                      : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
-                  )}
-                >
-                  <LayoutGrid className="w-4 h-4" />
-                </Button>
-              </div>
-            </div>
-
-            <div
-              ref={scrollContainerRef}
-              className="flex-1 overflow-y-auto min-h-0 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
-            >
-              <TabsContent value="erp" className="mt-0 space-y-3">
-                {renderCustomerList(erpCustomers, 'noErpCustomers')}
-              </TabsContent>
-              <TabsContent value="potential" className="mt-0 space-y-3">
-                {renderCustomerList(potentialCustomers, 'noPotentialCustomers')}
-              </TabsContent>
-              <TabsContent value="all" className="mt-0 space-y-3">
-                {renderCustomerList(displayCustomers, 'noCustomers')}
-              </TabsContent>
-            </div>
-          </Tabs>
-        </div>
+          <div className="flex-1 overflow-y-auto min-h-0 p-6 pt-4 bg-white dark:bg-[#130822] custom-scrollbar">
+            <TabsContent value="erp" className="mt-0 space-y-2 h-full">
+              {renderCustomerList(erpCustomers, 'noErpCustomers')}
+            </TabsContent>
+            <TabsContent value="potential" className="mt-0 space-y-2 h-full">
+              {renderCustomerList(potentialCustomers, 'noPotentialCustomers')}
+            </TabsContent>
+            <TabsContent value="all" className="mt-0 space-y-2 h-full">
+              {renderCustomerList(displayCustomers, 'noCustomers')}
+            </TabsContent>
+          </div>
+        </Tabs>
       </DialogContent>
     </Dialog>
   );

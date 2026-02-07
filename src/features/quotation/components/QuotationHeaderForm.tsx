@@ -40,6 +40,7 @@ import { usePaymentTypes } from '../hooks/usePaymentTypes';
 import { useExchangeRate } from '@/services/hooks/useExchangeRate';
 import { useCustomerOptions } from '@/features/customer-management/hooks/useCustomerOptions';
 import { useCustomer } from '@/features/customer-management/hooks/useCustomer';
+import { useErpProjects } from '@/services/hooks/useErpProjects';
 import { useAvailableDocumentSerialTypes } from '@/features/document-serial-type-management/hooks/useAvailableDocumentSerialTypes';
 import { PricingRuleType } from '@/features/pricing-rule/types/pricing-rule-types';
 import type { KurDto } from '@/services/erp-types';
@@ -47,7 +48,7 @@ import { ExchangeRateDialog } from './ExchangeRateDialog';
 import { 
   User, Truck, Briefcase, Globe, 
   Calendar, CreditCard, Hash, FileText, ArrowRightLeft, 
-  Layers, SearchX, Coins, BookUser
+  Layers, SearchX, Coins, BookUser, Building2, Phone, Mail, Folder
 } from 'lucide-react';
 import { useAuthStore } from '@/stores/auth-store';
 import type { CreateQuotationSchema } from '../schemas/quotation-schema';
@@ -100,6 +101,7 @@ export function QuotationHeaderForm({
   const { data: paymentTypes } = usePaymentTypes();
   const { data: customerOptions = [] } = useCustomerOptions();
   const { data: customer } = useCustomer(watchedCustomerId ?? 0);
+  const { data: projects = [] } = useErpProjects();
   
   const customerTypeId = useMemo(() => {
     if (watchedErpCustomerCode) return 0;
@@ -140,7 +142,10 @@ export function QuotationHeaderForm({
       type: (c.customerCode?.trim() ? 'erp' : 'crm') as 'erp' | 'crm',
       id: c.id,
       code: c.customerCode ?? undefined,
-      customerTypeId: c.customerTypeId
+      customerTypeId: c.customerTypeId,
+      name: c.name,
+      phone: c.phone,
+      email: c.email
     }));
   }, [customerOptions]);
 
@@ -297,12 +302,12 @@ export function QuotationHeaderForm({
                   />
                  </div>
 
-                 <div className="flex-1">
+                 <div>
                   <FormField
                     control={form.control}
                     name="quotation.description"
                     render={({ field }) => (
-                      <FormItem className="space-y-0 relative group h-full">
+                      <FormItem className="space-y-0 relative group">
                         <FormLabel className={styles.label}>
                           Notlar
                         </FormLabel>
@@ -311,7 +316,7 @@ export function QuotationHeaderForm({
                             {...field}
                             value={field.value || ''}
                             placeholder={t('quotation.header.descriptionPlaceholder', 'Özel koşullar...')}
-                            className="min-h-[120px] h-full rounded-xl border-zinc-200 dark:border-zinc-800 bg-white/50 dark:bg-zinc-950/30 resize-none focus-visible:border-pink-500 focus-visible:ring-4 focus-visible:ring-pink-500/20 transition-all text-sm py-2.5"
+                            className="min-h-[46px] rounded-xl border-zinc-200 dark:border-zinc-800 bg-white/50 dark:bg-zinc-950/30 resize-none focus-visible:border-pink-500 focus-visible:ring-4 focus-visible:ring-pink-500/20 transition-all text-sm py-2.5"
                             disabled={readOnly}
                           />
                         </FormControl>
@@ -320,6 +325,37 @@ export function QuotationHeaderForm({
                     )}
                   />
                  </div>
+              </div>
+
+              <div>
+                <FormField
+                  control={form.control}
+                  name="quotation.projectCode"
+                  render={({ field }) => (
+                    <FormItem className="space-y-0 relative group">
+                      <FormLabel className={styles.label}>
+                        <Folder className="h-3.5 w-3.5" />
+                        {t('quotation.header.projectCode', 'Proje Kodu')}
+                      </FormLabel>
+                      <div className="relative">
+                        <div className={styles.iconWrapper}><Folder className="h-4 w-4" /></div>
+                        <VoiceSearchCombobox
+                          className={styles.inputBase}
+                          value={field.value || ''}
+                          onSelect={(value) => field.onChange(value)}
+                          options={projects.map((p) => ({
+                            value: p.projeKod,
+                            label: p.projeKod + ' - ' + p.projeAciklama
+                          }))}
+                          placeholder={t('quotation.header.projectCodePlaceholder', 'Proje kodu seçiniz...')}
+                          searchPlaceholder={t('common.search', 'Ara...')}
+                          disabled={readOnly}
+                        />
+                      </div>
+                      <FormMessage className="mt-1.5" />
+                    </FormItem>
+                  )}
+                />
               </div>
             </div>
 
@@ -383,23 +419,23 @@ export function QuotationHeaderForm({
                                 <div className="absolute top-full left-0 w-full h-0" />
                               </PopoverTrigger>
                               <PopoverContent 
-                                className="p-0 w-[400px] max-h-[350px] overflow-hidden bg-white/90 dark:bg-[#0c0516]/95 backdrop-blur-2xl border border-zinc-200/50 dark:border-white/10 shadow-2xl rounded-2xl ring-1 ring-black/5" 
+                                className="p-0 w-[90vw] sm:w-[550px] max-h-[350px] overflow-hidden bg-white dark:bg-[#130822] border border-slate-100 dark:border-white/10 shadow-2xl rounded-2xl" 
                                 align="start"
                                 sideOffset={8}
                                 onOpenAutoFocus={(e) => e.preventDefault()}
                               >
                                 <Command shouldFilter={false} className="bg-transparent">
-                                  <CommandList className="max-h-[350px] overflow-y-auto p-1 custom-scrollbar">
+                                  <CommandList className="max-h-[350px] overflow-y-auto p-2 custom-scrollbar space-y-1">
                                     {filteredCustomerOptions.length === 0 && (
-                                      <CommandEmpty className="py-10 text-center flex flex-col items-center justify-center gap-3">
-                                        <div className="p-3 rounded-full bg-zinc-100 dark:bg-white/5 text-zinc-400 dark:text-zinc-500">
-                                          <SearchX className="w-6 h-6" />
+                                      <CommandEmpty className="py-8 text-center flex flex-col items-center justify-center gap-2">
+                                        <div className="p-2.5 rounded-full bg-slate-100 dark:bg-white/5 text-slate-400 dark:text-slate-500">
+                                          <SearchX className="w-5 h-5" />
                                         </div>
                                         <div className="flex flex-col gap-0.5">
-                                          <span className="text-sm font-medium text-zinc-900 dark:text-zinc-200">
+                                          <span className="text-sm font-medium text-slate-900 dark:text-white">
                                             {t('common.noResults', 'Sonuç bulunamadı')}
                                           </span>
-                                          <span className="text-xs text-zinc-500 dark:text-zinc-400">
+                                          <span className="text-xs text-slate-500 dark:text-slate-400">
                                             {t('quotation.header.tryDifferentSearch', 'Farklı bir arama terimi deneyin')}
                                           </span>
                                         </div>
@@ -411,33 +447,50 @@ export function QuotationHeaderForm({
                                           key={option.value}
                                           value={option.value}
                                           onSelect={() => handleComboboxSelect(option)}
-                                          className="cursor-pointer mb-1 last:mb-0 rounded-xl px-3 py-2.5 aria-selected:bg-pink-50 dark:aria-selected:bg-pink-500/10 aria-selected:text-pink-700 dark:aria-selected:text-pink-300 transition-colors"
+                                          className="cursor-pointer mb-1 last:mb-0 rounded-xl px-3 py-2 data-[selected=true]:bg-slate-100 dark:data-[selected=true]:bg-white/10 data-[selected=true]:text-slate-900 dark:data-[selected=true]:text-white transition-colors"
                                         >
-                                          <Check
-                                            className={cn(
-                                              "mr-3 h-4 w-4 shrink-0 transition-opacity",
-                                              ((option.type === 'crm' && watchedCustomerId === option.id) || (option.type === 'erp' && watchedErpCustomerCode === option.code))
-                                                ? "opacity-100 text-pink-600 dark:text-pink-400"
-                                                : "opacity-0"
-                                            )}
-                                          />
-                                          <div className="flex flex-col gap-0.5">
-                                            <span className="font-medium text-sm text-zinc-900 dark:text-zinc-100">{option.label}</span>
-                                            {option.code && (
+                                          <div className="flex items-center gap-3 w-full">
+                                            <div className={cn(
+                                              "w-8 h-8 rounded-full flex items-center justify-center shrink-0",
+                                              option.type === 'erp' 
+                                                ? "bg-purple-100 dark:bg-purple-500/10 text-purple-600 dark:text-purple-400" 
+                                                : "bg-pink-100 dark:bg-pink-500/10 text-pink-600 dark:text-pink-400"
+                                            )}>
+                                              {option.type === 'erp' ? <Building2 size={16} /> : <User size={16} />}
+                                            </div>
+                                            
+                                            <div className="flex flex-col flex-1 min-w-0">
                                               <div className="flex items-center gap-2">
-                                                <span className={cn(
-                                                  "text-[10px] px-1.5 py-0.5 rounded-md font-medium border",
-                                                  option.type === 'erp' 
-                                                    ? "bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-300 border-blue-100 dark:border-blue-800/30" 
-                                                    : "bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-300 border-purple-100 dark:border-purple-800/30"
-                                                )}>
-                                                  {option.type === 'erp' ? 'ERP' : 'CRM'}
+                                                <span className="font-medium text-sm text-slate-900 dark:text-zinc-200 truncate">
+                                                  {option.name || option.label}
                                                 </span>
-                                                <span className="text-xs text-zinc-500 dark:text-zinc-400 font-mono">
-                                                  {option.code}
-                                                </span>
+                                                {((option.type === 'crm' && watchedCustomerId === option.id) || (option.type === 'erp' && watchedErpCustomerCode === option.code)) && (
+                                                  <Check className="w-3.5 h-3.5 text-pink-500" />
+                                                )}
                                               </div>
-                                            )}
+                                              <div className="flex items-center gap-2">
+                                                {option.code && (
+                                                  <span className="text-[11px] text-slate-500 dark:text-zinc-500 font-mono truncate bg-slate-100 dark:bg-white/5 px-1.5 py-0.5 rounded">
+                                                    {option.code}
+                                                  </span>
+                                                )}
+                                              </div>
+                                            </div>
+
+                                            <div className="hidden sm:flex flex-col items-end gap-0.5 min-w-[120px]">
+                                              {option.phone && (
+                                                <div className="flex items-center gap-1.5 text-xs text-slate-500 dark:text-zinc-400">
+                                                  <Phone size={12} className="opacity-70" />
+                                                  <span>{option.phone}</span>
+                                                </div>
+                                              )}
+                                              {option.email && (
+                                                <div className="flex items-center gap-1.5 text-xs text-slate-500 dark:text-zinc-400">
+                                                  <Mail size={12} className="opacity-70" />
+                                                  <span className="max-w-[120px] truncate text-right">{option.email}</span>
+                                                </div>
+                                              )}
+                                            </div>
                                           </div>
                                         </CommandItem>
                                       ))}

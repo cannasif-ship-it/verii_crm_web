@@ -151,12 +151,13 @@ export function VoiceSearchCombobox({
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start">
-        <Command>
+      <PopoverContent className="w-[--radix-popover-trigger-width] p-0 overflow-hidden bg-white dark:bg-[#130822] border border-slate-100 dark:border-white/10 shadow-2xl rounded-2xl" align="start">
+        <Command className="bg-transparent">
           <CommandInput 
             placeholder={searchPlaceholder || t('common.search', 'Ara...')} 
             value={searchQuery}
             onValueChange={setSearchQuery}
+            className="border-b border-slate-100 dark:border-white/5 bg-transparent"
           >
              {recognitionRef.current && (
                <Button
@@ -164,8 +165,8 @@ export function VoiceSearchCombobox({
                  variant="ghost"
                  size="icon"
                  className={cn(
-                   "h-8 w-8 mr-1 shrink-0",
-                   isListening && "text-red-500 animate-pulse bg-red-50 dark:bg-red-900/20"
+                   "h-8 w-8 mr-1 shrink-0 rounded-lg hover:bg-slate-100 dark:hover:bg-white/5",
+                   isListening && "text-pink-500 animate-pulse bg-pink-50 dark:bg-pink-900/20"
                  )}
                  onClick={handleVoiceSearch}
                  title={t('common.voiceSearch', 'Sesli Arama')}
@@ -174,8 +175,10 @@ export function VoiceSearchCombobox({
                </Button>
              )}
           </CommandInput>
-          <CommandList>
-            <CommandEmpty>{t('common.noResults', 'Sonuç bulunamadı.')}</CommandEmpty>
+          <CommandList className="max-h-[300px] overflow-y-auto p-2 custom-scrollbar space-y-1">
+            <CommandEmpty className="py-6 text-center text-sm text-slate-500 dark:text-slate-400">
+              {t('common.noResults', 'Sonuç bulunamadı.')}
+            </CommandEmpty>
             <CommandGroup>
               {options.map((option) => (
                 <CommandItem
@@ -185,10 +188,11 @@ export function VoiceSearchCombobox({
                     onSelect(option.value === value ? null : option.value)
                     setOpen(false)
                   }}
+                  className="cursor-pointer rounded-xl px-3 py-2.5 data-[selected=true]:bg-slate-100 dark:data-[selected=true]:bg-white/10 data-[selected=true]:text-slate-900 dark:data-[selected=true]:text-white transition-colors"
                 >
                   <Check
                     className={cn(
-                      "mr-2 h-4 w-4",
+                      "mr-2 h-4 w-4 text-pink-500",
                       value === option.value ? "opacity-100" : "opacity-0"
                     )}
                   />
