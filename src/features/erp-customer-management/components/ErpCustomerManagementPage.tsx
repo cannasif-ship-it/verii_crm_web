@@ -220,14 +220,16 @@ export function ErpCustomerManagementPage(): ReactElement {
 // styles removed
 
   return (
-    <div className="w-full min-h-[calc(100vh-6rem)] flex flex-col gap-2">
-      <div className="flex flex-col gap-1 pt-1 shrink-0 px-0 sm:px-1">
+    <div className="w-full h-full flex flex-col space-y-4">
+      <div className="flex-none flex flex-col gap-1 pt-1 px-0 sm:px-1">
         <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-white transition-colors">
           {t('menu')}
         </h1>
       </div>
 
-      <div className="bg-white/70 dark:bg-[#1a1025]/60 backdrop-blur-xl border border-white/60 dark:border-white/5 shadow-sm rounded-2xl p-3 sm:p-4 flex flex-col gap-4 transition-all duration-300 shrink-0">
+      <div className="flex-1 flex flex-col min-h-0 bg-white/70 dark:bg-[#1a1025]/60 backdrop-blur-xl border border-white/60 dark:border-white/5 shadow-sm rounded-2xl p-0 overflow-hidden transition-all duration-300">
+          
+          <div className="flex-none p-4 border-b border-white/5 flex flex-col gap-4">
           
           <div className="flex flex-col lg:flex-row items-center justify-between gap-3">
             
@@ -514,10 +516,11 @@ export function ErpCustomerManagementPage(): ReactElement {
           </div>
 
 {/* Old filters removed */}
-      </div>
+          </div>
 
-      <div className="bg-white/70 dark:bg-[#1a1025]/60 backdrop-blur-xl border border-white/60 dark:border-white/5 shadow-sm rounded-2xl p-0 sm:p-1 transition-all duration-300 overflow-hidden flex-1 min-h-0">
-        <ErpCustomerTable customers={filteredCustomers} isLoading={isLoading} visibleColumns={visibleColumns} pageSize={pageSize} />
+          <div className="flex-1 flex flex-col min-h-0 overflow-hidden relative">
+            <ErpCustomerTable customers={filteredCustomers} isLoading={isLoading} visibleColumns={visibleColumns} pageSize={pageSize} />
+          </div>
       </div>
     </div>
   );

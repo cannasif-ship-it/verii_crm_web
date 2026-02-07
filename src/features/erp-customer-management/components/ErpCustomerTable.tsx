@@ -2,7 +2,6 @@ import { type ReactElement, useState, useMemo, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { TFunction } from 'i18next';
 import {
-  Table,
   TableBody,
   TableCell,
   TableHead,
@@ -179,7 +178,7 @@ export function ErpCustomerTable({ customers, isLoading, visibleColumns, pageSiz
   const headStyle = `
     text-slate-500 dark:text-slate-400 
     font-bold text-xs uppercase tracking-wider 
-    py-4 px-5 
+    py-2 px-4 
     hover:text-pink-600 dark:hover:text-pink-400 
     transition-colors cursor-pointer select-none
     border-r border-slate-200 dark:border-white/[0.03] last:border-r-0
@@ -189,25 +188,25 @@ export function ErpCustomerTable({ customers, isLoading, visibleColumns, pageSiz
 
   const cellStyle = `
     text-slate-600 dark:text-slate-400 
-    px-5 py-4
+    px-4 py-2
     border-r border-slate-100 dark:border-white/[0.03] last:border-r-0
-    text-sm align-top
+    text-sm align-middle
   `;
 
   return (
-    <div className="flex flex-col gap-4 max-h-full">
-        <div className="rounded-xl border border-white/5 dark:border-white/10 overflow-hidden bg-white/40 dark:bg-[#1a1025]/40 backdrop-blur-sm flex flex-col shadow-sm shrink min-h-0">
+    <div className="flex flex-col gap-4 h-full">
+        <div className="rounded-xl border border-white/5 dark:border-white/10 overflow-hidden bg-white/40 dark:bg-[#1a1025]/40 backdrop-blur-sm flex flex-col shadow-sm flex-1 min-h-0">
             <div 
                 ref={scrollRef}
-                className="overflow-auto w-full cursor-grab active:cursor-grabbing border border-white/5 rounded-2xl [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']"
+                className="overflow-auto w-full h-full cursor-grab active:cursor-grabbing border border-white/5 rounded-2xl [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']"
                 onMouseDown={handleMouseDown}
                 onMouseLeave={handleMouseUpOrLeave}
                 onMouseUp={handleMouseUpOrLeave}
                 onMouseMove={handleMouseMove}
             >
-                <Table className="w-full min-w-[1200px]">
+                <table className="w-full min-w-[1200px] caption-bottom text-sm">
                     <TableHeader className="bg-[#151025] sticky top-0 z-10 shadow-sm">
-                        <TableRow className="hover:bg-transparent border-b border-slate-200 dark:border-white/10">
+                        <TableRow className="h-10 hover:bg-transparent border-b border-slate-200 dark:border-white/10">
                             {allColumns.filter(col => visibleColumns.includes(col.key)).map((col) => (
                                 <TableHead 
                                     key={col.key} 
@@ -230,7 +229,7 @@ export function ErpCustomerTable({ customers, isLoading, visibleColumns, pageSiz
                         {paginatedCustomers.map((customer: CariDto, index: number) => (
                         <TableRow 
                             key={`${customer.cariKod}-${index}`}
-                            className="border-b border-slate-100 dark:border-white/5 transition-colors duration-200 hover:bg-pink-50/40 dark:hover:bg-pink-500/5 group last:border-0"
+                            className="h-10 border-b border-slate-100 dark:border-white/5 transition-colors duration-200 hover:bg-pink-50/40 dark:hover:bg-pink-500/5 group last:border-0"
                         >
                             {allColumns.filter(col => visibleColumns.includes(col.key)).map((col) => {
                                 const cellKey = col.key as keyof CariDto;
@@ -247,7 +246,7 @@ export function ErpCustomerTable({ customers, isLoading, visibleColumns, pageSiz
                         </TableRow>
                         ))}
                     </TableBody>
-                </Table>
+                </table>
             </div>
         </div>
 
